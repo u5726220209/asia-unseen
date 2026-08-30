@@ -20,7 +20,11 @@ export const site = {
   author: {
     name: 'Tri Hung',
     role: 'Éditeur',
-    email: 'bonjour@asiaunseen.com',
+    // Boîte de réception unique de l'éditeur. Elle est hébergée sur un autre
+    // domaine que le site, ce qui est volontaire : asiaunseen.com n'a pas de
+    // service de messagerie, et une adresse qui ne reçoit rien vaut moins
+    // qu'une adresse d'apparence dépareillée. Celle-ci a des MX valides.
+    email: 'contact@racinesvietnam.com',
   },
   social: {
     instagram: 'https://instagram.com/asiaunseen',
