@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { articlesPublies } from '@/lib/articles';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import ArticleCard from '@/components/ArticleCard.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
@@ -7,7 +8,7 @@ import Visuel from '@/components/Visuel.astro';
 import Newsletter from '@/components/Newsletter.astro';
 import AdSlot from '@/components/AdSlot.astro';
 
-const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+const posts = (await articlesPublies()).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 

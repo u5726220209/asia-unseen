@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { guidesPublies } from '@/lib/articles';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import Visuel from '@/components/Visuel.astro';
@@ -7,7 +8,7 @@ import Newsletter from '@/components/Newsletter.astro';
 import AdSlot from '@/components/AdSlot.astro';
 import { countries } from '@/data/countries';
 
-const guides = (await getCollection('guides', ({ data }) => !data.draft)).sort(
+const guides = (await guidesPublies()).sort(
   (a, b) => a.data.ordre - b.data.ordre,
 );
 ---

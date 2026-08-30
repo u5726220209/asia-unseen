@@ -1,5 +1,6 @@
 import type { APIRoute, GetStaticPaths } from 'astro';
 import { getCollection } from 'astro:content';
+import { articlesPublies, guidesPublies } from '@/lib/articles';
 import sharp from 'sharp';
 import { countries } from '@/data/countries';
 
@@ -18,8 +19,8 @@ import { countries } from '@/data/countries';
 type Props = { titre: string; categorie: string };
 
 export const getStaticPaths = (async () => {
-  const guides = await getCollection('guides', ({ data }) => !data.draft);
-  const blog = await getCollection('blog', ({ data }) => !data.draft);
+  const guides = await guidesPublies();
+  const blog = await articlesPublies();
 
   return [
     ...countries.map((c) => ({

@@ -1,0 +1,76 @@
+name: Parution quotidienne
+
+# Le site est reconstruit chaque matin, qu'il y ait eu un changement ou non.
+#
+# C'est ce qui fait exister la programmation : un article daté du 1er octobre
+# est invisible jusqu'au 30 septembre au soir, puis la construction du 1er le
+# fait apparaître. Sans ce rendez-vous quotidien, une date future n'aurait
+# aucun effet — le site resterait figé à la dernière poussée de code.
+#
+# La construction sert aussi de garde-fou passif : si une dépendance casse ou
+# si une donnée devient invalide, on le sait le lendemain, pas le jour où on
+# voulait publier quelque chose d'urgent.
+on:
+  schedule:
+    - cron: '10 6 * * *'   # 8 h 10 heure de Paris
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: npm }
+      - run: npm ci
+
+      - name: Ce qui attend son tour
+        run: node scripts/programme.mjs
+
+      - name: Reconstituer la configuration
+        run: |
+          cat > .env <<'EOF'
+          PUBLIC_ADSENSE_CLIENT=${{ secrets.PUBLIC_ADSENSE_CLIENT }}
+          PUBLIC_ADSENSE_SLOT_ARTICLE=${{ secrets.PUBLIC_ADSENSE_SLOT_ARTICLE }}
+          PUBLIC_ADSENSE_SLOT_LISTE=${{ secrets.PUBLIC_ADSENSE_SLOT_LISTE }}
+          PUBLIC_ADSENSE_SLOT_ENCART=${{ secrets.PUBLIC_ADSENSE_SLOT_ENCART }}
+          PUBLIC_GA_ID=${{ secrets.PUBLIC_GA_ID }}
+          PUBLIC_AFF_12GO=${{ secrets.PUBLIC_AFF_12GO }}
+          PUBLIC_AFF_GYG=${{ secrets.PUBLIC_AFF_GYG }}
+          PUBLIC_AFF_AGODA=${{ secrets.PUBLIC_AFF_AGODA }}
+          PUBLIC_AFF_AIRALO=${{ secrets.PUBLIC_AFF_AIRALO }}
+          PUBLIC_AFF_CHAPKA=${{ secrets.PUBLIC_AFF_CHAPKA }}
+          PUBLIC_AFF_WISE=${{ secrets.PUBLIC_AFF_WISE }}
+          PUBLIC_NEWSLETTER_ENDPOINT=${{ secrets.PUBLIC_NEWSLETTER_ENDPOINT }}
+          EOF
+
+      - run: npm run build
+
+      # Les mêmes contrôles que sur une poussée de code : une parution
+      # automatique ne mérite pas moins de vigilance qu'une manuelle.
+      - name: Contrôles avant envoi
+        run: |
+          node scripts/audit-seo.mjs
+          node scripts/verifier-liens.mjs
+          node scripts/verifier-chiffres.mjs --hors-ligne
+
+      - name: Envoyer sur l'hébergement
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOTE }}
+          username: ${{ secrets.FTP_UTILISATEUR }}
+          password: ${{ secrets.FTP_MOTDEPASSE }}
+          local-dir: ./dist/
+          server-dir: ./public_html/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+
+      - name: Le gardien confirme
+        run: |
+          sleep 30
+          node scripts/gardien.mjs

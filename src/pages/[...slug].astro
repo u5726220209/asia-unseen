@@ -1,6 +1,7 @@
 ---
 import type { GetStaticPaths } from 'astro';
-import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { render, type CollectionEntry } from 'astro:content';
+import { articlesPublies, guidesPublies } from '@/lib/articles';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import CountryView from '@/components/CountryView.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
@@ -27,8 +28,8 @@ import { site } from '@/data/site';
  * Les routes statiques (index, /blog, /a-propos…) restent prioritaires.
  */
 export const getStaticPaths = (async () => {
-  const guides = await getCollection('guides', ({ data }) => !data.draft);
-  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  const guides = await guidesPublies();
+  const posts = await articlesPublies();
 
   // Les fiches pays et les guides reçoivent la liste des contenus qui les
   // concernent. Sans ça, un article reste orphelin : rien ne pointe vers lui

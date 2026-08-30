@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { articlesPublies, guidesPublies } from '@/lib/articles';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import CountryCard from '@/components/CountryCard.astro';
 import ArticleCard from '@/components/ArticleCard.astro';
@@ -12,10 +13,10 @@ import { guidesNav } from '@/data/nav';
 import { site } from '@/data/site';
 import { nbCorrections } from '@/data/corrections';
 
-const guides = (await getCollection('guides', ({ data }) => !data.draft)).sort(
+const guides = (await guidesPublies()).sort(
   (a, b) => a.data.ordre - b.data.ordre,
 );
-const allPosts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+const allPosts = (await articlesPublies()).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 const posts = allPosts.slice(0, 4);
