@@ -1,19 +1,18 @@
-# ads.txt — déclaration des vendeurs autorisés
+# ads.txt — déclaration des vendeurs autorisés (IAB Tech Lab)
 #
-# Sans ce fichier correctement rempli, Google réduit fortement les revenus
-# display : les acheteurs programmatiques ne peuvent pas vérifier que l'inventaire
-# est légitime, et retirent leurs enchères.
+# Ce fichier sert deux choses à la fois :
 #
-# ─────────────────────────────────────────────────────────────────────────
-# À DÉCOMMENTER une fois le compte AdSense réactivé et le site approuvé.
+#  1. Il valide la propriété du site auprès d'AdSense. C'est la méthode retenue
+#     plutôt que l'extrait de code, parce que le script AdSense de ce site n'est
+#     chargé qu'après consentement du visiteur : le robot de vérification de
+#     Google, qui ne consent pas, ne le verrait jamais. ads.txt, lui, est servi
+#     sans condition.
 #
-# L'identifiant ci-dessous est celui du compte AdSense existant, trouvé le
-# 30 août 2026 sur fabrice.webprestige@gmail.com — compte désactivé pour
-# inactivité, à réactiver plutôt qu'à recréer (voir README).
+#  2. Il autorise Google à vendre l'inventaire publicitaire. Sans lui, les
+#     acheteurs programmatiques ne peuvent pas vérifier la légitimité de
+#     l'inventaire et retirent leurs enchères — une perte de revenu invisible.
 #
-# Si vous utilisez finalement un autre compte, remplacez l'identifiant : il
-# doit correspondre exactement à celui qui sert les annonces, sinon les
-# acheteurs considèrent l'inventaire comme non autorisé.
-# ─────────────────────────────────────────────────────────────────────────
+# L'identifiant doit correspondre exactement au compte qui sert les annonces.
+# Compte AdSense : pub-5044188066752064 — u5726220209@gmail.com, créé le 30/08/2026.
 
-# google.com, pub-9584472477260397, DIRECT, f08c47fec0942fa0
+google.com, pub-5044188066752064, DIRECT, f08c47fec0942fa0

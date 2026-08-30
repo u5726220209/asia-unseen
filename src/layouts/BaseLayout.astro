@@ -8,7 +8,7 @@ import '@/styles/global.css';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import ExitIntent from '@/components/ExitIntent.astro';
-import ConsentBanner from '@/components/ConsentBanner.astro';
+import GoogleConsent from '@/components/GoogleConsent.astro';
 import { site, legal } from '@/data/site';
 
 interface Props {
@@ -130,10 +130,11 @@ const baseSchema = [
     ))}
 
     {/*
-      Aucun script tiers n'est chargé ici : GA4 et AdSense sont injectés par
-      <ConsentBanner /> uniquement après un accord explicite du visiteur.
-      Voir src/components/ConsentBanner.astro.
+      Consentement et scripts Google. Le Consent Mode est déclaré avant tout
+      chargement, en refus par défaut là où le consentement est requis.
+      Voir src/components/GoogleConsent.astro pour le raisonnement complet.
     */}
+    <GoogleConsent />
   </head>
 
   <body class="flex min-h-screen flex-col">
@@ -145,7 +146,6 @@ const baseSchema = [
     <main id="contenu" class="flex-1" data-pagefind-body><slot /></main>
     <div data-pagefind-ignore><Footer /></div>
     {!noPopup && <ExitIntent />}
-    <ConsentBanner />
 
     <script>
       /*

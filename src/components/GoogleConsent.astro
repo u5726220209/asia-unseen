@@ -1,0 +1,106 @@
+---
+import { analytics, adsense } from '@/data/site';
+
+/**
+ * Consentement — mode Consent Mode v2 + CMP certifiée de Google.
+ *
+ * POURQUOI CE CHANGEMENT
+ * Le site utilisait un bandeau maison : conforme au RGPD, aucun script tiers
+ * avant accord, refus aussi simple qu'acceptation. Techniquement irréprochable,
+ * mais **non certifié par Google** — et Google exige une CMP certifiée pour
+ * diffuser des annonces aux visiteurs de l'EEE, du Royaume-Uni et de Suisse.
+ * Sans elle, le revenu publicitaire sur le trafic français est perdu.
+ *
+ * La CMP de Google est donc devenue la source unique du consentement, et le
+ * bandeau maison a été retiré : deux bandeaux auraient produit un état de
+ * consentement ambigu et une expérience incohérente.
+ *
+ * CE QUE ÇA CHANGE, HONNÊTEMENT
+ * Deux scripts Google se chargent désormais au chargement de page, alors
+ * qu'auparavant aucun ne se chargeait avant accord. C'est le fonctionnement
+ * même d'une CMP certifiée : elle est délivrée par le script publicitaire.
+ * En contrepartie, le Consent Mode déclare tout refusé par défaut : aucun
+ * cookie publicitaire ni de mesure n'est écrit tant que le visiteur n'a pas
+ * accepté. C'est le standard de l'industrie, et le seul moyen d'être à la fois
+ * conforme et rémunéré.
+ */
+
+const actif = Boolean(analytics.ga4) || adsense.enabled;
+
+// Régions où le consentement préalable est juridiquement requis.
+const REGIONS_CONSENTEMENT = [
+  'AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT',
+  'LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE',
+  'IS','LI','NO', 'GB','CH',
+];
+---
+
+{actif && (
+  <>
+    {/*
+      Le Consent Mode doit être déclaré AVANT tout script Google, sans quoi les
+      balises partiraient avec l'état par défaut de Google plutôt que le nôtre.
+    */}
+    <script is:inline define:vars={{ regions: REGIONS_CONSENTEMENT }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      window.gtag = gtag;
+
+      // Refus par défaut là où le consentement est requis…
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+        region: regions,
+        wait_for_update: 500,
+      });
+
+      // …et acceptation par défaut ailleurs, où il ne l'est pas.
+      gtag('consent', 'default', {
+        ad_storage: 'granted',
+        ad_user_data: 'granted',
+        ad_personalization: 'granted',
+        analytics_storage: 'granted',
+      });
+
+      gtag('set', 'ads_data_redaction', true);
+      gtag('js', new Date());
+    </script>
+
+    {adsense.enabled && (
+      <script
+        async
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsense.client}`}
+        crossorigin="anonymous"
+      ></script>
+    )}
+
+    {analytics.ga4 && (
+      <>
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${analytics.ga4}`}></script>
+        <script is:inline define:vars={{ id: analytics.ga4 }}>
+          gtag('config', id, { anonymize_ip: true });
+        </script>
+      </>
+    )}
+
+    {/* Lien « Gérer les cookies » du pied de page : rouvre la CMP de Google. */}
+    <script is:inline>
+      document.addEventListener('click', function (e) {
+        var t = e.target instanceof Element ? e.target.closest('[data-consent-open]') : null;
+        if (!t) return;
+        e.preventDefault();
+        var fc = window.googlefc;
+        if (fc && fc.callbackQueue) {
+          fc.callbackQueue.push({
+            CONSENT_DATA_READY: function () { fc.showRevocationMessage && fc.showRevocationMessage(); },
+          });
+          if (fc.showRevocationMessage) fc.showRevocationMessage();
+        } else {
+          window.location.href = '/confidentialite';
+        }
+      });
+    </script>
+  </>
+)}

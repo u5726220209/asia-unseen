@@ -178,28 +178,41 @@ pointant vers Formspree, Web3Forms ou une fonction Cloudflare Pages. Sans `actio
 formulaire affiche un message expliquant d'écrire directement, plutôt que d'échouer en
 silence. Même logique pour la newsletter.
 
-### Consentement
+### Consentement — CMP certifiée de Google + Consent Mode v2
 
-Le bandeau est **auto-hébergé**, dans `src/components/ConsentBanner.astro` — aucun
-prestataire tiers, aucun abonnement, aucune requête externe.
+Le site utilisait initialement un bandeau maison : conforme au RGPD, aucun script
+tiers avant accord. Techniquement irréprochable, mais **non certifié par Google** —
+et Google exige une CMP certifiée pour diffuser des annonces aux visiteurs de l'EEE,
+du Royaume-Uni et de Suisse. Sans elle, le revenu publicitaire sur le trafic français
+est perdu.
 
-Son comportement :
+La CMP de Google est donc la source unique du consentement, et le bandeau maison a
+été retiré : deux bandeaux auraient produit un état de consentement ambigu.
 
-- tant que `PUBLIC_GA4_ID` et `PUBLIC_ADSENSE_CLIENT` sont vides, **aucun bandeau
-  n'apparaît** : il n'y a rien à consentir, puisqu'aucun cookie n'est déposé ;
-- dès qu'un identifiant est renseigné, le bandeau s'affiche et **aucun script Google
-  n'est chargé avant un clic explicite** ;
-- refuser demande exactement le même effort qu'accepter : deux boutons de même taille,
-  au même niveau, un seul clic ;
-- le choix est conservé 6 mois et révocable par le lien « Gérer les cookies » du pied
-  de page.
+**Ce que ça change, honnêtement.** Deux scripts Google se chargent désormais à
+l'ouverture de page, alors qu'auparavant aucun ne se chargeait avant accord. C'est
+le fonctionnement même d'une CMP certifiée : elle est délivrée par le script
+publicitaire. En contrepartie, le Consent Mode déclare tout refusé par défaut dans
+les régions concernées — **aucun cookie publicitaire ni de mesure n'est écrit avant
+acceptation**. C'est le standard de l'industrie, et le seul moyen d'être à la fois
+conforme et rémunéré.
 
-Pour le tester : renseignez des identifiants factices dans `.env`, relancez le serveur,
-puis dans la console du navigateur vérifiez qu'avant tout clic
-`[...document.scripts].map(s => s.src)` ne contient ni `googletagmanager` ni
-`googlesyndication`.
+Vérifié en production sur `asiaunseen.com` :
 
----
+| Contrôle | Résultat |
+| --- | --- |
+| Consent Mode déclaré avant tout script Google | ✅ |
+| Défaut « refusé » sur 30 pays (EEE + UK + CH) | ✅ |
+| Défaut « accepté » hors de ces régions | ✅ |
+| `googlefc` chargé — CMP active | ✅ |
+| Cookies publicitaires ou de mesure avant choix | **0** |
+
+La configuration retenue dans AdSense est le message **à trois choix** — accepter,
+refuser, gérer les options — le seul conforme aux exigences de la CNIL sur l'égalité
+d'effort entre acceptation et refus.
+
+Le lien « Gérer les cookies » du pied de page rouvre la CMP via
+`googlefc.showRevocationMessage()`.
 
 ## Déploiement
 
