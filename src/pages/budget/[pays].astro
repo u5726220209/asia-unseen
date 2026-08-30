@@ -1,0 +1,154 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Visuel from '@/components/Visuel.astro';
+import BudgetCalculator from '@/components/BudgetCalculator.astro';
+import VerifiedBadge from '@/components/VerifiedBadge.astro';
+import AffiliateLink from '@/components/AffiliateLink.astro';
+import AdSlot from '@/components/AdSlot.astro';
+import Newsletter from '@/components/Newsletter.astro';
+import FAQ from '@/components/FAQ.astro';
+import { countries } from '@/data/countries';
+import { site } from '@/data/site';
+
+export function getStaticPaths() {
+  return countries.map((c) => ({ params: { pays: c.slug }, props: { c } }));
+}
+
+const { c } = Astro.props;
+
+/** Les voisins les moins chers et les plus chers, pour situer la destination. */
+const autres = countries.filter((x) => x.slug !== c.slug);
+const moinsCher = [...autres].sort((a, b) => a.budget.routard - b.budget.routard)[0];
+const plusCher = [...autres].sort((a, b) => b.budget.routard - a.budget.routard)[0];
+const rang = [...countries].sort((a, b) => a.budget.routard - b.budget.routard).findIndex((x) => x.slug === c.slug) + 1;
+
+const troisSemaines = {
+  routard: c.budget.routard * 21,
+  confort: c.budget.confort * 21,
+  premium: c.budget.premium * 21,
+};
+
+const faq = [
+  {
+    q: `Quel budget pour un voyage ${c.article} ${c.nom} ?`,
+    r: `Comptez ${c.budget.routard} € par jour et par personne en voyageant simplement, ${c.budget.confort} € en confort, ${c.budget.premium} € en haut de gamme — hors vol international. Sur trois semaines, cela représente ${troisSemaines.routard} €, ${troisSemaines.confort} € ou ${troisSemaines.premium} € sur place. Le vol depuis Paris s'ajoute à ces montants.`,
+  },
+  {
+    q: `Le ${c.nom} est-il cher par rapport aux pays voisins ?`,
+    r: `Sur les neuf destinations couvertes par ce site, ${c.nom} se situe au ${rang}ᵉ rang du moins cher au plus cher en budget quotidien routard. À titre de comparaison, ${moinsCher.nom} démarre à ${moinsCher.budget.routard} € par jour et ${plusCher.nom} à ${plusCher.budget.routard} €.`,
+  },
+  {
+    q: 'Ces montants incluent-ils le vol ?',
+    r: `Non. Les budgets quotidiens couvrent l'hébergement, les repas, les transports intérieurs et les visites. Le vol aller-retour depuis Paris s'ajoute, et le calculateur ci-dessus permet de l'inclure ou non dans le total.`,
+  },
+];
+---
+
+<BaseLayout
+  title={`Budget voyage ${c.nom} : combien prévoir par jour`}
+  description={`Budget réel pour un voyage ${c.article} ${c.nom} : ${c.budget.routard} à ${c.budget.premium} € par jour selon le style, hors vol. Calculez votre total selon votre durée et votre façon de voyager.`}
+  schema={[
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faq.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.r },
+      })),
+    },
+  ]}
+>
+  <header class="border-b border-line bg-cream-warm">
+    <div class="wrap py-10 lg:py-14">
+      <Breadcrumbs items={[{ label: c.nom, href: `/${c.slug}` }, { label: 'Budget' }]} />
+      <h1 class="mt-6 max-w-3xl text-hero">Quel budget pour {c.article === 'aux' ? 'les' : c.article === 'en' ? 'la' : 'le'} {c.nom} ?</h1>
+      <p class="mt-6 max-w-2xl text-[1.15rem] leading-relaxed text-warm">
+        De <strong>{c.budget.routard} €</strong> à <strong>{c.budget.premium} €</strong> par jour
+        et par personne, hors vol. Voici ce que couvre chaque fourchette, et le calcul pour
+        votre durée.
+      </p>
+    </div>
+  </header>
+
+  <Visuel page={`/budget/${c.slug}`} seed={`budget-${c.slug}`} prioritaire accent={c.accent === 'ink' ? 'ink' : 'teal'} />
+
+  <div class="wrap-narrow py-12">
+    <BudgetCalculator paysFixe={c.slug} />
+
+    <div class="prose-au mt-14">
+      <h2>Ce que ces fourchettes recouvrent</h2>
+      <p>
+        Les montants ci-dessus couvrent l'<strong>hébergement, les repas, les transports
+        intérieurs et les visites</strong>. Ils excluent le vol international, l'assurance et
+        les achats personnels — trois postes dont le montant dépend davantage de vous que de
+        la destination.
+      </p>
+      <p>
+        Sur trois semaines, cela représente <strong>{troisSemaines.routard} €</strong> en
+        voyageant simplement, <strong>{troisSemaines.confort} €</strong> en confort, et
+        <strong>{troisSemaines.premium} €</strong> en haut de gamme. Le vol depuis Paris
+        s'ajoute à ces totaux.
+      </p>
+
+      <h2>Où se situe {c.nom} par rapport aux voisins</h2>
+      <p>
+        Sur les neuf destinations couvertes par ce site, {c.nom} arrive au
+        <strong> {rang}ᵉ rang</strong> du moins cher au plus cher, en budget quotidien routard.
+        {moinsCher.nom} démarre à {moinsCher.budget.routard} € par jour, {plusCher.nom} à
+        {plusCher.budget.routard} €. Le <a href="/budget-voyage-asie">guide du budget en Asie</a>
+        détaille poste par poste ce qui explique ces écarts.
+      </p>
+      <p>
+        Si votre itinéraire traverse plusieurs pays, sachez que l'écart de budget quotidien
+        pèse souvent moins lourd que le coût des trajets entre eux : le
+        <a href="/transports-asie">guide des transports</a> donne les ordres de grandeur.
+      </p>
+
+      <h2>Ce qui fait vraiment varier la note</h2>
+      <ul>
+        <li>
+          <strong>La saison.</strong> Les prix d'hébergement peuvent doubler en haute saison.
+          Le <a href="/meilleure-saison-asie">calendrier mois par mois</a> indique quand partir.
+        </li>
+        <li>
+          <strong>Le rythme.</strong> Changer de ville tous les deux jours coûte davantage en
+          transport qu'en hébergement — et fatigue plus que ça ne fait voir.
+        </li>
+        <li>
+          <strong>Les réservations de dernière minute.</strong> Elles coûtent cher partout, sauf
+          pour l'hébergement en basse saison, où l'arrivée sur place peut faire baisser le prix.
+        </li>
+      </ul>
+
+      <h2>Deux dépenses à ne pas couper</h2>
+      <p>
+        L'<a href="/assurances-voyage">assurance voyage</a> et une
+        <a href="/banques-asie">carte sans frais de change</a>. La première parce qu'un
+        rapatriement depuis l'Asie se chiffre en dizaines de milliers d'euros ; la seconde parce
+        que 2 à 3 % de commission sur l'ensemble d'un voyage dépasse largement le prix d'une
+        carte. Pour réserver l'hébergement, comparez sur
+        <AffiliateLink partner="booking" params={{ ss: c.nom }} variant="text">Booking</AffiliateLink>
+        avant de vérifier le site propre de l'établissement : c'est souvent 10 à 15 % moins cher,
+        et ça ne nous rapporte rien de vous le dire.
+      </p>
+    </div>
+
+    <VerifiedBadge date={c.verifieLe} sources={c.sourcesVisa} page={`/${c.slug}`} class="!my-10" />
+
+    <AdSlot placement="in-article" />
+
+    <FAQ items={faq} title={`Budget ${c.nom} : les questions fréquentes`} />
+
+    <div class="prose-au mt-12">
+      <p>
+        Le détail complet de la destination — formalités, saisons, itinéraires et erreurs à
+        éviter — se trouve dans le <a href={`/${c.slug}`}>guide {c.nom}</a>. Et la
+        <a href={`/fiche/${c.slug}`}>fiche à emporter</a> résume l'essentiel sur une page.
+      </p>
+    </div>
+
+    <Newsletter class="mt-14" />
+  </div>
+</BaseLayout>

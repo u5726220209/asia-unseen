@@ -53,6 +53,14 @@ D'abord, l'écart entre le Vietnam et le Japon est d'un facteur 2,6 en routard, 
 
 Ensuite, le vol pèse énormément sur un séjour court. Sur dix jours au Vietnam en confort, le vol représente 54 % du budget total. Sur un mois, 28 %. **C'est l'argument le plus solide pour partir plus longtemps** : chaque jour supplémentaire coûte beaucoup moins que la moyenne.
 
+## Le budget d'un pays en particulier
+
+Chaque destination a sa page de budget, avec le calcul pour votre durée et son rang parmi les
+neuf : [Vietnam](/budget/vietnam) · [Thaïlande](/budget/thailande) · [Japon](/budget/japon) ·
+[Chine](/budget/chine) · [Laos](/budget/laos) · [Cambodge](/budget/cambodge) ·
+[Corée du Sud](/budget/coree-du-sud) · [Indonésie](/budget/indonesie) ·
+[Philippines](/budget/philippines).
+
 ## Où part l'argent
 
 Sur la base des dépenses relevées au jour le jour, la répartition d'un budget « sur place » se tient remarquablement bien d'un pays à l'autre :

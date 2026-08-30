@@ -1,0 +1,77 @@
+---
+import { site } from '@/data/site';
+import { corrections } from '@/data/corrections';
+
+/**
+ * Deux gestes autour d'une même idée : cette page a une date, aidez-nous à la tenir.
+ *
+ * À gauche, l'alerte — être prévenu quand la règle de ce pays change. À droite,
+ * la vérification — dire ce qu'on vient de constater à la frontière. Les deux
+ * passent par un courriel prérempli plutôt que par un formulaire : le site n'a
+ * pas encore de service d'envoi, et un formulaire qui ne va nulle part vaut
+ * moins qu'un lien qui fonctionne. Le jour où la liste de diffusion existera,
+ * seul le lien de gauche changera.
+ */
+interface Props { pays: string; nom: string; verifieLe: string }
+const { pays, nom, verifieLe } = Astro.props;
+
+const nb = corrections.filter((c) => c.page === `/${pays}`).length;
+
+const lien = (sujet: string, corps: string) =>
+  `mailto:${site.author.email}?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(corps)}`;
+
+const alerte = lien(
+  `Alerte ${nom} — prévenez-moi si la règle change`,
+  `Bonjour,\n\nJe souhaite être prévenu si les formalités d'entrée ${nom === 'Philippines' ? 'aux' : 'au'} ${nom} changent.\n\nPage concernée : ${site.url}/${pays}\n\n`,
+);
+
+const constat = lien(
+  `Vérification terrain — ${nom}`,
+  `Bonjour,\n\nJe viens de passer la frontière ${nom === 'Philippines' ? 'aux' : 'au'} ${nom} et je peux confirmer ou corriger ce que dit votre page.\n\nPage : ${site.url}/${pays}\nDate de vérification affichée : ${verifieLe}\nDate de mon passage : \n\nCe que j'ai constaté :\n\n\nDurée qui m'a été accordée :\nMontant réellement payé :\n\n`,
+);
+---
+
+<section data-pagefind-ignore class="not-prose my-12 overflow-hidden rounded-brand border border-line bg-cream-warm">
+  <div class="border-b border-line px-6 py-5">
+    <p class="eyebrow">Tenir cette page à jour</p>
+    <h2 class="mt-1.5 font-display text-xl font-bold text-ink">
+      Une règle d'entrée change plusieurs fois par an
+    </h2>
+    <p class="mt-2 max-w-2xl text-[0.92rem] leading-relaxed text-warm">
+      {nb > 0
+        ? `Cette page a déjà été corrigée ${nb} fois depuis sa publication, et chaque correction est publiée.`
+        : "Cette page n'a pas encore eu besoin d'être corrigée — mais elle le sera, et la correction sera publiée."}
+      {' '}Deux façons d'y contribuer.
+    </p>
+  </div>
+
+  <div class="grid gap-px bg-line sm:grid-cols-2">
+    <div class="bg-white p-6">
+      <h3 class="font-display text-[1.02rem] font-bold text-ink">Être prévenu</h3>
+      <p class="mt-2 text-[0.9rem] leading-relaxed text-warm">
+        Si la règle {nom === 'Philippines' ? 'aux' : 'au'} {nom} change avant votre départ,
+        vous recevez un message. Rien d'autre : ni promotion, ni lettre hebdomadaire.
+      </p>
+      <a href={alerte} class="btn-primary mt-5 !w-full !py-2.5 !text-[0.85rem]">
+        Me prévenir si ça change
+      </a>
+    </div>
+
+    <div class="bg-white p-6">
+      <h3 class="font-display text-[1.02rem] font-bold text-ink">Vous venez de passer la frontière ?</h3>
+      <p class="mt-2 text-[0.9rem] leading-relaxed text-warm">
+        Dites-nous ce qu'on vous a accordé et ce que vous avez payé. C'est ce qui rend cette
+        page vraie plus longtemps qu'un article recopié.
+      </p>
+      <a href={constat} class="btn-ghost mt-5 !w-full !py-2.5 !text-[0.85rem]">
+        Confirmer ou corriger
+      </a>
+    </div>
+  </div>
+
+  <p class="border-t border-line px-6 py-4 text-[0.8rem] leading-relaxed text-warm-light">
+    Les corrections sont publiées, datées et attribuées à leur source dans le
+    <a href="/mises-a-jour" class="underline decoration-warm-light/50 underline-offset-4 hover:text-ink">journal des corrections</a>
+    — jamais effacées en silence.
+  </p>
+</section>

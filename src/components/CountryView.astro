@@ -11,6 +11,7 @@ import AdSlot from './AdSlot.astro';
 import Newsletter from './Newsletter.astro';
 import Visuel from './Visuel.astro';
 import ArticleCard from './ArticleCard.astro';
+import VeillePays from './VeillePays.astro';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
@@ -110,7 +111,10 @@ const faq = [
 
       <p>
         Pour appliquer ces fourchettes à votre itinéraire réel — durée, nombre de voyageurs,
-        vol inclus ou non — utilisez le <a href="/budget-voyage-asie">calculateur de budget</a>.
+        vol inclus ou non — la page <a href={`/budget/${c.slug}`}>budget {c.nom}</a> fait le
+        calcul et situe le pays par rapport à ses voisins. Le
+        <a href="/budget-voyage-asie">guide du budget en Asie</a> détaille ce que recouvre
+        chaque poste.
       </p>
 
       <AdSlot placement="in-article" />
@@ -254,6 +258,8 @@ const faq = [
           )}
         </section>
       )}
+
+      <VeillePays pays={c.slug} nom={c.nom} verifieLe={c.verifieLe} />
 
       <FAQ items={faq} title={`${c.nom} : les questions qu'on nous pose`} />
 
