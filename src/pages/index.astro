@@ -13,12 +13,13 @@ import { site } from '@/data/site';
 const guides = (await getCollection('guides', ({ data }) => !data.draft)).sort(
   (a, b) => a.data.ordre - b.data.ordre,
 );
-const posts = (await getCollection('blog', ({ data }) => !data.draft))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 4);
+const allPosts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+const posts = allPosts.slice(0, 4);
 
 // Chiffres réels, calculés à partir du contenu publié — jamais arrondis à la hausse.
-const nbGuides = guides.length + countries.length;
+const nbPages = guides.length + countries.length + allPosts.length;
 const nbPays = countries.length;
 const majLabel = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' })
   .format(new Date(`${site.lastReview}-01T00:00:00`));
@@ -55,7 +56,7 @@ const problemes = [
   <section class="relative overflow-hidden border-b border-line bg-cream">
     <div class="wrap grid gap-14 py-20 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:py-28">
       <div class="animate-rise">
-        <p class="eyebrow">{nbPays} pays · {nbGuides} guides · mis à jour en {majLabel}</p>
+        <p class="eyebrow">{nbPays} pays · {nbPages} guides et articles · mis à jour en {majLabel}</p>
 
         <h1 class="mt-5 text-hero">
           L'Asie comme vous ne<br class="hidden sm:block" />
@@ -201,7 +202,7 @@ const problemes = [
       <dl class="grid grid-cols-2 gap-px overflow-hidden rounded-brand bg-white/10 sm:grid-cols-2">
         {[
           [`${nbPays}`, 'pays documentés en détail'],
-          [`${nbGuides}`, 'guides et fiches publiés'],
+          [`${nbPages}`, 'guides, fiches et articles publiés'],
           ['2016', 'installé en Asie du Sud-Est'],
           ['0 €', 'de contenu sponsorisé déguisé'],
         ].map(([chiffre, label]) => (

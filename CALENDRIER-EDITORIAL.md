@@ -28,9 +28,7 @@ Toutes les pages ne se valent pas. L'ordre suit celui de `PLAN-CROISSANCE.md` :
 - [ ] **Combien coûte un taxi depuis l'aéroport, ville par ville** — 9 pays, tarifs officiels contre tarifs réclamés.
 - [ ] **Que faire à Hoi An quand il pleut** — typique longue traîne : faible volume, quasi aucune concurrence.
 - [ ] **Prendre le train au Vietnam : classes, prix, réservation**
-- [ ] **Le JR Pass est-il rentable ? le calcul cas par cas** — outil de décision. Lie `/japon` et `/transports-asie`.
 - [ ] **Réserver un train en Chine : le guide de la fenêtre des 15 jours** — Lie `/chine`.
-- [ ] **Louer un scooter en Asie : ce que couvre vraiment l'assurance** — Lie `/assurances-voyage` et `/erreurs-a-eviter`.
 - [ ] **Négocier en Asie : où c'est attendu, où c'est déplacé**
 
 ## Priorité 3 — itinéraires
@@ -53,6 +51,9 @@ volontairement de les rédiger : c'est ce qui rend le site impossible à copier.
 ---
 
 ## Publiés
+
+- [x] Scooter en Asie : ce que couvre vraiment l'assurance — 30/08/2026
+- [x] JR Pass : rentable ou pas ? Le calcul, cas par cas — 30/08/2026
 
 - [x] Où dormir à Kyoto : le piège de la gare — 30/08/2026
 - [x] Où dormir à Bangkok : le quartier se choisit sur la ligne — 30/08/2026
