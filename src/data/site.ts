@@ -81,6 +81,8 @@ export const adsense = {
     inFeed: env.PUBLIC_ADSENSE_SLOT_IN_FEED ?? '',
     sidebar: env.PUBLIC_ADSENSE_SLOT_SIDEBAR ?? '',
   },
+  // Gabarit du bloc In-Feed, généré par AdSense en même temps que le bloc.
+  layoutInFeed: env.PUBLIC_ADSENSE_LAYOUT_IN_FEED ?? '',
   get enabled() {
     return this.client.length > 0;
   },

@@ -21,7 +21,14 @@ const slot =
 const live = adsense.enabled && slot.length > 0;
 const dev = import.meta.env.DEV;
 
-const format = placement === 'in-article' ? 'fluid' : 'auto';
+/**
+ * Les deux formats natifs (in-article et in-feed) se déclarent en « fluid » :
+ * AdSense adapte alors l'annonce au gabarit choisi lors de la création du bloc,
+ * décrit par data-ad-layout (in-article) ou data-ad-layout-key (in-feed).
+ * Le bloc latéral, lui, est un display responsive classique.
+ */
+const natif = placement !== 'sidebar';
+const format = natif ? 'fluid' : 'auto';
 ---
 
 {live && (
@@ -34,7 +41,8 @@ const format = placement === 'in-article' ? 'fluid' : 'auto';
       data-ad-slot={slot}
       data-ad-format={format}
       data-ad-layout={placement === 'in-article' ? 'in-article' : undefined}
-      data-full-width-responsive="true"
+      data-ad-layout-key={placement === 'in-feed' ? adsense.layoutInFeed : undefined}
+      data-full-width-responsive={natif ? undefined : 'true'}
     ></ins>
     <script is:inline>(window.adsbygoogle = window.adsbygoogle || []).push({});</script>
   </aside>
