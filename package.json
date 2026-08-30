@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build && pagefind --site dist --output-subdir pagefind && node scripts/alleger-pagefind.mjs",
+    "build": "astro build && pagefind --site dist --output-subdir pagefind && node scripts/alleger.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "brand": "node scripts/build-brand-assets.mjs",
@@ -29,7 +29,8 @@
     "editorial": "node scripts/editorial.mjs",
     "config": "node scripts/verifier-config.mjs",
     "commons": "node scripts/commons.mjs",
-    "licences": "node scripts/licences.mjs"
+    "licences": "node scripts/licences.mjs",
+    "planche": "node scripts/planche.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.11",

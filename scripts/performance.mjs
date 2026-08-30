@@ -27,8 +27,32 @@ const BUDGET = {
   htmlMoyen: 75,      // Ko, moyenne
   jsPage: 60,         // Ko, JavaScript réellement chargé par la page la plus gourmande
   cssPage: 80,        // Ko, idem pour les feuilles de style
-  imagePage: 250,     // Ko, image la plus lourde
-  imagesTotal: 6000,  // Ko, toutes images confondues
+
+  /**
+   * L'image la plus lourde servie. Le plafond était à 250 Ko quand le site
+   * n'avait aucune photographie : il mesurait alors des illustrations
+   * vectorielles. Il est relevé une fois, sciemment, parce que la nature du
+   * site a changé — pas parce qu'un contrôle gênait. 400 Ko correspond à une
+   * photographie pleine largeur de 1920 px, ce qui est le format servi aux
+   * écrans de bureau ; les mobiles reçoivent la variante 640 px.
+   */
+  imagePage: 400,
+
+  /**
+   * Ce qu'un visiteur télécharge réellement sur la page la plus lourde :
+   * son HTML, ses feuilles de style, son JavaScript et sa photographie.
+   * C'est la seule mesure qui corresponde à une expérience vécue — le total
+   * sur disque, lui, ne dit rien de ce que subit qui que ce soit.
+   */
+  pageComplete: 600,
+
+  /**
+   * Le poids total du dossier publié. Ce n'est pas une mesure d'expérience
+   * mais de déploiement : personne ne télécharge tout le site. Il monte
+   * mécaniquement avec chaque format supplémentaire — AVIF double le nombre
+   * de variantes tout en allégeant ce qui est réellement servi.
+   */
+  imagesTotal: 16000,
 };
 
 if (!existsSync('dist')) {
@@ -73,13 +97,29 @@ const img = lister('\\( -name "*.webp" -o -name "*.jpg" -o -name "*.png" -o -nam
 const somme = (l) => l.reduce((a, b) => a + b.o, 0);
 const pire = (l) => l.reduce((a, b) => (b.o > a.o ? b : a), { f: '—', o: 0 });
 
+/** Ce qu'une page envoie en tout : son texte, son habillage et son image. */
+const poidsPage = html.map(({ f, o }) => {
+  const contenu = readFileSync(f, 'utf8');
+  let image = 0;
+  // La plus grande variante référencée : c'est celle que reçoit un écran large.
+  for (const m of contenu.matchAll(/srcset="([^"]+)"/g)) {
+    for (const part of m[1].split(',')) {
+      const u = part.trim().split(/\s+/)[0];
+      const chemin = `dist${u.startsWith('/') ? '' : '/'}${u}`;
+      if (existsSync(chemin)) image = Math.max(image, statSync(chemin).size);
+    }
+  }
+  return { f, o: o + chargePar(f, 'js') + chargePar(f, 'css') + image };
+});
+
 const mesures = [
   { nom: 'page HTML la plus lourde', valeur: ko(pire(html).o), budget: BUDGET.htmlPage, ou: pire(html).f },
   { nom: 'poids HTML moyen',         valeur: Math.round(somme(html) / html.length / 1024), budget: BUDGET.htmlMoyen },
   { nom: 'JS chargé, pire page',     valeur: ko(pire(js).o),  budget: BUDGET.jsPage,  ou: pire(js).f },
   { nom: 'CSS chargé, pire page',    valeur: ko(pire(css).o), budget: BUDGET.cssPage, ou: pire(css).f },
   { nom: 'image la plus lourde',     valeur: ko(pire(img).o), budget: BUDGET.imagePage, ou: pire(img).f },
-  { nom: 'images, tout confondu',    valeur: ko(somme(img)), budget: BUDGET.imagesTotal },
+  { nom: 'page complète, pire cas',  valeur: ko(pire(poidsPage).o), budget: BUDGET.pageComplete, ou: pire(poidsPage).f },
+  { nom: 'dossier publié, images',   valeur: ko(somme(img)), budget: BUDGET.imagesTotal },
 ];
 
 const depassements = mesures.filter((m) => m.valeur > m.budget);
@@ -96,7 +136,19 @@ for (const { f } of html) {
   // Les attributs src= et href=, mais aussi les import() écrits dans le code :
   // la recherche ne charge son moteur qu'au moment où on ouvre le champ, et
   // compter ce fichier comme mort serait une conclusion fausse.
-  for (const m of contenu.matchAll(/(?:src|href)="([^"]+\.(?:js|css))"/g)) references.add(m[1].replace(/^\//, ''));
+  for (const m of contenu.matchAll(/(?:src|href)="([^"]+\.(?:js|css|jpe?g|png|webp|avif|svg))"/g)) references.add(m[1].replace(/^\//, ''));
+  // Les images responsives ne vivent que dans un srcset : les oublier ferait
+  // passer pour mortes toutes les variantes sauf la dernière.
+  for (const m of contenu.matchAll(/srcset="([^"]+)"/g)) {
+    for (const part of m[1].split(',')) {
+      const u = part.trim().split(/\s+/)[0];
+      if (u) references.add(u.replace(/^\//, ''));
+    }
+  }
+  // Les images de partage social ne sont jamais dans un src= : elles vivent
+  // dans <meta property="og:image" content="…">. Les oublier faisait passer
+  // pour mortes les quarante vignettes du site.
+  for (const m of contenu.matchAll(/content="([^"]+\.(?:jpe?g|png|webp|avif|svg))"/g)) references.add(m[1].replace(/^https?:\/\/[^/]+\//, '').replace(/^\//, ''));
   for (const m of contenu.matchAll(/import\(["'`]([^"'`]+\.js)["'`]\)/g)) references.add(m[1].replace(/^\//, ''));
 }
 // pagefind.js démarre son propre worker et charge l'index : ce qu'il tire
@@ -104,8 +156,11 @@ for (const { f } of html) {
 if (references.has('pagefind/pagefind.js')) {
   for (const f of ['pagefind/pagefind-worker.js', 'pagefind/wasm.unknown.pagefind']) references.add(f);
 }
-const jamaisCharges = lister('\\( -name "*.js" -o -name "*.css" \\)')
+const jamaisCharges = lister('\\( -name "*.js" -o -name "*.css" -o -name "*.jpg" -o -name "*.jpeg" -o -name "*.png" -o -name "*.webp" -o -name "*.avif" \\)')
   .filter((f) => !references.has(f.replace(/^dist\//, '')))
+  // Les icônes, le partage social et le plan du site sont demandés par le
+  // navigateur ou par un robot, jamais par une balise de la page.
+  .filter((f) => !/(favicon|icon-|apple-touch|og-|brand\/)/.test(f))
   .map((f) => ({ f, o: statSync(f).size }))
   .sort((a, b) => b.o - a.o);
 

@@ -60,19 +60,116 @@ export type Photo = {
 };
 
 export const photos: Photo[] = [
-  // Exemple de déclaration — décommentez et adaptez après avoir déposé le fichier.
-  //
-  // {
-  //   fichier: 'vietnam/hanoi-vieux-quartier-matin.jpg',
-  //   alt: "une marchande verse du bouillon dans un bol, sur un trottoir du vieux quartier de Hanoï au lever du jour",
-  //   legende: "Le vieux quartier avant 7 h : la seule heure où l'on y marche vraiment.",
-  //   credit: { auteur: 'Prénom Nom', source: 'Wikimedia Commons', url: 'https://commons.wikimedia.org/wiki/File:xxx' },
-  //   licence: { nom: 'CC BY 4.0', url: 'https://creativecommons.org/licenses/by/4.0' },
-  //   origine: 'https://commons.wikimedia.org/wiki/File:xxx',
-  //   releveLe: '2026-08-30',
-  //   pages: ['/vietnam'],
-  //   position: 'hero',
-  // },
+  /*
+   * Les neuf pages pays.
+   *
+   * Toutes viennent de Wikimedia Commons, en CC BY ou CC0, et toutes ont été
+   * regardées une par une avant d'être déclarées — le drapeau « personne
+   * identifiable » de Commons est saisi par les contributeurs, donc incomplet.
+   * Trois images ont été écartées à ce contrôle, dont deux que Commons n'avait
+   * pas signalées.
+   *
+   * Les sujets ont été choisis pour ne pas se répéter : une vieille ville, des
+   * falaises marines, un village de montagne, une skyline, une cascade, des
+   * ruines, une rue urbaine, des rizières, une baie. Neuf photographies de
+   * paysages identiques auraient été homogènes, et illisibles.
+   *
+   * Pas de légendes : une phrase sous une image est une affirmation comme une
+   * autre, et ce site ne publie pas d'affirmation sans source. Le texte
+   * alternatif décrit ce que l'on voit, et rien de plus.
+   */
+  {
+    fichier: 'vietnam/hoi-an-vieille-ville.jpg',
+    alt: "façades jaunes à volets de bois dans la vieille ville de Hội An, motos garées le long de la rue",
+    credit: { auteur: 'David McKelvey', source: 'Wikimedia Commons', url: 'https://commons.wikimedia.org/wiki/File:Hoi_An_Ancient_Town,_Vietnam_(7090606593).jpg' },
+    licence: { nom: 'CC BY 2.0', url: 'https://creativecommons.org/licenses/by/2.0' },
+    origine: 'https://commons.wikimedia.org/wiki/File:Hoi_An_Ancient_Town,_Vietnam_(7090606593).jpg',
+    releveLe: '2026-08-30',
+    pages: ['/vietnam'],
+    position: 'hero',
+  },
+  {
+    fichier: 'thailande/railay-krabi.jpg',
+    alt: "falaises calcaires couvertes de végétation plongeant dans la mer, à Railay, province de Krabi",
+    credit: { auteur: 'Wendy Harman', source: 'Wikimedia Commons', url: 'https://commons.wikimedia.org/wiki/File:Railay.jpg' },
+    licence: { nom: 'CC BY 2.0', url: 'https://creativecommons.org/licenses/by/2.0' },
+    origine: 'https://commons.wikimedia.org/wiki/File:Railay.jpg',
+    releveLe: '2026-08-30',
+    pages: ['/thailande'],
+    position: 'hero',
+  },
+  {
+    fichier: 'japon/shirakawa-go.jpg',
+    alt: "maisons aux toits de chaume et rizières jaunies du village de Shirakawa-gō, vues de hauteur",
+    credit: { auteur: '663highland', source: 'Wikimedia Commons', url: 'https://commons.wikimedia.org/wiki/File:Ogi_Shirakawa-g%C5%8D,_Gifu,_Japan.jpg' },
+    licence: { nom: 'CC BY 2.5', url: 'https://creativecommons.org/licenses/by/2.5' },
+    origine: 'https://commons.wikimedia.org/wiki/File:Ogi_Shirakawa-g%C5%8D,_Gifu,_Japan.jpg',
+    releveLe: '2026-08-30',
+    pages: ['/japon'],
+    position: 'hero',
+  },
+  {
+    fichier: 'chine/shanghai-pudong.jpg',
+    alt: "les tours de Pudong vues depuis la rive du Huangpu, à Shanghai",
+    credit: { auteur: 'Carl Lovén', source: 'Wikimedia Commons', url: 'https://commons.wikimedia.org/wiki/File:Shanghai_Skyline_2009.jpg' },
+    licence: { nom: 'CC BY 2.0', url: 'https://creativecommons.org/licenses/by/2.0' },
+    origine: 'https://commons.wikimedia.org/wiki/File:Shanghai_Skyline_2009.jpg',
+    releveLe: '2026-08-30',
+    pages: ['/chine'],
+    position: 'hero',
+  },
+  {
+    fichier: 'laos/kuang-si.jpg',
+    alt: "eau turquoise et cascades en gradins de Kuang Si, au milieu de la forêt",
+    credit: { auteur: 'Visions of Domino', source: 'Wikimedia Commons', url: 'https://commons.wikimedia.org/wiki/File:Kuang_Si_Waterfall_(23756198879).jpg' },
+    licence: { nom: 'CC BY 2.0', url: 'https://creativecommons.org/licenses/by/2.0' },
+    origine: 'https://commons.wikimedia.org/wiki/File:Kuang_Si_Waterfall_(23756198879).jpg',
+    releveLe: '2026-08-30',
+    pages: ['/laos'],
+    position: 'hero',
+  },
+  {
+    fichier: 'cambodge/angkor-thom.jpg',
+    // Le crédit ne reprend que le nom : la page Commons y ajoute un paragraphe
+    // de conditions d'usage, qui n'a pas sa place sous une photographie.
+    alt: "tour à visages de pierre d'une porte d'Angkor Thom, encadrée par les arbres",
+    credit: { auteur: 'Supanut Arunoprayote', source: 'Wikimedia Commons', url: 'https://commons.wikimedia.org/wiki/File:Angkor_Thom_(I).jpg' },
+    licence: { nom: 'CC BY 4.0', url: 'https://creativecommons.org/licenses/by/4.0' },
+    origine: 'https://commons.wikimedia.org/wiki/File:Angkor_Thom_(I).jpg',
+    releveLe: '2026-08-30',
+    pages: ['/cambodge'],
+    position: 'hero',
+  },
+  {
+    fichier: 'coree-du-sud/bukchon.jpg',
+    alt: "ruelle de maisons traditionnelles de Bukchon, les tours de Séoul en arrière-plan",
+    credit: { auteur: 'Bgag', source: 'Wikimedia Commons', url: 'https://commons.wikimedia.org/wiki/File:Bukchon_Hanok_Village_01.jpg' },
+    licence: { nom: 'CC0', url: 'https://creativecommons.org/publicdomain/zero/1.0/' },
+    origine: 'https://commons.wikimedia.org/wiki/File:Bukchon_Hanok_Village_01.jpg',
+    releveLe: '2026-08-30',
+    pages: ['/coree-du-sud'],
+    position: 'hero',
+  },
+  {
+    fichier: 'indonesie/tegallalang.jpg',
+    alt: "rizières en terrasses et palmiers de Tegallalang, à Bali",
+    credit: { auteur: 'Philip Nalangan', source: 'Wikimedia Commons', url: 'https://commons.wikimedia.org/wiki/File:Tegallalang_Rice_Terraces_Bali_1.jpg' },
+    licence: { nom: 'CC BY 4.0', url: 'https://creativecommons.org/licenses/by/4.0' },
+    origine: 'https://commons.wikimedia.org/wiki/File:Tegallalang_Rice_Terraces_Bali_1.jpg',
+    releveLe: '2026-08-30',
+    pages: ['/indonesie'],
+    position: 'hero',
+  },
+  {
+    fichier: 'philippines/el-nido.jpg',
+    alt: "baie d'El Nido, à Palawan, bordée de falaises boisées, bateaux au mouillage",
+    credit: { auteur: 'Philippine Fly Boy', source: 'Wikimedia Commons', url: 'https://commons.wikimedia.org/wiki/File:El_Nido_Palawan_2.jpg' },
+    licence: { nom: 'CC BY 2.0', url: 'https://creativecommons.org/licenses/by/2.0' },
+    origine: 'https://commons.wikimedia.org/wiki/File:El_Nido_Palawan_2.jpg',
+    releveLe: '2026-08-30',
+    pages: ['/philippines'],
+    position: 'hero',
+  },
 ];
 
 /** Photo déclarée pour une page et un emplacement donnés, s'il y en a une. */

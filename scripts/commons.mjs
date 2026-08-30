@@ -21,6 +21,7 @@
 import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { traiter } from './lib/traitement.mjs';
+import { saturationMoyenne } from './lib/commons.mjs';
 
 const UA = 'AsiaUnseen/1.0 (https://asiaunseen.com; contact@racinesvietnam.com)';
 const API = 'https://commons.wikimedia.org/w/api.php';
@@ -49,8 +50,9 @@ const RESOLUTION_MINIMALE = 1600; // en largeur, après quoi le recadrage devien
 const RAPPORT_MINIMAL = 1.2;
 
 const args = process.argv.slice(2);
-const requete = args.filter((a) => !a.startsWith('--'))[0];
 const lire = (nom) => { const i = args.indexOf(`--${nom}`); return i >= 0 ? args[i + 1] : null; };
+const titreExact = lire('titre');
+const requete = titreExact ?? args.filter((a) => !a.startsWith('--'))[0];
 
 if (!requete) {
   console.error('Usage : npm run commons -- "Hanoi Old Quarter street"');
@@ -60,24 +62,21 @@ if (!requete) {
 
 const sansBalises = (s) => (s ?? '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
 
-/** Écart moyen entre les canaux : proche de zéro sur une image monochrome. */
-async function saturationMoyenne(entree) {
-  const { default: sharp } = await import('sharp');
-  const { channels } = await sharp(entree, { failOn: 'none' }).stats();
-  if (channels.length < 3) return 0;
-  const [r, g, b] = channels.map((c) => c.mean);
-  return Math.round((Math.abs(r - g) + Math.abs(g - b) + Math.abs(r - b)) / 3 * 10) / 10;
-}
-
 /* ── Interroger Commons ─────────────────────────────────────────── */
 
 const url = new URL(API);
-url.search = new URLSearchParams({
-  action: 'query', format: 'json', origin: '*',
-  generator: 'search', gsrnamespace: '6', gsrlimit: '30',
-  gsrsearch: `${requete} filetype:bitmap`,
-  prop: 'imageinfo', iiprop: 'url|size|extmetadata|user',
-}).toString();
+// Une photo choisie sur une planche de contact se récupère par son titre
+// exact : rechercher à nouveau pourrait rendre un autre fichier, et on
+// importerait alors une image que personne n'a regardée.
+url.search = new URLSearchParams(
+  titreExact
+    ? { action: 'query', format: 'json', titles: titreExact,
+        prop: 'imageinfo', iiprop: 'url|size|extmetadata|user' }
+    : { action: 'query', format: 'json',
+        generator: 'search', gsrnamespace: '6', gsrlimit: '30',
+        gsrsearch: `${requete} filetype:bitmap`,
+        prop: 'imageinfo', iiprop: 'url|size|extmetadata|user' },
+).toString();
 
 const reponse = await fetch(url, { headers: { 'User-Agent': UA } });
 const data = await reponse.json();
@@ -147,7 +146,9 @@ if (prendre && vers) {
   // Une seule image monochrome au milieu de huit photos couleur ruine
   // exactement l'homogénéité qu'on cherche à construire.
   const sat = await saturationMoyenne(original);
-  if (sat < 6 && !args.includes('--accepter-monochrome')) {
+  // Un vrai noir et blanc mesure moins de 2. Le seuil est posé bas à dessein :
+  // rejeter une photo colorée coûte plus cher que laisser passer un doute.
+  if (sat < 4 && !args.includes('--accepter-monochrome')) {
     console.error(`Cette image est en noir et blanc (saturation ${sat}).`);
     console.error('Elle jurerait au milieu des autres. Choisissez-en une autre,');
     console.error('ou forcez avec --accepter-monochrome si c\'est voulu.');

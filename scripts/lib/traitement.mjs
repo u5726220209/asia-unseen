@@ -23,13 +23,36 @@ import sharp from 'sharp';
  * c'est-à-dire la palette du site imprimée dans chaque photographie. C'est ce
  * qui fait qu'une image prise à Kyoto et une autre à Luang Prabang finissent
  * par appartenir à la même publication.
+ *
+ * Un grain fin complétait l'ensemble. Il a été retiré après mesure : il coûtait
+ * 115 Ko par image, soit un tiers du poids servi, en défaisant la compression —
+ * du bruit ne se compresse pas. Pour un apport que le virage partagé produit
+ * déjà, c'était payer la vitesse du site, qui compte pour le classement, contre
+ * un effet que personne ne remarque.
  */
 
-/** Rapports de recadrage, calés sur les hauteurs des conteneurs. */
-const RAPPORTS = { hero: 2 / 1, bande: 3 / 1 };
+/**
+ * Rapports de recadrage, calés sur ce que le conteneur montre réellement.
+ *
+ * Le bandeau d'en-tête fait 416 px de haut sur toute la largeur : à 1280 px,
+ * c'est un rapport de 3,1 pour 1. Produire du 2:1 fabriquait donc la moitié de
+ * pixels que `object-cover` découpait sans que personne les voie jamais — payés
+ * au transfert, invisibles à l'écran. On reste un peu plus haut que le
+ * conteneur pour garder de la marge sur les écrans étroits, où la bande est
+ * proportionnellement plus haute.
+ */
+const RAPPORTS = { hero: 2.4 / 1, bande: 3.4 / 1 };
 
-/** Largeur conservée. Astro produit ensuite les variantes 640 à 1920. */
-const LARGEUR = 2400;
+/**
+ * Largeur conservée.
+ *
+ * Elle vaut exactement la plus grande variante servie par Astro. Garder du
+ * 2400 px « au cas où » avait un coût invisible : Astro recopie l'original
+ * dans le site publié, référencé par personne — dix-sept mégaoctets partaient
+ * à chaque déploiement pour rien. Une source plus large que ce qu'on affiche
+ * n'améliore aucune image.
+ */
+const LARGEUR = 1920;
 
 export const REGLAGES = {
   /** En dessous de 0,80 les verts d'Asie deviennent ternes. */
@@ -48,9 +71,6 @@ export const REGLAGES = {
    */
   pentes: [1.10, 1.07, 1.00],
   decalages: [-7, -3, 5],
-
-  /** Assez pour lier les textures d'un capteur de 2010 et d'un de 2024. */
-  grain: 0.07,
 };
 
 /**
@@ -69,22 +89,13 @@ export async function traiter(entree, variante = 'hero') {
     .rotate()
     .resize(largeur, hauteur, { fit: 'cover', position: sharp.strategy.attention });
 
-  const grain = {
-    create: {
-      width: largeur, height: hauteur, channels: 3,
-      noise: { type: 'gaussian', mean: 128, sigma: 20 },
-    },
-  };
-
   const buffer = await base
     .modulate({ saturation: REGLAGES.saturation })
     .linear(REGLAGES.pentes, REGLAGES.decalages)
-    .composite([
-      { input: await sharp(grain).png().toBuffer(), blend: 'overlay', opacity: REGLAGES.grain },
-    ])
-    // Qualité haute : ce fichier est la source d'Astro, qui en tirera l'AVIF et
-    // le WebP réellement servis. Économiser ici dégraderait deux fois.
-    .jpeg({ quality: 92, mozjpeg: true, chromaSubsampling: '4:4:4' })
+    // Qualité haute, mais pas absurde : ce fichier est la source d'Astro, qui
+    // en tirera le WebP réellement servi. Trop économiser ici dégraderait deux
+    // fois ; trop dépenser alourdit un fichier que personne ne télécharge.
+    .jpeg({ quality: 86, mozjpeg: true, chromaSubsampling: '4:2:0' })
     .toBuffer();
 
   return { buffer, largeur, hauteur };
