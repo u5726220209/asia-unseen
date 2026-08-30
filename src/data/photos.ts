@@ -28,14 +28,29 @@ export type Photo = {
   legende?: string;
 
   /**
-   * Crédit. Unsplash et Pexels ne l'imposent pas, mais un site qui affiche sa
-   * transparence sur les liens partenaires ne va pas taire d'où viennent ses images.
+   * Crédit. Unsplash et Pexels ne l'imposent pas ; Wikimedia Commons si, et
+   * c'est tant mieux — un site qui affiche sa transparence sur les liens
+   * partenaires ne va pas taire d'où viennent ses images.
    */
   credit?: {
     auteur: string;
     source: 'Unsplash' | 'Pexels' | 'Personnel' | string;
     url?: string;
   };
+
+  /**
+   * Licence, telle qu'elle est écrite sur la page d'origine. Elle n'est pas
+   * décorative : c'est ce qui rend la publication légale, et elle peut changer
+   * — un contributeur reverse une image, un fichier est supprimé. D'où la date
+   * de relevé, contrôlée comme le sont les tarifs cités dans les comparatifs.
+   */
+  licence?: { nom: string; url?: string };
+
+  /** Page d'origine, où la licence peut être revérifiée. */
+  origine?: string;
+
+  /** Date à laquelle la licence a été constatée, au format AAAA-MM-JJ. */
+  releveLe?: string;
 
   /** Pages où la photo s'affiche — chemins exacts, ex. « /vietnam », « /blog/ha-giang-moto-4-jours ». */
   pages: string[];
@@ -51,7 +66,10 @@ export const photos: Photo[] = [
   //   fichier: 'vietnam/hanoi-vieux-quartier-matin.jpg',
   //   alt: "une marchande verse du bouillon dans un bol, sur un trottoir du vieux quartier de Hanoï au lever du jour",
   //   legende: "Le vieux quartier avant 7 h : la seule heure où l'on y marche vraiment.",
-  //   credit: { auteur: 'Prénom Nom', source: 'Unsplash', url: 'https://unsplash.com/photos/xxxxx' },
+  //   credit: { auteur: 'Prénom Nom', source: 'Wikimedia Commons', url: 'https://commons.wikimedia.org/wiki/File:xxx' },
+  //   licence: { nom: 'CC BY 4.0', url: 'https://creativecommons.org/licenses/by/4.0' },
+  //   origine: 'https://commons.wikimedia.org/wiki/File:xxx',
+  //   releveLe: '2026-08-30',
   //   pages: ['/vietnam'],
   //   position: 'hero',
   // },

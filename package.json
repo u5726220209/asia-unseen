@@ -27,7 +27,9 @@
     "performance": "node scripts/performance.mjs",
     "certificats": "node scripts/certificats.mjs",
     "editorial": "node scripts/editorial.mjs",
-    "config": "node scripts/verifier-config.mjs"
+    "config": "node scripts/verifier-config.mjs",
+    "commons": "node scripts/commons.mjs",
+    "licences": "node scripts/licences.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.11",

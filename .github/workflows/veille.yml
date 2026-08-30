@@ -55,8 +55,19 @@ jobs:
           cat rapport-certificats.txt
           if [ $code -eq 0 ]; then echo "risque=non" >> $GITHUB_OUTPUT; else echo "risque=oui" >> $GITHUB_OUTPUT; fi
 
+      # Une licence relevée un jour n'est pas acquise pour toujours : un fichier
+      # peut être supprimé de Commons, une licence corrigée après coup. Le site
+      # afficherait alors un crédit faux, ou publierait sans droit.
+      - name: Licences photographiques
+        id: licences
+        run: |
+          code=0
+          node scripts/licences.mjs > rapport-licences.txt 2>&1 || code=$?
+          cat rapport-licences.txt
+          if [ $code -eq 0 ]; then echo "souci=non" >> $GITHUB_OUTPUT; else echo "souci=oui" >> $GITHUB_OUTPUT; fi
+
       - name: Ouvrir une tâche si quelque chose a bougé
-        if: steps.sentinelle.outputs.change == 'oui' || steps.fraicheur.outputs.du == 'oui' || steps.chiffres.outputs.faux == 'oui' || steps.certificats.outputs.risque == 'oui'
+        if: steps.sentinelle.outputs.change == 'oui' || steps.fraicheur.outputs.du == 'oui' || steps.chiffres.outputs.faux == 'oui' || steps.certificats.outputs.risque == 'oui' || steps.licences.outputs.souci == 'oui'
         uses: actions/github-script@v7
         with:
           script: |
@@ -65,6 +76,7 @@ jobs:
             const fraicheur = fs.readFileSync('rapport-fraicheur.txt', 'utf8');
             const chiffres = fs.readFileSync('rapport-chiffres.txt', 'utf8');
             const certificats = fs.readFileSync('rapport-certificats.txt', 'utf8');
+            const licences = fs.readFileSync('rapport-licences.txt', 'utf8');
             const titre = 'Veille — des sources ont bougé ou des fiches sont dues';
             const corps = [
               '_Rapport automatique. La machine signale, elle ne conclut pas._',
@@ -80,6 +92,9 @@ jobs:
               '',
               '## Certificats des portails officiels',
               '```', certificats.trim(), '```',
+              '',
+              '## Licences photographiques',
+              '```', licences.trim(), '```',
               '',
               '## Ce qu\'il reste à faire, à la main',
               '1. Ouvrir la source et lire la règle, ou le tarif, tel qu\'il est écrit.',
@@ -106,7 +121,7 @@ jobs:
             }
 
       - name: Refermer la tâche si tout est stable
-        if: steps.sentinelle.outputs.change == 'non' && steps.fraicheur.outputs.du == 'non' && steps.chiffres.outputs.faux == 'non' && steps.certificats.outputs.risque == 'non'
+        if: steps.sentinelle.outputs.change == 'non' && steps.fraicheur.outputs.du == 'non' && steps.chiffres.outputs.faux == 'non' && steps.certificats.outputs.risque == 'non' && steps.licences.outputs.souci == 'non'
         uses: actions/github-script@v7
         with:
           script: |
