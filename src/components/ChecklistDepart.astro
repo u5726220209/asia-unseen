@@ -120,6 +120,9 @@ const DEUX_ROUES = [
     const CLE = 'au_checklist';
     let coches = new Set<string>();
 
+    const aujourdhui = new Date();
+    aujourdhui.setHours(0, 0, 0, 0);
+
     function lireEtat() {
       try {
         const v = JSON.parse(localStorage.getItem(CLE) || '{}');
@@ -182,8 +185,6 @@ const DEUX_ROUES = [
       }
 
       const liste = etapes();
-      const aujourdhui = new Date();
-      aujourdhui.setHours(0, 0, 0, 0);
 
       sortie.innerHTML = '';
       const ol = document.createElement('ol');
@@ -205,10 +206,14 @@ const DEUX_ROUES = [
         box.checked = fait;
         box.className = 'mt-1 h-4 w-4 shrink-0 accent-teal';
         box.setAttribute('aria-label', e.titre);
+        // On met à jour cette ligne seulement, sans reconstruire la liste :
+        // un rendu complet détruirait la case que l'utilisateur vient de cocher
+        // et lui ferait perdre le focus clavier au milieu de sa progression.
         box.addEventListener('change', () => {
           box.checked ? coches.add(e.cle) : coches.delete(e.cle);
           ecrireEtat();
-          rendre();
+          majLigne(li, titre, box.checked, e.date < aujourdhui);
+          majCompteur();
         });
 
         const corps = document.createElement('div');
@@ -260,7 +265,23 @@ const DEUX_ROUES = [
       sortie.appendChild(ol);
       pied.hidden = false;
       $('cl-total').textContent = String(liste.length);
-      $('cl-faits').textContent = String(liste.filter((e) => coches.has(e.cle)).length);
+      majCompteur();
+    }
+
+    function majLigne(li: HTMLElement, titre: HTMLElement, fait: boolean, passe: boolean) {
+      li.className =
+        'flex gap-4 rounded-brand border px-4 py-3.5 transition-colors ' +
+        (fait ? 'border-line bg-cream-warm opacity-60'
+              : passe ? 'border-amber-700 bg-amber-50'
+              : 'border-line bg-white');
+      titre.className = 'mt-1 font-display text-[0.98rem] font-semibold text-ink' + (fait ? ' line-through' : '');
+    }
+
+    function majCompteur() {
+      const total = sortie.querySelectorAll('li').length;
+      const faits = sortie.querySelectorAll('input[type=checkbox]:checked').length;
+      $('cl-faits').textContent = String(faits);
+      $('cl-total').textContent = String(total);
     }
 
     // Export .ics : une journée entière par démarche, à la date calculée.
