@@ -11,6 +11,7 @@ import SeasonFinder from '@/components/SeasonFinder.astro';
 import FAQ from '@/components/FAQ.astro';
 import AdSlot from '@/components/AdSlot.astro';
 import Newsletter from '@/components/Newsletter.astro';
+import ArticleCard from '@/components/ArticleCard.astro';
 import { countries, bySlug, type Country } from '@/data/countries';
 import { guidesNav } from '@/data/nav';
 import { site } from '@/data/site';
@@ -23,21 +24,53 @@ import { site } from '@/data/site';
  */
 export const getStaticPaths = (async () => {
   const guides = await getCollection('guides', ({ data }) => !data.draft);
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+
+  // Les fiches pays et les guides reçoivent la liste des contenus qui les
+  // concernent. Sans ça, un article reste orphelin : rien ne pointe vers lui
+  // depuis les pages qui reçoivent le trafic, et le lecteur ne le trouve pas.
+  const parPays = (slug: string) => ({
+    articles: posts
+      .filter((p) => p.data.pays.includes(slug))
+      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
+    guides: guides.filter((g) => g.data.pays.includes(slug)).sort((a, b) => a.data.ordre - b.data.ordre),
+  });
 
   return [
-    ...countries.map((c) => ({ params: { slug: c.slug }, props: { kind: 'pays' as const, country: c } })),
-    ...guides.map((g) => ({ params: { slug: g.id }, props: { kind: 'guide' as const, entry: g } })),
+    ...countries.map((c) => ({
+      params: { slug: c.slug },
+      props: { kind: 'pays' as const, country: c, lies: parPays(c.slug) },
+    })),
+    ...guides.map((g) => ({
+      params: { slug: g.id },
+      props: {
+        kind: 'guide' as const,
+        entry: g,
+        // Articles partageant au moins un pays avec ce guide, les plus récents d'abord.
+        articles: posts
+          .filter((p) => p.data.pays.some((s) => g.data.pays.includes(s)))
+          .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+          .slice(0, 3),
+      },
+    })),
   ];
 }) satisfies GetStaticPaths;
 
+type Lies = {
+  articles: CollectionEntry<'blog'>[];
+  guides: CollectionEntry<'guides'>[];
+};
+
 type Props =
-  | { kind: 'pays'; country: Country }
-  | { kind: 'guide'; entry: CollectionEntry<'guides'> };
+  | { kind: 'pays'; country: Country; lies: Lies }
+  | { kind: 'guide'; entry: CollectionEntry<'guides'>; articles: CollectionEntry<'blog'>[] };
 
 const props = Astro.props as Props;
 
 const country = props.kind === 'pays' ? props.country : null;
 const guideEntry = props.kind === 'guide' ? props.entry : null;
+const liesPays = props.kind === 'pays' ? props.lies : { articles: [], guides: [] };
+const articlesDuGuide = props.kind === 'guide' ? props.articles : [];
 
 // ── Page pays ────────────────────────────────────────────────
 // Trois guides liés, choisis pour leur utilité immédiate sur une fiche pays.
@@ -92,7 +125,7 @@ const paysLies = (g?.pays ?? []).map((s) => bySlug[s]).filter(Boolean);
     image={`/og/${country!.slug}.png`}
     schema={paysSchema}
   >
-    <CountryView country={country!} related={relatedLinks} />
+    <CountryView country={country!} related={relatedLinks} lies={liesPays} />
   </BaseLayout>
 )}
 
@@ -135,6 +168,23 @@ const paysLies = (g?.pays ?? []).map((s) => bySlug[s]).filter(Boolean);
           {g!.sources.length > 0 && <VerifiedBadge date={site.lastReview} sources={g!.sources} class="!my-10" />}
 
           <FAQ items={g!.faq} />
+
+          {articlesDuGuide.length > 0 && (
+            <section class="not-prose mt-16">
+              <h2 class="text-title">À lire aussi</h2>
+              <div class="mt-4 h-[3px] w-12 bg-amber"></div>
+              <div class="mt-8 grid gap-5 sm:grid-cols-3">
+                {articlesDuGuide.map((a) => (
+                  <ArticleCard
+                    href={`/blog/${a.id}`}
+                    title={a.data.heading ?? a.data.title}
+                    accroche={a.data.accroche}
+                    date={a.data.pubDate}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
 
           {paysLies.length > 0 && (
             <section class="not-prose mt-16">

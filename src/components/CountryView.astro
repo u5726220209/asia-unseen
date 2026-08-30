@@ -9,9 +9,19 @@ import Callout from './Callout.astro';
 import FAQ from './FAQ.astro';
 import AdSlot from './AdSlot.astro';
 import Newsletter from './Newsletter.astro';
+import ArticleCard from './ArticleCard.astro';
+import type { CollectionEntry } from 'astro:content';
 
-interface Props { country: Country; related: { href: string; label: string; hint: string }[] }
-const { country: c, related } = Astro.props;
+interface Props {
+  country: Country;
+  related: { href: string; label: string; hint: string }[];
+  /** Articles et guides portant ce pays dans leur frontmatter. */
+  lies: { articles: CollectionEntry<'blog'>[]; guides: CollectionEntry<'guides'>[] };
+}
+const { country: c, related, lies } = Astro.props;
+
+const fmtCourt = (d: Date) =>
+  new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(d);
 
 const SAISON_STYLE = {
   3: { cell: 'bg-teal text-cream', label: 'Idéal' },
@@ -194,6 +204,44 @@ const faq = [
         ))}
       </div>
 
+      {(lies.articles.length > 0 || lies.guides.length > 0) && (
+        <section class="not-prose mt-16" id="tout-savoir">
+          <h2 class="text-title">Tout ce qu'on a écrit sur {c.article === 'aux' ? 'les' : 'le'} {c.nom}</h2>
+          <div class="mt-4 h-[3px] w-12 bg-amber"></div>
+
+          {lies.articles.length > 0 && (
+            <>
+              <p class="eyebrow mt-8">Récits et guides pratiques</p>
+              <div class="mt-4 grid gap-5 sm:grid-cols-2">
+                {lies.articles.map((a) => (
+                  <ArticleCard
+                    href={`/blog/${a.id}`}
+                    title={a.data.heading ?? a.data.title}
+                    accroche={a.data.accroche}
+                    meta={fmtCourt(a.data.pubDate)}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+
+          {lies.guides.length > 0 && (
+            <>
+              <p class="eyebrow mt-10">Guides transversaux qui couvrent ce pays</p>
+              <ul class="mt-4 flex flex-wrap gap-2.5">
+                {lies.guides.map((g) => (
+                  <li>
+                    <a href={`/${g.id}`} class="chip !px-4 !py-2 !text-[0.85rem] transition-colors hover:border-teal hover:text-teal">
+                      {g.data.heading ?? g.data.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </section>
+      )}
+
       <FAQ items={faq} title={`${c.nom} : les questions qu'on nous pose`} />
 
       <Newsletter variant="inline" />
@@ -211,6 +259,7 @@ const faq = [
             ['#incontournables', 'Ce qui vaut le détour'],
             ['#erreurs', "Ce qu'il ne faut pas faire"],
             ['#reserver', 'Réserver son voyage'],
+            ['#tout-savoir', 'Tout ce qu\'on a écrit'],
           ].map(([href, label]) => (
             <li><a href={href} class="text-warm transition-colors hover:text-teal">{label}</a></li>
           ))}
