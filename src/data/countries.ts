@@ -52,13 +52,14 @@ export const countries: Country[] = [
     saisonNote:
       "Le Vietnam fait 1 650 km du nord au sud : il n'y a pas une saison, il y en a trois. Nord (Hanoï, Sapa, Ha Long) : octobre à avril. Centre (Hoi An, Hué, Da Nang) : février à août, avec un pic de pluie en octobre-novembre. Sud (Saïgon, Mékong, Phu Quoc) : décembre à avril. Un itinéraire nord-sud en mars ou en avril reste le meilleur compromis.",
     visa: {
-      resume: "E-visa en ligne pour la majorité des séjours ; exemption courte durée pour les passeports français.",
-      duree: "E-visa jusqu'à 90 jours, entrées simples ou multiples. Exemption sans visa pour les séjours courts.",
-      cout: "≈ 25 USD (entrée simple) / 50 USD (entrées multiples)",
-      procedure: "Demande sur le portail officiel de l'immigration, réponse en 3 à 5 jours ouvrés. N'utilisez jamais les sites intermédiaires qui facturent 3 à 5 fois le tarif.",
+      resume: "Exemption de visa jusqu'à 45 jours pour les passeports français ; e-visa au-delà.",
+      duree: "45 jours sans visa. E-visa jusqu'à 90 jours, entrées simples ou multiples. Ni l'exemption ni l'e-visa ne sont prolongeables sur place.",
+      cout: "Gratuit sous exemption ; ≈ 25 USD (entrée simple) / 50 USD (entrées multiples) pour l'e-visa",
+      procedure: "E-visa sur le portail officiel de l'immigration, réponse en 3 à 5 jours ouvrés. N'utilisez jamais les sites intermédiaires qui facturent 3 à 5 fois le tarif. Passeport valide 6 mois à la date d'entrée. Un enregistrement en ligne dans les 72 h précédant l'arrivée est demandé à l'aéroport de Hô Chi Minh-Ville.",
     },
     sourcesVisa: [
       { label: "Portail e-visa officiel du Vietnam", url: 'https://evisa.gov.vn/' },
+      { label: "Enregistrement préalable (aéroport de Hô Chi Minh-Ville)", url: 'https://prearrival.immigration.gov.vn/' },
       SOURCE_FD,
     ],
     verifieLe: '2026-08',
@@ -95,12 +96,13 @@ export const countries: Country[] = [
     saisonNote:
       "Novembre à mars : sec, respirable, c'est la haute saison et les prix suivent. Avril : 40 °C à Bangkok, mais c'est le mois de Songkran. Mai à octobre : mousson côté Andaman (Phuket, Krabi) — en revanche le golfe (Koh Samui, Koh Phangan) reste correct jusqu'en septembre et ne prend l'eau qu'en octobre-novembre. Les deux côtes n'ont pas la même saison : c'est la clé pour voyager hors des périodes chères.",
     visa: {
-      resume: "Exemption de visa pour les séjours touristiques courts, avec une durée récemment allongée.",
-      duree: "Exemption jusqu'à 60 jours, prolongeable une fois sur place auprès de l'immigration.",
-      cout: "Gratuit à l'entrée ; ≈ 1 900 THB pour la prolongation sur place",
-      procedure: "Rien à demander avant le départ, mais un billet de sortie du territoire peut vous être réclamé à l'embarquement. Une déclaration d'arrivée en ligne peut être exigée : vérifiez avant de partir.",
+      resume: "Exemption de visa pour les séjours touristiques courts. La durée est en cours de réduction : à revérifier impérativement avant de réserver.",
+      duree: "60 jours à ce jour, mais une réduction à 30 jours est annoncée comme imminente par les autorités françaises. Tout séjour planifié au-delà de 30 jours doit être reconfirmé avant le départ.",
+      cout: "Gratuit à l'entrée ; ≈ 1 900 THB pour une prolongation sur place",
+      procedure: "La Thailand Digital Arrival Card (TDAC) est obligatoire depuis le 1er mai 2025 pour toute entrée par air, terre ou mer : à remplir en ligne dans les 3 jours précédant l'arrivée sur tdac.immigration.go.th. Un billet de sortie du territoire peut être réclamé à l'embarquement.",
     },
     sourcesVisa: [
+      { label: 'Thailand Digital Arrival Card (TDAC) — portail officiel', url: 'https://tdac.immigration.go.th/' },
       { label: "Ministère thaïlandais des Affaires étrangères", url: 'https://www.mfa.go.th/en/publicservice/visa' },
       SOURCE_FD,
     ],
@@ -180,10 +182,10 @@ export const countries: Country[] = [
     saisonNote:
       "Avril-mai et septembre-octobre, sans hésiter. Évitez la « semaine d'or » du 1er au 7 octobre : le pays entier est en déplacement. L'été est étouffant à Pékin et Shanghai, l'hiver mordant au nord. Le Yunnan et le Guangxi, au sud, restent agréables une bonne partie de l'année.",
     visa: {
-      resume: "Un dispositif d'exemption de visa pour les ressortissants français est en vigueur, reconduit d'année en année. C'est la formalité la plus mouvante d'Asie : à revérifier systématiquement.",
-      duree: "Exemption de courte durée pour le tourisme ; visa L classique au-delà. Transit sans visa possible dans de nombreuses villes.",
+      resume: "Exemption de visa de 30 jours pour les passeports français ordinaires, en vigueur jusqu'au 31 décembre 2026. Le dispositif est reconduit d'année en année : à revérifier avant chaque départ.",
+      duree: "30 jours sans visa, pour le tourisme, les affaires, les visites familiales, les échanges culturels et le transit. Non prolongeable sur place. Visa L classique au-delà de 30 jours.",
       cout: "Gratuit sous exemption ; ≈ 126 € pour un visa L déposé en centre",
-      procedure: "Si vous relevez du visa classique : dépôt en centre de visa avec biométrie, comptez 4 à 10 jours ouvrés. Préparez itinéraire, réservations d'hôtel et vols confirmés.",
+      procedure: "Passeport valide 6 mois après la date de sortie du territoire. Les passeports d'urgence sont exclus du dispositif. Enregistrement obligatoire auprès de la police locale dans les 24 h suivant l'arrivée — l'hôtel s'en charge, mais pas une location entre particuliers. Pour un visa L : dépôt en centre avec biométrie, 4 à 10 jours ouvrés.",
     },
     sourcesVisa: [
       { label: "Ambassade de Chine en France", url: 'http://fr.china-embassy.gov.cn/' },
@@ -225,8 +227,8 @@ export const countries: Country[] = [
     visa: {
       resume: "Visa touristique obtenu à l'arrivée ou en ligne, formalité simple.",
       duree: "30 jours, prolongeable sur place.",
-      cout: "≈ 30 à 50 USD selon la nationalité et le point d'entrée",
-      procedure: "E-visa en ligne pour éviter la file, ou visa à l'arrivée aux principaux postes frontières. Prévoyez une photo d'identité et des dollars en espèces en bon état.",
+      cout: "≈ 30 à 50 USD selon la nationalité et le point d'entrée ; prolongation à 2 USD par jour à Vientiane",
+      procedure: "E-visa en ligne pour éviter la file, ou visa à l'arrivée aux principaux postes frontières. Attention : les points de passage terrestres délivrant un visa à l'arrivée ou acceptant l'e-visa sont limités — vérifiez le vôtre avant de vous y présenter. Exigez le tampon d'entrée sur votre passeport : son absence est sanctionnée d'au moins 200 USD. Prévoyez une photo d'identité et des dollars en espèces en bon état.",
     },
     sourcesVisa: [
       { label: 'Portail e-visa officiel du Laos', url: 'https://laoevisa.gov.la/' },
@@ -266,8 +268,8 @@ export const countries: Country[] = [
     visa: {
       resume: "E-visa touristique en ligne ou visa à l'arrivée.",
       duree: '30 jours.',
-      cout: '≈ 36 USD (e-visa, frais de service inclus)',
-      procedure: "Demandez uniquement sur le portail gouvernemental officiel — les sites clones facturant 80 à 100 USD sont nombreux et bien référencés.",
+      cout: '≈ 36 USD (e-visa, frais de service inclus) ; ≈ 40 USD en espèces aux postes-frontières terrestres',
+      procedure: "Demandez uniquement sur le portail gouvernemental officiel — les sites clones facturant 80 à 100 USD sont nombreux et bien référencés. L'application « Cambodia e-arrival » est obligatoire depuis le 1er septembre 2024 pour toute arrivée par avion. Une assurance couvrant hospitalisation et rapatriement est exigée. Visa touristique prolongeable une fois d'un mois.",
     },
     sourcesVisa: [
       { label: 'E-visa officiel du Cambodge', url: 'https://www.evisa.gov.kh/' },
@@ -306,10 +308,10 @@ export const countries: Country[] = [
     saisonNote:
       "Avril à juin et septembre à octobre : les deux fenêtres évidentes. Juillet-août : chaleur lourde et jangma, la saison des pluies. Décembre à février : très froid mais lumineux, et la saison de ski est correcte. L'automne coréen, en octobre, est l'un des plus beaux d'Asie.",
     visa: {
-      resume: "Pas de visa pour un séjour touristique court ; une autorisation électronique (K-ETA) peut être requise ou suspendue selon les périodes.",
-      duree: "Jusqu'à 90 jours sans visa.",
-      cout: 'Gratuit (K-ETA ≈ 10 000 KRW lorsqu\'elle est exigée)',
-      procedure: "Vérifiez impérativement le statut du K-ETA pour les ressortissants français avant le départ : le dispositif a été suspendu puis rétabli plusieurs fois. Déclaration douanière et Q-Code sanitaire à remplir en ligne.",
+      resume: "Pas de visa pour un séjour touristique court. L'autorisation électronique K-ETA est actuellement suspendue pour les ressortissants français.",
+      duree: "Jusqu'à 90 jours sans visa. Exemption de K-ETA en vigueur du 1er janvier au 31 décembre 2026.",
+      cout: 'Gratuit',
+      procedure: "Le K-ETA n'est pas exigé sur cette période, mais reste facultatif : le demander dispense de remplir la carte d'arrivée à l'atterrissage. Sans K-ETA, la carte d'arrivée électronique est à compléter avant l'entrée. L'exemption prend fin le 31 décembre 2026 : revérifiez pour tout voyage en 2027.",
     },
     sourcesVisa: [
       { label: 'Portail officiel K-ETA', url: 'https://www.k-eta.go.kr/' },
@@ -349,8 +351,8 @@ export const countries: Country[] = [
     visa: {
       resume: "Visa à l'arrivée électronique (e-VOA) ou à un guichet dédié.",
       duree: "30 jours, prolongeable une fois de 30 jours.",
-      cout: '≈ 500 000 IDR (≈ 30 €)',
-      procedure: "L'e-VOA se demande en ligne quelques jours avant le départ et évite une file d'attente réelle à Denpasar. Une taxe touristique locale s'ajoute à l'entrée à Bali.",
+      cout: '≈ 500 000 IDR (≈ 30 €), plus 150 000 IDR (≈ 7,50 €) de taxe touristique à Bali',
+      procedure: "L'e-VOA se demande en ligne quelques jours avant le départ et évite une file d'attente réelle à Denpasar. Le formulaire douanier « All Indonesia » se remplit dans les 72 h précédant l'arrivée. Un billet de sortie du territoire est exigé, et le passeport doit être en excellent état — un document abîmé entraîne un refus d'entrée.",
     },
     sourcesVisa: [
       { label: "Direction générale de l'immigration indonésienne", url: 'https://evisa.imigrasi.go.id/' },
@@ -390,9 +392,9 @@ export const countries: Country[] = [
       "Décembre à avril : sec, c'est la saison. Juin à novembre : mousson et surtout saison des typhons, qui touchent principalement le nord et l'est de l'archipel. Le sud (Palawan, Siargao) reste plus praticable, mais les annulations de vols intérieurs sont fréquentes de juillet à octobre.",
     visa: {
       resume: "Pas de visa pour un séjour touristique court avec un passeport français.",
-      duree: "30 jours à l'entrée, prolongeable sur place auprès du Bureau of Immigration.",
-      cout: "Gratuit à l'entrée ; frais de prolongation sur place",
-      procedure: "Un billet de sortie du territoire est réclamé à l'embarquement. Une déclaration d'arrivée électronique (eTravel) est à remplir dans les 72 h avant le vol.",
+      duree: "30 jours à l'entrée, prolongeables de 29 jours supplémentaires auprès du Bureau of Immigration, soit 59 jours au total.",
+      cout: "Gratuit à l'entrée ; ≈ 3 030 PHP pour la prolongation sur place",
+      procedure: "Un billet de sortie ou de continuation est exigé à l'embarquement. La carte eTravel est obligatoire : remplissez-la 72 h avant le départ, le QR code généré est réclamé par la compagnie et à l'arrivée. Une taxe d'aéroport peut s'ajouter si elle n'est pas incluse dans le billet.",
     },
     sourcesVisa: [
       { label: 'Bureau of Immigration', url: 'https://immigration.gov.ph/' },

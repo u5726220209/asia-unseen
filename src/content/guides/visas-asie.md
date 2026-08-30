@@ -4,7 +4,7 @@ heading: "Visas pour l'Asie : ce qu'il faut vraiment faire, pays par pays"
 description: "Formalités d'entrée en Asie pour un passeport français : durée autorisée, coût réel, délai et procédure officielle pour 9 pays, avec les pièges à éviter."
 accroche: "Neuf pays, neuf procédures différentes, et une seule règle qui vaut partout : ne passez jamais par un intermédiaire pour une démarche que l'État concerné propose lui-même en ligne."
 pubDate: 2026-08-12
-updatedDate: 2026-08-28
+updatedDate: 2026-08-30
 ordre: 10
 pays: [vietnam, thailande, japon, chine, laos, cambodge, coree-du-sud, indonesie, philippines]
 sources:
@@ -43,15 +43,17 @@ Pour un passeport français et un séjour touristique, ces quatre pays ne demand
 | Pays | Durée autorisée | Formalité en ligne | Coût |
 | --- | --- | --- | --- |
 | Japon | 90 jours | Visit Japan Web (recommandé, pas obligatoire) | Gratuit |
-| Thaïlande | 60 jours | Déclaration d'arrivée selon les périodes | Gratuit |
-| Corée du Sud | 90 jours | K-ETA — statut variable pour la France | ≈ 10 000 KRW si exigée |
-| Philippines | 30 jours | eTravel, dans les 72 h avant le vol | Gratuit |
+| Thaïlande | 60 jours — réduction à 30 annoncée | **TDAC obligatoire**, dans les 3 jours avant l'arrivée | Gratuit |
+| Corée du Sud | 90 jours | K-ETA **suspendu** jusqu'au 31/12/2026 ; carte d'arrivée à remplir | Gratuit |
+| Philippines | 30 jours (+29 possibles) | **eTravel obligatoire**, 72 h avant le vol | Gratuit |
 
-Deux points d'attention.
+Trois points d'attention.
 
-D'abord, la **Corée du Sud** : l'exemption de K-ETA pour les ressortissants français a été accordée, prolongée, puis remise en question à plusieurs reprises. C'est la formalité la plus instable de la liste après la Chine. Vérifiez sur le portail officiel dans les jours qui précèdent votre départ.
+D'abord, la **Thaïlande**, et c'est le plus important de cette page. L'exemption est de 60 jours à ce jour, mais **une réduction à 30 jours est annoncée comme imminente** par les autorités françaises. Si vous planifiez plus de 30 jours sur place, reconfirmez la règle avant de réserver vos vols. Par ailleurs, la *Thailand Digital Arrival Card* est obligatoire depuis le 1er mai 2025 pour toute entrée par air, terre ou mer, à remplir dans les 3 jours précédant l'arrivée.
 
-Ensuite, le **billet de sortie du territoire**. La Thaïlande et les Philippines autorisent les compagnies aériennes à le réclamer à l'embarquement, et elles le font régulièrement. Un aller simple vers Bangkok sans billet de continuation peut vous coûter un refus d'embarquement à Roissy, avant même d'avoir décollé.
+Ensuite, la **Corée du Sud** : l'exemption de K-ETA pour les ressortissants français a été accordée, prolongée, puis remise en question à plusieurs reprises. Elle court actuellement du 1er janvier au 31 décembre 2026. Le K-ETA reste facultatif — le demander dispense de remplir la carte d'arrivée. Pour un voyage en 2027, revérifiez.
+
+Enfin, le **billet de sortie du territoire**. La Thaïlande et les Philippines autorisent les compagnies aériennes à le réclamer à l'embarquement, et elles le font régulièrement. Un aller simple vers Bangkok sans billet de continuation peut vous coûter un refus d'embarquement à Roissy, avant même d'avoir décollé.
 
 ## Les quatre e-visas
 
@@ -59,7 +61,7 @@ Vietnam, Laos, Cambodge et Indonésie fonctionnent sur le même modèle : un for
 
 | Pays | Durée | Coût officiel | Délai annoncé | Portail |
 | --- | --- | --- | --- | --- |
-| Vietnam | jusqu'à 90 jours | ≈ 25 USD (simple) / 50 USD (multiple) | 3 à 5 jours ouvrés | evisa.gov.vn |
+| Vietnam | 45 j sans visa, e-visa jusqu'à 90 j | ≈ 25 USD (simple) / 50 USD (multiple) | 3 à 5 jours ouvrés | evisa.gov.vn |
 | Cambodge | 30 jours | ≈ 36 USD | 3 jours ouvrés | evisa.gov.kh |
 | Laos | 30 jours | ≈ 30 à 50 USD | 3 jours ouvrés | laoevisa.gov.la |
 | Indonésie | 30 jours (+30) | ≈ 500 000 IDR (≈ 30 €) | quasi immédiat | evisa.imigrasi.go.id |
@@ -74,9 +76,11 @@ Vietnam, Laos, Cambodge et Indonésie fonctionnent sur le même modèle : un for
 
 La Chine mérite sa propre section parce que c'est le seul pays de cette liste dont la règle a changé plusieurs fois en peu de temps.
 
-Un dispositif d'exemption de visa pour les ressortissants français est en vigueur et a été reconduit d'année en année. Il couvre les séjours touristiques courts. En parallèle, le visa L classique reste disponible pour les séjours plus longs ou les cas non couverts, et un régime de transit sans visa existe dans de nombreuses villes pour les voyageurs en correspondance.
+L'exemption de visa pour les ressortissants français porte sur **30 jours** et court **jusqu'au 31 décembre 2026**. Elle couvre le tourisme, les affaires, les visites familiales, les échanges culturels et le transit. Les titulaires d'un passeport d'urgence en sont exclus, et elle n'est pas prolongeable sur place : au-delà de 30 jours, il faut un visa L obtenu avant le départ.
 
-**Ce qu'il faut faire, concrètement :** consulter le site de l'ambassade de Chine en France au moment de réserver, puis à nouveau deux semaines avant le départ. C'est le seul pays où je recommande une double vérification.
+Deux obligations qu'on découvre souvent trop tard : le passeport doit être valide **six mois après la date de sortie** du territoire, et tout étranger doit **s'enregistrer auprès de la police locale dans les 24 heures** suivant son arrivée. L'hôtel s'en charge automatiquement ; une location entre particuliers, non — c'est alors à vous de le faire au poste du quartier.
+
+**Ce qu'il faut faire, concrètement :** ce dispositif a été prolongé chaque année depuis sa création, mais rien ne garantit qu'il le sera à nouveau. Consultez le site de l'ambassade au moment de réserver, puis à nouveau deux semaines avant le départ. C'est le seul pays où je recommande une double vérification.
 
 Si vous relevez du visa classique, prévoyez large : dépôt physique en centre de visa avec prise d'empreintes, itinéraire détaillé, réservations d'hôtel et vols confirmés, quatre à dix jours ouvrés de traitement. Comptez six semaines de marge totale.
 
