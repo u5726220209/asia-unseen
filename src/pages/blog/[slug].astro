@@ -8,7 +8,7 @@ import ArticleCard from '@/components/ArticleCard.astro';
 import Newsletter from '@/components/Newsletter.astro';
 import AdSlot from '@/components/AdSlot.astro';
 import FAQ from '@/components/FAQ.astro';
-import HorizonBand from '@/components/HorizonBand.astro';
+import Visuel from '@/components/Visuel.astro';
 import { bySlug } from '@/data/countries';
 import { site } from '@/data/site';
 
@@ -76,7 +76,7 @@ const fmt = (date: Date) =>
       </div>
     </header>
 
-    <HorizonBand seed={post.id} accent={d.pays.includes('japon') || d.pays.includes('coree-du-sud') ? 'ink' : 'teal'} />
+    <Visuel page={`/blog/${post.id}`} seed={post.id} accent={d.pays.includes('japon') || d.pays.includes('coree-du-sud') ? 'ink' : 'teal'} prioritaire />
 
     <div class="wrap grid gap-14 py-14 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-16">
       <div class="prose-au min-w-0">
@@ -112,7 +112,7 @@ const fmt = (date: Date) =>
       </aside>
     </div>
 
-    <HorizonBand seed={`${post.id}-fin`} variant="bande" accent="ink" />
+    <Visuel page={`/blog/${post.id}`} position="bande" seed={`${post.id}-fin`} accent="ink" />
 
     {suite.length > 0 && (
       <section data-pagefind-ignore class="border-t border-line bg-cream-warm">

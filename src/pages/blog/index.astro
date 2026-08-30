@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import ArticleCard from '@/components/ArticleCard.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
-import HorizonBand from '@/components/HorizonBand.astro';
+import Visuel from '@/components/Visuel.astro';
 import Newsletter from '@/components/Newsletter.astro';
 import AdSlot from '@/components/AdSlot.astro';
 
@@ -33,7 +33,7 @@ const [featured, ...rest] = posts;
     </div>
   </header>
 
-  <HorizonBand seed="blog" accent="teal" />
+  <Visuel page="/blog" seed="blog" prioritaire accent="teal" />
 
   <div class="wrap py-14">
     {posts.length === 0 && (
@@ -68,7 +68,7 @@ const [featured, ...rest] = posts;
       ))}
     </div>
 
-    <HorizonBand seed="blog-fin" variant="bande" accent="ink" class="!mt-14" />
+    <Visuel page="/blog" position="bande" seed="blog-fin" accent="ink" class="!mt-14" />
     <AdSlot placement="in-feed" />
     <Newsletter class="mt-16" />
   </div>

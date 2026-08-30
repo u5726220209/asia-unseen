@@ -1,0 +1,36 @@
+---
+import HorizonBand from './HorizonBand.astro';
+import Photo from './Photo.astro';
+import { photoPour } from '@/data/photos';
+
+/**
+ * Emplacement visuel. Affiche la photographie déclarée pour cette page si elle
+ * existe, sinon l'illustration générative.
+ *
+ * C'est ce qui rend l'ajout de photos sans risque : le site est complet dès
+ * maintenant, et chaque photo déposée remplace une illustration sans qu'aucun
+ * gabarit ne change. Rien ne casse si une photo manque, est retirée, ou n'a
+ * jamais été ajoutée.
+ */
+interface Props {
+  /** Chemin exact de la page — sert de clé de recherche dans le registre. */
+  page: string;
+  position?: 'hero' | 'bande';
+  /** Graine de repli pour l'illustration générative. */
+  seed: string;
+  accent?: 'teal' | 'ink';
+  invert?: boolean;
+  prioritaire?: boolean;
+  class?: string;
+}
+const {
+  page, position = 'hero', seed, accent = 'teal',
+  invert = false, prioritaire = false, class: klass = '',
+} = Astro.props;
+
+const photo = photoPour(page, position);
+---
+
+{photo
+  ? <Photo photo={photo} variant={position} prioritaire={prioritaire} class={klass} />
+  : <HorizonBand seed={seed} variant={position === 'hero' ? 'hero' : 'bande'} accent={accent} invert={invert} class={klass} />}

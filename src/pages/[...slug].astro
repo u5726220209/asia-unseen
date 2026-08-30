@@ -9,7 +9,7 @@ import VerifiedBadge from '@/components/VerifiedBadge.astro';
 import BudgetCalculator from '@/components/BudgetCalculator.astro';
 import SeasonFinder from '@/components/SeasonFinder.astro';
 import ChecklistDepart from '@/components/ChecklistDepart.astro';
-import HorizonBand from '@/components/HorizonBand.astro';
+import Visuel from '@/components/Visuel.astro';
 import FAQ from '@/components/FAQ.astro';
 import AdSlot from '@/components/AdSlot.astro';
 import Newsletter from '@/components/Newsletter.astro';
@@ -156,7 +156,7 @@ const paysLies = (g?.pays ?? []).map((s) => bySlug[s]).filter(Boolean);
         </div>
       </header>
 
-      <HorizonBand seed={guideEntry!.id} />
+      <Visuel page={`/${guideEntry!.id}`} seed={guideEntry!.id} prioritaire />
 
       <div class="wrap grid gap-14 py-14 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-16">
         <div class="prose-au min-w-0">
@@ -173,7 +173,7 @@ const paysLies = (g?.pays ?? []).map((s) => bySlug[s]).filter(Boolean);
           {g!.sources.length > 0 && <VerifiedBadge date={site.lastReview} sources={g!.sources} page={`/${guideEntry!.id}`} class="!my-10" />}
 
           {g!.faq.length > 0 && (
-            <HorizonBand seed={`${guideEntry!.id}-faq`} variant="bande" accent="ink" class="!my-10" />
+            <Visuel page={`/${guideEntry!.id}`} position="bande" seed={`${guideEntry!.id}-faq`} accent="ink" class="!my-10" />
           )}
 
           <FAQ items={g!.faq} />

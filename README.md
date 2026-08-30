@@ -12,6 +12,7 @@ npm run build    # → dist/
 npm run preview  # sert dist/ localement
 npm run brand    # régénère favicons, icônes et image OG depuis public/brand/
 npm run build:preview <url>   # build pour un domaine temporaire, en noindex
+npm run photos   # contrôle du registre photographique (voir PHOTOS.md)
 ```
 
 ---
@@ -288,6 +289,13 @@ partenaires vers GA4.
 **Conversion** — page d'accueil structurée en AIDA, quatre points de capture email
 (bandeau, en cours d'article, pied de page, intention de sortie), pop-up limitée à une
 apparition par visiteur et par tranche de 60 jours, jamais avant 20 secondes de lecture.
+
+**Images** — chaque page porte deux visuels. Par défaut, des illustrations
+« Horizons » générées par le site à partir du slug de la page : aucune requête
+supplémentaire, +2 Ko compressés. Déposer une photographie dans `src/photos/` et
+la déclarer dans `src/data/photos.ts` la substitue automatiquement à
+l'illustration, avec redimensionnement, WebP et `srcset`. Mode d'emploi complet :
+`PHOTOS.md`.
 
 Voir `PLAN-CROISSANCE.md` pour la suite — trafic, contenu et revenus.
 Voir `BRAND_GUIDELINES.md` pour tout ce qui touche à l'identité visuelle.

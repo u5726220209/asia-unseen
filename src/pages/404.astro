@@ -2,11 +2,11 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { countries } from '@/data/countries';
 import { guidesNav } from '@/data/nav';
-import HorizonBand from '@/components/HorizonBand.astro';
+import Visuel from '@/components/Visuel.astro';
 ---
 
 <BaseLayout title="Page introuvable" description="Cette page n'existe pas ou a été déplacée." noindex noPopup>
-  <HorizonBand seed="404" accent="ink" />
+  <Visuel page="/404" seed="404" prioritaire accent="ink" />
 
   <section class="wrap py-20 text-center lg:py-24">
     <p class="eyebrow">Erreur 404</p>
@@ -35,7 +35,7 @@ import HorizonBand from '@/components/HorizonBand.astro';
     <a href="/" class="btn-dark mt-12">Retour à l'accueil</a>
   </section>
 
-  <HorizonBand seed="404-bas" variant="bande" />
+  <Visuel page="/404" position="bande" seed="404-bas" />
 
   <section class="wrap pb-16">
   </section>

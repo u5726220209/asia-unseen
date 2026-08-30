@@ -12,7 +12,8 @@
     "brand": "node scripts/build-brand-assets.mjs",
     "build:preview": "node scripts/build-preview.mjs",
     "verifier": "node scripts/verifier-liens.mjs",
-    "package": "node scripts/package.mjs"
+    "package": "node scripts/package.mjs",
+    "photos": "node scripts/verifier-photos.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.11",

@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
-import HorizonBand from '@/components/HorizonBand.astro';
+import Visuel from '@/components/Visuel.astro';
 import Newsletter from '@/components/Newsletter.astro';
 import { site } from '@/data/site';
 
@@ -30,7 +30,7 @@ const schema = [{
     </div>
   </header>
 
-  <HorizonBand seed="a-propos" accent="teal" />
+  <Visuel page="/a-propos" seed="a-propos" prioritaire accent="teal" />
 
   <div class="wrap grid gap-16 py-14 lg:grid-cols-[minmax(0,1fr)_18rem]">
     <div class="prose-au min-w-0">
@@ -107,7 +107,7 @@ const schema = [{
         <li>Une source officielle. Pour les formalités, seuls les sites gouvernementaux font foi.</li>
       </ul>
 
-      <HorizonBand seed="a-propos-erreur" variant="bande" accent="ink" class="!my-10" />
+      <Visuel page="/a-propos" position="bande" seed="a-propos-erreur" accent="ink" class="!my-10" />
 
       <h2>Une erreur, une info périmée ?</h2>
 

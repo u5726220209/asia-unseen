@@ -6,7 +6,7 @@ import ArticleCard from '@/components/ArticleCard.astro';
 import Newsletter from '@/components/Newsletter.astro';
 import Testimonials from '@/components/Testimonials.astro';
 import AdSlot from '@/components/AdSlot.astro';
-import HorizonBand from '@/components/HorizonBand.astro';
+import Visuel from '@/components/Visuel.astro';
 import { countries } from '@/data/countries';
 import { guidesNav } from '@/data/nav';
 import { site } from '@/data/site';
@@ -112,7 +112,7 @@ const problemes = [
     </div>
   </section>
 
-  <HorizonBand seed="accueil" />
+  <Visuel page="/" seed="accueil" prioritaire />
 
   <!-- ═══ INTÉRÊT — les destinations ══════════════════════════ -->
   <section id="destinations" class="wrap scroll-mt-24 py-20 lg:py-24">
@@ -189,7 +189,7 @@ const problemes = [
 
   <AdSlot placement="in-feed" class="wrap" />
 
-  <HorizonBand seed="accueil-auteur" accent="teal" invert />
+  <Visuel page="/" position="bande" seed="accueil-auteur" accent="teal" invert />
 
   <!-- ═══ DÉSIR — crédibilité de l'auteur ═════════════════════ -->
   <section class="border-y border-line bg-ink">
