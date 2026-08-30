@@ -20,8 +20,6 @@ Toutes les pages ne se valent pas. L'ordre suit celui de `PLAN-CROISSANCE.md` :
 
 - [ ] **Comparatif assurances voyage Asie** — requête « meilleure assurance voyage asie ». Tableau de 5 contrats sur plafond médical, avance de frais, exclusions deux-roues. Lie `/assurances-voyage`.
 - [ ] **Comparatif eSIM Asie** — requête « meilleure esim asie ». Prix au Go, couverture réelle, routage hors Chine. Lie `/esim-asie`.
-- [ ] **Où dormir à Bangkok : quel quartier choisir** — même format. Lie `/hotels-asie` et `/thailande`.
-- [ ] **Où dormir à Kyoto : le piège de la gare** — pourquoi le réflexe « près de la gare » est une erreur. Lie `/japon`.
 - [ ] **Quelle carte bancaire pour l'Asie** — comparatif frais de change et retraits. Lie `/banques-asie`.
 
 ## Priorité 2 — longue traîne pays
@@ -55,6 +53,9 @@ volontairement de les rédiger : c'est ce qui rend le site impossible à copier.
 ---
 
 ## Publiés
+
+- [x] Où dormir à Kyoto : le piège de la gare — 30/08/2026
+- [x] Où dormir à Bangkok : le quartier se choisit sur la ligne — 30/08/2026
 
 - [x] Où dormir à Hanoï : quel quartier choisir — 30/08/2026
 
