@@ -103,9 +103,10 @@ bord et dans les liens générés.
 de contenu », Fabrice Roy / Syllodi Service, France, EUR, Paris, site
 https://asiaunseen.com. Aucun compte de réseau social déclaré — il n'y en a
 pas, et en inventer un aurait été un mensonge sur la première ligne du
-dossier. GetYourGuide a envoyé un lien de confirmation à
-u5726220209@gmail.com : **c'est ce lien qui active le compte**, et il doit
-être ouvert depuis la boîte mail.
+dossier. Compte confirmé et actif le 30 août 2026.
+**partner_id : `ECSUCMH`**, relevé dans Outils → Liens, câblé dans `.env` et
+en production. Dix pages portent un lien tracké, chacune vers les résultats de
+son pays plutôt que vers la page d'accueil.
 
 ---
 
