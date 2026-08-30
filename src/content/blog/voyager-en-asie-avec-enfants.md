@@ -6,6 +6,8 @@ accroche: "L'Asie est plus facile en famille que sa réputation ne le laisse cro
 pubDate: 2026-06-26
 categorie: pratique
 pays: [vietnam, thailande, japon, coree-du-sud, indonesie]
+sources:
+  - { label: "France Diplomatie — Conseils aux voyageurs", url: "https://www.diplomatie.gouv.fr/fr/conseils-aux-voyageurs/" }
 faq:
   - q: "Quel pays d'Asie choisir pour un premier voyage en famille ?"
     r: "La Thaïlande et le Japon sont les deux plus simples. La Thaïlande pour ses infrastructures touristiques, ses distances courtes et son accueil des enfants ; le Japon pour sa propreté, sa sécurité, ses transports irréprochables et l'abondance d'activités qui plaisent aux enfants. Le Vietnam vient juste après, avec des trajets plus longs."

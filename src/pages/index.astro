@@ -33,9 +33,9 @@ const problemes = [
       "Chaque fiche visa porte une date de vérification et les liens vers les portails gouvernementaux. Quand une règle bouge, la page bouge — et la date le dit.",
   },
   {
-    probleme: 'Les « top 10 » sont écrits par des gens qui n\'y sont jamais allés',
+    probleme: 'Les « top 10 » recopient tous la même source, jamais vérifiée',
     solution:
-      "Ici, chaque recommandation vient d'un séjour réel. Quand une adresse a fermé ou s'est dégradée, elle saute. Quand un lieu est devenu invivable, on l'écrit.",
+      "Ici, aucune recommandation n'est reprise d'un autre blog. Les faits datés viennent des portails officiels, les prix des opérateurs, et les sources sont citées en bas de page pour que vous puissiez vérifier.",
   },
   {
     probleme: 'Les budgets annoncés sont irréalistes',
@@ -93,7 +93,7 @@ const problemes = [
         </p>
         <ul class="mt-6 space-y-5">
           {[
-            ['Écrit depuis l\'Asie', "Le fondateur vit au Vietnam depuis 2016. Les guides sont relus sur place, pas depuis un bureau à 10 000 km."],
+            ['Vérifié à la source', "Chaque règle de visa est relevée sur le portail du pays concerné, jamais recopiée d'un autre blog. Les sources sont citées et cliquables."],
             ['Daté, donc vérifiable', 'Chaque page de formalités affiche sa date de dernière vérification et ses sources officielles.'],
             ['Transparent sur l\'argent', "Les liens partenaires sont annoncés en haut de page. On dit aussi quand un service ne vaut pas son prix."],
           ].map(([titre, texte]) => (
@@ -197,12 +197,16 @@ const problemes = [
       <div>
         <p class="eyebrow !text-amber">L'auteur</p>
         <blockquote class="mt-6 font-accent text-[1.75rem] leading-[1.35] text-cream sm:text-[2rem]">
-          « Je vis au Vietnam depuis 2016. J'ai fait toutes les erreurs possibles : visa refusé
-          à trois jours du départ, hôtel réservé dans le mauvais quartier, train de nuit raté,
-          arnaque au change. Ce site, c'est tout ce que j'aurais voulu lire avant de partir. »
+          « Une information de voyage sans date est une information morte. Chaque règle publiée
+          ici a été relevée sur le portail du pays concerné, datée, et corrigée quand elle change —
+          en disant ce qui a changé. Le journal des corrections est public : c'est la seule preuve
+          qui vaille. »
         </blockquote>
         <p class="mt-8 font-display text-[0.9rem] font-semibold text-cream">{site.author.name}</p>
         <p class="text-[0.85rem] text-warm">{site.author.role}</p>
+        <a href="/mises-a-jour" class="mt-5 inline-block text-[0.85rem] font-medium text-amber underline decoration-amber/40 underline-offset-4 hover:decoration-amber">
+          Voir les {nbCorrections} corrections publiées →
+        </a>
       </div>
 
       <dl class="grid grid-cols-2 gap-px overflow-hidden rounded-brand bg-white/10 sm:grid-cols-2">

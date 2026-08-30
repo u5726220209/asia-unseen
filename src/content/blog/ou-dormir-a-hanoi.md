@@ -6,6 +6,8 @@ accroche: "À Hanoï, deux hôtels au même prix séparés de deux kilomètres n
 pubDate: 2026-08-30
 categorie: pratique
 pays: [vietnam]
+sources:
+  - { label: "Hanoi Metro — exploitant officiel", url: "https://metrohanoi.vn/en/" }
 faq:
   - q: "Dans quel quartier dormir à Hanoï pour un premier séjour ?"
     r: "Le Vieux Quartier ou la bordure nord du lac Hoan Kiem. Tout se fait à pied, la cuisine de rue est à votre porte et la plupart des navettes et excursions partent de là. La contrepartie est le bruit : demandez une chambre en étage élevé et côté cour."

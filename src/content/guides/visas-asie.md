@@ -66,6 +66,8 @@ Vietnam, Laos, Cambodge et Indonésie fonctionnent sur le même modèle : un for
 | Laos | 30 jours | ≈ 30 à 50 USD | 3 jours ouvrés | laoevisa.gov.la |
 | Indonésie | 30 jours (+30) | ≈ 500 000 IDR (≈ 30 €) | quasi immédiat | evisa.imigrasi.go.id |
 
+**Un avertissement de sécurité sur `evisa.gov.vn` ne signifie pas que le site est frauduleux.** Vérifié le 30 août 2026 : le portail vietnamien sert une chaîne de certificats incomplète — le certificat est authentique, émis par GlobalSign au Département de l'immigration, mais le serveur omet le certificat intermédiaire. Certains navigateurs affichent donc une alerte. Vérifiez que le domaine est exactement `evisa.gov.vn`, et continuez : c'est précisément ce genre d'alerte qui renvoie les voyageurs vers les intermédiaires à 120 €.
+
 **La photo est la première cause de rejet.** Fond uni, visage dégagé, format et poids respectés à la lettre. Une photo prise au téléphone contre un mur blanc passe très bien ; un scan de photo d'identité papier, presque jamais.
 
 **Le délai annoncé n'est pas le délai réel.** Trois à cinq jours ouvrés devient facilement dix jours autour du Têt vietnamien, du Nouvel An khmer ou du Nouvel An lao. Faites la demande un mois avant, pas une semaine.

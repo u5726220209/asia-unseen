@@ -4,8 +4,10 @@ heading: "Ha Giang à moto : quatre jours, et ce que personne ne dit avant"
 description: "Retour détaillé sur la boucle de Ha Giang au Vietnam : itinéraire jour par jour, coût réel, easy rider ou conduite soi-même, et les erreurs qu'on a failli faire."
 accroche: "Quatre jours, 350 kilomètres de routes de montagne, et la seule question qui compte vraiment : conduire soi-même, ou pas."
 pubDate: 2026-08-20
-categorie: recit
+categorie: pratique
 pays: [vietnam]
+sources:
+  - { label: "France Diplomatie — Vietnam, entrée et séjour", url: "https://www.diplomatie.gouv.fr/fr/information-par-pays/vietnam/conseils-aux-voyageurs-entree-sejour" }
 faq:
   - q: "Faut-il conduire soi-même la boucle de Ha Giang ?"
     r: "Seulement si vous avez une expérience réelle de la moto en montagne et un permis A ou A1 valide accompagné d'un permis international. Sinon, prenez un easy rider — un pilote local qui vous transporte en passager. Les routes de la boucle comportent des sections gravillonnées, des camions et des virages sans visibilité, et les évacuations sanitaires depuis cette région sont longues."
@@ -63,10 +65,10 @@ Avec un easy rider, ajoutez 100 à 160 € : le pilote, sa moto et son essence s
 
 **Quatre jours, c'est le bon format.** En trois, on roule tout le temps. En cinq, on s'arrête là où il n'y a pas grand-chose. Quatre, c'est le rythme qui laisse le temps de s'arrêter quand ça vaut le coup.
 
-## Ce que je referais autrement
+## Les deux ajustements qui reviennent le plus
 
-Deux choses. J'ai réservé les homestays à l'avance, par crainte de ne rien trouver — inutile en dehors des week-ends de haute saison, et ça enlève exactement la souplesse qui fait l'intérêt de la boucle.
+**Ne réservez pas les homestays à l'avance.** C'est le réflexe de la première fois, par crainte de ne rien trouver. En dehors des week-ends de haute saison, c'est inutile — et cela supprime exactement la souplesse qui fait l'intérêt de la boucle : rester une nuit de plus là où l'on est bien, écourter là où l'on ne l'est pas.
 
-Et je serais parti un jeudi plutôt qu'un lundi, pour tomber sur le marché de Dong Van du dimanche. C'est le genre de détail qui ne coûte rien à l'organisation et qui change une journée entière.
+**Calez le départ sur le marché de Dong Van, le dimanche matin.** Partir un jeudi plutôt qu'un lundi ne change rien à l'organisation et vous fait tomber dessus au bon moment. C'est le genre de détail qui transforme une journée entière.
 
 Le reste des informations pratiques sur le pays est dans le [guide Vietnam](/vietnam).

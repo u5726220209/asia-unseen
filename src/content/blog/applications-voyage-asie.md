@@ -6,6 +6,8 @@ accroche: "Six applications suffisent. Toutes les autres sont soit redondantes, 
 pubDate: 2026-07-04
 categorie: pratique
 pays: [vietnam, thailande, japon, chine, laos, cambodge, coree-du-sud, indonesie, philippines]
+sources:
+  - { label: "France Diplomatie — Chine, entrée et séjour", url: "https://www.diplomatie.gouv.fr/fr/information-par-pays/chine/conseils-aux-voyageurs-entree-sejour" }
 faq:
   - q: "Quelle application de VTC utiliser en Asie ?"
     r: "Une par région : Grab en Asie du Sud-Est (Vietnam, Thaïlande, Indonésie, Philippines, Cambodge), Gojek en Indonésie, DiDi en Chine, Kakao T en Corée du Sud, GO au Japon. Elles suppriment la négociation, la barrière de la langue et l'essentiel des arnaques au taxi. Il faut généralement un numéro local ou un compte créé avant le départ."

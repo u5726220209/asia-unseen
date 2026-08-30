@@ -3,7 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import Visuel from '@/components/Visuel.astro';
 import Newsletter from '@/components/Newsletter.astro';
-import { site } from '@/data/site';
+import { site, legal } from '@/data/site';
 
 const schema = [{
   '@context': 'https://schema.org',
@@ -35,39 +35,49 @@ const schema = [{
   <div class="wrap grid gap-16 py-14 lg:grid-cols-[minmax(0,1fr)_18rem]">
     <div class="prose-au min-w-0">
       <p>
-        Je vis au Vietnam depuis 2016. Avant ça, j'ai préparé mon premier grand voyage en Asie
-        comme tout le monde : quarante onglets ouverts, trois blogs qui se contredisaient, un
-        forum de 2011, et la vague impression de ne rien maîtriser.
+        Préparer un voyage en Asie n'est pas difficile parce que l'information manque. C'est
+        difficile parce qu'elle est partout, contradictoire, périmée, et souvent écrite pour
+        placer un lien.
       </p>
 
       <p>
-        J'ai fait à peu près toutes les erreurs qu'on peut faire. Un visa demandé sur un site
-        intermédiaire qui m'a facturé quatre fois le tarif officiel. Une réservation de baie
-        d'Ha Long vendue dans une rue de Hanoï, pour un bateau qui n'existait pas sous ce nom.
-        Un hôtel « à 10 minutes du centre » qui était à 10 minutes en scooter, pas à pied.
-        Un train de nuit raté parce que j'avais confondu deux gares de Saïgon.
+        Tapez « visa vietnam » : les premiers résultats sont des sites commerciaux qui facturent
+        60 à 120 € une démarche officielle à 25 USD. Cherchez « meilleure saison Thaïlande » :
+        vous trouverez dix articles qui recopient le même paragraphe, dont aucun ne dit que les
+        deux côtes du pays n'ont pas la même saison. Et l'exemption de visa thaïlandaise est
+        passée de 30 à 60 jours puis redescend à 30 — combien de ces pages l'ont corrigé ?
       </p>
 
       <p>
-        Chacune de ces erreurs a coûté de l'argent, une journée, ou les deux. Aucune n'était
-        évitable avec l'information disponible en français à l'époque. Ce site existe pour
-        combler exactement cet écart.
+        Ce site répond à cet écart précis, et à rien d'autre.
       </p>
 
       <h2>Comment ces guides sont écrits</h2>
 
       <p>
-        Chaque page part d'une expérience réelle, sur place — la mienne, ou celle de personnes
-        dont je vérifie les retours. Ensuite, tout ce qui est vérifiable est vérifié à la source :
-        les formalités auprès des portails gouvernementaux, les tarifs auprès des opérateurs,
-        les horaires auprès des compagnies.
+        Une règle simple : <strong>tout fait daté ou chiffré remonte à sa source primaire.</strong>
+        Les formalités viennent des portails gouvernementaux et de France Diplomatie, les tarifs
+        des opérateurs eux-mêmes, les horaires des compagnies. Jamais d'un autre blog — un blog
+        qui cite un blog n'est pas une source.
       </p>
 
       <p>
-        C'est pour ça que chaque fiche pays porte une <strong>date de dernière vérification</strong> et
-        la liste de ses sources. Une information de voyage sans date est une information morte :
-        les règles de visa en Asie changent parfois deux fois par an, et une bonne moitié des
-        contenus qui se classent en première page de Google ne sont plus exacts.
+        Chaque fiche pays porte donc une <strong>date de dernière vérification</strong> et la liste
+        de ses sources, cliquables. Passé six mois sans revérification, la page l'affiche
+        elle-même en avertissement plutôt que de laisser croire qu'elle est à jour.
+      </p>
+
+      <p>
+        Chaque mois, les neuf fiches sont recomparées aux portails officiels. Tout écart est
+        corrigé <em>et publié</em> : ce que le site affirmait, ce que dit la source, la date.
+        Le <a href="/mises-a-jour">journal des corrections</a> est public. C'est la seule
+        manière de prouver une promesse de fraîcheur au lieu de la répéter.
+      </p>
+
+      <p>
+        Le dernier audit, en août 2026, a corrigé huit fiches sur neuf — dont une réduction
+        d'exemption de visa qui aurait pu mettre un lecteur en difficulté à la frontière
+        thaïlandaise.
       </p>
 
       <h2>Comment ce site gagne de l'argent</h2>
@@ -104,7 +114,8 @@ const schema = [{
       <ul>
         <li>Une agence de voyage. On ne vend rien, on ne réserve rien à votre place.</li>
         <li>Un catalogue de « lieux incontournables » recopié des offices de tourisme.</li>
-        <li>Une source officielle. Pour les formalités, seuls les sites gouvernementaux font foi.</li>
+        <li>Une source officielle. Pour les formalités, seuls les sites gouvernementaux font foi — ils sont cités et liés sur chaque page.</li>
+        <li>Un site anonyme. L'éditeur est identifié dans les <a href="/mentions-legales">mentions légales</a>, avec son numéro d'immatriculation.</li>
       </ul>
 
       <Visuel page="/a-propos" position="bande" seed="a-propos-erreur" accent="ink" class="!my-10" />
@@ -128,10 +139,17 @@ const schema = [{
         <p class="mt-1 text-[0.85rem] text-warm">{site.author.role}</p>
         <hr class="rule my-5" />
         <dl class="space-y-3 text-[0.85rem]">
-          <div><dt class="text-warm-light">En Asie depuis</dt><dd class="font-medium text-ink">2016</dd></div>
-          <div><dt class="text-warm-light">Base</dt><dd class="font-medium text-ink">Hô Chi Minh-Ville, Vietnam</dd></div>
+          <div><dt class="text-warm-light">Éditeur</dt><dd class="font-medium text-ink">{legal.editeur}</dd></div>
+          <div><dt class="text-warm-light">Immatriculation</dt><dd class="font-medium text-ink">SIREN {legal.siren}</dd></div>
           <div><dt class="text-warm-light">Contact</dt><dd><a href={`mailto:${site.author.email}`} class="link">{site.author.email}</a></dd></div>
         </dl>
+        <hr class="rule my-5" />
+        <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-warm-light">Vérifier par vous-même</p>
+        <ul class="mt-3 space-y-2 text-[0.85rem]">
+          <li><a href="/mises-a-jour" class="link">Journal des corrections</a></li>
+          <li><a href="/affiliation" class="link">Charte d'affiliation</a></li>
+          <li><a href="/mentions-legales" class="link">Mentions légales</a></li>
+        </ul>
       </div>
     </aside>
   </div>

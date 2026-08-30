@@ -6,6 +6,8 @@ accroche: "Le loueur ne vous demandera rien. Votre assureur, lui, vérifiera tou
 pubDate: 2026-08-30
 categorie: pratique
 pays: [thailande, vietnam, indonesie, laos, cambodge, philippines]
+sources:
+  - { label: "France Diplomatie — Conseils aux voyageurs", url: "https://www.diplomatie.gouv.fr/fr/conseils-aux-voyageurs/" }
 faq:
   - q: "La formation 125 permet-elle de conduire un scooter en Asie ?"
     r: "Non. La formation de 7 heures qui autorise la conduite d'un 125 cm³ en France avec un permis B est un dispositif national, non reconnu à l'étranger. Elle n'apparaît pas comme une catégorie moto sur le permis international. Pour conduire légalement un deux-roues de plus de 50 cm³ en Asie, il faut un permis A ou A1, et un permis international mentionnant cette catégorie."

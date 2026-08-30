@@ -1,11 +1,14 @@
 ---
-title: "Trois semaines en Asie du Sud-Est : l'itinéraire que je referais"
+title: "Trois semaines en Asie du Sud-Est : l'itinéraire qui tient"
 heading: "Vingt et un jours entre Vietnam, Cambodge et Thaïlande"
 description: "Un itinéraire de trois semaines en Asie du Sud-Est, testé et corrigé : le parcours, les temps de trajet réels, le budget, et les deux étapes que je supprimerais."
 accroche: "L'erreur classique de trois semaines en Asie du Sud-Est, c'est de vouloir trois pays. Voici la version qui marche — et ce que j'enlèverais encore."
 pubDate: 2026-07-20
 categorie: itineraire
 pays: [vietnam, cambodge, thailande]
+sources:
+  - { label: "France Diplomatie — Conseils aux voyageurs", url: "https://www.diplomatie.gouv.fr/fr/conseils-aux-voyageurs/" }
+  - { label: "E-visa officiel du Cambodge", url: "https://www.evisa.gov.kh/" }
 faq:
   - q: "Peut-on faire trois pays d'Asie du Sud-Est en trois semaines ?"
     r: "Oui, à condition de n'en traverser aucun de bout en bout. Trois pays en 21 jours fonctionne si vous vous limitez à deux ou trois étapes par pays et acceptez deux vols intérieurs. Au-delà, le voyage devient une suite de transferts."
@@ -61,13 +64,13 @@ Par personne, en confort modeste :
 
 Les fourchettes détaillées par pays sont dans le [guide budget](/budget-voyage-asie), et le calculateur permet de les ajuster à votre durée.
 
-## Ce que je supprimerais
+## Ce qu'il faut retirer
 
 **Hoi An, ou plutôt sa durée.** Trois nuits, c'est une de trop. La ville est magnifique deux heures le matin et deux heures le soir ; entre les deux, elle est saturée. Deux nuits suffisent, et la journée gagnée va à Ninh Binh ou à Angkor.
 
 **Bangkok comme étape de trois jours.** Bangkok mérite une vraie visite, mais pas au milieu d'un itinéraire chargé, quand on arrive fatigué de deux pays. Deux nuits en transit, ou alors quatre jours en début de voyage, quand on a l'énergie.
 
-**Ce que j'ajouterais avec les jours gagnés :** une étape supplémentaire dans un seul endroit. Rester quatre nuits quelque part change la nature du séjour — on commence à reconnaître des visages, à comprendre le rythme de la ville, à manger là où on est revenu.
+**Ce qu'il faut faire des jours gagnés :** ne pas ajouter d'étape. Les mettre dans celles qui existent déjà. Rester quatre nuits quelque part change la nature du séjour — on reconnaît des visages, on comprend le rythme de la ville, on retourne manger là où c'était bon.
 
 ## La règle qui vaut pour tous les itinéraires
 

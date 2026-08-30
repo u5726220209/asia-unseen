@@ -8,6 +8,7 @@ import ArticleCard from '@/components/ArticleCard.astro';
 import Newsletter from '@/components/Newsletter.astro';
 import AdSlot from '@/components/AdSlot.astro';
 import FAQ from '@/components/FAQ.astro';
+import VerifiedBadge from '@/components/VerifiedBadge.astro';
 import Visuel from '@/components/Visuel.astro';
 import { bySlug } from '@/data/countries';
 import { site } from '@/data/site';
@@ -83,6 +84,16 @@ const fmt = (date: Date) =>
         <Disclosure compact class="!mb-10 !mt-0" />
         <Content />
         <AdSlot placement="in-article" />
+
+        {d.sources.length > 0 && (
+          <VerifiedBadge
+            date={`${(d.updatedDate ?? d.pubDate).getFullYear()}-${String((d.updatedDate ?? d.pubDate).getMonth() + 1).padStart(2, '0')}`}
+            sources={d.sources}
+            page={`/blog/${post.id}`}
+            class="!my-10"
+          />
+        )}
+
         <FAQ items={d.faq} />
 
         {paysLies.length > 0 && (

@@ -41,6 +41,12 @@ const blog = defineCollection({
     pays: z.array(z.string()).default([]),
     tempsLecture: z.number().optional(),
     faq: z.array(z.object({ q: z.string(), r: z.string() })).default([]),
+    /**
+     * Sources primaires citées. Affichées en bas d'article dans le bandeau de
+     * fraîcheur : c'est ce qui rend un fait citable par un moteur génératif
+     * plutôt que paraphrasable.
+     */
+    sources: z.array(z.object({ label: z.string(), url: z.string().url() })).default([]),
   }),
 });
 

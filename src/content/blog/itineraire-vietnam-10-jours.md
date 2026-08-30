@@ -6,13 +6,18 @@ accroche: "Dix jours au Vietnam, c'est assez pour une région, pas pour le pays.
 pubDate: 2026-07-16
 categorie: itineraire
 pays: [vietnam]
+sources:
+  - { label: "France Diplomatie — Vietnam, entrée et séjour", url: "https://www.diplomatie.gouv.fr/fr/information-par-pays/vietnam/conseils-aux-voyageurs-entree-sejour" }
+  - { label: "Portail e-visa officiel du Vietnam", url: "https://evisa.gov.vn/" }
 faq:
   - q: "Peut-on faire le Vietnam du nord au sud en 10 jours ?"
     r: "Techniquement oui, en prenant deux vols intérieurs. En pratique, c'est trois journées de transport sur dix, trois hôtels changés en une semaine, et aucune région vue correctement. Sur dix jours, choisir une seule région donne un bien meilleur voyage."
   - q: "Quel budget pour 10 jours au Vietnam ?"
     r: "Comptez 550 à 700 € sur place en voyage confort modeste, hors vol international. Le vol aller-retour depuis Paris ajoute environ 650 € par personne. La boucle de Ha Giang représente à elle seule 130 à 190 € de ce total."
   - q: "Faut-il un visa pour 10 jours au Vietnam ?"
-    r: "Un e-visa suffit, à demander sur le portail gouvernemental evisa.gov.vn pour environ 25 USD, avec un délai officiel de 3 à 5 jours ouvrés. Faites-le un mois avant le départ, pas une semaine : les périodes de fêtes locales allongent tout."
+    r: "Non. Les ressortissants français bénéficient d'une exemption de visa jusqu'à 45 jours, non prolongeable sur place. L'e-visa, à environ 25 USD sur le portail gouvernemental evisa.gov.vn, ne devient nécessaire qu'au-delà de cette durée."
+  - q: "Pourquoi le site officiel du visa vietnamien affiche-t-il un avertissement de sécurité ?"
+    r: "Parce que le serveur d'evisa.gov.vn transmet une chaîne de certificats incomplète : il envoie son certificat sans le certificat intermédiaire qui le rattache à une autorité reconnue. Le certificat lui-même est légitime, émis par GlobalSign au Département de l'immigration vietnamien. C'est une erreur de configuration, pas une usurpation — mais elle pousse de nombreux voyageurs vers des intermédiaires payants."
 ---
 
 L'erreur la plus fréquente sur dix jours au Vietnam, c'est de vouloir faire Hanoï, Hoi An et Saïgon. Le pays fait 1 650 km du nord au sud : ce programme, ce sont deux vols intérieurs, trois installations d'hôtel, et le sentiment permanent d'être en train de partir.
@@ -67,6 +72,18 @@ Plus le vol international, environ 650 €, et l'assurance, 30 à 45 € pour di
 **Aucun vol intérieur.** Ni transfert aéroport, ni enregistrement, ni retard. Sur dix jours, c'est une journée entière rendue.
 
 **Une vraie progression.** Ville, campagne, montagne, mer. Chaque étape ne ressemble pas à la précédente — ce qui n'est pas le cas d'un enchaînement de trois grandes villes.
+
+## Un piège technique sur le portail officiel
+
+Vérifié le 30 août 2026, et il mérite un paragraphe à lui seul.
+
+Le portail `evisa.gov.vn` sert une **chaîne de certificats incomplète** : le serveur transmet son certificat, mais pas le certificat intermédiaire qui permet de le rattacher à une autorité reconnue. Selon le navigateur et l'appareil, cela se traduit par un avertissement de sécurité — « la connexion n'est pas privée », « certificat non vérifié ».
+
+**Le certificat est pourtant parfaitement légitime.** Il est émis par GlobalSign au nom de `evisa.gov.vn`, pour le Département de l'immigration vietnamien. Le défaut est une erreur de configuration serveur, pas une usurpation.
+
+Le problème est ce que cet avertissement provoque : le voyageur conclut que le site officiel est frauduleux, ferme l'onglet, et retourne sur le premier résultat sponsorisé — un intermédiaire qui lui facturera 60 à 120 € la démarche à 25 USD. **L'avertissement de sécurité pousse vers l'arnaque au lieu d'en protéger.**
+
+**Ce qu'il faut faire :** vérifiez que le domaine est exactement `evisa.gov.vn`, sans sous-domaine ni suffixe. Si l'avertissement s'affiche, c'est le site officiel malgré tout. Si vous préférez ne prendre aucun risque, passez par le lien de la fiche pays de France Diplomatie, qui pointe vers le même domaine.
 
 ## Ce qu'il faut caler avant de partir
 

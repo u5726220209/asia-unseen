@@ -138,21 +138,65 @@ const baseSchema = [
     <ConsentBanner />
 
     <script>
-      // Suivi des clics d'affiliation : permet de savoir quels liens convertissent
-      // sans script tiers supplémentaire. N'envoie rien si GA4 n'est pas configuré.
-      document.addEventListener('click', (e) => {
-        const link = (e.target as HTMLElement)?.closest?.('a[data-aff]');
-        if (!link) return;
-        const partner = link.getAttribute('data-aff');
+      /*
+       * Suivi des conversions, sans script tiers supplémentaire.
+       *
+       * Rien n'est envoyé tant que GA4 n'est pas configuré ET que le visiteur
+       * n'a pas accepté les cookies : `gtag` n'existe simplement pas avant.
+       *
+       * Ces trois événements sont ceux vers lesquels une campagne payante doit
+       * optimiser. Sans eux, un budget SEA s'ajuste à l'aveugle sur des clics
+       * qui ne disent rien de ce qui se passe ensuite.
+       */
+      const envoi = (nom: string, params: Record<string, unknown>) => {
         const gtag = (window as any).gtag;
-        if (typeof gtag === 'function') {
-          gtag('event', 'affiliate_click', {
-            partner,
-            page_path: location.pathname,
-            link_url: link.getAttribute('href'),
+        if (typeof gtag === 'function') gtag('event', nom, { page_path: location.pathname, ...params });
+      };
+
+      // 1. Clic sortant vers un partenaire — la conversion qui rapporte.
+      document.addEventListener('click', (e) => {
+        const el = e.target as HTMLElement | null;
+
+        const aff = el?.closest?.('a[data-aff]');
+        if (aff) {
+          envoi('affiliate_click', {
+            partner: aff.getAttribute('data-aff'),
+            link_url: aff.getAttribute('href'),
           });
+          return;
+        }
+
+        // 2. Clic vers une source officielle — mesure la confiance accordée.
+        const src = el?.closest?.('a[rel~="nofollow"][target="_blank"]');
+        if (src && !src.hasAttribute('data-aff')) {
+          const href = src.getAttribute('href') ?? '';
+          if (/\.gov|diplomatie\.gouv\.fr|\.go\.(th|kr|jp|id)|mofa|immigration/.test(href)) {
+            envoi('source_click', { link_url: href });
+          }
         }
       });
+
+      // 3. Inscription à la newsletter — la conversion qui construit l'actif.
+      document.addEventListener('submit', (e) => {
+        const form = e.target as HTMLFormElement | null;
+        if (form?.classList.contains('au-nl')) {
+          envoi('newsletter_submit', { form_variant: form.closest('section') ? 'block' : 'inline' });
+        }
+      });
+
+      // 4. Usage réel d'un outil — le meilleur indicateur d'intention sur ce site.
+      //    Un seul événement par outil et par page, à la première interaction.
+      const outils = new Set<string>();
+      document.addEventListener('input', (e) => {
+        const cible = (e.target as HTMLElement)?.closest?.('.au-budget, .au-season, .au-checklist');
+        if (!cible) return;
+        const nom = cible.classList.contains('au-budget') ? 'budget'
+                  : cible.classList.contains('au-season') ? 'saison'
+                  : 'checklist';
+        if (outils.has(nom)) return;
+        outils.add(nom);
+        envoi('tool_use', { tool: nom });
+      }, true);
     </script>
   </body>
 </html>

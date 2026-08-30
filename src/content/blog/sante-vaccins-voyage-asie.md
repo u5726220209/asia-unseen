@@ -6,6 +6,8 @@ accroche: "Certains vaccins demandent trois rendez-vous étalés sur un mois. C'
 pubDate: 2026-07-08
 categorie: pratique
 pays: [vietnam, thailande, japon, chine, laos, cambodge, coree-du-sud, indonesie, philippines]
+sources:
+  - { label: "France Diplomatie — Conseils aux voyageurs", url: "https://www.diplomatie.gouv.fr/fr/conseils-aux-voyageurs/" }
 faq:
   - q: "Quels vaccins faut-il pour voyager en Asie du Sud-Est ?"
     r: "Il n'existe pas de réponse unique : cela dépend de votre destination précise, de la durée, de la saison, du type de séjour et de votre historique vaccinal. Seul un centre de vaccinations internationales ou votre médecin peut établir la liste qui vous concerne. Les recommandations officielles par pays sont publiées par l'Institut Pasteur et France Diplomatie."

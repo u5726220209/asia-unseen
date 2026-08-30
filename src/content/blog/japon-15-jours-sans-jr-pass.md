@@ -6,6 +6,9 @@ accroche: "Depuis la hausse tarifaire, le JR Pass est devenu un mauvais réflexe
 pubDate: 2026-08-16
 categorie: itineraire
 pays: [japon]
+sources:
+  - { label: "Japan Rail Pass — site officiel", url: "https://japanrailpass.net/" }
+  - { label: "Visit Japan Web — portail officiel", url: "https://www.vjw.digital.go.jp/" }
 faq:
   - q: "Le JR Pass vaut-il encore le coup en 2026 ?"
     r: "Rarement, sur un itinéraire classique de deux semaines. Il redevient intéressant si vous multipliez les longues distances — Tokyo, Hiroshima, Kyushu et retour dans une même semaine — ou si vous voulez la souplesse de monter dans n'importe quel train sans réserver. Sur un Tokyo–Alpes–Kyoto–Tokyo, l'achat à l'unité revient nettement moins cher."
@@ -15,7 +18,7 @@ faq:
     r: "Oui, c'est le premier achat à faire en arrivant. Suica, Pasmo ou ICOCA fonctionnent dans les métros, les bus et une grande partie des supérettes et distributeurs, partout au Japon. Elles s'ajoutent aussi au portefeuille de la plupart des smartphones, ce qui évite la file au guichet."
 ---
 
-Le JR Pass est le réflexe le plus automatique du voyage au Japon, et depuis la hausse tarifaire, c'est devenu le mauvais réflexe. Voici le calcul, fait sur un itinéraire réel.
+Le JR Pass est le réflexe le plus automatique du voyage au Japon, et depuis les hausses tarifaires successives, c'est devenu le mauvais réflexe. Voici le calcul, appliqué à un itinéraire complet.
 
 ## Le calcul, d'abord
 

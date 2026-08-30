@@ -6,6 +6,9 @@ accroche: "Tout le monde vous dira d'éviter juillet à octobre. Sur Angkor pré
 pubDate: 2026-08-14
 categorie: pratique
 pays: [cambodge]
+sources:
+  - { label: "France Diplomatie — Cambodge, entrée et séjour", url: "https://www.diplomatie.gouv.fr/fr/information-par-pays/cambodge/conseils-aux-voyageurs-entree-sejour" }
+  - { label: "E-visa officiel du Cambodge", url: "https://www.evisa.gov.kh/" }
 faq:
   - q: "Combien de jours faut-il pour visiter Angkor ?"
     r: "Trois jours au minimum. En un jour, on voit Angkor Wat, le Bayon et Ta Prohm dans la foule et la chaleur. En trois, on peut commencer par les temples éloignés, revenir aux grands sites aux bonnes heures, et laisser de la place à ceux qui n'étaient pas au programme — souvent les meilleurs."

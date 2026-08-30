@@ -6,6 +6,9 @@ accroche: "Le JR Pass est devenu un réflexe coûteux. La question n'est plus «
 pubDate: 2026-08-30
 categorie: argent
 pays: [japon]
+sources:
+  - { label: "Japan Rail Pass — site officiel", url: "https://japanrailpass.net/" }
+  - { label: "France Diplomatie — Japon, entrée et séjour", url: "https://www.diplomatie.gouv.fr/fr/information-par-pays/japon/conseils-aux-voyageurs-entree-sejour" }
 faq:
   - q: "Le JR Pass vaut-il encore le coup en 2026 ?"
     r: "Pas par défaut. Depuis les hausses successives, il faut environ trois à quatre trajets longue distance en shinkansen sur la durée du pass pour l'amortir. Un itinéraire classique Tokyo–Kyoto–Tokyo ne suffit pas. Faites le calcul segment par segment avant d'acheter : dans la majorité des cas, les billets à l'unité reviennent moins cher."

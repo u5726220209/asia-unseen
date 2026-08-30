@@ -6,6 +6,10 @@ accroche: "Deux pays, une frontière fluviale, et le plus beau trajet lent d'Asi
 pubDate: 2026-07-12
 categorie: itineraire
 pays: [thailande, laos]
+sources:
+  - { label: "France Diplomatie — Thaïlande, entrée et séjour", url: "https://www.diplomatie.gouv.fr/fr/information-par-pays/thailande/conseils-aux-voyageurs-entree-sejour" }
+  - { label: "France Diplomatie — Laos, entrée et séjour", url: "https://www.diplomatie.gouv.fr/fr/information-par-pays/laos/conseils-aux-voyageurs-entree-sejour" }
+  - { label: "Thailand Digital Arrival Card — portail officiel", url: "https://tdac.immigration.go.th/" }
 faq:
   - q: "Comment passer de Thaïlande au Laos par voie terrestre ?"
     r: "Le passage le plus courant se fait à Chiang Khong, côté thaïlandais, vers Huay Xai côté laotien, par le pont de l'Amitié. Vous sortez de Thaïlande, traversez en navette, puis obtenez le visa laotien à l'arrivée ou présentez votre e-visa. Comptez une heure à deux heures selon l'affluence."

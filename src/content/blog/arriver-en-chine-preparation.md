@@ -6,6 +6,9 @@ accroche: "La Chine n'est ni chère ni dangereuse. Elle est simplement le seul p
 pubDate: 2026-07-30
 categorie: pratique
 pays: [chine]
+sources:
+  - { label: "France Diplomatie — Chine, entrée et séjour", url: "https://www.diplomatie.gouv.fr/fr/information-par-pays/chine/conseils-aux-voyageurs-entree-sejour" }
+  - { label: "Ambassade de Chine en France", url: "http://fr.china-embassy.gov.cn/" }
 faq:
   - q: "Faut-il un VPN pour voyager en Chine ?"
     r: "Oui, et il doit être installé et testé avant le départ. Google, Gmail, WhatsApp, Instagram et la plupart des services occidentaux sont inaccessibles depuis la Chine continentale, et les magasins d'applications sont eux-mêmes filtrés : un VPN téléchargé une fois sur place est un VPN qu'on ne téléchargera pas."
@@ -21,7 +24,11 @@ La barrière n'est ni le coût, ni la sécurité, ni la langue. C'est la prépar
 
 ## Trois semaines avant : les formalités
 
-Le dispositif d'exemption de visa pour les ressortissants français est en vigueur et reconduit périodiquement. C'est la formalité la plus mouvante d'Asie : vérifiez sur le site de l'ambassade au moment de réserver, **puis à nouveau deux semaines avant le départ**. C'est le seul pays où je recommande une double vérification.
+L'exemption de visa pour les ressortissants français porte sur **30 jours** et court **jusqu'au 31 décembre 2026** — tourisme, affaires, visites familiales, échanges culturels et transit. Les titulaires d'un passeport d'urgence en sont exclus.
+
+C'est la formalité la plus mouvante d'Asie : elle a été prolongée chaque année depuis sa création, sans qu'aucune reconduction soit garantie. Vérifiez sur [France Diplomatie](https://www.diplomatie.gouv.fr/fr/information-par-pays/chine/conseils-aux-voyageurs-entree-sejour) au moment de réserver, **puis à nouveau deux semaines avant le départ**. C'est le seul pays de la liste qui justifie une double vérification.
+
+Deux obligations qu'on découvre souvent trop tard : le passeport doit être valide **six mois après la date de sortie**, et tout étranger doit **s'enregistrer auprès de la police locale dans les 24 heures** suivant son arrivée. L'hôtel s'en charge ; une location entre particuliers, non.
 
 Si vous relevez du visa L classique, prévoyez six semaines : dépôt en centre avec biométrie, itinéraire détaillé, réservations d'hôtel et vols confirmés.
 

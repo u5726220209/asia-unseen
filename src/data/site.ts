@@ -19,7 +19,7 @@ export const site = {
     "Guides de voyage en Asie écrits sur le terrain : visas, budgets, transports, hébergement et erreurs à éviter. Vietnam, Thaïlande, Japon, Chine, Laos, Cambodge, Corée du Sud, Indonésie, Philippines.",
   author: {
     name: 'Tri Hung',
-    role: 'Fondateur — basé au Vietnam',
+    role: 'Éditeur',
     email: 'bonjour@asiaunseen.com',
   },
   social: {

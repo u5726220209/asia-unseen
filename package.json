@@ -13,7 +13,8 @@
     "build:preview": "node scripts/build-preview.mjs",
     "verifier": "node scripts/verifier-liens.mjs",
     "package": "node scripts/package.mjs",
-    "photos": "node scripts/verifier-photos.mjs"
+    "photos": "node scripts/verifier-photos.mjs",
+    "sources": "node scripts/verifier-sources.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.11",
