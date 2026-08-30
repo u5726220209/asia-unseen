@@ -50,6 +50,9 @@ const year = new Date().getFullYear();
           {footerLegal.map((i) => (
             <li><a href={i.href} class="transition-colors hover:text-amber">{i.label}</a></li>
           ))}
+          <li>
+            <a href="/confidentialite" data-consent-open class="transition-colors hover:text-amber">Gérer les cookies</a>
+          </li>
         </ul>
       </nav>
     </div>

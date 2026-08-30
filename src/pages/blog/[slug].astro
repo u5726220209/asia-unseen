@@ -56,6 +56,7 @@ const fmt = (date: Date) =>
   title={d.title}
   description={d.description}
   type="article"
+  image={d.image ?? `/og/blog/${post.id}.png`}
   publishedTime={d.pubDate}
   modifiedTime={d.updatedDate ?? d.pubDate}
   schema={schema}

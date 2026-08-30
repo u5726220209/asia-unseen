@@ -89,6 +89,7 @@ const paysLies = (g?.pays ?? []).map((s) => bySlug[s]).filter(Boolean);
     title={`Voyager ${country!.article === 'aux' ? 'aux' : country!.article} ${country!.nom} : budget, visa, meilleure saison`}
     description={`${country!.resume.slice(0, 130)} Budget dès ${country!.budget.routard} €/jour, formalités à jour et erreurs à éviter.`}
     type="article"
+    image={`/og/${country!.slug}.png`}
     schema={paysSchema}
   >
     <CountryView country={country!} related={relatedLinks} />
@@ -100,6 +101,7 @@ const paysLies = (g?.pays ?? []).map((s) => bySlug[s]).filter(Boolean);
     title={g!.title}
     description={g!.description}
     type="article"
+    image={`/og/${guideEntry!.id}.png`}
     publishedTime={g!.pubDate}
     modifiedTime={g!.updatedDate ?? g!.pubDate}
     schema={guideSchema}

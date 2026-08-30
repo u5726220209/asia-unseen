@@ -1,0 +1,152 @@
+---
+import { analytics, adsense } from '@/data/site';
+
+/**
+ * Bandeau de consentement — auto-hébergé, sans prestataire tiers.
+ *
+ * Principes appliqués (RGPD, recommandations CNIL) :
+ *   · aucun cookie ni script tiers n'est déposé avant un choix explicite ;
+ *   · refuser est aussi simple qu'accepter — deux boutons, même taille,
+ *     même niveau, un seul clic dans les deux cas ;
+ *   · le choix est révocable à tout moment (lien « Gérer les cookies » en pied de page) ;
+ *   · le choix est conservé 6 mois, puis redemandé.
+ *
+ * Le bandeau ne s'affiche que s'il y a réellement quelque chose à consentir :
+ * tant que ni GA4 ni AdSense ne sont configurés, aucun cookie n'est posé et
+ * aucun bandeau n'apparaît.
+ */
+const needsConsent = Boolean(analytics.ga4) || adsense.enabled;
+---
+
+{needsConsent && (
+  <>
+    <div
+      id="au-consent"
+      hidden
+      class="fixed inset-x-0 bottom-0 z-[95] border-t border-line bg-cream/95 backdrop-blur-md"
+      role="dialog"
+      aria-modal="false"
+      aria-labelledby="au-consent-title"
+    >
+      <div class="wrap flex flex-col gap-5 py-6 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
+        <div class="max-w-2xl">
+          <p id="au-consent-title" class="font-display text-[0.95rem] font-bold text-ink">
+            Ce site utilise des cookies de mesure et de publicité
+          </p>
+          <p class="mt-1.5 text-[0.88rem] leading-relaxed text-warm">
+            Ils nous permettent de savoir quels guides sont utiles et de financer leur
+            écriture. Aucun n'est déposé avant votre accord, et refuser ne retire rien
+            au contenu.
+            <a href="/confidentialite" class="link">Notre politique</a>.
+          </p>
+        </div>
+
+        <div class="flex shrink-0 flex-col gap-2.5 sm:flex-row">
+          <button type="button" data-consent="denied" class="btn-outline !px-6 !py-3 !text-[0.88rem] sm:min-w-[10.5rem]">
+            Tout refuser
+          </button>
+          <button type="button" data-consent="granted" class="btn-dark !px-6 !py-3 !text-[0.88rem] sm:min-w-[10.5rem]">
+            Tout accepter
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script
+      is:inline
+      define:vars={{
+        ga4: analytics.ga4,
+        adsClient: adsense.client,
+      }}
+    >
+      (function () {
+        var KEY = 'au_consent';
+        var MAX_AGE = 180 * 24 * 3600 * 1000; // 6 mois
+        var banner = document.getElementById('au-consent');
+        var loaded = false;
+
+        function read() {
+          try {
+            var raw = localStorage.getItem(KEY);
+            if (!raw) return null;
+            var v = JSON.parse(raw);
+            if (Date.now() - v.t > MAX_AGE) return null;
+            return v.c;
+          } catch (e) {
+            return null;
+          }
+        }
+
+        function write(choice) {
+          try {
+            localStorage.setItem(KEY, JSON.stringify({ c: choice, t: Date.now() }));
+          } catch (e) {
+            /* navigation privée : le choix vaut pour la session */
+          }
+        }
+
+        function inject(src, attrs) {
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = src;
+          for (var k in attrs) s.setAttribute(k, attrs[k]);
+          document.head.appendChild(s);
+          return s;
+        }
+
+        // Les scripts tiers ne sont chargés qu'ici, après un accord explicite.
+        function loadTrackers() {
+          if (loaded) return;
+          loaded = true;
+
+          if (ga4) {
+            inject('https://www.googletagmanager.com/gtag/js?id=' + ga4);
+            window.dataLayer = window.dataLayer || [];
+            window.gtag = function () { window.dataLayer.push(arguments); };
+            window.gtag('js', new Date());
+            window.gtag('config', ga4, { anonymize_ip: true });
+          }
+
+          if (adsClient) {
+            inject(
+              'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + adsClient,
+              { crossorigin: 'anonymous' }
+            );
+            // Les emplacements rendus avant le consentement sont activés maintenant.
+            document.querySelectorAll('ins.adsbygoogle').forEach(function () {
+              (window.adsbygoogle = window.adsbygoogle || []).push({});
+            });
+          }
+        }
+
+        function show() { if (banner) banner.hidden = false; }
+        function hide() { if (banner) banner.hidden = true; }
+
+        function decide(choice) {
+          write(choice);
+          hide();
+          if (choice === 'granted') loadTrackers();
+        }
+
+        var current = read();
+        if (current === 'granted') loadTrackers();
+        else if (current !== 'denied') show();
+
+        document.querySelectorAll('[data-consent]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            decide(btn.getAttribute('data-consent'));
+          });
+        });
+
+        // Lien « Gérer les cookies » du pied de page.
+        document.addEventListener('click', function (e) {
+          var t = e.target instanceof Element ? e.target.closest('[data-consent-open]') : null;
+          if (!t) return;
+          e.preventDefault();
+          show();
+          banner.scrollIntoView({ block: 'nearest' });
+        });
+      })();
+    </script>
+  </>
+)}

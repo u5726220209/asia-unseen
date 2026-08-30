@@ -8,7 +8,8 @@ import '@/styles/global.css';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import ExitIntent from '@/components/ExitIntent.astro';
-import { site, analytics, adsense } from '@/data/site';
+import ConsentBanner from '@/components/ConsentBanner.astro';
+import { site } from '@/data/site';
 
 interface Props {
   title: string;
@@ -101,25 +102,11 @@ const baseSchema = [
       <script type="application/ld+json" set:html={JSON.stringify(s)} />
     ))}
 
-    {adsense.enabled && (
-      <script
-        async
-        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsense.client}`}
-        crossorigin="anonymous"
-      ></script>
-    )}
-
-    {analytics.ga4 && (
-      <>
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${analytics.ga4}`}></script>
-        <script is:inline define:vars={{ id: analytics.ga4 }}>
-          window.dataLayer = window.dataLayer || [];
-          function gtag() { dataLayer.push(arguments); }
-          gtag('js', new Date());
-          gtag('config', id, { anonymize_ip: true });
-        </script>
-      </>
-    )}
+    {/*
+      Aucun script tiers n'est chargé ici : GA4 et AdSense sont injectés par
+      <ConsentBanner /> uniquement après un accord explicite du visiteur.
+      Voir src/components/ConsentBanner.astro.
+    */}
   </head>
 
   <body class="flex min-h-screen flex-col">
@@ -131,6 +118,7 @@ const baseSchema = [
     <main id="contenu" class="flex-1"><slot /></main>
     <Footer />
     {!noPopup && <ExitIntent />}
+    <ConsentBanner />
 
     <script>
       // Suivi des clics d'affiliation : permet de savoir quels liens convertissent
