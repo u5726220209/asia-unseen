@@ -67,6 +67,24 @@ La page affiche « Ce site dépasse le quota reCAPTCHA Enterprise gratuit ». Si
 la case refuse de se valider, ce n'est pas votre navigateur : rechargez ou
 réessayez plus tard.
 
+### Le mécanisme de lien, vérifié le 30 août 2026
+
+Le gabarit de lien réseau a été testé de bout en bout avec un identifiant
+fictif, puis retiré. Il produit bien :
+
+```
+https://www.anrdoezrs.net/links/1234567/type/dlg/https%3A%2F%2Fwww.booking.com%2Fsearchresults.html%3Fss%3DVietnam
+```
+
+avec `rel="sponsored nofollow noopener"` conservé et la destination propre à
+chaque pays. Le double encodage sur les pays accentués (`Cor%25C3%25A9e`) est
+correct et non un défaut : CJ décode une fois pour obtenir l'URL Booking, puis
+Booking décode une seconde fois et retrouve « Corée du Sud ». Vérifié par
+décodage successif.
+
+Autrement dit, le jour où le lien CJ arrive, il n'y a qu'une variable à
+renseigner. Rien d'autre à écrire.
+
 ### Ce que CJ demandera ensuite
 
 Contrairement à Agoda et GetYourGuide, CJ est le **payeur** : il collecte donc
