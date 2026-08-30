@@ -301,11 +301,38 @@ Les quatre événements de conversion (`affiliate_click`, `source_click`,
 `newsletter_submit`, `tool_use`) remontent désormais réellement. Marquez-les comme
 **événements clés** dans l'interface GA4 pour qu'ils servent d'objectifs.
 
+### AdSense — état au 30 août 2026
+
+Inventaire des comptes Google associés :
+
+| Compte Google | AdSense |
+| --- | --- |
+| `u5726220209@gmail.com` *(porte la Search Console et GA4)* | aucun |
+| `fabrice.webprestige@gmail.com` | **`pub-9584472477260397` — désactivé pour inactivité** |
+| `syllodivn@gmail.com` | aucun |
+
+⚠️ **Ne créez pas un second compte AdSense.** Le règlement Google impose un seul
+compte par personne. En ouvrir un nouveau alors qu'un ancien existe expose les deux
+à une fermeture définitive. La voie sûre est la **réactivation** de
+`pub-9584472477260397`.
+
+La réactivation demande une validation par téléphone et la soumission du site pour
+examen — deux étapes qui ne peuvent être faites que par l'éditeur lui-même.
+
+Une fois le site approuvé :
+
+1. Décommenter la ligne de `public/ads.txt` (l'identifiant y est déjà inscrit).
+2. Renseigner `PUBLIC_ADSENSE_CLIENT=ca-pub-9584472477260397` dans `.env`, plus les
+   trois identifiants d'emplacement.
+3. Republier. Le bandeau de consentement couvre déjà AdSense : aucune modification
+   de code n'est nécessaire.
+
 ### Ce qu'il reste à faire
 
-1. **Comptes affiliés et AdSense.** Le site est en ligne et mesuré : les demandes qui
-   exigeaient un domaine actif peuvent partir.
-2. **Ligne de TVA.** `src/data/site.ts` retient la franchise en base (article 293 B).
+1. **Réactiver AdSense** (validation téléphone + soumission du site).
+2. **Comptes affiliés.** Le site est en ligne et mesuré : les programmes qui
+   exigeaient un domaine actif peuvent être demandés.
+3. **Ligne de TVA.** `src/data/site.ts` retient la franchise en base (article 293 B).
    À confirmer ou corriger.
 
 ---

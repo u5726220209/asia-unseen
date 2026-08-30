@@ -1,5 +1,19 @@
-# Fichier ads.txt — à activer une fois AdSense approuvé.
-# Remplacez pub-0000000000000000 par votre identifiant éditeur (sans le préfixe « ca- »).
-# Sans ce fichier correctement rempli, Google réduit fortement les revenus display.
+# ads.txt — déclaration des vendeurs autorisés
 #
-# google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0
+# Sans ce fichier correctement rempli, Google réduit fortement les revenus
+# display : les acheteurs programmatiques ne peuvent pas vérifier que l'inventaire
+# est légitime, et retirent leurs enchères.
+#
+# ─────────────────────────────────────────────────────────────────────────
+# À DÉCOMMENTER une fois le compte AdSense réactivé et le site approuvé.
+#
+# L'identifiant ci-dessous est celui du compte AdSense existant, trouvé le
+# 30 août 2026 sur fabrice.webprestige@gmail.com — compte désactivé pour
+# inactivité, à réactiver plutôt qu'à recréer (voir README).
+#
+# Si vous utilisez finalement un autre compte, remplacez l'identifiant : il
+# doit correspondre exactement à celui qui sert les annonces, sinon les
+# acheteurs considèrent l'inventaire comme non autorisé.
+# ─────────────────────────────────────────────────────────────────────────
+
+# google.com, pub-9584472477260397, DIRECT, f08c47fec0942fa0
