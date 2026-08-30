@@ -71,12 +71,27 @@ le meilleur taux des trois, et c'est le partenaire le plus utile à nos lecteurs
 **Ce que vous me rapportez :** votre identifiant partenaire (le code qui
 apparaît dans vos liens sous la forme `?z=XXXXX`).
 
+**État au 30 août 2026 :** candidature envoyée depuis u5726220209@gmail.com,
+réponse de 12Go : « Votre candidature a bien été reçue et sera examinée. »
+En attente de validation.
+
+Une remarque sur leur formulaire, si vous devez y revenir : les messages
+d'erreur rouges sous « Adresse email » et « Site web » ne s'effacent pas quand
+on corrige. Ce sont des restes de la tentative précédente, pas un refus des
+valeurs saisies — les champs réellement bloquants étaient « Description » et
+« pays cibles », qui n'affichent aucune alerte quand ils sont vides.
+
 ## 3. GetYourGuide — inscription directe
 
 https://partner.getyourguide.com/fr-fr — bouton « S'inscrire », programme
 « Affiliés et créateurs ».
 
 Commission : **8 % ou plus**, payée mensuellement. Validation en quelques jours.
+
+L'inscription se fait en trois étapes. La première crée le compte : email et
+mot de passe (au moins 8 caractères, avec une minuscule, une majuscule, un
+chiffre et un caractère spécial). Continuer vaut acceptation des « Conditions
+générales pour les prestataires » — à lire avant, c'est un contrat.
 
 **Ce que vous me rapportez :** votre `partner_id`, visible dans le tableau de
 bord et dans les liens générés.
