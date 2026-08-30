@@ -332,13 +332,14 @@ compte par personne. En ouvrir un nouveau alors qu'un ancien existe expose les d
 La réactivation demande une validation par téléphone et la soumission du site pour
 examen — deux étapes qui ne peuvent être faites que par l'éditeur lui-même.
 
-Une fois le site approuvé :
+**Fait le 30 août 2026.** Compte `pub-5044188066752064`, ouvert sur
+u5726220209@gmail.com. `ads.txt` est en ligne et a servi de méthode de
+vérification, les trois emplacements sont créés et leurs identifiants
+renseignés dans `.env`. Le site est en cours d'examen : les encarts ne se
+rempliront qu'à l'approbation.
 
-1. Décommenter la ligne de `public/ads.txt` (l'identifiant y est déjà inscrit).
-2. Renseigner `PUBLIC_ADSENSE_CLIENT=ca-pub-9584472477260397` dans `.env`, plus les
-   trois identifiants d'emplacement.
-3. Republier. Le bandeau de consentement couvre déjà AdSense : aucune modification
-   de code n'est nécessaire.
+L'identifiant `ca-pub-9584472477260397` qui figurait ici appartenait à un
+ancien compte désactivé, sur une autre adresse. Il ne doit pas être réutilisé.
 
 ### Ce qu'il reste à faire
 
