@@ -8,6 +8,7 @@ import Disclosure from '@/components/Disclosure.astro';
 import VerifiedBadge from '@/components/VerifiedBadge.astro';
 import BudgetCalculator from '@/components/BudgetCalculator.astro';
 import SeasonFinder from '@/components/SeasonFinder.astro';
+import ChecklistDepart from '@/components/ChecklistDepart.astro';
 import FAQ from '@/components/FAQ.astro';
 import AdSlot from '@/components/AdSlot.astro';
 import Newsletter from '@/components/Newsletter.astro';
@@ -160,6 +161,7 @@ const paysLies = (g?.pays ?? []).map((s) => bySlug[s]).filter(Boolean);
 
           {g!.outil === 'budget' && <BudgetCalculator />}
           {g!.outil === 'saison' && <SeasonFinder />}
+          {g!.outil === 'checklist' && <ChecklistDepart />}
 
           {Content && <Content />}
 

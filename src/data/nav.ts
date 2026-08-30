@@ -11,6 +11,7 @@ export const guidesNav = [
   { href: '/activites-asie',        label: 'Activités & guides',     hint: 'Ce qui vaut le prix, ce qui ne le vaut pas' },
   { href: '/banques-asie',          label: 'Argent & banques',       hint: 'Cartes, retraits, change, frais' },
   { href: '/erreurs-a-eviter',      label: 'Erreurs & arnaques',     hint: 'Les 20 pièges les plus coûteux' },
+  { href: '/checklist-depart',      label: 'Checklist de départ',    hint: 'Votre calendrier daté, personnalisé' },
 ];
 
 export const paysNav = countries.map((c) => ({

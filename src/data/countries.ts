@@ -28,6 +28,12 @@ export type Country = {
   saisonNote: string;
   visa: { resume: string; duree: string; cout: string; procedure: string };
   sourcesVisa: { label: string; url: string }[];
+  /**
+   * Démarches datées propres au pays, consommées par la checklist de départ.
+   * `jours` est le nombre de jours avant le départ où la démarche doit être faite.
+   * Renseignées à partir des audits de fraîcheur — voir audits/.
+   */
+  demarches: { jours: number; titre: string; detail: string }[];
   verifieLe: string;
   volDepuisParis: string;
   accent: string;           // couleur d'accent de la fiche (palette de marque uniquement)
@@ -61,6 +67,10 @@ export const countries: Country[] = [
       { label: "Portail e-visa officiel du Vietnam", url: 'https://evisa.gov.vn/' },
       { label: "Enregistrement préalable (aéroport de Hô Chi Minh-Ville)", url: 'https://prearrival.immigration.gov.vn/' },
       SOURCE_FD,
+    ],
+    demarches: [
+      { jours: 28, titre: "Déposer l'e-visa vietnamien", detail: "≈ 25 USD sur evisa.gov.vn, 3 à 5 jours ouvrés annoncés. Inutile si votre séjour tient dans les 45 jours d'exemption." },
+      { jours: 3, titre: 'Enregistrement en ligne préalable', detail: "Demandé dans les 72 h précédant l'arrivée à l'aéroport de Hô Chi Minh-Ville, sur prearrival.immigration.gov.vn." },
     ],
     verifieLe: '2026-08',
     volDepuisParis: '≈ 12 h en direct vers Hanoï ou Hô Chi Minh-Ville',
@@ -106,6 +116,10 @@ export const countries: Country[] = [
       { label: "Ministère thaïlandais des Affaires étrangères", url: 'https://www.mfa.go.th/en/publicservice/visa' },
       SOURCE_FD,
     ],
+    demarches: [
+      { jours: 30, titre: "Reconfirmer la durée d'exemption", detail: "Une réduction de 60 à 30 jours est annoncée comme imminente. Vérifiez avant de bloquer vos vols si votre séjour dépasse 30 jours." },
+      { jours: 3, titre: 'Remplir la Thailand Digital Arrival Card', detail: "Obligatoire pour toute entrée par air, terre ou mer, dans les 3 jours précédant l'arrivée, sur tdac.immigration.go.th." },
+    ],
     verifieLe: '2026-08',
     volDepuisParis: '≈ 11 h en direct vers Bangkok',
     accent: 'amber',
@@ -148,6 +162,9 @@ export const countries: Country[] = [
       { label: "Ambassade du Japon en France", url: 'https://www.fr.emb-japan.go.jp/' },
       { label: 'Visit Japan Web', url: 'https://www.vjw.digital.go.jp/' },
       SOURCE_FD,
+    ],
+    demarches: [
+      { jours: 2, titre: 'Remplir Visit Japan Web', detail: "Facultatif mais fait gagner une vraie demi-heure au passage de l'immigration et de la douane." },
     ],
     verifieLe: '2026-08',
     volDepuisParis: '≈ 12 h à 14 h selon la route',
@@ -192,6 +209,13 @@ export const countries: Country[] = [
       { label: 'Centre de demande de visa pour la Chine', url: 'https://bio.visaforchina.cn/' },
       SOURCE_FD,
     ],
+    demarches: [
+      { jours: 42, titre: "Vérifier le dispositif d'exemption", detail: "Exemption de 30 jours en vigueur jusqu'au 31 décembre 2026. Au-delà de 30 jours, un visa L déposé en centre est nécessaire : comptez 4 à 10 jours ouvrés." },
+      { jours: 14, titre: 'Lier une carte étrangère à Alipay ou WeChat Pay', detail: "À faire et à tester depuis la France : la vérification suppose un accès à des services filtrés sur place." },
+      { jours: 14, titre: 'Installer et tester deux VPN', detail: "Les magasins d'applications sont eux aussi filtrés : un VPN téléchargé sur place est un VPN qu'on ne téléchargera pas." },
+      { jours: 12, titre: 'Réserver les trains à grande vitesse', detail: "Les billets se vendent 10 à 15 jours à l'avance et partent vite sur les liaisons principales." },
+      { jours: 7, titre: "Revérifier l'exemption de visa", detail: "C'est la formalité la plus mouvante d'Asie : une seconde vérification avant le départ est justifiée." },
+    ],
     verifieLe: '2026-08',
     volDepuisParis: '≈ 11 h vers Pékin, 12 h vers Shanghai',
     accent: 'teal',
@@ -234,6 +258,10 @@ export const countries: Country[] = [
       { label: 'Portail e-visa officiel du Laos', url: 'https://laoevisa.gov.la/' },
       SOURCE_FD,
     ],
+    demarches: [
+      { jours: 28, titre: "Déposer l'e-visa laotien, ou préparer le visa à l'arrivée", detail: "≈ 30 à 50 USD. Vérifiez que votre point d'entrée délivre bien un visa à l'arrivée ou accepte l'e-visa : tous ne le font pas." },
+      { jours: 7, titre: 'Prévoir des dollars en espèces et une photo', detail: "Billets en bon état exigés au poste-frontière." },
+    ],
     verifieLe: '2026-08',
     volDepuisParis: '≈ 15 h avec une escale (Bangkok, Hanoï ou Singapour)',
     accent: 'teal',
@@ -274,6 +302,10 @@ export const countries: Country[] = [
     sourcesVisa: [
       { label: 'E-visa officiel du Cambodge', url: 'https://www.evisa.gov.kh/' },
       SOURCE_FD,
+    ],
+    demarches: [
+      { jours: 28, titre: "Déposer l'e-visa cambodgien", detail: "≈ 36 USD sur evisa.gov.kh uniquement — les sites clones facturent 80 à 100 USD." },
+      { jours: 2, titre: "Remplir l'application « Cambodia e-arrival »", detail: "Obligatoire pour toute arrivée par avion depuis le 1er septembre 2024." },
     ],
     verifieLe: '2026-08',
     volDepuisParis: '≈ 14 h avec une escale',
@@ -317,6 +349,10 @@ export const countries: Country[] = [
       { label: 'Portail officiel K-ETA', url: 'https://www.k-eta.go.kr/' },
       SOURCE_FD,
     ],
+    demarches: [
+      { jours: 7, titre: 'Vérifier le statut du K-ETA', detail: "L'exemption court jusqu'au 31 décembre 2026. Pour un départ en 2027, le K-ETA pourrait redevenir obligatoire." },
+      { jours: 3, titre: "Préparer la carte d'arrivée électronique", detail: "À compléter avant l'entrée si vous n'avez pas demandé de K-ETA." },
+    ],
     verifieLe: '2026-08',
     volDepuisParis: '≈ 11 h à 13 h en direct vers Séoul-Incheon',
     accent: 'ink',
@@ -357,6 +393,11 @@ export const countries: Country[] = [
     sourcesVisa: [
       { label: "Direction générale de l'immigration indonésienne", url: 'https://evisa.imigrasi.go.id/' },
       SOURCE_FD,
+    ],
+    demarches: [
+      { jours: 14, titre: "Demander l'e-VOA", detail: "≈ 500 000 IDR sur evisa.imigrasi.go.id — évite une vraie file d'attente à Denpasar." },
+      { jours: 3, titre: 'Remplir le formulaire douanier « All Indonesia »', detail: "Dans les 72 h précédant l'arrivée. Prévoyez aussi 150 000 IDR de taxe touristique à Bali." },
+      { jours: 30, titre: "Vérifier l'état du passeport", detail: "Un passeport abîmé entraîne un refus d'entrée et une reconduite — le contrôle est strict." },
     ],
     verifieLe: '2026-08',
     volDepuisParis: '≈ 16 h à 18 h avec une escale',
@@ -400,6 +441,10 @@ export const countries: Country[] = [
       { label: 'Bureau of Immigration', url: 'https://immigration.gov.ph/' },
       { label: 'eTravel Philippines', url: 'https://etravel.gov.ph/' },
       SOURCE_FD,
+    ],
+    demarches: [
+      { jours: 3, titre: 'Remplir la carte eTravel', detail: "Obligatoire : le QR code généré est réclamé par la compagnie et à l'arrivée." },
+      { jours: 21, titre: 'Réserver un billet de sortie du territoire', detail: "Exigé à l'embarquement. Un aller simple sans billet de continuation vaut un refus au départ de Paris." },
     ],
     verifieLe: '2026-08',
     volDepuisParis: '≈ 16 h à 18 h avec une escale',

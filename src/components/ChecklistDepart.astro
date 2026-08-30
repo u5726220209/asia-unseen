@@ -1,0 +1,325 @@
+---
+import { countries } from '@/data/countries';
+
+/**
+ * Checklist de départ personnalisée.
+ *
+ * Le calendrier à rebours est le format signature du site — il est répété en
+ * prose dans cinq guides. Ici il devient actionnable : le lecteur donne sa date
+ * de départ et ses pays, et obtient des échéances datées, cochables, avec les
+ * démarches propres à chaque destination issues des audits de fraîcheur.
+ *
+ * Entièrement côté client, sans dépendance. L'état est conservé en local :
+ * préparer un voyage prend des semaines, la liste doit survivre à la fermeture
+ * de l'onglet.
+ */
+
+const data = countries.map((c) => ({
+  slug: c.slug,
+  nom: c.nom,
+  demarches: c.demarches,
+}));
+
+/** Étapes valables quelle que soit la destination. */
+const GENERIQUES = [
+  { jours: 56, titre: 'Vérifier la validité du passeport', detail: "Six mois après la date de retour, deux pages vierges. Un renouvellement prend trois à six semaines, davantage au printemps.", lien: '/visas-asie' },
+  { jours: 56, titre: 'Prendre rendez-vous pour les vaccins', detail: "Les centres de vaccinations internationales affichent souvent trois à quatre semaines d'attente. C'est cette file, plus que le vaccin, qui fait rater le calendrier.", lien: '/blog/sante-vaccins-voyage-asie' },
+  { jours: 42, titre: 'Consultation santé', detail: "Apportez votre carnet de vaccination et votre itinéraire détaillé : les recommandations diffèrent entre trois jours à Bangkok et trois semaines en province.", lien: '/blog/sante-vaccins-voyage-asie' },
+  { jours: 28, titre: "Souscrire l'assurance voyage", detail: "Visez 200 000 € de plafond médical minimum, un rapatriement aux frais réels, et l'avance de frais. Vérifiez la clause deux-roues si vous comptez rouler.", lien: '/assurances-voyage' },
+  { jours: 21, titre: 'Réserver les deux ou trois premières nuits', detail: "La seule réservation réellement obligatoire. Arriver après quatorze heures d'avion sans chambre, c'est payer trop cher un endroit médiocre.", lien: '/hotels-asie' },
+  { jours: 14, titre: 'Commander la eSIM, sans l’activer', detail: "Il faut Internet pour installer une eSIM : achetez et installez avant de partir, activez à l'arrivée.", lien: '/esim-asie' },
+  { jours: 14, titre: 'Prévenir la banque et vérifier les cartes', detail: "Deux cartes de deux banques différentes, rangées à deux endroits. Un retrait à l'étranger sur une carte jamais sortie déclenche souvent un blocage.", lien: '/banques-asie' },
+  { jours: 7, titre: 'Revérifier les formalités instables', detail: "Les règles de visa en Asie changent plusieurs fois par an. Le journal des corrections liste ce qui a bougé récemment.", lien: '/mises-a-jour' },
+  { jours: 2, titre: 'Photographier passeport, visas et assurance', detail: "Envoyez-vous le tout par email. Le jour où votre sac disparaît, c'est ce qui fait la différence entre une contrariété et une catastrophe.", lien: null },
+  { jours: 1, titre: 'Télécharger les cartes hors ligne et le traducteur', detail: "Zones hors ligne de toutes vos étapes, et le pack de langue du traducteur. Divise par deux ou trois la consommation de données.", lien: '/blog/applications-voyage-asie' },
+  { jours: 1, titre: "Couper l'itinérance données de la ligne française", detail: "C'est ainsi qu'on rentre avec 300 € de hors-forfait.", lien: '/esim-asie' },
+];
+
+/** Étapes ajoutées si le voyageur compte conduire un deux-roues. */
+const DEUX_ROUES = [
+  { jours: 90, titre: 'Passer le permis A1 si vous ne l’avez pas', detail: "La formation 125 française n'est pas reconnue à l'étranger et n'apparaît pas sur le permis international. Sans permis A ou A1, vous roulez sans aucune couverture.", lien: '/blog/scooter-asie-permis-assurance' },
+  { jours: 56, titre: 'Demander le permis international', detail: "Gratuit, mais plusieurs semaines de délai. Il doit mentionner la catégorie A ou A1 — il ne fait que traduire votre permis national.", lien: '/blog/scooter-asie-permis-assurance' },
+];
+---
+
+<div class="au-checklist my-10 overflow-hidden rounded-brand border border-line bg-white">
+  <div class="border-b border-line bg-cream-warm px-6 py-5">
+    <p class="eyebrow">Outil</p>
+    <h3 class="mt-1.5 font-display text-xl font-bold text-ink">Votre calendrier de départ, daté</h3>
+    <p class="mt-1.5 text-[0.88rem] text-warm">
+      Certaines démarches ont un délai incompressible. Voici les vôtres, à la bonne date.
+    </p>
+  </div>
+
+  <div class="grid gap-6 px-6 py-7 sm:grid-cols-2">
+    <div>
+      <label for="cl-date" class="mb-2 block font-display text-[0.8rem] font-semibold uppercase tracking-wider text-ink">Date de départ</label>
+      <input id="cl-date" type="date" class="w-full rounded-brand border border-line bg-cream px-4 py-3 font-medium text-ink focus:border-teal focus:outline-none" />
+    </div>
+
+    <div class="flex items-end">
+      <label class="flex cursor-pointer items-center gap-3 pb-3 text-[0.92rem] text-ink-soft">
+        <input id="cl-moto" type="checkbox" class="h-4 w-4 accent-teal" />
+        Je compte conduire un deux-roues
+      </label>
+    </div>
+
+    <div class="sm:col-span-2">
+      <p class="mb-2 font-display text-[0.8rem] font-semibold uppercase tracking-wider text-ink">Pays traversés</p>
+      <div id="cl-pays" class="flex flex-wrap gap-2">
+        {countries.map((c) => (
+          <button
+            type="button" data-slug={c.slug} aria-pressed="false"
+            class="cl-pays rounded-full border border-line bg-white px-4 py-1.5 font-display text-[0.85rem] font-medium text-warm transition-colors hover:border-teal hover:text-teal aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:text-cream"
+          >{c.nom}</button>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <div id="cl-sortie" class="border-t border-line px-6 py-7">
+    <p class="py-6 text-center text-[0.92rem] text-warm-light">
+      Choisissez une date et au moins un pays.
+    </p>
+  </div>
+
+  <div id="cl-pied" hidden class="flex flex-wrap items-center justify-between gap-4 border-t border-line bg-cream-warm px-6 py-5">
+    <p class="text-[0.85rem] text-warm">
+      <span id="cl-faits" class="font-display font-semibold text-ink">0</span> sur
+      <span id="cl-total" class="font-display font-semibold text-ink">0</span> démarches effectuées.
+      Votre progression est conservée sur cet appareil.
+    </p>
+    <div class="flex flex-wrap gap-2">
+      <button type="button" id="cl-ics" class="btn-outline !px-5 !py-2.5 !text-[0.85rem]">Ajouter à mon agenda</button>
+      <button type="button" id="cl-reset" class="btn-ghost !px-3 !py-2.5 !text-[0.82rem]">Tout décocher</button>
+    </div>
+  </div>
+</div>
+
+<script type="application/json" id="cl-data" set:html={JSON.stringify({ pays: data, generiques: GENERIQUES, moto: DEUX_ROUES })}></script>
+
+<script>
+  type Etape = { jours: number; titre: string; detail: string; lien?: string | null; pays?: string };
+  type Pays = { slug: string; nom: string; demarches: { jours: number; titre: string; detail: string }[] };
+
+  const racine = document.querySelector('.au-checklist');
+  const brut = document.getElementById('cl-data')?.textContent;
+
+  if (racine && brut) {
+    const { pays, generiques, moto } = JSON.parse(brut) as {
+      pays: Pays[]; generiques: Etape[]; moto: Etape[];
+    };
+
+    const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+    const dateEl = $<HTMLInputElement>('cl-date');
+    const motoEl = $<HTMLInputElement>('cl-moto');
+    const sortie = $('cl-sortie');
+    const pied = $('cl-pied');
+    const boutons = Array.from(document.querySelectorAll<HTMLButtonElement>('.cl-pays'));
+
+    const CLE = 'au_checklist';
+    let coches = new Set<string>();
+
+    function lireEtat() {
+      try {
+        const v = JSON.parse(localStorage.getItem(CLE) || '{}');
+        if (v.date) dateEl.value = v.date;
+        if (v.moto) motoEl.checked = true;
+        (v.pays || []).forEach((s: string) => {
+          const b = boutons.find((x) => x.dataset.slug === s);
+          if (b) b.setAttribute('aria-pressed', 'true');
+        });
+        coches = new Set(v.coches || []);
+      } catch { /* mode privé : la liste fonctionne, sans mémoire */ }
+    }
+
+    function ecrireEtat() {
+      try {
+        localStorage.setItem(CLE, JSON.stringify({
+          date: dateEl.value,
+          moto: motoEl.checked,
+          pays: selection(),
+          coches: [...coches],
+        }));
+      } catch { /* ignoré */ }
+    }
+
+    const selection = () =>
+      boutons.filter((b) => b.getAttribute('aria-pressed') === 'true').map((b) => b.dataset.slug!);
+
+    /** Construit la liste datée, triée du plus lointain au plus proche. */
+    function etapes(): (Etape & { date: Date; cle: string })[] {
+      const depart = new Date(dateEl.value + 'T00:00:00');
+      const slugs = selection();
+
+      const liste: Etape[] = [
+        ...generiques,
+        ...(motoEl.checked ? moto : []),
+        ...slugs.flatMap((s) => {
+          const p = pays.find((x) => x.slug === s)!;
+          return p.demarches.map((d) => ({ ...d, pays: p.nom, lien: `/${p.slug}` }));
+        }),
+      ];
+
+      return liste
+        .map((e) => {
+          const d = new Date(depart);
+          d.setDate(d.getDate() - e.jours);
+          return { ...e, date: d, cle: `${e.jours}|${e.titre}` };
+        })
+        .sort((a, b) => b.jours - a.jours || a.titre.localeCompare(b.titre));
+    }
+
+    const fmt = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+
+    function rendre() {
+      const slugs = selection();
+      if (!dateEl.value || slugs.length === 0) {
+        sortie.innerHTML =
+          '<p class="py-6 text-center text-[0.92rem] text-warm-light">Choisissez une date et au moins un pays.</p>';
+        pied.hidden = true;
+        return;
+      }
+
+      const liste = etapes();
+      const aujourdhui = new Date();
+      aujourdhui.setHours(0, 0, 0, 0);
+
+      sortie.innerHTML = '';
+      const ol = document.createElement('ol');
+      ol.className = 'space-y-2';
+
+      for (const e of liste) {
+        const passe = e.date < aujourdhui;
+        const fait = coches.has(e.cle);
+
+        const li = document.createElement('li');
+        li.className =
+          'flex gap-4 rounded-brand border px-4 py-3.5 transition-colors ' +
+          (fait ? 'border-line bg-cream-warm opacity-60'
+                : passe ? 'border-amber-700 bg-amber-50'
+                : 'border-line bg-white');
+
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+        box.checked = fait;
+        box.className = 'mt-1 h-4 w-4 shrink-0 accent-teal';
+        box.setAttribute('aria-label', e.titre);
+        box.addEventListener('change', () => {
+          box.checked ? coches.add(e.cle) : coches.delete(e.cle);
+          ecrireEtat();
+          rendre();
+        });
+
+        const corps = document.createElement('div');
+        corps.className = 'min-w-0 flex-1';
+
+        const entete = document.createElement('p');
+        entete.className = 'flex flex-wrap items-baseline gap-x-3 gap-y-1';
+
+        const quand = document.createElement('span');
+        quand.className =
+          'font-display text-[0.7rem] font-semibold uppercase tracking-wider ' +
+          (passe && !fait ? 'text-amber-700' : 'text-teal');
+        quand.textContent =
+          (e.jours >= 7 ? `J−${e.jours} · ` : e.jours === 0 ? 'Le jour même · ' : `J−${e.jours} · `) +
+          fmt.format(e.date) +
+          (passe && !fait ? ' — échéance passée' : '');
+
+        if (e.pays) {
+          const tag = document.createElement('span');
+          tag.className = 'rounded-full border border-line px-2 py-0.5 font-display text-[0.65rem] font-medium uppercase tracking-wider text-warm';
+          tag.textContent = e.pays;
+          entete.append(quand, tag);
+        } else {
+          entete.append(quand);
+        }
+
+        const titre = document.createElement('p');
+        titre.className = 'mt-1 font-display text-[0.98rem] font-semibold text-ink' + (fait ? ' line-through' : '');
+        titre.textContent = e.titre;
+
+        const detail = document.createElement('p');
+        detail.className = 'mt-1 text-[0.85rem] leading-relaxed text-warm';
+        detail.textContent = e.detail;
+
+        corps.append(entete, titre, detail);
+
+        if (e.lien) {
+          const a = document.createElement('a');
+          a.href = e.lien;
+          a.className = 'mt-2 inline-block text-[0.8rem] font-medium text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber';
+          a.textContent = 'Le guide correspondant';
+          corps.appendChild(a);
+        }
+
+        li.append(box, corps);
+        ol.appendChild(li);
+      }
+
+      sortie.appendChild(ol);
+      pied.hidden = false;
+      $('cl-total').textContent = String(liste.length);
+      $('cl-faits').textContent = String(liste.filter((e) => coches.has(e.cle)).length);
+    }
+
+    // Export .ics : une journée entière par démarche, à la date calculée.
+    function ics() {
+      const liste = etapes();
+      const pad = (n: number) => String(n).padStart(2, '0');
+      const jour = (d: Date) => `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}`;
+      const echap = (t: string) => t.replace(/([,;\\])/g, '\\$1').replace(/\n/g, '\\n');
+
+      const lignes = [
+        'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Asia Unseen//Checklist//FR', 'CALSCALE:GREGORIAN',
+      ];
+      for (const e of liste) {
+        const fin = new Date(e.date);
+        fin.setDate(fin.getDate() + 1);
+        lignes.push(
+          'BEGIN:VEVENT',
+          `UID:${jour(e.date)}-${Math.abs(hash(e.cle))}@asiaunseen.com`,
+          `DTSTAMP:${jour(new Date())}T090000Z`,
+          `DTSTART;VALUE=DATE:${jour(e.date)}`,
+          `DTEND;VALUE=DATE:${jour(fin)}`,
+          `SUMMARY:${echap((e.pays ? `[${e.pays}] ` : '') + e.titre)}`,
+          `DESCRIPTION:${echap(e.detail)}`,
+          'END:VEVENT',
+        );
+      }
+      lignes.push('END:VCALENDAR');
+
+      const blob = new Blob([lignes.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `checklist-depart-${dateEl.value}.ics`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function hash(s: string) {
+      let h = 0;
+      for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+      return h;
+    }
+
+    boutons.forEach((b) =>
+      b.addEventListener('click', () => {
+        b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+        ecrireEtat();
+        rendre();
+      }),
+    );
+    [dateEl, motoEl].forEach((el) =>
+      el.addEventListener('change', () => { ecrireEtat(); rendre(); }),
+    );
+    $('cl-ics').addEventListener('click', ics);
+    $('cl-reset').addEventListener('click', () => { coches.clear(); ecrireEtat(); rendre(); });
+
+    lireEtat();
+    rendre();
+  }
+</script>
