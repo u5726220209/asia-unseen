@@ -1,0 +1,158 @@
+---
+import { countries } from '@/data/countries';
+import { assureurs, releveLe, TRANCHES_AGE } from '@/data/assurances';
+
+/**
+ * Comparateur d'assurances voyage.
+ *
+ * Ce n'est pas un tableau de plus : c'est le seul moyen de rendre visible le
+ * fait que les deux assureurs ne classent pas l'Asie dans les mêmes zones. Un
+ * comparatif rédigé fige un exemple ; celui-ci recalcule pour la destination et
+ * la durée du lecteur, et montre que le moins cher change selon le pays.
+ *
+ * Les grilles vivent dans src/data/assurances.ts avec leur date de relevé.
+ */
+// L'article est repris de la fiche pays : « au Vietnam », « en Thaïlande »,
+// « aux Philippines ». Le déduire du nom donne des fautes visibles.
+const pays = countries.map((c) => ({ slug: c.slug, nom: c.nom, article: c.article }));
+
+const config = {
+  chapkaZone3: assureurs.chapka.zone3,
+  chapkaTranches: [8, 12, 16, 24, 32, 61, 90],
+  chapkaPrix: { z2: [32, 49, 64, 97, 130, 174, 234], z3: [38, 57, 75, 120, 157, 212, 282] },
+  chapkaPlafond: { z2: 500000, z3: 1000000 },
+  aviZoneA: assureurs.avi.zoneA,
+  aviPrix: {
+    A: { '0-18': 33.9, '19-35': 33.9, '36-60': 37.02, '61+': 50.2 },
+    B: { '0-18': 28.82, '19-35': 28.82, '36-60': 31.47, '61+': 42.68 },
+  },
+  aviPlafond: { A: 1250000, B: 500000 },
+  articles: Object.fromEntries(countries.map((c) => [c.slug, c.article])),
+  chapkaUrl: assureurs.chapka.url,
+  aviUrl: assureurs.avi.url,
+};
+
+const releveLabel = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+  .format(new Date(releveLe));
+---
+
+<div class="au-assur my-10 overflow-hidden rounded-brand border border-line bg-white" data-config={JSON.stringify(config)}>
+  <div class="border-b border-line bg-cream-warm px-6 py-5">
+    <p class="eyebrow">Outil</p>
+    <h3 class="mt-1.5 font-display text-xl font-bold text-ink">Quelle assurance pour votre voyage ?</h3>
+    <p class="mt-1.5 text-[0.88rem] text-warm">
+      Les deux assureurs ne classent pas l'Asie dans les mêmes zones. Le moins cher change donc
+      selon votre destination.
+    </p>
+  </div>
+
+  <div class="grid gap-6 px-6 py-7 sm:grid-cols-3">
+    <div>
+      <label for="as-pays" class="mb-2 block font-display text-[0.8rem] font-semibold uppercase tracking-wider text-ink">Destination</label>
+      <select id="as-pays" class="w-full rounded-brand border border-line bg-cream px-4 py-3 font-medium text-ink focus:border-teal focus:outline-none">
+        {pays.map((p) => <option value={p.slug}>{p.nom}</option>)}
+      </select>
+    </div>
+    <div>
+      <label for="as-jours" class="mb-2 block font-display text-[0.8rem] font-semibold uppercase tracking-wider text-ink">Durée (jours)</label>
+      <input id="as-jours" type="number" min="1" max="90" value="21" class="w-full rounded-brand border border-line bg-cream px-4 py-3 font-medium text-ink focus:border-teal focus:outline-none" />
+    </div>
+    <div>
+      <label for="as-age" class="mb-2 block font-display text-[0.8rem] font-semibold uppercase tracking-wider text-ink">Âge</label>
+      <select id="as-age" class="w-full rounded-brand border border-line bg-cream px-4 py-3 font-medium text-ink focus:border-teal focus:outline-none">
+        {TRANCHES_AGE.map((t) => <option value={t.cle} selected={t.cle === '19-35'}>{t.label}</option>)}
+      </select>
+    </div>
+  </div>
+
+  <div id="as-resultats" class="grid gap-px border-t border-line bg-line sm:grid-cols-2"></div>
+  <p id="as-verdict" class="border-t border-line bg-cream px-6 py-4 text-[0.92rem] leading-relaxed text-ink"></p>
+
+  <p class="border-t border-line px-6 py-4 text-[0.8rem] leading-relaxed text-warm-light">
+    Tarifs relevés le {releveLabel} sur les pages officielles des deux assureurs, pour la formule
+    de base sans option. Ils changent sans préavis : le devis fait foi, pas ce tableau. La
+    majoration de 10 % appliquée par Chapka au-delà de 65 ans n'est pas incluse.
+  </p>
+</div>
+
+<script is:inline>
+  (() => {
+    const racine = document.querySelector('.au-assur');
+    if (!racine) return;
+    const C = JSON.parse(racine.dataset.config);
+    const $ = (id) => racine.querySelector('#' + id);
+    const pays = $('as-pays'), jours = $('as-jours'), age = $('as-age');
+    const res = $('as-resultats'), verdict = $('as-verdict');
+
+    const eur = (n) => new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2 }).format(n);
+    const ent = (n) => new Intl.NumberFormat('fr-FR').format(n);
+
+    function chapka(p, j) {
+      if (j < 1 || j > 90) return null;
+      const z3 = C.chapkaZone3.includes(p);
+      const i = C.chapkaTranches.findIndex((t) => j <= t);
+      if (i === -1) return null;
+      return { prix: (z3 ? C.chapkaPrix.z3 : C.chapkaPrix.z2)[i], plafond: z3 ? C.chapkaPlafond.z3 : C.chapkaPlafond.z2, zone: z3 ? 'zone 3' : 'zone 2' };
+    }
+
+    function avi(p, j, a) {
+      const sem = Math.ceil(j / 7);
+      if (sem < 1 || sem > 8) return null;
+      const zA = C.aviZoneA.includes(p);
+      const tarif = (zA ? C.aviPrix.A : C.aviPrix.B)[a];
+      return { prix: Math.round(tarif * sem * 100) / 100, plafond: zA ? C.aviPlafond.A : C.aviPlafond.B, zone: zA ? 'zone A' : 'zone B', semaines: sem };
+    }
+
+    function carte(nom, url, d, j) {
+      if (!d) {
+        return `<div class="bg-white p-6">
+          <p class="font-display text-[1.05rem] font-bold text-ink">${nom}</p>
+          <p class="mt-3 text-[0.9rem] leading-relaxed text-warm">Ce contrat ne couvre pas une durée de ${j} jours. Il faut un contrat long séjour.</p>
+        </div>`;
+      }
+      const detail = d.semaines
+        ? `${d.semaines} semaine${d.semaines > 1 ? 's' : ''} facturée${d.semaines > 1 ? 's' : ''} — le tarif est à la semaine entière`
+        : `tranche de durée couvrant ${j} jours`;
+      return `<div class="bg-white p-6">
+        <p class="font-display text-[1.05rem] font-bold text-ink">${nom}</p>
+        <p class="mt-3 font-display text-[2rem] font-bold leading-none text-ink">${eur(d.prix)}</p>
+        <p class="mt-2 text-[0.85rem] text-warm-light">${detail}</p>
+        <dl class="mt-4 space-y-1.5 text-[0.88rem]">
+          <div class="flex justify-between gap-4 border-b border-line pb-1.5">
+            <dt class="text-warm">Plafond frais médicaux</dt><dd class="font-semibold text-ink">${ent(d.plafond)} €</dd>
+          </div>
+          <div class="flex justify-between gap-4">
+            <dt class="text-warm">Classement du pays</dt><dd class="font-semibold text-ink">${d.zone}</dd>
+          </div>
+        </dl>
+        <a href="${url}" target="_blank" rel="sponsored nofollow noopener" class="btn-ghost mt-5 !w-full !py-2.5 !text-[0.85rem]">Voir le contrat</a>
+      </div>`;
+    }
+
+    function rendre() {
+      const p = pays.value, j = Math.max(1, Math.min(90, parseInt(jours.value || '0', 10) || 0)), a = age.value;
+      const dc = chapka(p, j), da = avi(p, j, a);
+      const nomPays = pays.options[pays.selectedIndex].text;
+      const lieu = `${C.articles[p]} ${nomPays}`;
+
+      res.innerHTML = carte('Chapka', C.chapkaUrl, dc, j) + carte('AVI International', C.aviUrl, da, j);
+
+      if (dc && da) {
+        const ecart = Math.abs(dc.prix - da.prix);
+        const moinsCher = dc.prix < da.prix ? 'Chapka' : 'AVI';
+        const meilleurPlafond = dc.plafond > da.plafond ? 'Chapka' : da.plafond > dc.plafond ? 'AVI' : null;
+        verdict.innerHTML = meilleurPlafond && meilleurPlafond !== moinsCher
+          ? `Pour ${j} jours ${lieu}, <strong>${moinsCher} est moins cher de ${eur(ecart)}</strong>, mais <strong>${meilleurPlafond} offre un plafond plus élevé</strong>. Le choix se fait donc entre le prix et la couverture, pas entre deux contrats équivalents.`
+          : meilleurPlafond
+            ? `Pour ${j} jours, <strong>${moinsCher} est à la fois moins cher (${eur(ecart)} d'écart) et mieux couvert</strong>. Il n'y a pas d'arbitrage à faire.`
+            : `Pour ${j} jours, les deux plafonds sont identiques et <strong>${moinsCher} est moins cher de ${eur(ecart)}</strong>.`;
+      } else {
+        verdict.innerHTML = `Au-delà de deux mois, ces deux contrats courte durée ne conviennent plus : il faut un contrat long séjour, qui n'obéit pas aux mêmes règles.`;
+      }
+      try { window.gtag?.('event', 'tool_use', { outil: 'comparateur-assurances', pays: p, jours: j }); } catch {}
+    }
+
+    [pays, jours, age].forEach((el) => el.addEventListener('input', rendre));
+    rendre();
+  })();
+</script>

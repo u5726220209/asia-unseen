@@ -5,6 +5,7 @@ description: "Formalités d'entrée en Asie pour un passeport français : durée
 accroche: "Neuf pays, neuf procédures différentes, et une seule règle qui vaut partout : ne passez jamais par un intermédiaire pour une démarche que l'État concerné propose lui-même en ligne."
 pubDate: 2026-08-12
 updatedDate: 2026-08-30
+outil: visas
 ordre: 10
 pays: [vietnam, thailande, japon, chine, laos, cambodge, coree-du-sud, indonesie, philippines]
 sources:

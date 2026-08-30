@@ -22,7 +22,7 @@ const guides = defineCollection({
     /** Résumé d'une phrase, affiché dans les listes et les cartes. */
     accroche: z.string(),
     /** Outil interactif injecté après l'introduction, le cas échéant. */
-    outil: z.enum(['budget', 'saison', 'checklist']).optional(),
+    outil: z.enum(['budget', 'saison', 'checklist', 'assurance', 'visas']).optional(),
     /** Questions-réponses balisées en FAQPage pour les extraits enrichis. */
     faq: z.array(z.object({ q: z.string(), r: z.string() })).default([]),
     /** Sources officielles citées en bas de page (E-E-A-T). */

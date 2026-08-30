@@ -9,6 +9,8 @@ import VerifiedBadge from '@/components/VerifiedBadge.astro';
 import BudgetCalculator from '@/components/BudgetCalculator.astro';
 import SeasonFinder from '@/components/SeasonFinder.astro';
 import ChecklistDepart from '@/components/ChecklistDepart.astro';
+import ComparateurAssurances from '@/components/ComparateurAssurances.astro';
+import ComparateurVisas from '@/components/ComparateurVisas.astro';
 import Visuel from '@/components/Visuel.astro';
 import FAQ from '@/components/FAQ.astro';
 import AdSlot from '@/components/AdSlot.astro';
@@ -165,6 +167,8 @@ const paysLies = (g?.pays ?? []).map((s) => bySlug[s]).filter(Boolean);
           {g!.outil === 'budget' && <BudgetCalculator />}
           {g!.outil === 'saison' && <SeasonFinder />}
           {g!.outil === 'checklist' && <ChecklistDepart />}
+          {g!.outil === 'assurance' && <ComparateurAssurances />}
+          {g!.outil === 'visas' && <ComparateurVisas />}
 
           {Content && <Content />}
 

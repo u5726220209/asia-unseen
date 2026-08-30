@@ -5,6 +5,7 @@ description: "Comparatif des assurances voyage pour l'Asie : ce que couvre réel
 accroche: "Un rapatriement sanitaire depuis l'Asie coûte entre 20 000 et 80 000 €. C'est le seul chiffre qui compte dans cette décision — le reste n'est que du détail contractuel."
 pubDate: 2026-08-06
 updatedDate: 2026-08-28
+outil: assurance
 ordre: 40
 pays: [vietnam, thailande, japon, chine, laos, cambodge, coree-du-sud, indonesie, philippines]
 sources:
