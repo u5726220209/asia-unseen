@@ -114,6 +114,31 @@ Restent :
    été calculées puis converties en dollars, avec une perte de change à chaque
    versement.
 6. **Formulaire fiscal W-8BEN** — déclaration fiscale signée, donc à l'éditeur.
+   Chemin : Paramètres → Paramètres de paiement → Informations fiscales →
+   Modifier. CJ envoie d'abord un **code de vérification par e-mail** avant
+   d'ouvrir le formulaire.
+
+   Pourquoi ce formulaire existe : Commission Junction est une société
+   américaine. Sans déclaration, la loi américaine impose une retenue à la
+   source de **30 %** sur les sommes versées. Le W-8BEN sert à déclarer qu'on
+   n'est pas contribuable américain et à invoquer la convention fiscale
+   France–États-Unis, qui ramène cette retenue à zéro. Ne pas le remplir, ou le
+   remplir sans invoquer la convention, coûte donc littéralement 30 % des
+   commissions.
+
+   Quel formulaire : le **W-9** est réservé aux contribuables américains. Le
+   **W-8BEN** vaut pour une personne physique non américaine, le **W-8BEN-E**
+   pour une société. Une entreprise individuelle française n'a pas de
+   personnalité juridique distincte de son dirigeant — c'est en principe le
+   W-8BEN qui s'applique. À confirmer par le comptable : ce site ne donne pas
+   de conseil fiscal.
+
+   Le champ qui bloque le plus souvent : le **numéro d'identification fiscale
+   étranger**, c'est-à-dire le **numéro fiscal à 13 chiffres** qui figure en
+   haut de l'avis d'imposition français. Ce n'est ni le SIREN ni le SIRET.
+
+   La dernière case est une signature **sous peine de parjure**. Elle
+   n'appartient qu'à l'éditeur.
 7. **Informations de paiement** — coordonnées bancaires, à l'éditeur.
 
 Puis, seulement une fois le compte activé : chercher l'annonceur Booking.com
