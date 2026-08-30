@@ -85,6 +85,36 @@ décodage successif.
 Autrement dit, le jour où le lien CJ arrive, il n'y a qu'une variable à
 renseigner. Rien d'autre à écrire.
 
+### État de l'intégration CJ au 30 août 2026 — 3 étapes sur 8
+
+Faites :
+
+1. **Compte créé et e-mail validé** (par l'éditeur : mot de passe, reCAPTCHA,
+   et l'acceptation des trois contrats, qui sont des engagements personnels).
+2. **Profil de réseau** — description de 1 932 caractères en anglais : nature
+   du site, modèle économique, origine du trafic, méthodes de promotion,
+   standards éditoriaux, société, partenaires actuels. C'est ce texte que les
+   annonceurs lisent avant d'accepter une candidature.
+3. **Espace promotionnel** — « Asia Unseen - asiaunseen.com »,
+   **identifiant 101873231**, type Site Web, modèle principal Contenu/Blog/
+   Média, secondaire Comparaison de produits, statut actif et marqué principal.
+
+Un piège à connaître si l'on refait ce formulaire : cocher une case y déplie
+un bloc et décale toute la page, si bien qu'un second clic atterrit sur la
+mauvaise ligne. C'est ainsi que « Code de réduction/Offre » s'était coché — ce
+qui est faux, le site ne publie aucun coupon. Corrigé, mais à surveiller.
+
+Restent :
+
+4. **Informations utilisateur** — prénom, nom et titre saisis ; il manque le
+   **numéro de téléphone**, obligatoire, que je ne connais pas.
+5. **Détails de la société et formulaire fiscal W-8BEN** — déclaration fiscale
+   signée, donc à l'éditeur.
+6. **Informations de paiement** — coordonnées bancaires, à l'éditeur.
+
+Puis, seulement une fois le compte activé : chercher l'annonceur Booking.com
+et candidater. Sans cette dernière étape, le compte CJ ne sert à rien.
+
 ### Ce que CJ demandera ensuite
 
 Contrairement à Agoda et GetYourGuide, CJ est le **payeur** : il collecte donc
