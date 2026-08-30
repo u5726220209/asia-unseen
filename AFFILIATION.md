@@ -96,10 +96,23 @@ Deux choix de saisie à connaître, parce qu'ils sont discutables :
   légales. **Si Agoda attend le numéro fiscal personnel à 13 chiffres, il faut
   le remplacer** — je ne saisis pas ce genre de donnée.
 
-**Restent à faire, et par vous seul :** date de naissance, numéro de
-téléphone, la déclaration « le propriétaire est-il fonctionnaire ? », puis
-Sauvegarder — sans quoi la saisie est perdue. Ensuite : vérifier l'adresse
-e-mail, et renseigner l'onglet Informations bancaires.
+Profil enregistré et adresse e-mail vérifiée le 30 août 2026.
+
+**Vérification du domaine : demandée le 30 août 2026.** Agoda ne proposait
+aucune méthode automatique dans l'interface — seule la vérification manuelle
+était offerte, avec un délai annoncé jusqu'à une semaine. Le dossier décrit le
+site en anglais (limite stricte de 1 024 caractères), catégorie « Blog de
+voyage ». Envoi confirmé par la réponse du serveur : POST
+/ManualVerification/SubmitManualVerification, code 200. Une première tentative
+avait été faite avant que la limite de caractères ne soit connue ; Agoda peut
+donc voir deux demandes identiques, ce qui est sans conséquence.
+
+**Le `cid` n'existe pas encore.** Le générateur de liens affiche `cid=-1` et
+aucun site n'est sélectionnable tant que le domaine n'est pas vérifié. Il n'y
+a donc rien à câbler avant l'approbation.
+
+**Reste à faire par l'éditeur :** l'onglet Informations bancaires, une fois le
+compte approuvé.
 
 **Ce que vous me rapportez :** votre identifiant de campagne, le `cid`.
 
