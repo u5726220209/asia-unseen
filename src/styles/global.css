@@ -216,6 +216,31 @@
 .prose-au tbody td { @apply border-b border-line px-3 py-3 align-top text-ink-soft; }
 .prose-au tbody tr:hover { @apply bg-teal-50/50; }
 
+/* Échappatoire `not-prose`.
+   Tailwind ne fournit ce comportement qu'avec son plugin typography, que le
+   site n'utilise pas : sans ces règles, un bloc de composants inséré au milieu
+   d'un article hérite des puces, des marges et des soulignages de la prose. */
+.prose-au .not-prose,
+.prose-au .not-prose * {
+  margin-top: revert;
+}
+.prose-au .not-prose ul,
+.prose-au .not-prose ol {
+  list-style: none;
+  padding-left: 0;
+}
+.prose-au .not-prose ul > li,
+.prose-au .not-prose ol > li {
+  padding-left: 0;
+}
+.prose-au .not-prose ul > li::before,
+.prose-au .not-prose ol > li::marker {
+  content: none;
+}
+.prose-au .not-prose a {
+  text-decoration: none;
+}
+
 /* Le premier paragraphe d'un article respire davantage */
 .prose-au > p:first-child {
   @apply text-[1.2rem] leading-[1.6] text-warm;
