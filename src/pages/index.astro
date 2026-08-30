@@ -9,6 +9,7 @@ import AdSlot from '@/components/AdSlot.astro';
 import { countries } from '@/data/countries';
 import { guidesNav } from '@/data/nav';
 import { site } from '@/data/site';
+import { nbCorrections } from '@/data/corrections';
 
 const guides = (await getCollection('guides', ({ data }) => !data.draft)).sort(
   (a, b) => a.data.ordre - b.data.ordre,
@@ -201,14 +202,18 @@ const problemes = [
 
       <dl class="grid grid-cols-2 gap-px overflow-hidden rounded-brand bg-white/10 sm:grid-cols-2">
         {[
-          [`${nbPays}`, 'pays documentés en détail'],
-          [`${nbPages}`, 'guides, fiches et articles publiés'],
-          ['2016', 'installé en Asie du Sud-Est'],
-          ['0 €', 'de contenu sponsorisé déguisé'],
-        ].map(([chiffre, label]) => (
+          [`${nbPays}`, 'pays documentés en détail', null],
+          [`${nbPages}`, 'guides, fiches et articles publiés', null],
+          [`${nbCorrections}`, 'corrections publiées, avec leur source', '/mises-a-jour'],
+          ['0 €', 'de contenu sponsorisé déguisé', '/affiliation'],
+        ].map(([chiffre, label, href]) => (
           <div class="bg-ink p-8">
             <dt class="font-display text-[2.6rem] font-bold leading-none tracking-tight text-amber">{chiffre}</dt>
-            <dd class="mt-2 text-[0.85rem] leading-snug text-warm-light">{label}</dd>
+            <dd class="mt-2 text-[0.85rem] leading-snug text-warm-light">
+              {href ? (
+                <a href={href} class="underline decoration-white/20 underline-offset-4 transition-colors hover:text-cream hover:decoration-amber">{label}</a>
+              ) : label}
+            </dd>
           </div>
         ))}
       </dl>

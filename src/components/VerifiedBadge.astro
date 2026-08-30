@@ -1,31 +1,72 @@
 ---
+import { correctionsPourPage } from '@/data/corrections';
+import { site } from '@/data/site';
+
 /**
- * Bandeau de fraîcheur + sources. Sert deux objectifs à la fois :
- * la confiance du lecteur (E-E-A-T) et l'honnêteté sur des informations
- * — formalités, tarifs — qui bougent constamment.
+ * Bandeau de fraîcheur. Il porte trois choses à la fois :
+ *
+ *   · la date de dernière vérification, exprimée en durée écoulée — « il y a
+ *     3 semaines » se lit et se juge, « 2026-08 » demande un calcul ;
+ *   · un avertissement automatique passé six mois, parce qu'une fiche de
+ *     formalités non revérifiée depuis six mois n'est plus fiable, et que le
+ *     silence sur ce point serait malhonnête ;
+ *   · un bouton de signalement, qui transforme le lecteur en auditeur.
  */
 interface Props {
   date: string;                                  // format AAAA-MM
   sources?: { label: string; url: string }[];
+  /** Chemin de la page, pour rattacher les corrections publiées et le signalement. */
+  page?: string;
   class?: string;
 }
-const { date, sources = [], class: klass = '' } = Astro.props;
-const [y, m] = date.split('-');
-const label = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' })
-  .format(new Date(Number(y), Number(m) - 1, 1));
+const { date, sources = [], page, class: klass = '' } = Astro.props;
+
+const [y, m] = date.split('-').map(Number);
+const verifieLe = new Date(y, m - 1, 1);
+const label = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(verifieLe);
+
+// Astro construit le site à un instant donné : l'écart est figé à la compilation,
+// et se rafraîchit donc à chaque publication. C'est le comportement voulu — un
+// site qu'on ne republie jamais doit afficher qu'il vieillit.
+const moisEcoules = Math.max(
+  0,
+  (new Date().getFullYear() - y) * 12 + (new Date().getMonth() + 1 - m),
+);
+const perime = moisEcoules >= 6;
+
+const anciennete =
+  moisEcoules === 0 ? 'ce mois-ci'
+  : moisEcoules === 1 ? 'il y a un mois'
+  : `il y a ${moisEcoules} mois`;
+
+const liees = page ? correctionsPourPage(page) : [];
+
+const sujet = `Information périmée — ${page ?? site.domain}`;
+const corps = `Page concernée : ${site.url}${page ?? ''}\nDate de vérification affichée : ${label}\n\nCe qui me semble faux ou périmé :\n\n\nMa source (si vous en avez une) :\n\n`;
+const mailto = `mailto:${site.author.email}?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(corps)}`;
 ---
 
-<div class:list={['rounded-brand border border-line bg-white px-5 py-4', klass]}>
-  <p class="flex items-center gap-2 font-display text-[0.78rem] font-semibold uppercase tracking-[0.14em] text-teal">
-    <svg viewBox="0 0 16 16" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M2.5 8.5 6 12l7.5-8" />
-    </svg>
-    Informations vérifiées en {label}
+<div class:list={['rounded-brand border bg-white px-5 py-4', perime ? 'border-amber-700' : 'border-line', klass]}>
+  <p class:list={['flex flex-wrap items-center gap-x-2 gap-y-1 font-display text-[0.78rem] font-semibold uppercase tracking-[0.14em]', perime ? 'text-amber-700' : 'text-teal']}>
+    {perime ? (
+      <svg viewBox="0 0 16 16" class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+        <path d="M8 2.5 15 14H1z" stroke-linejoin="round" /><path d="M8 7v3M8 12v.1" />
+      </svg>
+    ) : (
+      <svg viewBox="0 0 16 16" class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M2.5 8.5 6 12l7.5-8" />
+      </svg>
+    )}
+    Vérifié en {label}
+    <span class="font-normal normal-case tracking-normal opacity-70">— {anciennete}</span>
   </p>
+
   <p class="mt-2 text-[0.85rem] leading-relaxed text-warm">
-    Les formalités et les tarifs changent sans préavis. Confirmez systématiquement auprès des
-    sources officielles avant de réserver — c'est la seule chose qui fasse foi.
+    {perime
+      ? "Cette page n'a pas été revérifiée depuis six mois. Les règles de visa en Asie changent plusieurs fois par an : considérez ces informations comme indicatives et confirmez-les à la source avant de réserver."
+      : "Les formalités et les tarifs changent sans préavis. Confirmez systématiquement auprès des sources officielles avant de réserver — c'est la seule chose qui fasse foi."}
   </p>
+
   {sources.length > 0 && (
     <ul class="mt-3 flex flex-wrap gap-x-5 gap-y-1.5">
       {sources.map((s) => (
@@ -37,4 +78,15 @@ const label = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' 
       ))}
     </ul>
   )}
+
+  <div class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-line pt-3.5 text-[0.8rem]">
+    {liees.length > 0 && (
+      <a href="/mises-a-jour" class="font-medium text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">
+        {liees.length === 1 ? '1 correction publiée' : `${liees.length} corrections publiées`} sur cette page
+      </a>
+    )}
+    <a href={mailto} class="text-warm underline decoration-warm-light/50 underline-offset-4 transition-colors hover:text-ink">
+      Signaler une information périmée
+    </a>
+  </div>
 </div>

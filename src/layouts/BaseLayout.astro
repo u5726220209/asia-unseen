@@ -114,9 +114,9 @@ const baseSchema = [
       Aller au contenu
     </a>
 
-    <Header />
-    <main id="contenu" class="flex-1"><slot /></main>
-    <Footer />
+    <div data-pagefind-ignore><Header /></div>
+    <main id="contenu" class="flex-1" data-pagefind-body><slot /></main>
+    <div data-pagefind-ignore><Footer /></div>
     {!noPopup && <ExitIntent />}
     <ConsentBanner />
 

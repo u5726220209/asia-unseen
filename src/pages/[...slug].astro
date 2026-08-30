@@ -165,7 +165,7 @@ const paysLies = (g?.pays ?? []).map((s) => bySlug[s]).filter(Boolean);
 
           <AdSlot placement="in-article" />
 
-          {g!.sources.length > 0 && <VerifiedBadge date={site.lastReview} sources={g!.sources} class="!my-10" />}
+          {g!.sources.length > 0 && <VerifiedBadge date={site.lastReview} sources={g!.sources} page={`/${guideEntry!.id}`} class="!my-10" />}
 
           <FAQ items={g!.faq} />
 

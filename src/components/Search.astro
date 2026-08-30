@@ -1,0 +1,187 @@
+---
+/**
+ * Recherche instantanée, propulsée par Pagefind.
+ *
+ * L'index est construit après la compilation, à partir du HTML produit
+ * (`pagefind --site dist`) : il n'y a donc aucun service tiers, aucune requête
+ * sortante, et l'index se met à jour tout seul à chaque publication.
+ *
+ * L'interface est écrite ici plutôt que reprise de celle fournie par Pagefind,
+ * pour rester dans le système de design du site.
+ */
+---
+
+<button
+  type="button"
+  id="au-search-open"
+  class="inline-flex h-10 items-center gap-2 rounded-brand border border-line bg-white px-3 text-warm transition-colors hover:border-teal hover:text-teal"
+  aria-label="Rechercher sur le site"
+  aria-keyshortcuts="Control+K Meta+K"
+>
+  <svg viewBox="0 0 20 20" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+    <circle cx="9" cy="9" r="6" /><path d="m13.5 13.5 4 4" />
+  </svg>
+  <span class="hidden font-display text-[0.82rem] font-medium xl:inline">Rechercher</span>
+  <kbd class="hidden rounded border border-line px-1.5 py-0.5 font-sans text-[0.65rem] text-warm-light xl:inline">⌘K</kbd>
+</button>
+
+<div
+  id="au-search"
+  hidden
+  class="fixed inset-0 z-[96] hidden items-start justify-center bg-ink/70 p-4 pt-[8vh] backdrop-blur-sm"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="au-search-title"
+>
+  <div class="flex max-h-[80vh] w-full max-w-2xl flex-col overflow-hidden rounded-brand bg-cream shadow-lift-hover">
+    <h2 id="au-search-title" class="sr-only">Rechercher sur Asia Unseen</h2>
+
+    <div class="flex items-center gap-3 border-b border-line px-5">
+      <svg viewBox="0 0 20 20" class="h-5 w-5 shrink-0 text-warm-light" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+        <circle cx="9" cy="9" r="6" /><path d="m13.5 13.5 4 4" />
+      </svg>
+      <input
+        id="au-search-input"
+        type="search"
+        autocomplete="off"
+        spellcheck="false"
+        placeholder="Visa Thaïlande, budget Japon, scooter…"
+        class="min-w-0 flex-1 bg-transparent py-4 font-display text-[1.05rem] text-ink placeholder:font-sans placeholder:text-warm-light focus:outline-none"
+        aria-controls="au-search-results"
+      />
+      <button type="button" id="au-search-close" class="shrink-0 rounded border border-line px-2 py-1 font-sans text-[0.68rem] text-warm-light transition-colors hover:text-ink" aria-label="Fermer la recherche">
+        Échap
+      </button>
+    </div>
+
+    <div id="au-search-results" class="min-h-0 flex-1 overflow-y-auto px-3 py-3" role="listbox" aria-label="Résultats">
+      <p class="px-3 py-6 text-center text-[0.9rem] text-warm-light">
+        Tapez au moins deux lettres.
+      </p>
+    </div>
+
+    <p class="border-t border-line px-5 py-3 text-[0.75rem] text-warm-light">
+      Recherche locale, sans service externe — l'index est embarqué dans le site.
+    </p>
+  </div>
+</div>
+
+<script>
+  const modal = document.getElementById('au-search');
+  const input = document.getElementById('au-search-input') as HTMLInputElement | null;
+  const out = document.getElementById('au-search-results');
+  const openBtn = document.getElementById('au-search-open');
+  const closeBtn = document.getElementById('au-search-close');
+
+  if (modal && input && out) {
+    let pagefind: any = null;
+    let chargement: Promise<any> | null = null;
+    let dernier = 0;
+
+    // L'index n'existe qu'après `pagefind --site dist`, donc pas en développement.
+    // On charge à la première ouverture plutôt qu'au chargement de page : la
+    // recherche ne doit rien coûter à ceux qui ne s'en servent pas.
+    function charger() {
+      if (chargement) return chargement;
+      // Le chemin passe par une variable : Rollup ne doit pas tenter de résoudre
+      // ce module à la compilation, il n'existe qu'après l'étape Pagefind.
+      const url = '/pagefind/pagefind.js';
+      chargement = import(/* @vite-ignore */ url)
+        .then(async (mod: any) => {
+          await mod.init();
+          pagefind = mod;
+          return mod;
+        })
+        .catch(() => null);
+      return chargement;
+    }
+
+    function message(texte: string) {
+      out!.innerHTML = '';
+      const p = document.createElement('p');
+      p.className = 'px-3 py-6 text-center text-[0.9rem] text-warm-light';
+      p.textContent = texte;
+      out!.appendChild(p);
+    }
+
+    function ouvrir() {
+      modal!.hidden = false;
+      modal!.classList.replace('hidden', 'flex');
+      document.body.style.overflow = 'hidden';
+      input!.focus();
+      input!.select();
+      charger();
+    }
+
+    function fermer() {
+      modal!.hidden = true;
+      modal!.classList.replace('flex', 'hidden');
+      document.body.style.overflow = '';
+      openBtn?.focus();
+    }
+
+    async function chercher(q: string) {
+      const jeton = ++dernier;
+      if (q.trim().length < 2) return message('Tapez au moins deux lettres.');
+
+      const mod = await charger();
+      if (jeton !== dernier) return;
+      if (!mod) return message("La recherche n'est disponible que sur le site publié.");
+
+      message('Recherche…');
+      const rep = await mod.search(q);
+      if (jeton !== dernier) return;
+
+      const donnees = await Promise.all(rep.results.slice(0, 8).map((r: any) => r.data()));
+      if (jeton !== dernier) return;
+      if (!donnees.length) return message(`Aucun résultat pour « ${q} ».`);
+
+      out!.innerHTML = '';
+      const ul = document.createElement('ul');
+      ul.className = 'space-y-1';
+
+      for (const d of donnees) {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = d.url.replace(/\.html$/, '').replace(/\/index$/, '') || '/';
+        a.className =
+          'block rounded-brand px-3 py-3 transition-colors hover:bg-teal-50 focus-visible:bg-teal-50';
+        a.setAttribute('role', 'option');
+
+        const t = document.createElement('span');
+        t.className = 'block font-display text-[0.95rem] font-semibold text-ink';
+        t.textContent = d.meta?.title ?? d.url;
+
+        // `excerpt` contient le fragment avec <mark> autour des termes trouvés :
+        // c'est une chaîne produite par Pagefind à partir du HTML du site, pas
+        // une saisie utilisateur.
+        const e = document.createElement('p');
+        e.className = 'mt-1 text-[0.85rem] leading-relaxed text-warm [&_mark]:bg-amber-100 [&_mark]:text-ink';
+        e.innerHTML = d.excerpt;
+
+        a.append(t, e);
+        li.appendChild(a);
+        ul.appendChild(li);
+      }
+      out!.appendChild(ul);
+    }
+
+    let minuteur: number | undefined;
+    input.addEventListener('input', () => {
+      clearTimeout(minuteur);
+      minuteur = window.setTimeout(() => chercher(input.value), 140);
+    });
+
+    openBtn?.addEventListener('click', ouvrir);
+    closeBtn?.addEventListener('click', fermer);
+    modal.addEventListener('click', (e) => { if (e.target === modal) fermer(); });
+
+    document.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        modal.hidden ? ouvrir() : fermer();
+      }
+      if (e.key === 'Escape' && !modal.hidden) fermer();
+    });
+  }
+</script>

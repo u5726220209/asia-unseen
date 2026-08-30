@@ -1,5 +1,6 @@
 ---
 import Logo from './Logo.astro';
+import Search from './Search.astro';
 import { paysNav, guidesNav, mainNav } from '@/data/nav';
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
@@ -67,6 +68,7 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
     </nav>
 
     <div class="flex items-center gap-2">
+      <Search />
       <a href="/newsletter" class="btn-primary hidden !px-5 !py-2.5 !text-[0.85rem] sm:inline-flex">
         Recevoir les itinéraires
       </a>
