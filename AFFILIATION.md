@@ -57,6 +57,28 @@ Commission annoncée : **4 % du montant de la réservation**.
 `dpbolvw.net` ou `tkqlhce.net`). Copiez-le tel quel, je m'occupe du reste — le
 code sait déjà envelopper une destination dans un lien de réseau.
 
+### Le formulaire d'ouverture, préparé le 30 août 2026
+
+Langue **Français**, Pays **FRANCE**, e-mail **u5726220209@gmail.com** : ces
+trois champs sont pré-remplis. Restent le mot de passe et un **reCAPTCHA**,
+que je ne résous pas — c'est une limite absolue, pas une difficulté technique.
+
+La page affiche « Ce site dépasse le quota reCAPTCHA Enterprise gratuit ». Si
+la case refuse de se valider, ce n'est pas votre navigateur : rechargez ou
+réessayez plus tard.
+
+### Ce que CJ demandera ensuite
+
+Contrairement à Agoda et GetYourGuide, CJ est le **payeur** : il collecte donc
+un dossier fiscal et bancaire complet. Prévoyez le SIRET, l'adresse
+enregistrée, et vos coordonnées bancaires. Ces deux dernières étapes sont les
+vôtres.
+
+Pour la description du site, réutilisez le texte déjà rédigé pour Agoda — il
+est en anglais, factuel, et dit ce que CJ vérifie : nature du trafic, absence
+de trafic payant, transparence des liens partenaires. Il est reproduit dans
+la section Agoda ci-dessus.
+
 ## 1 bis. Agoda — la route courte vers l'hébergement
 
 Vérifié le 30 août 2026 : Agoda gère son programme **en direct**, sans réseau
