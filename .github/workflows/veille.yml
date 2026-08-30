@@ -96,13 +96,18 @@ jobs:
               });
             }
 
-      - name: Mémoriser l'état des sources
+      # L'état n'est mémorisé que si une source a réellement bougé. Sans cette
+      # condition, la sentinelle réécrirait le fichier chaque matin, ce qui
+      # déclencherait un contrôle puis une mise en ligne quotidiens pour rien.
+      # Le marqueur [skip ci] empêche par ailleurs toute réaction en chaîne.
+      - name: Mémoriser le nouvel état des sources
+        if: steps.sentinelle.outputs.change == 'oui'
         run: |
           node scripts/veille.mjs --init > /dev/null 2>&1 || true
           if ! git diff --quiet src/data/veille-empreintes.json; then
             git config user.name  "Sentinelle"
             git config user.email "actions@users.noreply.github.com"
             git add src/data/veille-empreintes.json
-            git commit -m "Veille : nouvel état des sources officielles"
+            git commit -m "Veille : nouvel état des sources officielles [skip ci]"
             git push
           fi
