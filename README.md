@@ -40,10 +40,11 @@ exposent juridiquement ou commercialement si vous les sautez.
    l'éditeur, SIRET, directeur de publication, hébergeur. L'article 6 III de la LCEN
    les rend obligatoires.
 
-4. **Installer un bandeau de consentement.**
-   Dès que vous activez GA4 ou AdSense, un bandeau conforme (refus aussi simple que
-   l'acceptation, aucun dépôt avant choix) devient obligatoire. Voir « Consentement »
-   plus bas.
+4. **Le bandeau de consentement est déjà en place** — rien à installer.
+   Il s'active tout seul dès que `PUBLIC_GA4_ID` ou `PUBLIC_ADSENSE_CLIENT` est
+   renseigné, et reste invisible tant qu'aucun cookie n'est déposé. Vérifiez
+   simplement, après activation, qu'aucun script tiers ne se charge avant un clic —
+   la procédure de test est décrite dans « Consentement » plus bas.
 
 5. **Remplir `public/ads.txt`.**
    Décommentez la ligne et remplacez l'identifiant éditeur une fois AdSense approuvé.
@@ -165,10 +166,24 @@ silence. Même logique pour la newsletter.
 
 ### Consentement
 
-Le site ne charge aucun script tiers tant que `PUBLIC_GA4_ID` et
-`PUBLIC_ADSENSE_CLIENT` sont vides. Dès que vous les renseignez, ajoutez un bandeau
-conforme (Axeptio, Tarteaucitron, Cookiebot…) et conditionnez le chargement des scripts
-au consentement — le point d'insertion est le `<head>` de `src/layouts/BaseLayout.astro`.
+Le bandeau est **auto-hébergé**, dans `src/components/ConsentBanner.astro` — aucun
+prestataire tiers, aucun abonnement, aucune requête externe.
+
+Son comportement :
+
+- tant que `PUBLIC_GA4_ID` et `PUBLIC_ADSENSE_CLIENT` sont vides, **aucun bandeau
+  n'apparaît** : il n'y a rien à consentir, puisqu'aucun cookie n'est déposé ;
+- dès qu'un identifiant est renseigné, le bandeau s'affiche et **aucun script Google
+  n'est chargé avant un clic explicite** ;
+- refuser demande exactement le même effort qu'accepter : deux boutons de même taille,
+  au même niveau, un seul clic ;
+- le choix est conservé 6 mois et révocable par le lien « Gérer les cookies » du pied
+  de page.
+
+Pour le tester : renseignez des identifiants factices dans `.env`, relancez le serveur,
+puis dans la console du navigateur vérifiez qu'avant tout clic
+`[...document.scripts].map(s => s.src)` ne contient ni `googletagmanager` ni
+`googlesyndication`.
 
 ---
 
@@ -232,13 +247,21 @@ Sans cela, le sous-domaine dupliquerait l'intégralité du contenu et pénaliser
 
 ## Ce qui est déjà en place
 
-**SEO** — plan du site, canoniques, Open Graph et Twitter Cards, RSS, JSON-LD
-(`Organization`, `WebSite`, `Article`, `BlogPosting`, `FAQPage`, `BreadcrumbList`),
-maillage interne automatique entre pays, guides et articles, fils d'Ariane balisés.
+**SEO** — plan du site, canoniques, RSS, JSON-LD (`Organization`, `WebSite`,
+`Article`, `BlogPosting`, `FAQPage`, `BreadcrumbList`), maillage interne automatique
+entre pays, guides et articles, fils d'Ariane balisés.
 
-**Performance** — sortie statique, zéro framework côté client, polices auto-hébergées
-en variable, styles critiques intégrés, préchargement au survol, aucun script tiers
-tant que la monétisation n'est pas activée.
+**Images de partage** — une image Open Graph **par page**, générée à la compilation
+par `src/pages/og/[...slug].png.ts`. Le titre de l'article s'affiche donc dans les
+aperçus de partage, pas le nom du site. Rien à maintenir : une nouvelle page produit
+automatiquement son image.
+
+**Consentement** — bandeau RGPD auto-hébergé, sans prestataire tiers (voir plus haut).
+
+**Performance** — mesuré sur la préversion en ligne : **137 Ko et 16 requêtes** sur la
+page d'accueil, 0 script tiers, DOM prêt en moins d'une seconde. Sortie statique, zéro
+framework côté client, polices auto-hébergées en variable, styles critiques intégrés,
+préchargement au survol.
 
 **Accessibilité** — lien d'évitement, focus visibles, contrastes AA vérifiés (voir la
 charte), navigation au clavier sur les menus et la pop-up, `prefers-reduced-motion`
