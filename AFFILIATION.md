@@ -73,7 +73,10 @@ apparaît dans vos liens sous la forme `?z=XXXXX`).
 
 **État au 30 août 2026 :** candidature envoyée depuis u5726220209@gmail.com,
 réponse de 12Go : « Votre candidature a bien été reçue et sera examinée. »
-En attente de validation.
+Leur email de confirmation annonce un **examen sous 48 heures** ; en cas
+d'accord, un second email apporte les identifiants de connexion. Réponse
+attendue au plus tard le 1er septembre 2026. Répondre à affiliate@12go.asia
+si rien n'arrive.
 
 Une remarque sur leur formulaire, si vous devez y revenir : les messages
 d'erreur rouges sous « Adresse email » et « Site web » ne s'effacent pas quand
