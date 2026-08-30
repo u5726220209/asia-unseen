@@ -52,7 +52,7 @@ Ce piège est particulièrement agressif sur les distributeurs des aéroports as
 
 **Retirez peu de fois, des montants importants.** Chaque retrait a un coût fixe. Quatre retraits de 200 € coûtent bien moins que douze retraits de 65 €.
 
-**Connaissez les distributeurs à éviter.** En Thaïlande, la quasi-totalité des distributeurs prélèvent des frais fixes élevés par opération, indépendamment de votre banque. Au Vietnam et au Cambodge, certaines banques locales sont nettement moins chères que d'autres — l'information circule dans les guesthouses et vaut le détour de deux rues.
+**Connaissez les distributeurs à éviter.** En Thaïlande, la quasi-totalité des distributeurs prélèvent des frais fixes élevés par opération, indépendamment de votre banque — ce sont eux, et non la commission de change, qui pèsent le plus lourd, comme le détaille [le comparatif des cartes](/blog/carte-bancaire-asie-comparatif). Au Vietnam et au Cambodge, certaines banques locales sont nettement moins chères que d'autres — l'information circule dans les guesthouses et vaut le détour de deux rues.
 
 **Refusez le retrait à l'aéroport pour de gros montants.** Prenez de quoi rejoindre la ville, retirez le reste ensuite.
 

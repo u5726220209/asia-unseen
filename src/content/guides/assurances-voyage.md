@@ -69,6 +69,8 @@ Quand vous comparez des offres, ce sont les seuls critères qui changent quelque
 
 **Séjour de 2 à 8 semaines, cas standard.** Un contrat voyage classique avec un plafond médical élevé et l'avance de frais. C'est le cas le plus fréquent, et le meilleur rapport garanties/prix. Les assureurs spécialisés voyage comme [Chapka](https://www.chapkadirect.fr) ou [AVI International](https://www.avi-international.com) proposent des formules construites pour ce profil, avec un réseau de prise en charge en Asie.
 
+Ces deux assureurs ne classent pas l'Asie dans les mêmes zones tarifaires, et le moins cher des deux change donc selon le pays visité : les prix relevés destination par destination sont dans [le comparatif chiffré](/blog/assurance-voyage-asie-comparatif).
+
 **Séjour long, PVT, tour du monde.** Contrat dédié, souscrit avant le départ, avec attestation en anglais — plusieurs pays la demandent à l'entrée.
 
 **Vous conduirez un deux-roues.** Passez le permis A1 avant de partir si ce n'est pas fait, prenez le permis international, et choisissez un contrat qui couvre explicitement la conduite. C'est le seul moyen d'être réellement assuré.

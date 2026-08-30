@@ -22,7 +22,7 @@ La connexion en voyage est passée d'un problème à un non-problème en cinq an
 
 ## Les trois options, avec leurs vrais coûts
 
-**L'eSIM.** Vous achetez en ligne avant le départ, vous scannez un QR code, et vous atterrissez connecté. Comptez 8 à 15 € pour 5 à 10 Go sur un pays, 20 à 35 € pour une couverture régionale multi-pays.
+**L'eSIM.** Vous achetez en ligne avant le départ, vous scannez un QR code, et vous atterrissez connecté. Comptez 8 à 15 € pour 5 à 10 Go sur un pays, 20 à 35 € pour une couverture régionale multi-pays. Attention au choix du forfait plus qu'au choix de la marque : chez un même fournisseur, l'illimité coûte quatre fois le forfait 10 Go, comme le montre [le relevé de prix détaillé](/blog/esim-asie-comparatif-prix).
 
 **La SIM locale.** Achetée à l'aéroport ou en boutique opérateur. C'est deux à trois fois moins cher : au Vietnam ou en Thaïlande, 5 à 8 € vous achètent 15 à 30 Go pour un mois. Vous obtenez aussi un numéro local, ce qui compte plus qu'on ne le croit — Grab, Gojek et la plupart des services de livraison veulent un numéro du pays.
 
