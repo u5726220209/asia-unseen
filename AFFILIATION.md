@@ -57,6 +57,29 @@ Commission annoncée : **4 % du montant de la réservation**.
 `dpbolvw.net` ou `tkqlhce.net`). Copiez-le tel quel, je m'occupe du reste — le
 code sait déjà envelopper une destination dans un lien de réseau.
 
+## 1 bis. Agoda — la route courte vers l'hébergement
+
+Vérifié le 30 août 2026 : Agoda gère son programme **en direct**, sans réseau
+intermédiaire. https://partners.agoda.com — bouton « Sign up », type de
+partenaire **Affiliate** (et non « Agoda Ambassador », qui vise les créateurs
+sur les réseaux sociaux), puis acceptation de l'Affiliate Agreement.
+
+Commission de 3 à 7 % selon le volume, paiement par virement, **seuil de
+versement à 200 USD**.
+
+Pourquoi ça mérite de passer avant Booking sur ce site précis : Agoda a été
+racheté par Booking Holdings mais garde un catalogue distinct, historiquement
+plus dense en Asie sur les petits établissements familiaux — exactement le
+type d'hébergement que recommandent nos guides. Et l'inscription est directe
+là où Booking impose désormais deux comptes, un formulaire fiscal et un
+CAPTCHA.
+
+Ce n'est pas une raison d'abandonner Booking : la marque rassure un lecteur
+français et convertit sur les grandes villes. C'est une raison de commencer
+par le plus court.
+
+**Ce que vous me rapportez :** votre identifiant de campagne, le `cid`.
+
 ## 2. 12Go Asia — inscription directe, la plus simple
 
 https://agent.12go.asia — bouton « Rejoignez-nous ».
