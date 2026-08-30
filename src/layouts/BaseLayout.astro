@@ -9,7 +9,7 @@ import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import ExitIntent from '@/components/ExitIntent.astro';
 import ConsentBanner from '@/components/ConsentBanner.astro';
-import { site } from '@/data/site';
+import { site, legal } from '@/data/site';
 
 interface Props {
   title: string;
@@ -59,6 +59,23 @@ const baseSchema = [
     slogan: site.tagline,
     logo: { '@type': 'ImageObject', url: `${site.url}/brand/logo-primary.svg` },
     sameAs: Object.values(site.social),
+    // L'identité légale est un signal d'entité fort : elle relie le site à une
+    // personne réelle et immatriculée — ce qui compte sur des sujets où la
+    // fiabilité est en jeu : formalités, argent, santé.
+    legalName: `${legal.editeur} (${legal.enseigne})`,
+    founder: { '@type': 'Person', name: legal.editeur },
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: '60 rue François 1er',
+      postalCode: '75008',
+      addressLocality: 'Paris',
+      addressCountry: 'FR',
+    },
+    identifier: [
+      { '@type': 'PropertyValue', propertyID: 'SIREN', value: legal.siren.replace(/ /g, '') },
+      { '@type': 'PropertyValue', propertyID: 'SIRET', value: legal.siret.replace(/ /g, '') },
+    ],
+    email: site.author.email,
   },
 ];
 ---

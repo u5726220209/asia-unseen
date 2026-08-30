@@ -31,6 +31,43 @@ export const site = {
   lastReview: '2026-08',
 } as const;
 
+/**
+ * Identité légale de l'éditeur.
+ *
+ * Source : répertoire SIRENE, via l'API publique recherche-entreprises.api.gouv.fr
+ * (source primaire — les agrégateurs type Pappers en dérivent).
+ * Relevé le 30 août 2026.
+ *
+ * Ces mentions sont obligatoires : article 6 III de la loi pour la confiance
+ * dans l'économie numérique. Un site publié sans elles expose son éditeur.
+ */
+export const legal = {
+  /** Nom de l'entrepreneur individuel — c'est lui, l'éditeur, pas l'enseigne. */
+  editeur: 'Fabrice Roy',
+  /** Nom commercial déclaré au répertoire SIRENE. */
+  enseigne: 'Syllodi Service',
+  statut: 'Entrepreneur individuel',
+  siren: '991 954 017',
+  siret: '991 954 017 00018',
+  /** Registre national des entreprises — immatriculation unique depuis 2023. */
+  immatriculation: 'Registre national des entreprises (RNE)',
+  ape: { code: '73.11Z', libelle: 'Activités des agences de publicité' },
+  creation: '3 septembre 2025',
+  adresse: '60 rue François 1er, 75008 Paris, France',
+  /**
+   * À confirmer par l'éditeur. Une entreprise individuelle non employeuse créée
+   * en 2025 relève très probablement de la franchise en base ; le numéro
+   * intracommunautaire (FR 33 991954017) ne s'affiche qu'une fois assujetti.
+   */
+  tva: 'TVA non applicable, article 293 B du CGI',
+  directeurPublication: 'Fabrice Roy',
+  hebergeur: {
+    nom: 'Hostinger International Ltd',
+    adresse: '61 Lordou Vironos Street, 6023 Larnaca, Chypre',
+    url: 'https://www.hostinger.fr',
+  },
+} as const;
+
 /* ── Analytics ─────────────────────────────────────────────── */
 export const analytics = {
   ga4: env.PUBLIC_GA4_ID ?? '',

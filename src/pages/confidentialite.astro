@@ -2,7 +2,7 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import Visuel from '@/components/Visuel.astro';
-import { site } from '@/data/site';
+import { site, legal } from '@/data/site';
 ---
 
 <BaseLayout title="Politique de confidentialité et cookies" description="Quelles données Asia Unseen collecte, pourquoi, combien de temps, et comment exercer vos droits." noindex noPopup>
@@ -16,22 +16,21 @@ import { site } from '@/data/site';
   <Visuel page="/confidentialite" seed="confidentialite" prioritaire accent="ink" />
 
   <div class="wrap-narrow prose-au py-14">
-    <div class="not-prose mb-10 rounded-brand border-l-[3px] border-amber bg-amber-50 px-6 py-5">
-      <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-amber-700">À adapter avant mise en ligne</p>
+    <div class="not-prose mb-10 rounded-brand border-l-[3px] border-teal bg-teal-50 px-6 py-5">
+      <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-teal-700">En résumé</p>
       <p class="mt-2 text-[0.92rem] leading-relaxed text-ink-soft">
-        Ce texte décrit la configuration prévue du site. Ajustez-le à ce que vous activez
-        réellement (analytics, régie publicitaire, outil d'emailing) et renseignez l'identité
-        du responsable de traitement. Dès qu'AdSense ou GA4 est activé, un bandeau de consentement
-        conforme est <strong>obligatoire</strong> — voir README, section « Consentement ».
+        Aucun cookie de mesure ou de publicité n'est déposé avant votre accord explicite, et
+        refuser demande exactement le même effort qu'accepter. Vos données ne sont ni revendues
+        ni partagées. Les sections ci-dessous détaillent chaque traitement, sa base légale et sa
+        durée de conservation.
       </p>
     </div>
 
-    <Visuel page="/confidentialite" position="bande" seed="confidentialite-2" class="!mb-10" />
-
     <h2>Responsable de traitement</h2>
     <p>
-      [Nom du responsable de traitement], joignable à
-      <a href={`mailto:${site.author.email}`}>{site.author.email}</a>.
+      <strong>{legal.editeur}</strong> ({legal.enseigne}), entrepreneur individuel immatriculé
+      sous le numéro SIREN {legal.siren}, dont le siège est situé {legal.adresse}.
+      Joignable à <a href={`mailto:${site.author.email}`}>{site.author.email}</a>.
     </p>
 
     <h2>Ce que nous collectons, et pourquoi</h2>
