@@ -19,7 +19,9 @@
     "veille:init": "node scripts/veille.mjs --init",
     "fraicheur": "node scripts/fraicheur.mjs",
     "audit": "node scripts/audit-seo.mjs",
-    "controle": "npm run build && npm run audit && npm run verifier && npm run fraicheur && npm run veille"
+    "controle": "npm run build && node scripts/audit-seo.mjs && node scripts/verifier-liens.mjs && node scripts/verifier-chiffres.mjs --hors-ligne && node scripts/fraicheur.mjs",
+    "chiffres": "node scripts/verifier-chiffres.mjs",
+    "gardien": "node scripts/gardien.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.11",

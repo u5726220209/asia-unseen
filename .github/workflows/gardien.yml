@@ -1,0 +1,104 @@
+name: Gardien du site en ligne
+
+# Toutes les six heures, quelqu'un regarde le site comme le ferait un visiteur.
+#
+# Le contrôle mécanique juge le dépôt : il dit si le code est sain. Il ne dit
+# rien du site réellement servi. Or les pannes les plus coûteuses arrivent
+# après le déploiement, et en silence : un `noindex` oublié, un `ads.txt` qui
+# saute, un certificat qui expire un dimanche. Aucune ne provoque d'erreur
+# visible ; on les découvre des semaines plus tard, à la courbe de trafic.
+#
+# Ce gardien est donc la seule chose du dépôt qui parle à la production.
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  veiller:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+
+      - name: Contrôler le site servi
+        id: garde
+        run: |
+          code=0
+          node scripts/gardien.mjs > rapport-gardien.txt 2>&1 || code=$?
+          cat rapport-gardien.txt
+          if [ $code -eq 0 ]; then echo "alerte=non" >> $GITHUB_OUTPUT; else echo "alerte=oui" >> $GITHUB_OUTPUT; fi
+
+      # Une deuxième passe cinq minutes plus tard : un hébergeur mutualisé a le
+      # droit d'avoir une seconde difficile. Crier pour un incident qui s'est
+      # déjà résorbé serait le meilleur moyen de faire ignorer les vraies alertes.
+      - name: Confirmer avant de crier
+        if: steps.garde.outputs.alerte == 'oui'
+        id: confirmation
+        run: |
+          sleep 300
+          code=0
+          node scripts/gardien.mjs > rapport-gardien.txt 2>&1 || code=$?
+          cat rapport-gardien.txt
+          if [ $code -eq 0 ]; then echo "confirme=non" >> $GITHUB_OUTPUT; else echo "confirme=oui" >> $GITHUB_OUTPUT; fi
+
+      - name: Ouvrir une alerte
+        if: steps.confirmation.outputs.confirme == 'oui'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const rapport = require('fs').readFileSync('rapport-gardien.txt', 'utf8');
+            const corps = [
+              '**Le site en ligne présente un défaut confirmé** — constaté deux fois à cinq minutes d\'intervalle.',
+              '',
+              '```', rapport.trim(), '```',
+              '',
+              '## Quoi faire',
+              '- **Page en erreur** : vérifier que la dernière mise en ligne s\'est bien terminée, puis relancer le workflow « Mise en ligne ».',
+              '- **`noindex` inattendu** : chercher `noindex` dans `src/layouts/` — une page ne doit jamais en porter sauf le 404.',
+              '- **`ads.txt` absent** : le fichier vit dans `public/`. S\'il ne suit plus, AdSense cessera de diffuser sous 24 h.',
+              '- **Certificat proche de l\'expiration** : Hostinger le renouvelle seul ; s\'il reste moins de sept jours, ouvrir un ticket.',
+            ].join('\n');
+
+            const { data: ouvertes } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: 'gardien',
+            });
+            if (ouvertes.length) {
+              await github.rest.issues.update({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: ouvertes[0].number, body: corps,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo,
+                title: 'Gardien — le site en ligne présente un défaut',
+                body: corps, labels: ['gardien'],
+              });
+            }
+
+      - name: Refermer si tout est rentré dans l'ordre
+        if: steps.garde.outputs.alerte == 'non' || steps.confirmation.outputs.confirme == 'non'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: ouvertes } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: 'gardien',
+            });
+            for (const i of ouvertes) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: i.number,
+                body: 'Le site répond de nouveau correctement à tous les contrôles.',
+              });
+              await github.rest.issues.update({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: i.number, state: 'closed',
+              });
+            }

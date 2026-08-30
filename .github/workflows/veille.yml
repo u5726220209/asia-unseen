@@ -33,14 +33,26 @@ jobs:
           node scripts/fraicheur.mjs > rapport-fraicheur.txt 2>&1 && echo "du=non" >> $GITHUB_OUTPUT || echo "du=oui" >> $GITHUB_OUTPUT
           cat rapport-fraicheur.txt
 
+      # Les tarifs cités noir sur blanc dans les comparatifs. La sentinelle des
+      # sources voit qu'une page a changé ; celle-ci dit lequel de nos montants
+      # est devenu faux. Sans dist/, elle ne juge que les sources.
+      - name: Chiffres publiés
+        id: chiffres
+        run: |
+          code=0
+          node scripts/verifier-chiffres.mjs > rapport-chiffres.txt 2>&1 || code=$?
+          cat rapport-chiffres.txt
+          if [ $code -eq 0 ]; then echo "faux=non" >> $GITHUB_OUTPUT; else echo "faux=oui" >> $GITHUB_OUTPUT; fi
+
       - name: Ouvrir une tâche si quelque chose a bougé
-        if: steps.sentinelle.outputs.change == 'oui' || steps.fraicheur.outputs.du == 'oui'
+        if: steps.sentinelle.outputs.change == 'oui' || steps.fraicheur.outputs.du == 'oui' || steps.chiffres.outputs.faux == 'oui'
         uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
             const veille = fs.readFileSync('rapport-veille.txt', 'utf8');
             const fraicheur = fs.readFileSync('rapport-fraicheur.txt', 'utf8');
+            const chiffres = fs.readFileSync('rapport-chiffres.txt', 'utf8');
             const titre = 'Veille — des sources ont bougé ou des fiches sont dues';
             const corps = [
               '_Rapport automatique. La machine signale, elle ne conclut pas._',
@@ -51,8 +63,11 @@ jobs:
               '## Échéances',
               '```', fraicheur.trim(), '```',
               '',
+              '## Montants publiés',
+              '```', chiffres.trim(), '```',
+              '',
               '## Ce qu\'il reste à faire, à la main',
-              '1. Ouvrir la source et lire la règle telle qu\'elle est écrite.',
+              '1. Ouvrir la source et lire la règle, ou le tarif, tel qu\'il est écrit.',
               '2. Corriger `src/data/countries.ts` si elle a changé.',
               '3. Ajouter l\'entrée dans `src/data/corrections.ts`, avec l\'avant, l\'après et la source.',
               '4. Remonter `verifieLe`.',
@@ -76,7 +91,7 @@ jobs:
             }
 
       - name: Refermer la tâche si tout est stable
-        if: steps.sentinelle.outputs.change == 'non' && steps.fraicheur.outputs.du == 'non'
+        if: steps.sentinelle.outputs.change == 'non' && steps.fraicheur.outputs.du == 'non' && steps.chiffres.outputs.faux == 'non'
         uses: actions/github-script@v7
         with:
           script: |

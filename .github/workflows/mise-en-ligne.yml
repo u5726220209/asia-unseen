@@ -61,11 +61,12 @@ jobs:
             **/.git*/**
             **/node_modules/**
 
-      - name: Vérifier que le site répond
+      # Le gardien, aussitôt après le transfert. Il ne se contente pas de trois
+      # codes 200 : il vérifie que rien de vital n'est tombé pendant l'envoi —
+      # ads.txt, robots.txt, le jeu de données, et l'absence de noindex. Un
+      # déploiement qui casse l'une de ces choses doit se voir tout de suite,
+      # pas six heures plus tard.
+      - name: Le gardien confirme le déploiement
         run: |
-          sleep 20
-          for u in / /vietnam /donnees/visas.json; do
-            code=$(curl -s -o /dev/null -w '%{http_code}' -A 'Mozilla/5.0' "https://asiaunseen.com$u")
-            echo "$u → $code"
-            [ "$code" = "200" ] || exit 1
-          done
+          sleep 30
+          node scripts/gardien.mjs
