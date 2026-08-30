@@ -18,9 +18,9 @@ Toutes les pages ne se valent pas. L'ordre suit celui de `PLAN-CROISSANCE.md` :
 
 ## Priorité 1 — transactionnel
 
-- [ ] **Comparatif assurances voyage Asie** — requête « meilleure assurance voyage asie ». Tableau de 5 contrats sur plafond médical, avance de frais, exclusions deux-roues. Lie `/assurances-voyage`.
-- [ ] **Comparatif eSIM Asie** — requête « meilleure esim asie ». Prix au Go, couverture réelle, routage hors Chine. Lie `/esim-asie`.
-- [ ] **Quelle carte bancaire pour l'Asie** — comparatif frais de change et retraits. Lie `/banques-asie`.
+- [x] **Comparatif assurances voyage Asie** — publié le 30/08/2026. Requête « meilleure assurance voyage asie ». Tableau de 5 contrats sur plafond médical, avance de frais, exclusions deux-roues. Lie `/assurances-voyage`.
+- [x] **Comparatif eSIM Asie** — publié le 30/08/2026. Requête « meilleure esim asie ». Prix au Go, couverture réelle, routage hors Chine. Lie `/esim-asie`.
+- [x] **Quelle carte bancaire pour l'Asie** — publié le 30/08/2026. Comparatif frais de change et retraits. Lie `/banques-asie`.
 
 ## Priorité 2 — longue traîne pays
 
