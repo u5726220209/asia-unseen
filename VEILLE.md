@@ -101,14 +101,56 @@ npm run controle
 
 Compile, audite, vérifie les liens, liste les échéances, interroge les sources.
 
-## Ce qu'il reste à brancher
+## Où ça tourne
 
-Les trois workflows sont écrits et prêts dans `.github/workflows/`. Ils
-attendent deux choses :
+Dépôt privé **github.com/u5726220209/asia-unseen**, poussé le 30 août 2026.
 
-1. **Le dépôt sur GitHub.** Aujourd'hui l'historique est local.
-2. **Les secrets du dépôt** : les identifiants FTP de l'hébergement, et les
-   variables `PUBLIC_*` qui vivent aujourd'hui dans `.env`.
+L'accès se fait par la clé SSH `~/.ssh/id_ed25519_syllodi_leados`, qui
+authentifie le compte `u5726220209`. Attention : la clé par défaut de cette
+machine, `~/.ssh/id_ed25519`, appartient à un **autre compte GitHub**
+(`lecongelothermique`) et n'a aucun accès à ce dépôt. Le choix de la clé est
+fixé dans la configuration locale du dépôt :
 
-Sans ça, tout fonctionne à la main avec les commandes ci-dessus. Avec ça, la
-sentinelle passe seule chaque matin et la mise en ligne se fait toute seule.
+```
+git config core.sshCommand "ssh -i ~/.ssh/id_ed25519_syllodi_leados -o IdentitiesOnly=yes"
+```
+
+### État au 30 août 2026
+
+| Automatisme | État |
+| --- | --- |
+| Contrôle mécanique | ✅ vert au premier essai |
+| Veille quotidienne | ✅ vert, note ouverte automatiquement |
+| Mise en ligne | ⛔ en attente des secrets FTP |
+
+## Les secrets à déposer
+
+Dépôt → Settings → Secrets and variables → Actions → New repository secret.
+
+Trois pour la mise en ligne, à récupérer dans hPanel → Fichiers → Comptes FTP :
+
+| Nom | Contenu |
+| --- | --- |
+| `FTP_HOTE` | l'adresse du serveur FTP |
+| `FTP_UTILISATEUR` | l'identifiant FTP |
+| `FTP_MOTDEPASSE` | le mot de passe FTP |
+
+Puis les variables de `.env`, une par une, sous le même nom : `PUBLIC_GA4_ID`,
+`PUBLIC_ADSENSE_CLIENT`, les trois `PUBLIC_ADSENSE_SLOT_*`,
+`PUBLIC_ADSENSE_LAYOUT_IN_FEED`, `PUBLIC_AFF_GETYOURGUIDE`, et les autres
+`PUBLIC_AFF_*` au fur et à mesure qu'ils arrivent.
+
+Ces valeurs ne doivent jamais entrer dans le dépôt : `.env` est exclu depuis le
+premier commit, et les secrets GitHub sont chiffrés, invisibles jusque dans les
+rapports d'exécution.
+
+## Ce que la première exécution a montré
+
+La sentinelle a signalé la page tarifaire d'AVI pour une valeur disparue :
+`1830`. Ce n'est pas un tarif, c'est un compteur de lecture dans un bloc
+éditorial. C'est exactement le faux positif annoncé plus haut — et il se rejette
+d'un coup d'œil, ce qui était le but du calibrage.
+
+Quatre sources sont restées injoignables depuis les machines de GitHub, comme
+depuis n'importe quel script. Elles sont signalées comme telles, jamais comme
+mortes.
