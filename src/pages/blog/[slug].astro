@@ -1,7 +1,7 @@
 ---
 import type { GetStaticPaths } from 'astro';
 import { render } from 'astro:content';
-import { articlesPublies } from '@/lib/articles';
+import { articlesPublies, suggestionsCroisees } from '@/lib/articles';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import Disclosure from '@/components/Disclosure.astro';
@@ -27,14 +27,9 @@ const readingTime = d.tempsLecture ?? remarkPluginFrontmatter?.minutes ?? null;
 const toc = headings.filter((h) => h.depth === 2);
 const paysLies = d.pays.map((s) => bySlug[s]).filter(Boolean);
 
-// Suggestions : d'abord les articles partageant un pays, sinon les plus récents.
-const suite = posts
-  .filter((p) => p.id !== post.id)
-  .sort((a, b) => {
-    const shared = (x: typeof a) => x.data.pays.filter((s) => d.pays.includes(s)).length;
-    return shared(b) - shared(a) || b.data.pubDate.valueOf() - a.data.pubDate.valueOf();
-  })
-  .slice(0, 3);
+// Suggestions : pertinentes d'abord, mais réparties — voir la note dans
+// src/lib/articles.ts sur les articles qui ne recevaient jamais de lien.
+const suite = (await suggestionsCroisees()).get(post.id) ?? [];
 
 const schema = [
   {

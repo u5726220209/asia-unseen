@@ -50,3 +50,56 @@ export async function articlesProgrammes(): Promise<CollectionEntry<'blog'>[]> {
     .filter((a) => !a.data.draft && jour(a.data.pubDate) > aujourdhui())
     .sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf());
 }
+
+/**
+ * Les suggestions de fin d'article, réparties équitablement.
+ *
+ * La règle évidente — « les trois articles qui partagent le plus de pays, puis
+ * les plus récents » — a un défaut qui ne se voit pas à la lecture d'une page :
+ * elle est déterministe, donc les mêmes trois articles sont proposés partout.
+ * Une poignée récolte tous les liens internes, et le reste n'en reçoit aucun.
+ * Ces derniers deviennent alors invisibles pour le lecteur qui navigue de
+ * proche en proche, et faibles aux yeux de Google, qui lit les liens internes
+ * comme un vote du site sur ses propres pages.
+ *
+ * On garde donc la pertinence comme premier critère, mais à pertinence égale
+ * on propose l'article le moins déjà proposé. Le calcul est global et fait une
+ * seule fois : chaque page reçoit ensuite sa liste toute prête.
+ */
+export async function suggestionsCroisees(): Promise<Map<string, CollectionEntry<'blog'>[]>> {
+  const posts = (await articlesPublies()).sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+  );
+
+  const dejaPropose = new Map(posts.map((p) => [p.id, 0]));
+  const resultat = new Map<string, CollectionEntry<'blog'>[]>();
+
+  for (const post of posts) {
+    const partages = (x: CollectionEntry<'blog'>) =>
+      x.data.pays.filter((s) => post.data.pays.includes(s)).length;
+
+    const choisis: CollectionEntry<'blog'>[] = [];
+    const restants = posts.filter((p) => p.id !== post.id);
+
+    // Trois passes : à chaque tour on reprend le meilleur candidat au vu des
+    // compteurs mis à jour, sinon les trois choix seraient faits d'un bloc et
+    // le rééquilibrage n'aurait pas lieu.
+    while (choisis.length < 3 && choisis.length < restants.length) {
+      const candidat = restants
+        .filter((p) => !choisis.includes(p))
+        .sort(
+          (a, b) =>
+            partages(b) - partages(a) ||
+            (dejaPropose.get(a.id) ?? 0) - (dejaPropose.get(b.id) ?? 0) ||
+            b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+        )[0];
+      if (!candidat) break;
+      choisis.push(candidat);
+      dejaPropose.set(candidat.id, (dejaPropose.get(candidat.id) ?? 0) + 1);
+    }
+
+    resultat.set(post.id, choisis);
+  }
+
+  return resultat;
+}

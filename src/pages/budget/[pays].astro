@@ -141,6 +141,39 @@ const faq = [
 
     <FAQ items={faq} title={`Budget ${c.nom} : les questions fréquentes`} />
 
+    <!--
+      Le classement complet, et pas seulement les deux extrêmes cités plus haut.
+      Quelqu'un qui lit « budget Vietnam » n'a presque jamais arrêté sa
+      destination : il compare. Lui donner les neuf chiffres côte à côte répond
+      à la question qu'il se pose vraiment, et relie chaque fiche budget aux
+      huit autres — elles ne recevaient jusqu'ici que deux liens du site.
+    -->
+    <section class="mt-14">
+      <h2 class="text-title">Les neuf pays, du moins cher au plus cher</h2>
+      <p class="mt-3 text-warm">
+        Budget routard par jour, hébergement, repas et transports locaux compris — vol exclu.
+      </p>
+      <ul class="mt-6 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+        {[...countries].sort((a, b) => a.budget.routard - b.budget.routard).map((x) => (
+          <li>
+            <a
+              href={`/budget/${x.slug}`}
+              class:list={[
+                'flex items-baseline justify-between gap-3 rounded-brand border px-4 py-3 transition-colors',
+                x.slug === c.slug
+                  ? 'border-teal bg-teal-50 font-semibold text-ink'
+                  : 'border-line hover:border-teal hover:text-teal',
+              ]}
+              aria-current={x.slug === c.slug ? 'page' : undefined}
+            >
+              <span class="font-display text-[0.95rem]">{x.nom}</span>
+              <span class="tabular-nums text-[0.95rem]">{x.budget.routard} €<span class="text-warm-light">/j</span></span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
     <div class="prose-au mt-12">
       <p>
         Le détail complet de la destination — formalités, saisons, itinéraires et erreurs à
