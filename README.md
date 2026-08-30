@@ -213,49 +213,57 @@ tableau de bord Pages.
 
 `vercel.json` est déjà configuré (framework, en-têtes, `cleanUrls`).
 
-### Préversion sur un sous-domaine temporaire
+### Le site est en production
 
-Le site est actuellement en ligne sur un sous-domaine Hostinger gratuit :
-
-**https://mistyrose-hamster-995694.hostingersite.com**
-
-Pour reconstruire et redéployer cette préversion :
+**https://asiaunseen.com** — Hostinger, plan `hostinger_business`.
 
 ```bash
-npm run build:preview https://mistyrose-hamster-995694.hostingersite.com
-cd dist && zip -rq ../dist_$(date +%Y%m%d_%H%M%S).zip . && cd ..
-# puis téléverser l'archive dans le gestionnaire de fichiers Hostinger
+npm run build          # production, indexable
+npm run package        # + contrôle des liens + archive prête à téléverser
+```
+
+Puis téléversez l'archive dans hPanel → Gestionnaire de fichiers → `asiaunseen.com/public_html`,
+ou demandez « déploie l'archive » dans Claude Code.
+
+Redirections en place, vérifiées :
+
+| Depuis | Vers |
+| --- | --- |
+| `http://asiaunseen.com/*` | `https://asiaunseen.com/*` (301) |
+| `https://www.asiaunseen.com/*` | `https://asiaunseen.com/*` (301) |
+| l'ancien sous-domaine de préversion | `https://asiaunseen.com/*` (301) |
+
+### Préversion sur un sous-domaine temporaire
+
+Toujours disponible pour tester avant publication, sur n'importe quel domaine :
+
+```bash
+npm run package -- https://mon-domaine-de-test.example.com
 ```
 
 `build:preview` diffère de `build` sur deux points, et les deux comptent :
 
-- les canoniques, le plan du site et le flux RSS pointent vers le domaine temporaire ;
+- les canoniques, le plan du site et le flux RSS pointent vers le domaine de test ;
 - **tout le site passe en `noindex, nofollow`** et `robots.txt` bloque tous les robots.
 
-Sans cela, le sous-domaine dupliquerait l'intégralité du contenu et pénaliserait
-`asiaunseen.com` au moment du lancement.
+Sans cela, un domaine de test dupliquerait l'intégralité du contenu.
 
 > Sur les domaines en `*.hostingersite.com`, Hostinger sert son propre `robots.txt`
-> à la place du vôtre (le fichier est bien déployé, mais il est masqué). Ce n'est pas
-> gênant : la balise `noindex` présente sur chaque page reste le signal déterminant,
-> et le `robots.txt` de la plateforme bloque déjà Googlebot. Sur un domaine
-> personnalisé, c'est `public/robots.txt` qui sera servi.
+> à la place du vôtre. Sur un domaine personnalisé — donc en production — c'est bien
+> `public/robots.txt` qui est servi. Vérifié le 30 août 2026.
 
-### Basculer sur le domaine définitif
+### Ce qu'il reste à faire après la mise en ligne
 
-1. Connecter `asiaunseen.com` à l'hébergement (ou à Cloudflare Pages / Vercel).
-2. Reconstruire avec `npm run build` — **sans** `build:preview`, pour retrouver les
-   canoniques de production et retirer le `noindex`.
-3. Vérifier que `/robots.txt` sert bien le fichier de `public/`, pas celui de la plateforme.
-4. Mettre en place une redirection 301 du sous-domaine temporaire vers le domaine définitif.
-
-### Après la mise en ligne
-
-1. Changer `site` dans `astro.config.mjs` et `site.url` dans `src/data/site.ts` si le
-   domaine diffère de `asiaunseen.com`.
-2. Déclarer le site dans la Search Console, soumettre `/sitemap-index.xml`.
-3. Vérifier `/robots.txt`, `/rss.xml` et l'aperçu de partage avec un validateur OG.
-4. Lancer un audit Lighthouse sur `dist/` servi par `npm run preview`.
+1. **Search Console.** Créez la propriété sur `https://asiaunseen.com`, choisissez la
+   vérification par balise HTML, collez le jeton dans `PUBLIC_GSC_TOKEN` du `.env`,
+   republiez — la vérification passe sans toucher au DNS. Soumettez ensuite
+   `/sitemap-index.xml`.
+2. **GA4.** Créez la propriété, collez l'identifiant dans `PUBLIC_GA4_ID`. Le bandeau
+   de consentement s'active alors tout seul.
+3. **Comptes affiliés et AdSense.** Le site est en ligne : les demandes qui exigeaient
+   un domaine actif peuvent partir.
+4. **Ligne de TVA.** `src/data/site.ts` retient la franchise en base (article 293 B).
+   À confirmer ou corriger.
 
 ---
 

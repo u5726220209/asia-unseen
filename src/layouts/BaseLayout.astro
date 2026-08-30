@@ -114,6 +114,16 @@ const baseSchema = [
     <meta name="twitter:image" content={ogImage} />
 
     <link rel="alternate" type="application/rss+xml" title={`${site.name} — derniers articles`} href="/rss.xml" />
+    <link rel="alternate" type="application/rss+xml" title={`${site.name} — corrections`} href="/mises-a-jour/rss.xml" />
+
+    {/*
+      Vérification de propriété Search Console. Renseignez PUBLIC_GSC_TOKEN dans
+      .env avec la valeur de la balise fournie par Google (la chaîne seule, pas
+      la balise entière), puis republiez : la vérification passe sans toucher au DNS.
+    */}
+    {import.meta.env.PUBLIC_GSC_TOKEN && (
+      <meta name="google-site-verification" content={import.meta.env.PUBLIC_GSC_TOKEN} />
+    )}
 
     {[...baseSchema, ...schema].map((s) => (
       <script type="application/ld+json" set:html={JSON.stringify(s)} />
