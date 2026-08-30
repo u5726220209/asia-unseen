@@ -39,5 +39,10 @@ jobs:
         run: npm run chiffres -- --hors-ligne
       - name: Liens affiliés
         run: npm run affilies -- --hors-ligne
+      # Le poids ne dérape jamais d'un coup : il monte d'un cran à chaque
+      # révision, et personne ne remarque le cran du jour. Le budget refuse
+      # au moment où l'on sait encore quel changement l'a causé.
+      - name: Budget de performance
+        run: npm run performance
       - name: Sources externes
         run: npm run sources || echo "Des sources n'ont pas répondu — souvent un blocage anti-robot, à vérifier à la main."
