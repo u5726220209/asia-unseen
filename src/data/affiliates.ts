@@ -23,12 +23,20 @@ type Partner = {
   /** Paramètre de tracking et sa valeur (issue du .env). */
   param?: string;
   id: string;
+  /**
+   * Gabarit de lien réseau, quand le partenaire ne se traque pas par un simple
+   * paramètre. Booking.com, par exemple, ne prend plus d'inscription directe :
+   * tout passe par CJ Affiliate, qui fournit un lien de redirection portant
+   * l'identifiant de l'éditeur, avec l'URL de destination encodée dedans.
+   * Le gabarit contient le marqueur {url} là où cette destination doit aller.
+   */
+  template?: string;
   /** Fourchette de commission observée — sert au tableau de bord interne. */
   commission: string;
 };
 
 export const partners: Record<PartnerKey, Partner> = {
-  booking:      { key: 'booking',      label: 'Booking.com',   category: 'hebergement',   base: 'https://www.booking.com/searchresults.html', param: 'aid', id: env.PUBLIC_AFF_BOOKING ?? '',      commission: '25–40 % de la commission Booking' },
+  booking:      { key: 'booking',      label: 'Booking.com',   category: 'hebergement',   base: 'https://www.booking.com/searchresults.html', param: 'aid', id: env.PUBLIC_AFF_BOOKING ?? '', template: env.PUBLIC_AFF_BOOKING_TEMPLATE ?? '', commission: '4 % du montant, via CJ Affiliate' },
   agoda:        { key: 'agoda',        label: 'Agoda',         category: 'hebergement',   base: 'https://www.agoda.com/search',               param: 'cid', id: env.PUBLIC_AFF_AGODA ?? '',        commission: '4–7 % du montant' },
   twelvego:     { key: 'twelvego',     label: '12Go Asia',     category: 'transport',     base: 'https://12go.asia',                          param: 'z',   id: env.PUBLIC_AFF_12GO ?? '',         commission: '5–10 %' },
   skyscanner:   { key: 'skyscanner',   label: 'Skyscanner',    category: 'transport',     base: 'https://www.skyscanner.fr',                                id: '',                                 commission: 'CPC / CPA variable' },
@@ -48,5 +56,10 @@ export function buildUrl(key: PartnerKey, extra: Record<string, string> = {}): s
   const url = new URL(p.base);
   if (p.param && p.id) url.searchParams.set(p.param, p.id);
   for (const [k, v] of Object.entries(extra)) url.searchParams.set(k, v);
+
+  // Un gabarit de réseau, s'il existe, enveloppe la destination : le visiteur
+  // passe par le réseau, qui compte le clic puis le renvoie vers la page voulue.
+  if (p.template) return p.template.replace('{url}', encodeURIComponent(url.toString()));
+
   return url.toString();
 }
