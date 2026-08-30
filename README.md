@@ -127,6 +127,19 @@ Ajoutez une entrée dans `src/data/countries.ts`. La page, la carte d'accueil, l
 calculateur de budget, le sélecteur de saison, la navigation et le plan du site se
 mettent à jour ensemble.
 
+### Le maillage se fait tout seul
+
+Le champ `pays` du frontmatter est le seul levier à actionner. Un article ou un guide
+qui porte `pays: [vietnam]` apparaît automatiquement :
+
+- dans la section « Tout ce qu'on a écrit sur le Vietnam » de `/vietnam` ;
+- dans le bloc « À lire aussi » des guides qui couvrent ce pays ;
+- dans les liens de bas d'article.
+
+Sans ce mécanisme, les articles restent orphelins : rien ne pointe vers eux depuis les
+pages qui reçoivent le trafic. Renseignez `pays` systématiquement — c'est la ligne de
+frontmatter qui rapporte le plus.
+
 ### Les liens d'affiliation
 
 **Écrivez simplement un lien Markdown vers le partenaire.**
