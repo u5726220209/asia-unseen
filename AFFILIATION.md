@@ -137,8 +137,29 @@ Restent :
    étranger**, c'est-à-dire le **numéro fiscal à 13 chiffres** qui figure en
    haut de l'avis d'imposition français. Ce n'est ni le SIREN ni le SIRET.
 
-   La dernière case est une signature **sous peine de parjure**. Elle
-   n'appartient qu'à l'éditeur.
+   **Rempli le 30/08/2026, ce qui pouvait l'être :** formulaire W-8BEN
+   sélectionné, nom du bénéficiaire effectif Fabrice Roy, pays de citoyenneté
+   France, adresse de résidence reprise du compte, et pays de convention
+   fiscale France.
+
+   **Trois champs restent, et aucun ne m'appartient :**
+
+   - Le **numéro d'identification fiscale étranger** — les 13 chiffres de
+     l'avis d'imposition.
+   - Les deux champs de la **Partie II** : l'article du traité invoqué, le taux
+     de retenue réclamé, et les conditions qui le justifient. C'est une
+     qualification fiscale, pas une saisie.
+   - La **signature électronique**, faite sous peine de parjure.
+
+   Un choix à trancher avec un comptable, parce qu'il change tout le reste du
+   formulaire : l'interrupteur « Je ne demande pas les avantages fiscaux
+   prévus par la convention. Ignorer la Partie II ». Activé, il fait
+   disparaître les deux champs de la Partie II et simplifie radicalement le
+   formulaire. Désactivé, il faut désigner l'article du traité France–
+   États-Unis et le taux réclamé. Les commissions d'affiliation versées à un
+   éditeur français sans présence aux États-Unis relèvent en général des
+   bénéfices des entreprises, mais cette qualification n'appartient pas à ce
+   dossier.
 7. **Informations de paiement** — coordonnées bancaires, à l'éditeur.
 
 Puis, seulement une fois le compte activé : chercher l'annonceur Booking.com
