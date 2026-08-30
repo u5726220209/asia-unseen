@@ -67,3 +67,8 @@ ErrorDocument 404 /404/index.html
   AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml \
     application/javascript application/json image/svg+xml
 </IfModule>
+
+# Un déploiement mal configuré a un jour recopié le site dans public_html/public_html.
+# Le double répondait, et Google pouvait l'indexer comme du contenu dupliqué.
+# La règle reste en place : elle ne coûte rien et referme la porte définitivement.
+RedirectMatch 404 ^/public_html(/|$)

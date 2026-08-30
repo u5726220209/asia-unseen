@@ -18,7 +18,7 @@
  * jamais casser la recherche au motif de gagner quelques kilo-octets.
  */
 
-import { existsSync, statSync, unlinkSync, readFileSync } from 'node:fs';
+import { existsSync, statSync, unlinkSync, readFileSync, writeFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 
 const MOTEUR = 'dist/pagefind/pagefind.js';
@@ -86,4 +86,28 @@ for (const f of lister('-path "dist/_astro/*" \\( -name "*.jpg" -o -name "*.jpeg
 
 if (retireesImages) {
   console.log(`Originaux non servis retirés : ${retireesImages} fichiers, ${Math.round(gagneImages / 1024)} Ko.`);
+}
+
+
+/* ── La signature de la version publiée ──────────────────────────── */
+
+/**
+ * Un fichier qui dit quelle version du dépôt est réellement en ligne.
+ *
+ * Sans lui, un déploiement peut réussir sans rien changer — ce qui est arrivé :
+ * le transfert partait dans un sous-dossier, le workflow affichait un succès,
+ * le gardien passait ses quatorze contrôles sur l'ancienne version, et le site
+ * est resté figé sans que rien ne le signale. Toutes les pages répondaient :
+ * c'est précisément ce qui rendait la panne invisible.
+ *
+ * Comparer cette signature à celle attendue transforme un succès mensonger en
+ * échec franc.
+ */
+try {
+  const sha = execFileSync('git', ['rev-parse', '--short', 'HEAD'], { encoding: 'utf8' }).trim();
+  const contenu = `${sha}\n${new Date().toISOString()}\n`;
+  writeFileSync('dist/version.txt', contenu);
+  console.log(`Version publiée : ${sha}`);
+} catch {
+  // Hors dépôt git (archive téléchargée) : on ne bloque pas la construction.
 }

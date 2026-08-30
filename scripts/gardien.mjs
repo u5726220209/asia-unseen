@@ -31,6 +31,7 @@ const FICHIERS_VITAUX = [
   { chemin: '/robots.txt', doitContenir: 'Sitemap', pourquoi: 'il déclare le plan du site' },
   { chemin: '/sitemap-index.xml', doitContenir: '<sitemap', pourquoi: 'Google y lit la liste des pages' },
   { chemin: '/donnees/visas.json', doitContenir: '"nombrePays"', pourquoi: 'jeu de données public' },
+  { chemin: '/robots.txt', doitContenir: 'Sitemap', pourquoi: 'il déclare le plan du site' },
 ];
 
 /** Les seules pages autorisées à porter un noindex. */
@@ -106,7 +107,41 @@ try {
   }
 } catch { certificat = { erreur: 'non vérifiable depuis cette machine' }; }
 
-/* ── 5. Le bandeau de consentement est toujours là ───────────────── */
+/* ── 5. La version en ligne est-elle bien celle attendue ? ───────── */
+
+/**
+ * Le contrôle qui manquait. Un déploiement peut réussir sans rien changer :
+ * c'est arrivé, le transfert partant dans un sous-dossier. Toutes les pages
+ * répondaient, les quatorze contrôles passaient, et le site était figé.
+ *
+ * On compare donc la signature servie à celle attendue. Appelé avec
+ * --attendu <sha>, le gardien exige l'égalité — c'est ce que fait la mise en
+ * ligne juste après un transfert. Sans argument, il se contente de dire quelle
+ * version est en ligne et depuis quand.
+ */
+const attendu = process.argv[process.argv.indexOf('--attendu') + 1];
+const versionEnLigne = await chercher('/version.txt');
+let version = null;
+
+if (versionEnLigne.statut !== 200) {
+  if (attendu) alertes.push({ gravite: 'critique', quoi: '/version.txt est absent du site', pourquoi: 'impossible de vérifier que le déploiement a bien remplacé les fichiers' });
+} else {
+  const [sha, date] = versionEnLigne.texte.trim().split('\n');
+  const heures = Math.round((Date.now() - new Date(date)) / 3_600_000);
+  version = { sha, date, heures };
+
+  if (attendu && sha !== attendu.trim()) {
+    alertes.push({
+      gravite: 'critique',
+      quoi: `le site en ligne est en version ${sha}, alors que ${attendu.trim()} vient d'être déployée`,
+      pourquoi: 'le transfert a réussi sans remplacer les fichiers servis — vérifiez server-dir',
+    });
+  } else {
+    ok.push(`version ${sha}, publiée il y a ${heures} h`);
+  }
+}
+
+/* ── 6. Le bandeau de consentement est toujours là ───────────────── */
 
 const accueil = await chercher('/');
 if (accueil.statut === 200) {
@@ -120,11 +155,12 @@ if (accueil.statut === 200) {
 /* ── Rapport ────────────────────────────────────────────────────── */
 
 if (process.argv.includes('--json')) {
-  console.log(JSON.stringify({ site: SITE, date: new Date().toISOString(), controles: ok.length + alertes.length, alertes, certificat }, null, 2));
+  console.log(JSON.stringify({ site: SITE, date: new Date().toISOString(), controles: ok.length + alertes.length, alertes, certificat, version }, null, 2));
 } else {
   console.log(`Gardien — ${SITE}\n`);
   if (!alertes.length) {
     console.log(`✓ ${ok.length} contrôles passés. Rien à signaler.`);
+    if (version) console.log(`  Version en ligne : ${version.sha}, publiée il y a ${version.heures} h.`);
     if (certificat?.jours) console.log(`  Certificat valide encore ${certificat.jours} jours.`);
   } else {
     console.log(`⛔ ${alertes.length} alerte(s) :\n`);

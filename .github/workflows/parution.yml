@@ -75,7 +75,11 @@ jobs:
           username: ${{ secrets.FTP_UTILISATEUR }}
           password: ${{ secrets.FTP_MOTDEPASSE }}
           local-dir: ./dist/
-          server-dir: ./public_html/
+          # Le compte FTP est cloisonné dans le dossier du site : la connexion
+          # y arrive déjà. Ajouter « public_html/ » créait un public_html dans
+          # public_html — le transfert réussissait, le site ne changeait pas,
+          # et le double devenait du contenu dupliqué indexable.
+          server-dir: ./
           exclude: |
             **/.git*
             **/.git*/**
@@ -84,4 +88,7 @@ jobs:
       - name: Le gardien confirme
         run: |
           sleep 30
-          node scripts/gardien.mjs
+          # --attendu : le gardien exige que la version servie soit celle qu'on
+          # vient de déployer. Sans cela, un transfert parti au mauvais endroit
+          # se conclut par un succès, sur un site resté figé.
+          node scripts/gardien.mjs --attendu "$(git rev-parse --short HEAD)"
