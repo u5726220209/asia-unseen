@@ -170,7 +170,7 @@ const paysLies = (g?.pays ?? []).map((s) => bySlug[s]).filter(Boolean);
           <FAQ items={g!.faq} />
 
           {articlesDuGuide.length > 0 && (
-            <section class="not-prose mt-16">
+            <section data-pagefind-ignore class="not-prose mt-16">
               <h2 class="text-title">À lire aussi</h2>
               <div class="mt-4 h-[3px] w-12 bg-amber"></div>
               <div class="mt-8 grid gap-5 sm:grid-cols-3">
@@ -187,7 +187,7 @@ const paysLies = (g?.pays ?? []).map((s) => bySlug[s]).filter(Boolean);
           )}
 
           {paysLies.length > 0 && (
-            <section class="not-prose mt-16">
+            <section data-pagefind-ignore class="not-prose mt-16">
               <h2 class="text-title">Voir aussi, pays par pays</h2>
               <div class="mt-4 h-[3px] w-12 bg-amber"></div>
               <ul class="mt-8 flex flex-wrap gap-2.5">
@@ -205,7 +205,7 @@ const paysLies = (g?.pays ?? []).map((s) => bySlug[s]).filter(Boolean);
           <Newsletter variant="inline" />
         </div>
 
-        <aside class="lg:sticky lg:top-24 lg:h-fit">
+        <aside data-pagefind-ignore class="lg:sticky lg:top-24 lg:h-fit">
           {toc.length > 0 && (
             <nav aria-label="Sommaire" class="rounded-brand border border-line bg-white p-5">
               <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-warm-light">Sur cette page</p>

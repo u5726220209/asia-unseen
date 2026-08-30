@@ -23,9 +23,16 @@ const origin = url.replace(/\/$/, '');
 
 rmSync('dist', { recursive: true, force: true });
 
-execFileSync('npx', ['astro', 'build'], {
+const env = { ...process.env, PUBLIC_SITE_URL: origin, PUBLIC_NOINDEX: '1' };
+
+execFileSync('npx', ['astro', 'build'], { stdio: 'inherit', env });
+
+// L'index de recherche se construit à partir du HTML produit : il doit être
+// régénéré à chaque build, y compris ici. Sans cette ligne, la préversion
+// partirait sans /pagefind/ et la recherche renverrait des 404.
+execFileSync('npx', ['pagefind', '--site', 'dist', '--output-subdir', 'pagefind'], {
   stdio: 'inherit',
-  env: { ...process.env, PUBLIC_SITE_URL: origin, PUBLIC_NOINDEX: '1' },
+  env,
 });
 
 writeFileSync(

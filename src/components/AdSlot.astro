@@ -25,7 +25,7 @@ const format = placement === 'in-article' ? 'fluid' : 'auto';
 ---
 
 {live && (
-  <aside class:list={['my-10 text-center', klass]} aria-label="Publicité">
+  <aside data-pagefind-ignore class:list={['my-10 text-center', klass]} aria-label="Publicité">
     <span class="mb-1.5 block font-display text-[0.65rem] uppercase tracking-[0.2em] text-warm-light">Publicité</span>
     <ins
       class="adsbygoogle block"
@@ -41,7 +41,7 @@ const format = placement === 'in-article' ? 'fluid' : 'auto';
 )}
 
 {!live && dev && (
-  <aside class:list={['my-10 rounded-brand border border-dashed border-line py-8 text-center', klass]}>
+  <aside data-pagefind-ignore class:list={['my-10 rounded-brand border border-dashed border-line py-8 text-center', klass]}>
     <p class="font-display text-[0.7rem] uppercase tracking-[0.2em] text-warm-light">
       Emplacement AdSense · {placement}
     </p>

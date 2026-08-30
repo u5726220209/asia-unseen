@@ -8,6 +8,7 @@ const { compact = false, class: klass = '' } = Astro.props;
 ---
 
 <p
+  data-pagefind-ignore
   class:list={[
     'flex items-start gap-2.5 rounded-brand border border-line bg-white text-warm',
     compact ? 'px-3.5 py-2.5 text-[0.78rem]' : 'px-5 py-4 text-[0.85rem] leading-relaxed',

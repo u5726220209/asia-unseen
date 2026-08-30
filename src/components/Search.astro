@@ -143,7 +143,9 @@
       for (const d of donnees) {
         const li = document.createElement('li');
         const a = document.createElement('a');
-        a.href = d.url.replace(/\.html$/, '').replace(/\/index$/, '') || '/';
+        // Le site est canonique sans slash final ; sans cette normalisation
+        // chaque résultat déclencherait une redirection 301 au clic.
+        a.href = d.url.replace(/\.html$/, '').replace(/\/index$/, '').replace(/(.+)\/$/, '$1') || '/';
         a.className =
           'block rounded-brand px-3 py-3 transition-colors hover:bg-teal-50 focus-visible:bg-teal-50';
         a.setAttribute('role', 'option');
