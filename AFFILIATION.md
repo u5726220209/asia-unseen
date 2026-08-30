@@ -85,6 +85,21 @@ décodage successif.
 Autrement dit, le jour où le lien CJ arrive, il n'y a qu'une variable à
 renseigner. Rien d'autre à écrire.
 
+### Identifiants CJ
+
+Compte éditeur **8058140**, membre **7743504**, devise **EUR**, langue française.
+Espace promotionnel **101873231**.
+
+### Assistance CJ
+
+Le centre d'aide interne (members.cj.com/member/support) reste bloqué au
+chargement — constaté le 30/08/2026, un dimanche. La page publique de contact
+ne propose pas de formulaire, seulement un téléphone :
+
+- Numéro gratuit **800-761-1072**, ou **805-539-4598**
+- Ouvert du **lundi au vendredi, 6 h – 17 h heure du Pacifique**, soit
+  **15 h – 2 h heure de Paris**
+
 ### État de l'intégration CJ au 30 août 2026 — 3 étapes sur 8
 
 Faites :
