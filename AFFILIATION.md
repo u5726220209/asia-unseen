@@ -99,6 +99,14 @@ générales pour les prestataires » — à lire avant, c'est un contrat.
 **Ce que vous me rapportez :** votre `partner_id`, visible dans le tableau de
 bord et dans les liens générés.
 
+**État au 30 août 2026 :** les trois étapes sont remplies. Profil « créateur
+de contenu », Fabrice Roy / Syllodi Service, France, EUR, Paris, site
+https://asiaunseen.com. Aucun compte de réseau social déclaré — il n'y en a
+pas, et en inventer un aurait été un mensonge sur la première ligne du
+dossier. GetYourGuide a envoyé un lien de confirmation à
+u5726220209@gmail.com : **c'est ce lien qui active le compte**, et il doit
+être ouvert depuis la boîte mail.
+
 ---
 
 ## Où ça atterrit
