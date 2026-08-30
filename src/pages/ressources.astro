@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import HorizonBand from '@/components/HorizonBand.astro';
 import Newsletter from '@/components/Newsletter.astro';
 import AdSlot from '@/components/AdSlot.astro';
 import { countries } from '@/data/countries';
@@ -25,6 +26,8 @@ const guides = (await getCollection('guides', ({ data }) => !data.draft)).sort(
       </p>
     </div>
   </header>
+
+  <HorizonBand seed="ressources" accent="teal" />
 
   <section class="wrap py-14">
     <p class="eyebrow">Guides pratiques</p>
@@ -61,7 +64,9 @@ const guides = (await getCollection('guides', ({ data }) => !data.draft)).sort(
       ))}
     </ul>
 
-    <div class="mt-16 rounded-brand border border-line bg-white p-8 sm:p-10">
+    <HorizonBand seed="ressources-telechargements" variant="bande" accent="ink" class="!mt-16" />
+
+    <div class="mt-8 rounded-brand border border-line bg-white p-8 sm:p-10">
       <p class="eyebrow">À télécharger</p>
       <h2 class="mt-3 text-title">Ressources gratuites</h2>
       <p class="mt-4 max-w-2xl text-[1rem] leading-relaxed text-warm">

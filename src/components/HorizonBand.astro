@@ -1,0 +1,27 @@
+---
+import Horizon from './Horizon.astro';
+
+/**
+ * Bandeau illustré. Les illustrations sont posées en bandes pleine largeur,
+ * jamais derrière du texte : la lisibilité ne dépend d'aucun réglage de
+ * contraste, et la ponctuation visuelle reste franche.
+ */
+interface Props {
+  seed: string;
+  variant?: 'hero' | 'bande';
+  accent?: 'teal' | 'ink';
+  invert?: boolean;
+  class?: string;
+}
+const { seed, variant = 'hero', accent = 'teal', invert = false, class: klass = '' } = Astro.props;
+---
+
+<div
+  class:list={[
+    'not-prose w-full overflow-hidden',
+    variant === 'hero' ? 'h-36 sm:h-48 lg:h-56' : 'h-16 sm:h-20',
+    klass,
+  ]}
+>
+  <Horizon seed={seed} variant={variant} accent={accent} invert={invert} />
+</div>

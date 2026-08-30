@@ -6,6 +6,7 @@ import ArticleCard from '@/components/ArticleCard.astro';
 import Newsletter from '@/components/Newsletter.astro';
 import Testimonials from '@/components/Testimonials.astro';
 import AdSlot from '@/components/AdSlot.astro';
+import HorizonBand from '@/components/HorizonBand.astro';
 import { countries } from '@/data/countries';
 import { guidesNav } from '@/data/nav';
 import { site } from '@/data/site';
@@ -111,6 +112,8 @@ const problemes = [
     </div>
   </section>
 
+  <HorizonBand seed="accueil" />
+
   <!-- ═══ INTÉRÊT — les destinations ══════════════════════════ -->
   <section id="destinations" class="wrap scroll-mt-24 py-20 lg:py-24">
     <div class="flex flex-wrap items-end justify-between gap-6">
@@ -185,6 +188,8 @@ const problemes = [
   </section>
 
   <AdSlot placement="in-feed" class="wrap" />
+
+  <HorizonBand seed="accueil-auteur" accent="teal" invert />
 
   <!-- ═══ DÉSIR — crédibilité de l'auteur ═════════════════════ -->
   <section class="border-y border-line bg-ink">

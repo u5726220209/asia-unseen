@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import HorizonBand from '@/components/HorizonBand.astro';
 import { site } from '@/data/site';
 ---
 
@@ -12,6 +13,8 @@ import { site } from '@/data/site';
     </div>
   </header>
 
+  <HorizonBand seed="confidentialite" accent="ink" />
+
   <div class="wrap-narrow prose-au py-14">
     <div class="not-prose mb-10 rounded-brand border-l-[3px] border-amber bg-amber-50 px-6 py-5">
       <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-amber-700">À adapter avant mise en ligne</p>
@@ -22,6 +25,8 @@ import { site } from '@/data/site';
         conforme est <strong>obligatoire</strong> — voir README, section « Consentement ».
       </p>
     </div>
+
+    <HorizonBand seed="confidentialite-2" variant="bande" class="!mb-10" />
 
     <h2>Responsable de traitement</h2>
     <p>

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import HorizonBand from '@/components/HorizonBand.astro';
 import { site } from '@/data/site';
 ---
 
@@ -12,6 +13,8 @@ import { site } from '@/data/site';
     </div>
   </header>
 
+  <HorizonBand seed="mentions" accent="ink" />
+
   <div class="wrap-narrow prose-au py-14">
     <div class="not-prose mb-10 rounded-brand border-l-[3px] border-amber bg-amber-50 px-6 py-5">
       <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-amber-700">À compléter avant mise en ligne</p>
@@ -21,6 +24,8 @@ import { site } from '@/data/site';
         l'identité de l'éditeur : un site publié sans ces mentions expose son éditeur à des sanctions.
       </p>
     </div>
+
+    <HorizonBand seed="mentions-2" variant="bande" class="!mb-10" />
 
     <h2>Éditeur du site</h2>
     <p>

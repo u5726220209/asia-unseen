@@ -9,6 +9,7 @@ import Callout from './Callout.astro';
 import FAQ from './FAQ.astro';
 import AdSlot from './AdSlot.astro';
 import Newsletter from './Newsletter.astro';
+import HorizonBand from './HorizonBand.astro';
 import ArticleCard from './ArticleCard.astro';
 import type { CollectionEntry } from 'astro:content';
 
@@ -76,6 +77,8 @@ const faq = [
       </dl>
     </div>
   </header>
+
+  <HorizonBand seed={c.slug} accent={c.accent === 'ink' ? 'ink' : 'teal'} />
 
   <div class="wrap grid gap-14 py-14 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-16">
     <div class="prose-au min-w-0">
@@ -179,6 +182,8 @@ const faq = [
           qui est exigé. Le récupérer après un litige peut prendre des jours.
         </p>
       </Callout>
+
+      <HorizonBand seed={`${c.slug}-reserver`} variant="bande" accent={c.accent === 'ink' ? 'teal' : 'ink'} class="!my-10" />
 
       <!-- Réserver -->
       <h2 id="reserver">Réserver son voyage</h2>

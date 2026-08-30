@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import HorizonBand from '@/components/HorizonBand.astro';
 import { site } from '@/data/site';
 ---
 
@@ -18,6 +19,8 @@ import { site } from '@/data/site';
       </p>
     </div>
   </header>
+
+  <HorizonBand seed="contact" accent="ink" />
 
   <div class="wrap grid gap-14 py-14 lg:grid-cols-[1.1fr_0.9fr]">
     <div>
@@ -97,6 +100,8 @@ import { site } from '@/data/site';
           insérés dans du contenu existant et les articles rédigés par l'annonceur.
         </p>
       </div>
+
+      <HorizonBand seed="contact-aside" variant="bande" accent="ink" class="!rounded-brand" />
 
       <div class="rounded-brand border-l-[3px] border-amber bg-amber-50 p-6">
         <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-amber-700">Ce qu'on ne peut pas faire</p>

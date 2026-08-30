@@ -3,6 +3,13 @@ import type { Country } from '@/data/countries';
 import { MOIS } from '@/data/countries';
 interface Props { country: Country; }
 const { country: c } = Astro.props;
+// Les libellés de coût se sont allongés après l'audit de fraîcheur (« Gratuit
+// sous exemption ; ≈ 25 USD… »). La carte n'affiche que la première clause :
+// le détail complet est sur la fiche, qui est à un clic.
+const visaCourt = c.visa.cout === 'Gratuit'
+  ? 'Aucun pour un séjour court'
+  : c.visa.cout.split(' ; ')[0];
+
 const best = c.saisons
   .map((s, i) => ({ s, m: MOIS[i] }))
   .filter((x) => x.s === 3)
@@ -24,7 +31,7 @@ const best = c.saisons
   <dl class="mt-5 space-y-1.5 border-t border-line pt-4 text-[0.82rem]">
     <div class="flex gap-2">
       <dt class="w-20 shrink-0 text-warm-light">Visa</dt>
-      <dd class="text-ink-soft">{c.visa.cout === 'Gratuit' ? 'Aucun pour un séjour court' : c.visa.cout}</dd>
+      <dd class="text-ink-soft">{visaCourt}</dd>
     </div>
     <div class="flex gap-2">
       <dt class="w-20 shrink-0 text-warm-light">Saison</dt>
