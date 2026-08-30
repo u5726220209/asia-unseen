@@ -2,7 +2,8 @@ name: Contrôle mécanique
 
 # Tout ce qu'une machine sait vérifier sans jugement : le site compile, les
 # titres et descriptions tiennent dans ce que Google affiche, aucun lien interne
-# ne pointe dans le vide, aucune source externe n'est morte.
+# ne pointe dans le vide, aucun montant publié n'en contredit un autre, aucun
+# lien affilié ne perd sa commission, aucune source externe n'est morte.
 #
 # Ce contrôle tourne à chaque poussée et bloque la mise en ligne s'il échoue :
 # c'est le filet qui empêche qu'une correction faite dans l'urgence casse
@@ -29,5 +30,14 @@ jobs:
         run: npm run audit
       - name: Liens internes
         run: npm run verifier
+      # Deux contrôles hors ligne : nos montants publiés se contredisent-ils
+      # d'une page à l'autre, et les liens des programmes ouverts portent-ils
+      # bien leur identifiant. Les deux sont des fautes de notre côté, donc
+      # bloquantes ; ce que disent les sources et les partenaires relève de la
+      # veille, qui alerte sans bloquer.
+      - name: Montants publiés
+        run: npm run chiffres -- --hors-ligne
+      - name: Liens affiliés
+        run: npm run affilies -- --hors-ligne
       - name: Sources externes
         run: npm run sources || echo "Des sources n'ont pas répondu — souvent un blocage anti-robot, à vérifier à la main."

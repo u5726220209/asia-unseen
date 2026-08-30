@@ -56,6 +56,7 @@ jobs:
           node scripts/audit-seo.mjs
           node scripts/verifier-liens.mjs
           node scripts/verifier-chiffres.mjs --hors-ligne
+          node scripts/liens-affilies.mjs --hors-ligne
 
       - name: Envoyer sur l'hébergement
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
