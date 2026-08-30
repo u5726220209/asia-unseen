@@ -9,12 +9,13 @@ import { buildUrl, partners, type PartnerKey } from '@/data/affiliates';
 interface Props {
   partner: PartnerKey;
   params?: Record<string, string>;
-  href?: string;      // pour surcharger l'URL générée (page produit précise)
+  path?: string;      // chemin de destination chez le partenaire, tracking conservé
+  href?: string;      // pour surcharger l'URL générée (page produit précise) — sans tracking
   variant?: 'button' | 'text';
   class?: string;
 }
-const { partner, params = {}, href, variant = 'button', class: klass = '' } = Astro.props;
-const url = href ?? buildUrl(partner, params);
+const { partner, params = {}, path, href, variant = 'button', class: klass = '' } = Astro.props;
+const url = href ?? buildUrl(partner, params, path);
 const label = partners[partner].label;
 ---
 

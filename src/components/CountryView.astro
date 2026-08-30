@@ -202,7 +202,12 @@ const faq = [
           <div class="flex flex-col rounded-brand border border-line bg-white p-6">
             <p class="font-display text-[1.05rem] font-bold text-ink">{b.titre}</p>
             <p class="mt-2 flex-1 text-[0.9rem] leading-relaxed text-warm">{b.texte}</p>
-            <AffiliateLink partner={b.p} params={b.p === 'booking' ? { ss: c.nom } : {}} class="mt-5 !w-full !py-3 !text-[0.88rem]">
+            <AffiliateLink
+              partner={b.p}
+              params={b.p === 'booking' ? { ss: c.nom } : b.p === 'getyourguide' ? { q: c.nom } : {}}
+              path={b.p === 'getyourguide' ? '/s/' : undefined}
+              class="mt-5 !w-full !py-3 !text-[0.88rem]"
+            >
               {b.cta}
             </AffiliateLink>
           </div>

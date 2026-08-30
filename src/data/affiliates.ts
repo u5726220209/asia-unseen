@@ -50,10 +50,18 @@ export const partners: Record<PartnerKey, Partner> = {
   revolut:      { key: 'revolut',      label: 'Revolut',       category: 'argent',        base: 'https://www.revolut.com',                                  id: '',                                 commission: 'prime fixe par client actif' },
 };
 
-/** Construit l'URL trackée d'un partenaire, avec paramètres additionnels optionnels. */
-export function buildUrl(key: PartnerKey, extra: Record<string, string> = {}): string {
+/**
+ * Construit l'URL trackée d'un partenaire.
+ *
+ * `path` permet de viser une page de destination plutôt que l'accueil : un lien
+ * vers la page d'accueil d'une plateforme oblige le visiteur à refaire sa
+ * recherche, et convertit donc beaucoup moins bien qu'un lien qui arrive
+ * directement sur les résultats du pays concerné.
+ */
+export function buildUrl(key: PartnerKey, extra: Record<string, string> = {}, path?: string): string {
   const p = partners[key];
   const url = new URL(p.base);
+  if (path) url.pathname = path;
   if (p.param && p.id) url.searchParams.set(p.param, p.id);
   for (const [k, v] of Object.entries(extra)) url.searchParams.set(k, v);
 
