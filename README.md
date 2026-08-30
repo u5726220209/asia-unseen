@@ -274,13 +274,38 @@ page d'accueil demandée.
 `PUBLIC_GSC_TOKEN` reste disponible dans `.env` comme méthode de secours par balise
 HTML, mais n'est pas nécessaire tant que le TXT est en place.
 
+### Google Analytics 4 — fait le 30 août 2026
+
+Propriété **Asia Unseen** (`552100380`), compte Syllodi Service.
+Flux web « Asia Unseen — site web » sur `https://asiaunseen.com`.
+
+```
+PUBLIC_GA4_ID=G-T2KWW5STQL
+```
+
+Fuseau France, devise euro. Objectifs déclarés : générer des leads, comprendre le
+trafic web.
+
+**Le bandeau de consentement s'est activé automatiquement.** Comportement vérifié
+en production, sur le domaine réel :
+
+| Étape | Scripts Google | Cookies |
+| --- | --- | --- |
+| Avant tout choix | **0** | **0** |
+| Après « Tout refuser » | **0** | **0** |
+| Après « Tout accepter » | gtag.js chargé | `_ga`, `_ga_T2KWW5STQL` |
+
+Réception confirmée dans le rapport temps réel : page vue et `first_visit`.
+
+Les quatre événements de conversion (`affiliate_click`, `source_click`,
+`newsletter_submit`, `tool_use`) remontent désormais réellement. Marquez-les comme
+**événements clés** dans l'interface GA4 pour qu'ils servent d'objectifs.
+
 ### Ce qu'il reste à faire
 
-1. **GA4.** Créez la propriété, collez l'identifiant dans `PUBLIC_GA4_ID`. Le bandeau
-   de consentement s'active alors tout seul.
-3. **Comptes affiliés et AdSense.** Le site est en ligne : les demandes qui exigeaient
-   un domaine actif peuvent partir.
-4. **Ligne de TVA.** `src/data/site.ts` retient la franchise en base (article 293 B).
+1. **Comptes affiliés et AdSense.** Le site est en ligne et mesuré : les demandes qui
+   exigeaient un domaine actif peuvent partir.
+2. **Ligne de TVA.** `src/data/site.ts` retient la franchise en base (article 293 B).
    À confirmer ou corriger.
 
 ---
