@@ -1,0 +1,187 @@
+---
+import { countries } from '@/data/countries';
+
+/**
+ * Comparateur de formalités d'entrée, deux à trois pays côte à côte.
+ *
+ * Le lecteur qui prépare un voyage multi-pays ne cherche pas un article : il
+ * cherche à mettre deux règles l'une à côté de l'autre. Aucun site français ne
+ * le propose, alors que la donnée existe déjà — il ne manquait que la mise en
+ * regard, et la date de vérification dans chaque case.
+ *
+ * Entièrement côté client, sans dépendance. Le tableau défile horizontalement
+ * sur mobile plutôt que de se replier : trois colonnes tronquées ne comparent
+ * plus rien.
+ */
+
+const data = countries.map((c) => ({
+  slug: c.slug,
+  nom: c.nom,
+  visa: c.visa,
+  sources: c.sourcesVisa,
+  verifieLe: c.verifieLe,
+  demarches: c.demarches.length,
+  premiereDemarche: c.demarches.length ? Math.max(...c.demarches.map((d) => d.jours)) : null,
+}));
+
+const LIGNES = [
+  { cle: 'resume', label: "La règle" },
+  { cle: 'duree', label: 'Durée autorisée' },
+  { cle: 'cout', label: 'Coût officiel' },
+  { cle: 'procedure', label: 'Procédure et pièges' },
+] as const;
+---
+
+<div class="au-cmp my-10 overflow-hidden rounded-brand border border-line bg-white" data-pays={JSON.stringify(data)}>
+  <div class="border-b border-line bg-cream-warm px-6 py-5">
+    <p class="eyebrow">Outil</p>
+    <h3 class="mt-1.5 font-display text-xl font-bold text-ink">Comparer les formalités, côte à côte</h3>
+    <p class="mt-1.5 text-[0.88rem] text-warm">
+      Choisissez deux ou trois pays. Chaque case porte la date à laquelle elle a été vérifiée.
+    </p>
+  </div>
+
+  <div class="border-b border-line px-6 py-5">
+    <p id="cmp-legende" class="mb-3 font-display text-[0.8rem] font-semibold uppercase tracking-wider text-ink">
+      Pays à comparer <span class="font-normal normal-case tracking-normal text-warm-light">(2 à 3)</span>
+    </p>
+    <div class="flex flex-wrap gap-2" role="group" aria-labelledby="cmp-legende">
+      {data.map((c) => (
+        <button
+          type="button"
+          data-cmp-pays={c.slug}
+          aria-pressed="false"
+          class="rounded-full border border-line px-4 py-2 text-[0.88rem] font-medium text-warm transition hover:border-teal hover:text-ink aria-pressed:border-teal aria-pressed:bg-teal aria-pressed:text-white"
+        >
+          {c.nom}
+        </button>
+      ))}
+    </div>
+    <p id="cmp-avert" class="mt-3 hidden text-[0.85rem] text-amber-700" role="status"></p>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table id="cmp-table" class="w-full min-w-[42rem] border-collapse text-left">
+      <thead>
+        <tr id="cmp-entetes" class="border-b border-line"></tr>
+      </thead>
+      <tbody id="cmp-corps"></tbody>
+    </table>
+  </div>
+
+  <p class="border-t border-line bg-cream px-6 py-4 text-[0.82rem] leading-relaxed text-warm-light">
+    Les règles d'entrée changent sans préavis. Avant de réserver, ouvrez la source officielle —
+    elle est citée sous chaque pays. Ces données sont aussi publiées
+    <a href="/donnees" class="text-teal-700 underline decoration-teal/30 underline-offset-4">en accès libre</a>.
+  </p>
+</div>
+
+<script is:inline define:vars={{ LIGNES }}>
+  (() => {
+    const racine = document.querySelector('.au-cmp');
+    if (!racine) return;
+
+    const PAYS = JSON.parse(racine.dataset.pays);
+    const parSlug = Object.fromEntries(PAYS.map((p) => [p.slug, p]));
+    const boutons = [...racine.querySelectorAll('[data-cmp-pays]')];
+    const entetes = racine.querySelector('#cmp-entetes');
+    const corps = racine.querySelector('#cmp-corps');
+    const alerte = racine.querySelector('#cmp-avert');
+
+    // Le couple le plus fréquemment comparé sert de point de départ : un tableau
+    // vide n'apprend rien et n'invite pas à cliquer.
+    let choisis = ['vietnam', 'thailande'];
+
+    const mois = (v) => {
+      const [a, m] = String(v).split('-');
+      const noms = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+      return m ? `${noms[+m - 1]} ${a}` : v;
+    };
+
+    const echapper = (s) =>
+      String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+    function rendre() {
+      entetes.innerHTML =
+        '<th scope="col" class="sticky left-0 z-10 bg-white px-6 py-4 align-bottom font-display text-[0.75rem] uppercase tracking-wider text-warm-light">Critère</th>' +
+        choisis
+          .map((s) => {
+            const p = parSlug[s];
+            return `<th scope="col" class="min-w-[15rem] px-6 py-4 align-bottom">
+              <a href="/${p.slug}" class="font-display text-[1.15rem] font-bold text-ink underline decoration-transparent underline-offset-4 transition hover:decoration-amber">${echapper(p.nom)}</a>
+              <span class="mt-1 block font-normal text-[0.75rem] text-warm-light">Vérifié en ${mois(p.verifieLe)}</span>
+            </th>`;
+          })
+          .join('');
+
+      const lignes = LIGNES.map(
+        (l) => `<tr class="border-b border-line align-top">
+          <th scope="row" class="sticky left-0 z-10 bg-white px-6 py-5 font-display text-[0.78rem] font-semibold uppercase tracking-wider text-warm-light">${l.label}</th>
+          ${choisis.map((s) => `<td class="px-6 py-5 text-[0.92rem] leading-relaxed text-warm">${echapper(parSlug[s].visa[l.cle])}</td>`).join('')}
+        </tr>`,
+      ).join('');
+
+      const demarches = `<tr class="border-b border-line align-top">
+        <th scope="row" class="sticky left-0 z-10 bg-white px-6 py-5 font-display text-[0.78rem] font-semibold uppercase tracking-wider text-warm-light">À faire avant</th>
+        ${choisis
+          .map((s) => {
+            const p = parSlug[s];
+            const t = p.premiereDemarche
+              ? `${p.demarches} démarche${p.demarches > 1 ? 's' : ''} propre${p.demarches > 1 ? 's' : ''} au pays, la première <strong class="font-semibold text-ink">${p.premiereDemarche} jours</strong> avant le départ`
+              : 'Aucune démarche spécifique au pays';
+            return `<td class="px-6 py-5 text-[0.92rem] leading-relaxed text-warm">${t}</td>`;
+          })
+          .join('')}
+      </tr>`;
+
+      const sources = `<tr class="align-top">
+        <th scope="row" class="sticky left-0 z-10 bg-white px-6 py-5 font-display text-[0.78rem] font-semibold uppercase tracking-wider text-warm-light">Sources</th>
+        ${choisis
+          .map((s) => {
+            const liens = parSlug[s].sources
+              .map(
+                (src) =>
+                  `<li><a href="${echapper(src.url)}" target="_blank" rel="noopener nofollow" class="text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">${echapper(src.label)}</a></li>`,
+              )
+              .join('');
+            return `<td class="px-6 py-5 text-[0.86rem] leading-relaxed"><ul class="space-y-1.5">${liens}</ul></td>`;
+          })
+          .join('')}
+      </tr>`;
+
+      corps.innerHTML = lignes + demarches + sources;
+      boutons.forEach((b) => b.setAttribute('aria-pressed', String(choisis.includes(b.dataset.cmpPays))));
+    }
+
+    boutons.forEach((b) => {
+      b.addEventListener('click', () => {
+        const s = b.dataset.cmpPays;
+        alerte.classList.add('hidden');
+
+        if (choisis.includes(s)) {
+          if (choisis.length === 2) {
+            alerte.textContent = 'Il faut au moins deux pays pour comparer.';
+            alerte.classList.remove('hidden');
+            return;
+          }
+          choisis = choisis.filter((x) => x !== s);
+        } else {
+          if (choisis.length === 3) {
+            alerte.textContent = 'Trois pays au maximum : au-delà, le tableau ne se lit plus.';
+            alerte.classList.remove('hidden');
+            return;
+          }
+          choisis = [...choisis, s];
+        }
+
+        // L'ordre du tableau suit celui des boutons, pas l'ordre des clics :
+        // deux lecteurs qui choisissent les mêmes pays voient la même chose.
+        choisis = PAYS.map((p) => p.slug).filter((x) => choisis.includes(x));
+        rendre();
+        try { window.gtag?.('event', 'tool_use', { outil: 'comparateur-visas', pays: choisis.join('+') }); } catch {}
+      });
+    });
+
+    rendre();
+  })();
+</script>

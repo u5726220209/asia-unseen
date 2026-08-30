@@ -97,6 +97,20 @@ Une préparation qui fonctionne, en remontant depuis la date de départ :
 5. **72 heures avant** — remplir les déclarations en ligne : eTravel pour les Philippines, Visit Japan Web pour le Japon.
 6. **La veille** — photographier passeport, visas et assurance, et s'envoyer le tout par email. Le jour où votre sac disparaît, c'est ce qui vous sauve.
 
+## Comparer deux pays d'un coup d'œil
+
+Sur un itinéraire qui traverse une frontière, la question n'est plus « quelle est la règle ? »
+mais « en quoi diffèrent-elles ? ». Le [comparateur de formalités](/comparer-visas) met deux ou
+trois pays côte à côte — règle, durée, coût, procédure — avec la date de vérification de chaque
+case.
+
+## Ces règles, en données brutes
+
+Toutes les formalités de cette page — règle, durée, coût, procédure, démarches préalables, sources
+officielles et date de vérification — sont publiées dans un [fichier en accès libre](/donnees),
+réutilisable avec attribution. C'est la même donnée que celle affichée ici, sans la mise en forme :
+de quoi vérifier ce qu'on avance, ou s'en servir ailleurs.
+
 ## Les cinq erreurs qui coûtent le plus cher
 
 **Confondre validité du visa et durée de séjour autorisée.** Un e-visa valable 90 jours n'autorise pas toujours 90 jours sur place : la durée de séjour est celle tamponnée à l'entrée. Lisez le tampon.

@@ -1,0 +1,96 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Visuel from '@/components/Visuel.astro';
+import ComparateurVisas from '@/components/ComparateurVisas.astro';
+import Newsletter from '@/components/Newsletter.astro';
+import AdSlot from '@/components/AdSlot.astro';
+import { countries } from '@/data/countries';
+import { site } from '@/data/site';
+
+const sansVisa = countries.filter((c) => /exemption|sans visa/i.test(c.visa.resume));
+---
+
+<BaseLayout
+  title="Comparer les visas : Vietnam, Thaïlande, Japon…"
+  description="Comparez les formalités d'entrée de deux ou trois pays d'Asie côte à côte : règle, durée autorisée, coût officiel, procédure et sources. Avec la date de vérification."
+  schema={[
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: "Comparateur de formalités d'entrée en Asie",
+      applicationCategory: 'TravelApplication',
+      operatingSystem: 'Web',
+      url: `${site.url}/comparer-visas`,
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+    },
+  ]}
+>
+  <header class="border-b border-line bg-cream-warm">
+    <div class="wrap py-10 lg:py-14">
+      <Breadcrumbs items={[{ label: 'Comparer les visas' }]} />
+      <h1 class="mt-6 max-w-3xl text-hero">Deux règles, côte à côte</h1>
+      <p class="mt-6 max-w-2xl text-[1.15rem] leading-relaxed text-warm">
+        Préparer un voyage en Thaïlande <em>et</em> au Cambodge, c'est jongler entre deux
+        administrations qui ne se ressemblent pas. Voici les deux règles alignées, avec ce
+        que chacune coûte et à quelle date nous l'avons vérifiée.
+      </p>
+    </div>
+  </header>
+
+  <Visuel page="/comparer-visas" seed="comparer-visas" prioritaire accent="teal" />
+
+  <div class="wrap-narrow py-12">
+    <ComparateurVisas />
+
+    <div class="prose-au mt-14">
+      <h2>Ce que ce tableau vous évite</h2>
+      <p>
+        L'erreur la plus coûteuse d'un voyage multi-pays n'est presque jamais le visa lui-même :
+        c'est la <strong>durée cumulée</strong>. On additionne mentalement des séjours qui,
+        pris un par un, tiennent dans la règle — et on découvre à la frontière que l'un d'eux
+        n'était pas prolongeable.
+      </p>
+      <p>
+        {sansVisa.length} des {countries.length} pays couverts par ce site dispensent les
+        passeports français de visa pour un séjour touristique. C'est ce qui rend l'erreur
+        facile : la formalité est si légère qu'on ne la vérifie plus, et on rate la ligne qui
+        dit combien de jours exactement, et si ces jours se prolongent sur place.
+      </p>
+
+      <h2>Trois pièges que le tableau met en évidence</h2>
+      <ol>
+        <li>
+          <strong>Une exemption n'est pas un visa.</strong> Elle est souvent non prolongeable,
+          là où un e-visa peut l'être. Le tableau le dit dans la ligne « Durée autorisée ».
+        </li>
+        <li>
+          <strong>Le coût officiel n'est pas le prix payé.</strong> Des intermédiaires facturent
+          trois à cinq fois le tarif de l'administration. La ligne « Coût officiel » donne le
+          montant réel, et la source pour le vérifier.
+        </li>
+        <li>
+          <strong>Certaines démarches se font des semaines avant.</strong> La ligne « À faire
+          avant » indique le délai le plus long de chaque pays. Pour obtenir votre calendrier
+          daté, utilisez la <a href="/checklist-depart">checklist de départ</a>.
+        </li>
+      </ol>
+
+      <h2>Pourquoi les dates figurent dans le tableau</h2>
+      <p>
+        Une règle d'entrée sans date de vérification ne vaut rien : la Thaïlande a réduit son
+        exemption de 60 à 30 jours, la Corée du Sud a suspendu son K-ETA, la Chine a rouvert
+        une exemption temporaire. Tout cela en moins d'un an. Chaque colonne porte donc le mois
+        où nous avons vérifié la règle auprès de la source officielle, et chaque changement est
+        consigné dans le <a href="/mises-a-jour">journal des corrections</a>.
+      </p>
+      <p>
+        Le détail pays par pays se trouve dans le <a href="/visas-asie">guide des visas</a>, et
+        les données brutes sont publiées <a href="/donnees">en accès libre</a>.
+      </p>
+    </div>
+
+    <AdSlot placement="in-article" />
+    <Newsletter class="mt-14" />
+  </div>
+</BaseLayout>

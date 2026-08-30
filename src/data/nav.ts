@@ -31,5 +31,6 @@ export const footerLegal = [
   { href: '/mentions-legales', label: 'Mentions légales' },
   { href: '/confidentialite', label: 'Confidentialité & cookies' },
   { href: '/affiliation', label: 'Transparence & affiliation' },
+  { href: '/donnees', label: 'Données ouvertes' },
   { href: '/contact', label: 'Contact' },
 ];

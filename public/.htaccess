@@ -44,6 +44,15 @@ ErrorDocument 404 /404/index.html
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
   Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
 
+  # Le jeu de données ouvert doit être appelable depuis n'importe quel site :
+  # c'est tout l'intérêt de le publier. L'en-tête est posé ici parce qu'un
+  # hébergement statique sert le fichier directement, sans exécuter le code
+  # qui l'a produit — les en-têtes définis à la compilation n'arrivent jamais.
+  <FilesMatch "\.json$">
+    Header set Access-Control-Allow-Origin "*"
+    Header set Cache-Control "public, max-age=3600"
+  </FilesMatch>
+
   # Les assets versionnés d'Astro sont immuables.
   <FilesMatch "\.(js|css|woff2|png|jpg|jpeg|webp|svg|ico)$">
     Header set Cache-Control "public, max-age=31536000, immutable"

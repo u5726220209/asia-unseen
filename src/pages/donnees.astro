@@ -1,0 +1,140 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Visuel from '@/components/Visuel.astro';
+import { countries } from '@/data/countries';
+import { site } from '@/data/site';
+
+const jeu = {
+  url: `${site.url}/donnees/visas.json`,
+  pays: countries.length,
+  champs: 12,
+};
+---
+
+<BaseLayout
+  title="Données ouvertes : les règles d'entrée en Asie"
+  description="Les formalités d'entrée de neuf pays d'Asie en accès libre, au format JSON : règle, durée, coût, démarches, sources officielles et date de vérification. Réutilisable avec attribution."
+  schema={[
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Dataset',
+      name: "Règles d'entrée en Asie pour les voyageurs français",
+      description:
+        "Formalités d'entrée, durées autorisées, coûts et démarches préalables pour neuf pays d'Asie, avec les sources officielles et la date de vérification.",
+      url: `${site.url}/donnees`,
+      license: 'https://creativecommons.org/licenses/by/4.0/',
+      isAccessibleForFree: true,
+      creator: { '@type': 'Organization', name: site.name, url: site.url },
+      distribution: [
+        {
+          '@type': 'DataDownload',
+          encodingFormat: 'application/json',
+          contentUrl: jeu.url,
+        },
+      ],
+      spatialCoverage: countries.map((c) => c.nom).join(', '),
+      keywords: ['visa', 'Asie', 'formalités', 'voyage', 'immigration'],
+    },
+  ]}
+>
+  <header class="border-b border-line bg-cream-warm">
+    <div class="wrap py-10 lg:py-14">
+      <Breadcrumbs items={[{ label: 'Données ouvertes' }]} />
+      <h1 class="mt-6 max-w-3xl text-hero">Nos données, en accès libre</h1>
+      <p class="mt-6 max-w-2xl text-[1.15rem] leading-relaxed text-warm">
+        Les règles d'entrée des neuf pays que couvre ce site, dans un fichier que n'importe qui
+        peut lire, vérifier et réutiliser. Avec les sources et les dates.
+      </p>
+    </div>
+  </header>
+
+  <Visuel page="/donnees" seed="donnees-ouvertes" prioritaire accent="ink" />
+
+  <div class="wrap-narrow py-14">
+    <div class="not-prose rounded-brand border border-line bg-white p-6 sm:p-8">
+      <p class="font-display text-[0.7rem] uppercase tracking-[0.2em] text-warm-light">Le fichier</p>
+      <a
+        href="/donnees/visas.json"
+        class="mt-3 block break-all font-mono text-[0.95rem] font-semibold text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber"
+      >
+        {jeu.url}
+      </a>
+      <dl class="mt-6 grid gap-4 sm:grid-cols-3">
+        <div>
+          <dt class="text-[0.78rem] uppercase tracking-wider text-warm-light">Pays couverts</dt>
+          <dd class="mt-1 font-display text-[1.5rem] font-bold text-ink">{jeu.pays}</dd>
+        </div>
+        <div>
+          <dt class="text-[0.78rem] uppercase tracking-wider text-warm-light">Format</dt>
+          <dd class="mt-1 font-display text-[1.5rem] font-bold text-ink">JSON</dd>
+        </div>
+        <div>
+          <dt class="text-[0.78rem] uppercase tracking-wider text-warm-light">Licence</dt>
+          <dd class="mt-1 font-display text-[1.5rem] font-bold text-ink">CC BY 4.0</dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="prose-au mt-12">
+      <h2>Pourquoi nous publions ça</h2>
+      <p>
+        Ce site repose sur une promesse simple : chaque affirmation porte sa source et sa date.
+        Publier les données brutes en est la conséquence logique. Plutôt que de vous demander
+        de nous croire, nous vous donnons de quoi vérifier — et de quoi faire mieux si vous
+        le pouvez.
+      </p>
+      <p>
+        Il y a une seconde raison, moins noble et parfaitement assumée. Une part croissante des
+        recherches ne se termine plus sur un site mais dans une réponse générée par une machine.
+        Un fichier propre, daté et sourcé est bien plus facile à citer que dix articles qui se
+        contredisent. Nous préférons être la source que le bruit.
+      </p>
+
+      <h2>Ce que contient le fichier</h2>
+      <p>Pour chacun des {jeu.pays} pays :</p>
+      <ul>
+        <li>la <strong>règle d'entrée</strong> pour un passeport français, en une phrase ;</li>
+        <li>la <strong>durée autorisée</strong>, et si elle est prolongeable sur place ;</li>
+        <li>le <strong>coût officiel</strong> — celui de l'administration, pas celui des intermédiaires ;</li>
+        <li>la <strong>procédure</strong>, avec les pièges connus ;</li>
+        <li>les <strong>démarches préalables</strong> et leur délai, en jours avant le départ ;</li>
+        <li>les <strong>sources officielles</strong> consultées, avec leurs adresses ;</li>
+        <li>la <strong>date de vérification</strong> et, s'il y en a eu une, la date de la dernière correction.</li>
+      </ul>
+
+      <h2>Ce que vous pouvez en faire</h2>
+      <p>
+        Tout, y compris un usage commercial, à une seule condition : <strong>citer la source</strong>.
+        La licence est la <a href="https://creativecommons.org/licenses/by/4.0/deed.fr">Creative Commons
+        Attribution 4.0</a>. La mention à reprendre figure dans le fichier lui-même, au champ
+        <code>licence.attribution</code>.
+      </p>
+      <p>
+        Le fichier autorise les requêtes depuis n'importe quel domaine. Vous pouvez donc l'appeler
+        directement depuis votre propre site ou votre application, sans nous demander la permission.
+      </p>
+
+      <h2>Ce que ces données ne sont pas</h2>
+      <p>
+        Elles ne remplacent pas une administration. Une règle d'entrée peut changer du jour au
+        lendemain, parfois sans annonce. Nous vérifions à la main, à intervalles réguliers, et nous
+        datons chaque fiche — mais <strong>avant un départ, ouvrez la source officielle</strong>.
+        Elle est dans le fichier, à côté de la donnée.
+      </p>
+      <p>
+        Quand une règle change, la correction est consignée publiquement dans le
+        <a href="/mises-a-jour">journal des corrections</a>, avec ce que le site affirmait avant et
+        ce que dit la source. Le champ <code>derniereCorrection</code> vous permet de savoir, pour
+        chaque pays, si une donnée a déjà été rectifiée.
+      </p>
+
+      <h2>Une erreur, une donnée manquante ?</h2>
+      <p>
+        Écrivez à <a href={`mailto:${site.author.email}`}>{site.author.email}</a> avec la source
+        qui vous fait dire que nous avons tort. Les corrections sont publiées, datées et attribuées
+        à leur source — jamais effacées en silence.
+      </p>
+    </div>
+  </div>
+</BaseLayout>

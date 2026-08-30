@@ -36,7 +36,10 @@ const servies = new Set(
 const casses = new Map();
 
 for (const page of pages) {
-  const html = readFileSync(page, 'utf8');
+  // Le contenu des <script> est retiré avant l'analyse : un gabarit JavaScript
+  // qui construit une adresse — `/${slug}` par exemple — n'est pas un lien de
+  // la page, et le signaler comme cassé fait perdre confiance dans l'outil.
+  const html = readFileSync(page, 'utf8').replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
   for (const m of html.matchAll(/href="(\/[^"#?]*)"/g)) {
     const href = m[1].replace(/\/$/, '') || '/';
     if (href.startsWith('/_astro')) continue;

@@ -22,7 +22,7 @@ const guides = (await getCollection('guides', ({ data }) => !data.draft)).sort(
       <h1 class="mt-6 max-w-3xl text-hero">Tout ce dont vous avez besoin avant de partir</h1>
       <p class="mt-6 max-w-2xl text-[1.15rem] leading-relaxed text-warm">
         Les guides pratiques transversaux, valables pour toute l'Asie, et les fiches pays.
-        Deux outils interactifs pour trancher les questions de budget et de saison.
+        Trois outils interactifs pour trancher les questions de budget, de saison et de visa.
       </p>
     </div>
   </header>
@@ -47,6 +47,16 @@ const guides = (await getCollection('guides', ({ data }) => !data.draft)).sort(
           )}
         </a>
       ))}
+    </div>
+
+    <div class="mt-10 rounded-brand border border-line bg-cream-warm p-7">
+      <p class="eyebrow">Outil</p>
+      <h3 class="mt-1.5 font-display text-[1.15rem] font-bold text-ink">Comparer les formalités de deux pays</h3>
+      <p class="mt-2.5 max-w-2xl text-[0.92rem] leading-relaxed text-warm">
+        Règle, durée autorisée, coût officiel et procédure, alignés côte à côte, avec la date
+        de vérification dans chaque case. Utile dès que l'itinéraire traverse une frontière.
+      </p>
+      <a href="/comparer-visas" class="btn-primary mt-5 inline-flex">Ouvrir le comparateur</a>
     </div>
 
     <AdSlot placement="in-feed" />
