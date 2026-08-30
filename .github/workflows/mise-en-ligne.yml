@@ -1,0 +1,71 @@
+name: Mise en ligne
+
+# Corriger une règle devient : modifier un fichier, pousser. Le reste suit.
+#
+# Le contrôle mécanique passe d'abord et bloque en cas d'échec : mieux vaut ne
+# pas déployer qu'envoyer en ligne une correction qui en casse une autre.
+on:
+  workflow_run:
+    workflows: ['Contrôle mécanique']
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deployer:
+    if: github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: npm }
+      - run: npm ci
+
+      # Les identifiants d'affiliation et de mesure sont des secrets du dépôt :
+      # ils ne doivent pas vivre dans le code, mais le site ne se compile
+      # correctement que s'ils sont présents à la compilation.
+      - name: Reconstituer la configuration
+        run: |
+          cat > .env <<EOF
+          PUBLIC_GA4_ID=${{ secrets.PUBLIC_GA4_ID }}
+          PUBLIC_ADSENSE_CLIENT=${{ secrets.PUBLIC_ADSENSE_CLIENT }}
+          PUBLIC_ADSENSE_SLOT_IN_ARTICLE=${{ secrets.PUBLIC_ADSENSE_SLOT_IN_ARTICLE }}
+          PUBLIC_ADSENSE_SLOT_IN_FEED=${{ secrets.PUBLIC_ADSENSE_SLOT_IN_FEED }}
+          PUBLIC_ADSENSE_SLOT_SIDEBAR=${{ secrets.PUBLIC_ADSENSE_SLOT_SIDEBAR }}
+          PUBLIC_ADSENSE_LAYOUT_IN_FEED=${{ secrets.PUBLIC_ADSENSE_LAYOUT_IN_FEED }}
+          PUBLIC_AFF_GETYOURGUIDE=${{ secrets.PUBLIC_AFF_GETYOURGUIDE }}
+          PUBLIC_AFF_BOOKING_TEMPLATE=${{ secrets.PUBLIC_AFF_BOOKING_TEMPLATE }}
+          PUBLIC_AFF_AGODA=${{ secrets.PUBLIC_AFF_AGODA }}
+          PUBLIC_AFF_12GO=${{ secrets.PUBLIC_AFF_12GO }}
+          PUBLIC_AFF_AIRALO=${{ secrets.PUBLIC_AFF_AIRALO }}
+          PUBLIC_AFF_HOLAFLY=${{ secrets.PUBLIC_AFF_HOLAFLY }}
+          PUBLIC_AFF_CHAPKA=${{ secrets.PUBLIC_AFF_CHAPKA }}
+          PUBLIC_AFF_WISE=${{ secrets.PUBLIC_AFF_WISE }}
+          PUBLIC_NEWSLETTER_ENDPOINT=${{ secrets.PUBLIC_NEWSLETTER_ENDPOINT }}
+          EOF
+
+      - run: npm run build
+
+      - name: Envoyer sur l'hébergement
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOTE }}
+          username: ${{ secrets.FTP_UTILISATEUR }}
+          password: ${{ secrets.FTP_MOTDEPASSE }}
+          local-dir: ./dist/
+          server-dir: ./public_html/
+          # Le fichier d'état de la veille et les archives n'ont rien à faire
+          # sur le serveur : ils appartiennent au dépôt.
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+
+      - name: Vérifier que le site répond
+        run: |
+          sleep 20
+          for u in / /vietnam /donnees/visas.json; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' -A 'Mozilla/5.0' "https://asiaunseen.com$u")
+            echo "$u → $code"
+            [ "$code" = "200" ] || exit 1
+          done

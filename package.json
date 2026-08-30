@@ -14,7 +14,12 @@
     "verifier": "node scripts/verifier-liens.mjs",
     "package": "node scripts/package.mjs",
     "photos": "node scripts/verifier-photos.mjs",
-    "sources": "node scripts/verifier-sources.mjs"
+    "sources": "node scripts/verifier-sources.mjs",
+    "veille": "node scripts/veille.mjs",
+    "veille:init": "node scripts/veille.mjs --init",
+    "fraicheur": "node scripts/fraicheur.mjs",
+    "audit": "node scripts/audit-seo.mjs",
+    "controle": "npm run build && npm run audit && npm run verifier && npm run fraicheur && npm run veille"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.11",

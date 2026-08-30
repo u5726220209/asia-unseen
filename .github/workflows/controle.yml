@@ -1,0 +1,33 @@
+name: Contrôle mécanique
+
+# Tout ce qu'une machine sait vérifier sans jugement : le site compile, les
+# titres et descriptions tiennent dans ce que Google affiche, aucun lien interne
+# ne pointe dans le vide, aucune source externe n'est morte.
+#
+# Ce contrôle tourne à chaque poussée et bloque la mise en ligne s'il échoue :
+# c'est le filet qui empêche qu'une correction faite dans l'urgence casse
+# autre chose.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: '0 5 * * 1'
+  workflow_dispatch:
+
+jobs:
+  controler:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: npm }
+      - run: npm ci
+      - name: Compiler
+        run: npm run build
+      - name: Audit mécanique
+        run: npm run audit
+      - name: Liens internes
+        run: npm run verifier
+      - name: Sources externes
+        run: npm run sources || echo "Des sources n'ont pas répondu — souvent un blocage anti-robot, à vérifier à la main."

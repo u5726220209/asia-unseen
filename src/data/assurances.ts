@@ -83,3 +83,15 @@ export function devisAvi(pays: string, jours: number, age: TrancheAge): Devis {
 }
 
 export const assureurs = { chapka: CHAPKA, avi: AVI };
+
+/**
+ * Les pages exactes que la sentinelle doit surveiller.
+ *
+ * Ce sont les grilles tarifaires, pas les pages d'accueil : une page d'accueil
+ * change tous les jours sans que rien de tarifaire ne bouge, et une sentinelle
+ * qui crie tous les jours finit par n'être plus lue.
+ */
+export const sourcesTarifaires = [
+  { label: 'Chapka — grille Cap Assistance 24/24', url: 'https://www.chapkadirect.fr/index.php?action=produit&id=924' },
+  { label: 'AVI — grille Routard', url: 'https://www.avi-international.com/assurance-voyage/assurance-routard' },
+];
