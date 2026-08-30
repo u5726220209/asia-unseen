@@ -106,11 +106,15 @@ qui est faux, le site ne publie aucun coupon. Corrigé, mais à surveiller.
 
 Restent :
 
-4. **Informations utilisateur** — prénom, nom et titre saisis ; il manque le
-   **numéro de téléphone**, obligatoire, que je ne connais pas.
-5. **Détails de la société et formulaire fiscal W-8BEN** — déclaration fiscale
-   signée, donc à l'éditeur.
-6. **Informations de paiement** — coordonnées bancaires, à l'éditeur.
+4. **Informations utilisateur** — fait le 30/08/2026 : Fabrice Roy, Éditeur.
+5. **Informations du compte** — raison sociale, adresse, ville, département,
+   code postal et format de date saisis, en attente du téléphone.
+   **Point à ne pas manquer : la devise fonctionnelle est réglée sur USD par
+   défaut.** Elle a été passée à **EUR** — sans quoi les commissions auraient
+   été calculées puis converties en dollars, avec une perte de change à chaque
+   versement.
+6. **Formulaire fiscal W-8BEN** — déclaration fiscale signée, donc à l'éditeur.
+7. **Informations de paiement** — coordonnées bancaires, à l'éditeur.
 
 Puis, seulement une fois le compte activé : chercher l'annonceur Booking.com
 et candidater. Sans cette dernière étape, le compte CJ ne sert à rien.
