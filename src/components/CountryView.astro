@@ -262,6 +262,17 @@ const faq = [
 
     <!-- Colonne latérale -->
     <aside data-pagefind-ignore class="lg:sticky lg:top-24 lg:h-fit">
+      <div class="mb-5 rounded-brand border border-line bg-cream-warm p-5">
+        <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-warm-light">À emporter</p>
+        <p class="mt-2 text-[0.9rem] leading-relaxed text-warm">
+          Une page à imprimer : numéros de secours, ambassade de France, règle de visa.
+          Utile le jour où le téléphone n'a plus de batterie.
+        </p>
+        <a href={`/fiche/${c.slug}`} class="btn-primary mt-4 !w-full !py-2.5 !text-[0.85rem]">
+          Fiche {c.nom}
+        </a>
+      </div>
+
       <nav aria-label="Sommaire" class="rounded-brand border border-line bg-white p-5">
         <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-warm-light">Sur cette page</p>
         <ul class="mt-4 space-y-2.5 text-[0.88rem]">

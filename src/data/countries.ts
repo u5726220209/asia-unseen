@@ -34,6 +34,18 @@ export type Country = {
    * Renseignées à partir des audits de fraîcheur — voir audits/.
    */
   demarches: { jours: number; titre: string; detail: string }[];
+  /**
+   * Numéros de secours et représentation diplomatique française.
+   * Relevés un par un sur les pages « Contacts utiles » de France Diplomatie
+   * et sur les sites des ambassades. Une donnée d'urgence fausse est pire
+   * qu'une donnée absente : là où la source officielle ne dit rien, on ne
+   * comble pas le trou.
+   */
+  urgences: {
+    numeros: { label: string; numero: string }[];
+    ambassade: { ville: string; adresse: string; telephone: string };
+    source: { label: string; url: string };
+  };
   verifieLe: string;
   volDepuisParis: string;
   accent: string;           // couleur d'accent de la fiche (palette de marque uniquement)
@@ -72,6 +84,11 @@ export const countries: Country[] = [
       { jours: 28, titre: "Déposer l'e-visa vietnamien", detail: "≈ 25 USD sur evisa.gov.vn, 3 à 5 jours ouvrés annoncés. Inutile si votre séjour tient dans les 45 jours d'exemption." },
       { jours: 3, titre: 'Enregistrement en ligne préalable', detail: "Demandé dans les 72 h précédant l'arrivée à l'aéroport de Hô Chi Minh-Ville, sur prearrival.immigration.gov.vn." },
     ],
+    urgences: {
+      numeros: [{ label: 'Police', numero: '113' }, { label: 'Pompiers', numero: '114' }, { label: 'Secours médicaux', numero: '115' }],
+      ambassade: { ville: 'Hanoï', adresse: '57 Tran Hung Dao, Hanoï', telephone: '+84 24 3944 5700' },
+      source: { label: 'France Diplomatie — Contacts utiles', url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/vietnam/conseils-aux-voyageurs-contacts-utiles' },
+    },
     verifieLe: '2026-08',
     volDepuisParis: '≈ 12 h en direct vers Hanoï ou Hô Chi Minh-Ville',
     accent: 'teal',
@@ -120,6 +137,11 @@ export const countries: Country[] = [
       { jours: 30, titre: "Reconfirmer la durée d'exemption", detail: "Une réduction de 60 à 30 jours est annoncée comme imminente. Vérifiez avant de bloquer vos vols si votre séjour dépasse 30 jours." },
       { jours: 3, titre: 'Remplir la Thailand Digital Arrival Card', detail: "Obligatoire pour toute entrée par air, terre ou mer, dans les 3 jours précédant l'arrivée, sur tdac.immigration.go.th." },
     ],
+    urgences: {
+      numeros: [{ label: 'Police', numero: '191' }, { label: 'Police touristique', numero: '1155' }, { label: 'Pompiers', numero: '199' }, { label: 'Secours médicaux', numero: '1669' }],
+      ambassade: { ville: 'Bangkok', adresse: '35 Charoenkrung soi 36, Bangrak, Bangkok 10500', telephone: '+66 2 844 7005' },
+      source: { label: 'France Diplomatie — Contacts utiles', url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/thailande/conseils-aux-voyageurs-contacts-utiles' },
+    },
     verifieLe: '2026-08',
     volDepuisParis: '≈ 11 h en direct vers Bangkok',
     accent: 'amber',
@@ -166,6 +188,11 @@ export const countries: Country[] = [
     demarches: [
       { jours: 2, titre: 'Remplir Visit Japan Web', detail: "Facultatif mais fait gagner une vraie demi-heure au passage de l'immigration et de la douane." },
     ],
+    urgences: {
+      numeros: [{ label: 'Police', numero: '110' }, { label: 'Pompiers et ambulance', numero: '119' }, { label: 'Police, assistance en français', numero: '+81 3 3503 8484' }],
+      ambassade: { ville: 'Tokyo', adresse: '4-11-44 Minami-Azabu, Minato-ku, Tokyo 106-8514', telephone: '+81 3 5798 6000' },
+      source: { label: 'France Diplomatie — Contacts utiles', url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/japon/conseils-aux-voyageurs-contacts-utiles' },
+    },
     verifieLe: '2026-08',
     volDepuisParis: '≈ 12 h à 14 h selon la route',
     accent: 'ink',
@@ -216,6 +243,11 @@ export const countries: Country[] = [
       { jours: 12, titre: 'Réserver les trains à grande vitesse', detail: "Les billets se vendent 10 à 15 jours à l'avance et partent vite sur les liaisons principales." },
       { jours: 7, titre: "Revérifier l'exemption de visa", detail: "C'est la formalité la plus mouvante d'Asie : une seconde vérification avant le départ est justifiée." },
     ],
+    urgences: {
+      numeros: [{ label: 'Police', numero: '110' }, { label: 'Secours médicaux', numero: '120' }, { label: 'Hong Kong et Macao, tous secours', numero: '999' }],
+      ambassade: { ville: 'Pékin', adresse: '60 Tianze Lu, Pékin 100600', telephone: '+86 10 8531 2000' },
+      source: { label: 'France Diplomatie — Contacts utiles', url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/chine/conseils-aux-voyageurs-contacts-utiles' },
+    },
     verifieLe: '2026-08',
     volDepuisParis: '≈ 11 h vers Pékin, 12 h vers Shanghai',
     accent: 'teal',
@@ -262,6 +294,11 @@ export const countries: Country[] = [
       { jours: 28, titre: "Déposer l'e-visa laotien, ou préparer le visa à l'arrivée", detail: "≈ 30 à 50 USD. Vérifiez que votre point d'entrée délivre bien un visa à l'arrivée ou accepte l'e-visa : tous ne le font pas." },
       { jours: 7, titre: 'Prévoir des dollars en espèces et une photo', detail: "Billets en bon état exigés au poste-frontière." },
     ],
+    urgences: {
+      numeros: [{ label: 'Police', numero: '191' }, { label: 'Pompiers', numero: '190' }, { label: 'Police touristique, Vientiane', numero: '+856 21 243647' }, { label: 'Centre médical français, Vientiane', numero: '+856 21 214150' }],
+      ambassade: { ville: 'Vientiane', adresse: 'Rue Setthathirath, BP 06, Vientiane', telephone: '+856 21 267400' },
+      source: { label: 'France Diplomatie — Contacts utiles', url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/laos/conseils-aux-voyageurs-contacts-utiles' },
+    },
     verifieLe: '2026-08',
     volDepuisParis: '≈ 15 h avec une escale (Bangkok, Hanoï ou Singapour)',
     accent: 'teal',
@@ -307,6 +344,11 @@ export const countries: Country[] = [
       { jours: 28, titre: "Déposer l'e-visa cambodgien", detail: "≈ 36 USD sur evisa.gov.kh uniquement — les sites clones facturent 80 à 100 USD." },
       { jours: 2, titre: "Remplir l'application « Cambodia e-arrival »", detail: "Obligatoire pour toute arrivée par avion depuis le 1er septembre 2024." },
     ],
+    urgences: {
+      numeros: [{ label: 'Police', numero: '117 ou 118' }, { label: 'Ambulance', numero: '119' }],
+      ambassade: { ville: 'Phnom Penh', adresse: '1 boulevard Monivong, BP 18, Phnom Penh', telephone: '+855 23 260 010' },
+      source: { label: 'France Diplomatie — Contacts utiles', url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/cambodge/conseils-aux-voyageurs-contacts-utiles' },
+    },
     verifieLe: '2026-08',
     volDepuisParis: '≈ 14 h avec une escale',
     accent: 'amber',
@@ -353,6 +395,11 @@ export const countries: Country[] = [
       { jours: 7, titre: 'Vérifier le statut du K-ETA', detail: "L'exemption court jusqu'au 31 décembre 2026. Pour un départ en 2027, le K-ETA pourrait redevenir obligatoire." },
       { jours: 3, titre: "Préparer la carte d'arrivée électronique", detail: "À compléter avant l'entrée si vous n'avez pas demandé de K-ETA." },
     ],
+    urgences: {
+      numeros: [{ label: 'Police', numero: '112' }, { label: 'Pompiers et ambulance', numero: '119' }],
+      ambassade: { ville: 'Séoul', adresse: '43-12 Seosomun-ro, Seodaemun-gu, Séoul 03741', telephone: '+82 2 3149 4300' },
+      source: { label: 'France Diplomatie — Contacts utiles', url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/coree-du-sud/conseils-aux-voyageurs-contacts-utiles' },
+    },
     verifieLe: '2026-08',
     volDepuisParis: '≈ 11 h à 13 h en direct vers Séoul-Incheon',
     accent: 'ink',
@@ -399,6 +446,11 @@ export const countries: Country[] = [
       { jours: 3, titre: 'Remplir le formulaire douanier « All Indonesia »', detail: "Dans les 72 h précédant l'arrivée. Prévoyez aussi 150 000 IDR de taxe touristique à Bali." },
       { jours: 30, titre: "Vérifier l'état du passeport", detail: "Un passeport abîmé entraîne un refus d'entrée et une reconduite — le contrôle est strict." },
     ],
+    urgences: {
+      numeros: [{ label: 'Police', numero: '110 ou 112' }, { label: 'Pompiers', numero: '113' }, { label: 'Ambulance', numero: '118 ou 119' }, { label: 'Recherche et sauvetage', numero: '115' }],
+      ambassade: { ville: 'Jakarta', adresse: 'Jl. M.H. Thamrin 20, Jakarta 10350', telephone: '+62 21 2355 8000' },
+      source: { label: 'France Diplomatie — Contacts utiles', url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/indonesie/conseils-aux-voyageurs-contacts-utiles' },
+    },
     verifieLe: '2026-08',
     volDepuisParis: '≈ 16 h à 18 h avec une escale',
     accent: 'teal',
@@ -446,6 +498,11 @@ export const countries: Country[] = [
       { jours: 3, titre: 'Remplir la carte eTravel', detail: "Obligatoire : le QR code généré est réclamé par la compagnie et à l'arrivée." },
       { jours: 21, titre: 'Réserver un billet de sortie du territoire', detail: "Exigé à l'embarquement. Un aller simple sans billet de continuation vaut un refus au départ de Paris." },
     ],
+    urgences: {
+      numeros: [{ label: 'Tous secours', numero: '911' }, { label: 'Centre antipoison, Manille', numero: '+63 2 8524 1078' }],
+      ambassade: { ville: 'Manille', adresse: '21e étage, Ayala Triangle Gardens Tower 2, Paseo de Roxas, 1226 Makati, Metro Manila', telephone: '+63 2 8857 6900' },
+      source: { label: 'France Diplomatie — Contacts utiles', url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/philippines/conseils-aux-voyageurs-contacts-utiles' },
+    },
     verifieLe: '2026-08',
     volDepuisParis: '≈ 16 h à 18 h avec une escale',
     accent: 'amber',
