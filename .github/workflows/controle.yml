@@ -24,6 +24,10 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: '22', cache: npm }
       - run: npm ci
+      # En premier : si les noms des réglages ne concordent pas, tout le reste
+      # est contrôlé sur un site auquel il manque des morceaux, sans le dire.
+      - name: Concordance des réglages
+        run: npm run config
       - name: Compiler
         run: npm run build
       - name: Audit mécanique

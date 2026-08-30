@@ -26,23 +26,30 @@ jobs:
       # correctement que s'ils sont présents à la compilation.
       - name: Reconstituer la configuration
         run: |
-          cat > .env <<EOF
-          PUBLIC_GA4_ID=${{ secrets.PUBLIC_GA4_ID }}
+          # Les variables sont écrites une par une, avec exactement les noms que
+          # le code lit. Un nom approchant ne provoque aucune erreur : le site se
+          # construit, et la publicité ou le lien affilié disparaît en silence.
+          # C'est le genre de panne qu'on ne découvre qu'à la facture.
+          cat > .env <<'FIN'
+          PUBLIC_SITE_URL=https://asiaunseen.com
           PUBLIC_ADSENSE_CLIENT=${{ secrets.PUBLIC_ADSENSE_CLIENT }}
           PUBLIC_ADSENSE_SLOT_IN_ARTICLE=${{ secrets.PUBLIC_ADSENSE_SLOT_IN_ARTICLE }}
           PUBLIC_ADSENSE_SLOT_IN_FEED=${{ secrets.PUBLIC_ADSENSE_SLOT_IN_FEED }}
           PUBLIC_ADSENSE_SLOT_SIDEBAR=${{ secrets.PUBLIC_ADSENSE_SLOT_SIDEBAR }}
           PUBLIC_ADSENSE_LAYOUT_IN_FEED=${{ secrets.PUBLIC_ADSENSE_LAYOUT_IN_FEED }}
-          PUBLIC_AFF_GETYOURGUIDE=${{ secrets.PUBLIC_AFF_GETYOURGUIDE }}
+          PUBLIC_GA4_ID=${{ secrets.PUBLIC_GA4_ID }}
+          PUBLIC_GSC_TOKEN=${{ secrets.PUBLIC_GSC_TOKEN }}
+          PUBLIC_AFF_BOOKING=${{ secrets.PUBLIC_AFF_BOOKING }}
           PUBLIC_AFF_BOOKING_TEMPLATE=${{ secrets.PUBLIC_AFF_BOOKING_TEMPLATE }}
           PUBLIC_AFF_AGODA=${{ secrets.PUBLIC_AFF_AGODA }}
           PUBLIC_AFF_12GO=${{ secrets.PUBLIC_AFF_12GO }}
+          PUBLIC_AFF_GETYOURGUIDE=${{ secrets.PUBLIC_AFF_GETYOURGUIDE }}
           PUBLIC_AFF_AIRALO=${{ secrets.PUBLIC_AFF_AIRALO }}
           PUBLIC_AFF_HOLAFLY=${{ secrets.PUBLIC_AFF_HOLAFLY }}
           PUBLIC_AFF_CHAPKA=${{ secrets.PUBLIC_AFF_CHAPKA }}
           PUBLIC_AFF_WISE=${{ secrets.PUBLIC_AFF_WISE }}
           PUBLIC_NEWSLETTER_ENDPOINT=${{ secrets.PUBLIC_NEWSLETTER_ENDPOINT }}
-          EOF
+          FIN
 
       - run: npm run build
 
