@@ -1,5 +1,5 @@
 ---
-title: "Activités en Asie : ce qui vaut le prix, ce qui ne le vaut pas"
+title: "Activités en Asie : lesquelles valent vraiment leur prix"
 heading: "Visites et activités en Asie : où mettre son argent"
 description: "Quelles activités réserver en Asie et lesquelles éviter : guides, excursions, plongée, treks. Ce qui se réserve à l'avance, ce qui coûte moins cher sur place."
 accroche: "Sur dix activités vendues aux voyageurs en Asie, trois valent largement leur prix, quatre sont correctes, et trois ne devraient pas exister. Voici comment les distinguer."

@@ -31,10 +31,15 @@
   class="fixed inset-0 z-[96] hidden items-start justify-center bg-ink/70 p-4 pt-[8vh] backdrop-blur-sm"
   role="dialog"
   aria-modal="true"
-  aria-labelledby="au-search-title"
+  aria-label="Rechercher sur Asia Unseen"
 >
+  {/*
+    Le nom de la boîte de dialogue passe par aria-label plutôt que par un titre
+    masqué : ce dialogue est déclaré tout en haut du document, et un h2 placé
+    là précédait le h1 de la page. La hiérarchie annoncée aux lecteurs d'écran
+    commençait donc au niveau 2, ce qui n'a pas de sens.
+  */}
   <div class="flex max-h-[80vh] w-full max-w-2xl flex-col overflow-hidden rounded-brand bg-cream shadow-lift-hover">
-    <h2 id="au-search-title" class="sr-only">Rechercher sur Asia Unseen</h2>
 
     <div class="flex items-center gap-3 border-b border-line px-5">
       <svg viewBox="0 0 20 20" class="h-5 w-5 shrink-0 text-warm-light" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">

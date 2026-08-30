@@ -122,7 +122,7 @@ const paysLies = (g?.pays ?? []).map((s) => bySlug[s]).filter(Boolean);
 {props.kind === 'pays' && (
   <BaseLayout
     title={`Voyager ${country!.article === 'aux' ? 'aux' : country!.article} ${country!.nom} : budget, visa, meilleure saison`}
-    description={`${country!.resume.slice(0, 130)} Budget dès ${country!.budget.routard} €/jour, formalités à jour et erreurs à éviter.`}
+    description={`${country!.resume.slice(0, 95).trim()}… Budget dès ${country!.budget.routard} €/jour, formalités vérifiées et erreurs à éviter.`}
     type="article"
     image={`/og/${country!.slug}.png`}
     schema={paysSchema}

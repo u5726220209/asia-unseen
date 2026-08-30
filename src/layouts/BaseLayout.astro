@@ -37,7 +37,20 @@ const blockIndexing = noindex || isPreview;
 
 const canonical = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', site.url).href;
 const ogImage = new URL(image, site.url).href;
-const fullTitle = title.includes(site.name) ? title : `${title} · ${site.name}`;
+/**
+ * Le nom du site n'est ajouté au titre que s'il tient dans la limite affichée
+ * par Google, environ 60 caractères. Au-delà, la fin du titre est remplacée par
+ * des points de suspension : ajouter la marque coûterait alors les mots qui
+ * font cliquer, pour un gain nul — le nom de domaine est déjà affiché sous le
+ * titre dans les résultats de recherche.
+ */
+const LIMITE_TITRE = 60;
+const avecMarque = `${title} · ${site.name}`;
+const fullTitle = title.includes(site.name)
+  ? title
+  : avecMarque.length <= LIMITE_TITRE
+    ? avecMarque
+    : title;
 
 // Balisage global : l'organisation et le site, déclarés une fois sur chaque page.
 const baseSchema = [

@@ -36,6 +36,10 @@ ErrorDocument 404 /404/index.html
 # ── Sécurité ──────────────────────────────────────────────────
 <IfModule mod_headers.c>
   Header always set X-Content-Type-Options "nosniff"
+  # HSTS : impose HTTPS pendant un an, y compris sur les sous-domaines.
+  # Sans lui, la toute première visite peut encore passer en clair avant
+  # la redirection, et c'est précisément là que se joue une interception.
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
   Header always set X-Frame-Options "SAMEORIGIN"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
   Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"

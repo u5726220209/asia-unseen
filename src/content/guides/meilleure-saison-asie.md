@@ -1,5 +1,5 @@
 ---
-title: "Meilleure saison pour partir en Asie : le guide mois par mois"
+title: "Meilleure saison pour partir en Asie : mois par mois"
 heading: "Quand partir en Asie : le calendrier réel, mois par mois"
 description: "Quel pays d'Asie visiter en janvier, en juillet, en octobre ? Le calendrier des saisons pour 9 pays, avec les moussons, les pics de chaleur et les périodes à éviter."
 accroche: "Il n'y a pas de mauvaise saison en Asie — seulement de mauvaises combinaisons pays/mois. Choisissez votre mois, voici où il faut aller."

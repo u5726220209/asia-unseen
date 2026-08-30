@@ -1,5 +1,5 @@
 ---
-title: "Angkor en saison des pluies : pourquoi c'est le meilleur moment"
+title: "Angkor en saison des pluies : le meilleur moment"
 heading: "Angkor sous la pluie : le contre-pied qui marche"
 description: "Visiter Angkor pendant la mousson : douves pleines, pierre sombre, groupes divisés par trois. Ce que ça change réellement, et comment organiser les trois jours."
 accroche: "Tout le monde vous dira d'éviter juillet à octobre. Sur Angkor précisément, c'est le contraire — et l'écart est visible dès la première heure."

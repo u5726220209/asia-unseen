@@ -1,5 +1,5 @@
 ---
-title: "Vietnam en 10 jours : l'itinéraire qui évite le piège classique"
+title: "Vietnam en 10 jours : l'itinéraire sans le piège classique"
 heading: "Dix jours au Vietnam : le nord, correctement"
 description: "Un itinéraire de 10 jours au Vietnam, testé : Hanoï, Ninh Binh, Ha Giang, baie de Lan Ha. Temps de trajet réels, budget détaillé et l'erreur que font 80 % des voyageurs."
 accroche: "Dix jours au Vietnam, c'est assez pour une région, pas pour le pays. Voici celle qui donne le plus, et pourquoi le nord-sud express est une mauvaise idée."

@@ -24,10 +24,12 @@ export default defineConfig({
   integrations: [
     sitemap({
       i18n: { defaultLocale: 'fr', locales: { fr: 'fr-FR' } },
-      filter: (page) =>
-        !page.includes('/mentions-legales') &&
-        !page.includes('/confidentialite') &&
-        !page.includes('/merci'),
+      // Les pages légales restent dans le plan du site : ce sont des signaux de
+      // confiance que Google cherche activement, et une page d'identité qu'on
+      // cache indexe mal l'idée qu'on n'a rien à cacher. Seule la page de
+      // remerciement après inscription en est exclue : elle n'a de sens
+      // qu'immédiatement après le formulaire.
+      filter: (page) => !page.includes('/merci'),
       // Astro produit des URL en /page/ ; les canoniques du site et les hôtes
       // statiques utilisent /page. On aligne le plan du site dessus pour ne pas
       // déclarer à Google une liste d'URL qui redirigent toutes.
