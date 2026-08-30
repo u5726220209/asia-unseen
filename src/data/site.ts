@@ -58,10 +58,23 @@ export const legal = {
   ape: { code: '73.11Z', libelle: 'Activités des agences de publicité' },
   creation: '3 septembre 2025',
   adresse: '60 rue François 1er, 75008 Paris, France',
-  /**
-   * À confirmer par l'éditeur. Une entreprise individuelle non employeuse créée
-   * en 2025 relève très probablement de la franchise en base ; le numéro
-   * intracommunautaire (FR 33 991954017) ne s'affiche qu'une fois assujetti.
+  /*
+   * Vérifié le 30 août 2026, deux sources publiques concordantes :
+   *   — VIES (Commission européenne) répond isValid: false pour FR33991954017.
+   *     Aucun numéro de TVA intracommunautaire actif n'est rattaché au SIREN.
+   *   — Le registre national confirme une entreprise individuelle sans salarié,
+   *     créée le 3 septembre 2025, toujours active.
+   *
+   * Le seuil à ne pas dépasser n'est pas 37 500 € pour la première année :
+   * l'article 293 D du CGI ajuste les plafonds au prorata des jours d'activité
+   * (BOFiP BOI-TVA-DECLA-40-10-10, § 290). Du 3 septembre au 31 décembre 2025,
+   * cela fait 120 jours, soit un seuil ajusté de 37 500 × 120/365 = 12 329 €,
+   * et un seuil majoré de 13 562 €. Pour 2026, année pleine, les seuils
+   * reprennent leur valeur normale : 37 500 € et 41 250 €.
+   *
+   * Reste à confirmer par l'éditeur : le chiffre d'affaires encaissé entre le
+   * 3 septembre et le 31 décembre 2025. S'il dépasse 12 329 €, cette ligne doit
+   * devenir « FR33991954017 » et l'intitulé redevenir « TVA intracommunautaire ».
    */
   tva: 'TVA non applicable, article 293 B du CGI',
   directeurPublication: 'Fabrice Roy',
