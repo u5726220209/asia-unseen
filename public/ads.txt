@@ -1,0 +1,5 @@
+# Fichier ads.txt — à activer une fois AdSense approuvé.
+# Remplacez pub-0000000000000000 par votre identifiant éditeur (sans le préfixe « ca- »).
+# Sans ce fichier correctement rempli, Google réduit fortement les revenus display.
+#
+# google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0

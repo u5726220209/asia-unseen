@@ -1,0 +1,155 @@
+---
+import { countries } from '@/data/countries';
+
+/**
+ * Calculateur de budget. Entièrement côté client, sans dépendance :
+ * il fonctionne dès le premier rendu et ne bloque pas le LCP.
+ *
+ * Les estimations de vol A/R depuis Paris sont des moyennes observées
+ * hors vacances scolaires, en réservant 2 à 4 mois à l'avance.
+ */
+const VOLS: Record<string, number> = {
+  vietnam: 650, thailande: 620, japon: 780, chine: 620, laos: 780,
+  cambodge: 700, 'coree-du-sud': 700, indonesie: 800, philippines: 780,
+};
+
+const data = countries.map((c) => ({
+  slug: c.slug, nom: c.nom, budget: c.budget, vol: VOLS[c.slug] ?? 700,
+}));
+---
+
+<div class="au-budget my-10 overflow-hidden rounded-brand border border-line bg-white">
+  <div class="border-b border-line bg-cream-warm px-6 py-5">
+    <p class="eyebrow">Outil</p>
+    <h3 class="mt-1.5 font-display text-xl font-bold text-ink">Combien va vous coûter ce voyage ?</h3>
+    <p class="mt-1.5 text-[0.88rem] text-warm">
+      Fourchettes établies à partir de dépenses réelles, hors achats personnels et assurance.
+    </p>
+  </div>
+
+  <div class="grid gap-6 px-6 py-7 sm:grid-cols-2">
+    <div>
+      <label for="bg-pays" class="mb-2 block font-display text-[0.8rem] font-semibold uppercase tracking-wider text-ink">Destination</label>
+      <select id="bg-pays" class="w-full rounded-brand border border-line bg-cream px-4 py-3 font-medium text-ink focus:border-teal focus:outline-none">
+        {countries.map((c) => <option value={c.slug}>{c.nom}</option>)}
+      </select>
+    </div>
+
+    <div>
+      <label for="bg-style" class="mb-2 block font-display text-[0.8rem] font-semibold uppercase tracking-wider text-ink">Style de voyage</label>
+      <select id="bg-style" class="w-full rounded-brand border border-line bg-cream px-4 py-3 font-medium text-ink focus:border-teal focus:outline-none">
+        <option value="routard">Routard — dortoirs, bus, cuisine de rue</option>
+        <option value="confort" selected>Confort — hôtel 3★, restaurants, quelques vols</option>
+        <option value="premium">Premium — 4★, chauffeur, activités guidées</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="bg-jours" class="mb-2 flex items-baseline justify-between font-display text-[0.8rem] font-semibold uppercase tracking-wider text-ink">
+        Durée <span id="bg-jours-out" class="font-sans text-[0.95rem] font-bold normal-case tracking-normal text-teal">15 jours</span>
+      </label>
+      <input id="bg-jours" type="range" min="3" max="60" value="15" class="w-full accent-teal" />
+    </div>
+
+    <div>
+      <label for="bg-pers" class="mb-2 flex items-baseline justify-between font-display text-[0.8rem] font-semibold uppercase tracking-wider text-ink">
+        Voyageurs <span id="bg-pers-out" class="font-sans text-[0.95rem] font-bold normal-case tracking-normal text-teal">2</span>
+      </label>
+      <input id="bg-pers" type="range" min="1" max="6" value="2" class="w-full accent-teal" />
+    </div>
+
+    <div class="sm:col-span-2">
+      <label class="flex cursor-pointer items-center gap-3 text-[0.92rem] text-ink-soft">
+        <input id="bg-vol" type="checkbox" checked class="h-4 w-4 accent-teal" />
+        <span>Inclure le vol international A/R depuis Paris (<span id="bg-vol-out">650</span>&nbsp;€ par personne, estimation)</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="border-t border-line bg-ink px-6 py-7 text-cream">
+    <div class="flex flex-wrap items-baseline justify-between gap-4">
+      <div>
+        <p class="font-display text-[0.72rem] uppercase tracking-[0.18em] text-warm">Budget total estimé</p>
+        <p id="bg-total" class="mt-1 font-display text-4xl font-bold tracking-tight text-cream">—</p>
+      </div>
+      <p class="text-[0.85rem] text-warm-light">
+        soit <span id="bg-jour" class="font-semibold text-amber">—</span> par personne et par jour sur place
+      </p>
+    </div>
+
+    <ul id="bg-detail" class="mt-7 grid gap-x-8 gap-y-3 sm:grid-cols-2"></ul>
+
+    <p class="mt-7 border-t border-white/10 pt-5 text-[0.78rem] leading-relaxed text-warm">
+      Estimation indicative, pas un devis. Les prix des vols varient du simple au double selon
+      la période, et un mois de mousson coûte 20 à 30 % de moins qu'une semaine de Nouvel An lunaire.
+    </p>
+  </div>
+</div>
+
+<script type="application/json" id="bg-data" set:html={JSON.stringify(data)}></script>
+
+<script>
+  type Row = { slug: string; nom: string; budget: Record<string, number>; vol: number };
+
+  const root = document.querySelector('.au-budget');
+  const raw = document.getElementById('bg-data')?.textContent;
+  if (root && raw) {
+    const rows: Row[] = JSON.parse(raw);
+    const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+
+    const pays = $<HTMLSelectElement>('bg-pays');
+    const style = $<HTMLSelectElement>('bg-style');
+    const jours = $<HTMLInputElement>('bg-jours');
+    const pers = $<HTMLInputElement>('bg-pers');
+    const vol = $<HTMLInputElement>('bg-vol');
+
+    // Répartition moyenne d'un budget sur place, observée sur la région.
+    const POSTES: [string, number][] = [
+      ['Hébergement', 0.38],
+      ['Repas et boissons', 0.24],
+      ['Transports sur place', 0.14],
+      ['Visites et activités', 0.16],
+      ['Divers et imprévus', 0.08],
+    ];
+
+    const eur = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+
+    function render() {
+      const row = rows.find((r) => r.slug === pays.value)!;
+      const perDay = row.budget[style.value];
+      const nDays = Number(jours.value);
+      const nPers = Number(pers.value);
+
+      const surPlace = perDay * nDays * nPers;
+      const vols = vol.checked ? row.vol * nPers : 0;
+
+      $('bg-jours-out').textContent = `${nDays} jour${nDays > 1 ? 's' : ''}`;
+      $('bg-pers-out').textContent = String(nPers);
+      $('bg-vol-out').textContent = String(row.vol);
+      $('bg-total').textContent = eur.format(surPlace + vols);
+      $('bg-jour').textContent = eur.format(perDay);
+
+      const detail = $('bg-detail');
+      detail.innerHTML = '';
+      const lignes: [string, number][] = POSTES.map(([label, part]) => [label, surPlace * part]);
+      if (vols) lignes.unshift(['Vols internationaux', vols]);
+
+      for (const [label, montant] of lignes) {
+        const li = document.createElement('li');
+        li.className = 'flex items-baseline justify-between gap-4 border-b border-white/10 pb-2';
+        li.innerHTML =
+          `<span class="text-[0.9rem] text-warm-light"></span>` +
+          `<span class="font-display text-[0.95rem] font-semibold text-cream"></span>`;
+        li.children[0].textContent = label;
+        li.children[1].textContent = eur.format(montant);
+        detail.appendChild(li);
+      }
+    }
+
+    [pays, style, jours, pers, vol].forEach((el) => {
+      el.addEventListener('input', render);
+      el.addEventListener('change', render);
+    });
+    render();
+  }
+</script>

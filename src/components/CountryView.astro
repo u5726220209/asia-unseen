@@ -1,0 +1,239 @@
+---
+import type { Country } from '@/data/countries';
+import { MOIS } from '@/data/countries';
+import Breadcrumbs from './Breadcrumbs.astro';
+import Disclosure from './Disclosure.astro';
+import VerifiedBadge from './VerifiedBadge.astro';
+import AffiliateLink from './AffiliateLink.astro';
+import Callout from './Callout.astro';
+import FAQ from './FAQ.astro';
+import AdSlot from './AdSlot.astro';
+import Newsletter from './Newsletter.astro';
+
+interface Props { country: Country; related: { href: string; label: string; hint: string }[] }
+const { country: c, related } = Astro.props;
+
+const SAISON_STYLE = {
+  3: { cell: 'bg-teal text-cream', label: 'Idéal' },
+  2: { cell: 'bg-amber-100 text-amber-700', label: 'Correct' },
+  1: { cell: 'bg-cream-warm text-warm-light', label: 'À éviter' },
+} as const;
+
+const faq = [
+  {
+    q: `Faut-il un visa pour ${c.article === 'aux' ? 'aller aux' : c.article === 'au' ? 'aller au' : 'aller en'} ${c.nom} ?`,
+    r: `${c.visa.resume} ${c.visa.duree} Coût : ${c.visa.cout}. ${c.visa.procedure} Ces règles évoluent : vérifiez sur le portail officiel avant de réserver.`,
+  },
+  {
+    q: `Quel budget prévoir par jour ${c.article === 'aux' ? 'aux' : c.article} ${c.nom} ?`,
+    r: `Comptez environ ${c.budget.routard} € par jour et par personne en voyage routard (dortoir, bus, cuisine de rue), ${c.budget.confort} € en voyage confort (hôtel 3★, restaurants, quelques trajets rapides) et ${c.budget.premium} € en voyage premium. Ces montants excluent le vol international, estimé à ${c.volDepuisParis.includes('escale') ? '700 à 800 €' : '620 à 780 €'} aller-retour depuis Paris.`,
+  },
+  {
+    q: `Quelle est la meilleure période pour partir ${c.article === 'aux' ? 'aux' : c.article} ${c.nom} ?`,
+    r: c.saisonNote,
+  },
+  {
+    q: `Quelle est la principale erreur à éviter ${c.article === 'aux' ? 'aux' : c.article} ${c.nom} ?`,
+    r: c.erreurs[0] + ". Les autres pièges fréquents sont détaillés dans la section « Ce qu'il ne faut pas faire » de ce guide.",
+  },
+];
+---
+
+<article>
+  <!-- Hero -->
+  <header class="border-b border-line bg-cream-warm">
+    <div class="wrap py-10 lg:py-14">
+      <Breadcrumbs items={[{ href: '/#destinations', label: 'Destinations' }, { label: c.nom }]} />
+
+      <h1 class="mt-6 max-w-3xl text-hero">Voyager {c.article === 'aux' ? 'aux' : c.article} {c.nom}</h1>
+      <p class="mt-6 max-w-2xl text-[1.15rem] leading-relaxed text-warm">{c.resume}</p>
+      <p class="mt-5 max-w-2xl text-[0.95rem] text-warm-light">
+        <strong class="font-semibold text-ink-soft">Pour qui :</strong> {c.pourQui}
+      </p>
+
+      <dl class="mt-10 grid gap-px overflow-hidden rounded-brand border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
+        {[
+          ['Capitale', c.capitale],
+          ['Monnaie', c.monnaie],
+          ['Décalage horaire', c.decalage],
+          ['Depuis Paris', c.volDepuisParis],
+        ].map(([k, v]) => (
+          <div class="bg-cream-warm px-5 py-4">
+            <dt class="font-display text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-warm-light">{k}</dt>
+            <dd class="mt-1 text-[0.92rem] font-medium text-ink">{v}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </header>
+
+  <div class="wrap grid gap-14 py-14 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-16">
+    <div class="prose-au min-w-0">
+      <Disclosure class="!mb-10 !mt-0" />
+
+      <!-- Budget -->
+      <h2 id="budget">Quel budget prévoir</h2>
+      <p>
+        Trois façons de voyager {c.article === 'aux' ? 'aux' : c.article} {c.nom}, trois budgets très différents.
+        Les montants ci-dessous sont par personne et par jour, hors vol international, hors assurance
+        et hors achats personnels.
+      </p>
+
+      <div class="not-prose my-8 grid gap-px overflow-hidden rounded-brand border border-line bg-line sm:grid-cols-3">
+        {[
+          ['Routard', c.budget.routard, 'Dortoir ou guesthouse, bus de nuit, cuisine de rue, peu d\'activités payantes.'],
+          ['Confort', c.budget.confort, 'Hôtel 3★ ou bel Airbnb, restaurants, trajets rapides, visites guidées.'],
+          ['Premium', c.budget.premium, 'Hôtel 4★, chauffeur privé, excursions organisées, vols intérieurs.'],
+        ].map(([label, montant, desc], i) => (
+          <div class:list={['bg-white p-6', i === 1 && 'ring-1 ring-inset ring-teal-200']}>
+            <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-warm-light">{label}</p>
+            <p class="mt-2 font-display text-[2.1rem] font-bold leading-none tracking-tight text-ink">
+              {montant} <span class="text-[1.1rem] font-semibold text-warm">€ / jour</span>
+            </p>
+            <p class="mt-3 text-[0.85rem] leading-relaxed text-warm">{desc}</p>
+          </div>
+        ))}
+      </div>
+
+      <p>
+        Pour appliquer ces fourchettes à votre itinéraire réel — durée, nombre de voyageurs,
+        vol inclus ou non — utilisez le <a href="/budget-voyage-asie">calculateur de budget</a>.
+      </p>
+
+      <AdSlot placement="in-article" />
+
+      <!-- Saison -->
+      <h2 id="saison">Quand partir</h2>
+      <div class="not-prose my-8 overflow-hidden rounded-brand border border-line bg-white">
+        <div class="table-wrap !my-0">
+          <div class="grid min-w-[34rem] grid-cols-12">
+            {c.saisons.map((s, i) => (
+              <div class="border-r border-line/60 last:border-r-0">
+                <p class="border-b border-line py-2 text-center font-display text-[0.72rem] font-semibold uppercase tracking-wider text-warm">
+                  {MOIS[i]}
+                </p>
+                <p class:list={['py-4 text-center font-display text-[0.68rem] font-semibold uppercase tracking-wide', SAISON_STYLE[s].cell]}>
+                  {SAISON_STYLE[s].label}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      <p>{c.saisonNote}</p>
+
+      <!-- Visa -->
+      <h2 id="visa">Formalités et visa</h2>
+      <p>{c.visa.resume}</p>
+      <div class="not-prose my-8 overflow-hidden rounded-brand border border-line">
+        <dl class="divide-y divide-line">
+          {[
+            ['Durée autorisée', c.visa.duree],
+            ['Coût', c.visa.cout],
+            ['Procédure', c.visa.procedure],
+          ].map(([k, v]) => (
+            <div class="grid gap-1 bg-white px-5 py-4 sm:grid-cols-[10rem_1fr] sm:gap-6">
+              <dt class="font-display text-[0.8rem] font-semibold uppercase tracking-wider text-warm-light">{k}</dt>
+              <dd class="text-[0.95rem] leading-relaxed text-ink-soft">{v}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+      <VerifiedBadge date={c.verifieLe} sources={c.sourcesVisa} class="!my-8" />
+      <p>
+        Le détail des procédures, les délais réels et les pièges des sites intermédiaires sont
+        traités dans le <a href="/visas-asie">guide des visas pour l'Asie</a>.
+      </p>
+
+      <!-- Incontournables -->
+      <h2 id="incontournables">Ce qui vaut vraiment le détour</h2>
+      <ul>{c.incontournables.map((i) => <li>{i}</li>)}</ul>
+
+      <h3>Et si vous voulez sortir du circuit</h3>
+      <ul>{c.horsSentiers.map((i) => <li>{i}</li>)}</ul>
+
+      <AdSlot placement="in-article" />
+
+      <!-- Erreurs -->
+      <h2 id="erreurs">Ce qu'il ne faut pas faire</h2>
+      <p>
+        Chacune de ces erreurs coûte de l'argent, du temps, ou les deux. Elles reviennent
+        systématiquement dans les messages qu'on reçoit.
+      </p>
+      <ol>{c.erreurs.map((e) => <li>{e}</li>)}</ol>
+
+      <Callout type="attention" title="Un réflexe qui vaut pour toute l'Asie">
+        <p>
+          Ne laissez jamais votre passeport en caution — ni pour un scooter, ni pour un hôtel,
+          ni pour une excursion. Une photocopie ou une photo suffit, et c'est légalement ce
+          qui est exigé. Le récupérer après un litige peut prendre des jours.
+        </p>
+      </Callout>
+
+      <!-- Réserver -->
+      <h2 id="reserver">Réserver son voyage</h2>
+      <p>
+        Les liens ci-dessous sont des liens partenaires : ils ne changent rien à votre prix et
+        financent l'écriture de ces guides. On n'y met que ce qu'on utilise réellement.
+      </p>
+
+      <div class="not-prose my-8 grid gap-5 sm:grid-cols-2">
+        {[
+          { p: 'booking' as const, titre: 'Hébergement', texte: "La meilleure couverture sur les petits hôtels familiaux, et l'annulation gratuite quasi partout.", cta: 'Chercher un hôtel' },
+          { p: 'twelvego' as const, titre: 'Trains, bus et ferries', texte: "Le seul agrégateur fiable pour les transports terrestres en Asie du Sud-Est, avec les horaires réels.", cta: 'Voir les trajets' },
+          { p: 'getyourguide' as const, titre: 'Activités et guides', texte: 'Annulation jusqu\'à 24 h avant, avis vérifiés, et des guides francophones sur les grandes villes.', cta: 'Voir les activités' },
+          { p: 'chapka' as const, titre: 'Assurance voyage', texte: "Rapatriement et frais médicaux sans franchise sur la plupart des formules. Indispensable si vous roulez.", cta: "Comparer les formules" },
+        ].map((b) => (
+          <div class="flex flex-col rounded-brand border border-line bg-white p-6">
+            <p class="font-display text-[1.05rem] font-bold text-ink">{b.titre}</p>
+            <p class="mt-2 flex-1 text-[0.9rem] leading-relaxed text-warm">{b.texte}</p>
+            <AffiliateLink partner={b.p} params={b.p === 'booking' ? { ss: c.nom } : {}} class="mt-5 !w-full !py-3 !text-[0.88rem]">
+              {b.cta}
+            </AffiliateLink>
+          </div>
+        ))}
+      </div>
+
+      <FAQ items={faq} title={`${c.nom} : les questions qu'on nous pose`} />
+
+      <Newsletter variant="inline" />
+    </div>
+
+    <!-- Colonne latérale -->
+    <aside class="lg:sticky lg:top-24 lg:h-fit">
+      <nav aria-label="Sommaire" class="rounded-brand border border-line bg-white p-5">
+        <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-warm-light">Sur cette page</p>
+        <ul class="mt-4 space-y-2.5 text-[0.88rem]">
+          {[
+            ['#budget', 'Quel budget prévoir'],
+            ['#saison', 'Quand partir'],
+            ['#visa', 'Formalités et visa'],
+            ['#incontournables', 'Ce qui vaut le détour'],
+            ['#erreurs', "Ce qu'il ne faut pas faire"],
+            ['#reserver', 'Réserver son voyage'],
+          ].map(([href, label]) => (
+            <li><a href={href} class="text-warm transition-colors hover:text-teal">{label}</a></li>
+          ))}
+        </ul>
+      </nav>
+
+      {related.length > 0 && (
+        <nav aria-label="Guides liés" class="mt-6 rounded-brand border border-line bg-white p-5">
+          <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-warm-light">À lire ensuite</p>
+          <ul class="mt-4 space-y-3.5">
+            {related.map((r) => (
+              <li>
+                <a href={r.href} class="group block">
+                  <span class="block font-display text-[0.9rem] font-semibold text-ink transition-colors group-hover:text-teal">{r.label}</span>
+                  <span class="block text-[0.8rem] leading-snug text-warm">{r.hint}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
+
+      <AdSlot placement="sidebar" class="!mt-6" />
+    </aside>
+  </div>
+</article>

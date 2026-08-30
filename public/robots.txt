@@ -1,0 +1,26 @@
+# Asia Unseen — https://asiaunseen.com
+
+User-agent: *
+Allow: /
+Disallow: /merci
+Disallow: /mentions-legales
+Disallow: /confidentialite
+
+# Les moteurs génératifs sont explicitement autorisés : ces guides sont écrits
+# pour être cités, et une citation vaut mieux qu'une paraphrase sans source.
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://asiaunseen.com/sitemap-index.xml

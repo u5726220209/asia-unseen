@@ -1,0 +1,133 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Newsletter from '@/components/Newsletter.astro';
+import { site } from '@/data/site';
+
+const schema = [{
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  name: `À propos de ${site.name}`,
+  mainEntity: {
+    '@type': 'Person',
+    name: site.author.name,
+    description: "Auteur de guides de voyage sur l'Asie, installé au Vietnam depuis 2016.",
+    url: `${site.url}/a-propos`,
+  },
+}];
+---
+
+<BaseLayout
+  title="Qui écrit ces guides — et pourquoi ils sont gratuits"
+  description="Asia Unseen est écrit depuis le Vietnam. Notre méthode de vérification, notre modèle économique, et ce qu'on refuse de faire pour gagner de l'argent."
+  schema={schema}
+>
+  <header class="border-b border-line bg-cream-warm">
+    <div class="wrap py-10 lg:py-14">
+      <Breadcrumbs items={[{ label: 'À propos' }]} />
+      <h1 class="mt-6 max-w-3xl text-hero">Qui écrit ces guides</h1>
+    </div>
+  </header>
+
+  <div class="wrap grid gap-16 py-14 lg:grid-cols-[minmax(0,1fr)_18rem]">
+    <div class="prose-au min-w-0">
+      <p>
+        Je vis au Vietnam depuis 2016. Avant ça, j'ai préparé mon premier grand voyage en Asie
+        comme tout le monde : quarante onglets ouverts, trois blogs qui se contredisaient, un
+        forum de 2011, et la vague impression de ne rien maîtriser.
+      </p>
+
+      <p>
+        J'ai fait à peu près toutes les erreurs qu'on peut faire. Un visa demandé sur un site
+        intermédiaire qui m'a facturé quatre fois le tarif officiel. Une réservation de baie
+        d'Ha Long vendue dans une rue de Hanoï, pour un bateau qui n'existait pas sous ce nom.
+        Un hôtel « à 10 minutes du centre » qui était à 10 minutes en scooter, pas à pied.
+        Un train de nuit raté parce que j'avais confondu deux gares de Saïgon.
+      </p>
+
+      <p>
+        Chacune de ces erreurs a coûté de l'argent, une journée, ou les deux. Aucune n'était
+        évitable avec l'information disponible en français à l'époque. Ce site existe pour
+        combler exactement cet écart.
+      </p>
+
+      <h2>Comment ces guides sont écrits</h2>
+
+      <p>
+        Chaque page part d'une expérience réelle, sur place — la mienne, ou celle de personnes
+        dont je vérifie les retours. Ensuite, tout ce qui est vérifiable est vérifié à la source :
+        les formalités auprès des portails gouvernementaux, les tarifs auprès des opérateurs,
+        les horaires auprès des compagnies.
+      </p>
+
+      <p>
+        C'est pour ça que chaque fiche pays porte une <strong>date de dernière vérification</strong> et
+        la liste de ses sources. Une information de voyage sans date est une information morte :
+        les règles de visa en Asie changent parfois deux fois par an, et une bonne moitié des
+        contenus qui se classent en première page de Google ne sont plus exacts.
+      </p>
+
+      <h2>Comment ce site gagne de l'argent</h2>
+
+      <p>
+        Trois sources, dans cet ordre : la publicité display, les liens partenaires (Booking,
+        12Go, GetYourGuide, assurances, eSIM) et, à terme, des ressources payantes.
+        Aucun contenu n'est vendu à un annonceur.
+      </p>
+
+      <p>Concrètement, cela veut dire trois engagements :</p>
+
+      <ul>
+        <li>
+          <strong>Les liens partenaires sont signalés en haut de chaque page concernée</strong>,
+          en clair, pas dans une ligne grise en bas de page.
+        </li>
+        <li>
+          <strong>Un service qui ne vaut pas son prix est décrit comme tel</strong>, même quand
+          il nous rémunère. Un site qui ne dit jamais de mal de ses partenaires n'a aucune valeur.
+        </li>
+        <li>
+          <strong>Aucun article sponsorisé déguisé.</strong> Si un jour un contenu est financé
+          par un tiers, il portera une mention en tête d'article, sans ambiguïté.
+        </li>
+      </ul>
+
+      <p>
+        Le détail complet est sur la page <a href="/affiliation">transparence et affiliation</a>.
+      </p>
+
+      <h2>Ce que ce site n'est pas</h2>
+
+      <ul>
+        <li>Une agence de voyage. On ne vend rien, on ne réserve rien à votre place.</li>
+        <li>Un catalogue de « lieux incontournables » recopié des offices de tourisme.</li>
+        <li>Une source officielle. Pour les formalités, seuls les sites gouvernementaux font foi.</li>
+      </ul>
+
+      <h2>Une erreur, une info périmée ?</h2>
+
+      <p>
+        Écrivez-moi. Les corrections sont la partie la plus utile du courrier que je reçois, et
+        elles sont appliquées vite — avec mise à jour de la date de vérification.
+        <a href="/contact">Le formulaire est ici</a>, ou directement à
+        <a href={`mailto:${site.author.email}`}>{site.author.email}</a>.
+      </p>
+
+      <Newsletter variant="inline" />
+    </div>
+
+    <aside class="lg:sticky lg:top-24 lg:h-fit">
+      <div class="rounded-brand border border-line bg-white p-6">
+        <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-warm-light">L'auteur</p>
+        <p class="mt-3 font-display text-[1.05rem] font-bold text-ink">{site.author.name}</p>
+        <p class="mt-1 text-[0.85rem] text-warm">{site.author.role}</p>
+        <hr class="rule my-5" />
+        <dl class="space-y-3 text-[0.85rem]">
+          <div><dt class="text-warm-light">En Asie depuis</dt><dd class="font-medium text-ink">2016</dd></div>
+          <div><dt class="text-warm-light">Base</dt><dd class="font-medium text-ink">Hô Chi Minh-Ville, Vietnam</dd></div>
+          <div><dt class="text-warm-light">Contact</dt><dd><a href={`mailto:${site.author.email}`} class="link">{site.author.email}</a></dd></div>
+        </dl>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>

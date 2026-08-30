@@ -1,0 +1,40 @@
+---
+/**
+ * Bandeau de fraîcheur + sources. Sert deux objectifs à la fois :
+ * la confiance du lecteur (E-E-A-T) et l'honnêteté sur des informations
+ * — formalités, tarifs — qui bougent constamment.
+ */
+interface Props {
+  date: string;                                  // format AAAA-MM
+  sources?: { label: string; url: string }[];
+  class?: string;
+}
+const { date, sources = [], class: klass = '' } = Astro.props;
+const [y, m] = date.split('-');
+const label = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' })
+  .format(new Date(Number(y), Number(m) - 1, 1));
+---
+
+<div class:list={['rounded-brand border border-line bg-white px-5 py-4', klass]}>
+  <p class="flex items-center gap-2 font-display text-[0.78rem] font-semibold uppercase tracking-[0.14em] text-teal">
+    <svg viewBox="0 0 16 16" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M2.5 8.5 6 12l7.5-8" />
+    </svg>
+    Informations vérifiées en {label}
+  </p>
+  <p class="mt-2 text-[0.85rem] leading-relaxed text-warm">
+    Les formalités et les tarifs changent sans préavis. Confirmez systématiquement auprès des
+    sources officielles avant de réserver — c'est la seule chose qui fasse foi.
+  </p>
+  {sources.length > 0 && (
+    <ul class="mt-3 flex flex-wrap gap-x-5 gap-y-1.5">
+      {sources.map((s) => (
+        <li>
+          <a href={s.url} target="_blank" rel="noopener nofollow" class="text-[0.82rem] font-medium text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">
+            {s.label} ↗
+          </a>
+        </li>
+      ))}
+    </ul>
+  )}
+</div>

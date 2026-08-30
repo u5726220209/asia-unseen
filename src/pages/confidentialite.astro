@@ -1,0 +1,94 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import { site } from '@/data/site';
+---
+
+<BaseLayout title="Politique de confidentialité et cookies" description="Quelles données Asia Unseen collecte, pourquoi, combien de temps, et comment exercer vos droits." noindex noPopup>
+  <header class="border-b border-line bg-cream-warm">
+    <div class="wrap py-10">
+      <Breadcrumbs items={[{ label: 'Confidentialité' }]} />
+      <h1 class="mt-6 text-display">Confidentialité et cookies</h1>
+    </div>
+  </header>
+
+  <div class="wrap-narrow prose-au py-14">
+    <div class="not-prose mb-10 rounded-brand border-l-[3px] border-amber bg-amber-50 px-6 py-5">
+      <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-amber-700">À adapter avant mise en ligne</p>
+      <p class="mt-2 text-[0.92rem] leading-relaxed text-ink-soft">
+        Ce texte décrit la configuration prévue du site. Ajustez-le à ce que vous activez
+        réellement (analytics, régie publicitaire, outil d'emailing) et renseignez l'identité
+        du responsable de traitement. Dès qu'AdSense ou GA4 est activé, un bandeau de consentement
+        conforme est <strong>obligatoire</strong> — voir README, section « Consentement ».
+      </p>
+    </div>
+
+    <h2>Responsable de traitement</h2>
+    <p>
+      [Nom du responsable de traitement], joignable à
+      <a href={`mailto:${site.author.email}`}>{site.author.email}</a>.
+    </p>
+
+    <h2>Ce que nous collectons, et pourquoi</h2>
+
+    <h3>Mesure d'audience</h3>
+    <p>
+      Le site utilise Google Analytics 4 pour comprendre quelles pages sont utiles et lesquelles
+      ne le sont pas. L'anonymisation des adresses IP est activée. Ces cookies sont déposés
+      <strong>uniquement après votre consentement</strong>. Base légale : consentement
+      (article 6.1.a du RGPD). Durée de conservation : 14 mois maximum.
+    </p>
+
+    <h3>Publicité</h3>
+    <p>
+      Les emplacements publicitaires sont fournis par Google AdSense, qui peut déposer des
+      cookies pour mesurer les affichages et, si vous l'acceptez, personnaliser les annonces.
+      Vous pouvez refuser la personnalisation sans perdre l'accès au contenu. Base légale :
+      consentement.
+    </p>
+
+    <h3>Newsletter</h3>
+    <p>
+      Si vous vous inscrivez, nous conservons votre adresse email et la date d'inscription,
+      chez notre prestataire d'emailing. Nous ne l'utilisons que pour vous envoyer la lettre et
+      les ressources annoncées. Base légale : consentement, retirable à tout moment via le lien
+      de désabonnement présent dans chaque email. Suppression sous 30 jours après désinscription.
+    </p>
+
+    <h3>Formulaire de contact</h3>
+    <p>
+      Les informations transmises servent exclusivement à vous répondre. Elles sont conservées
+      douze mois puis supprimées. Base légale : intérêt légitime à répondre à une sollicitation.
+    </p>
+
+    <h2>Ce que nous ne faisons pas</h2>
+    <ul>
+      <li>Nous ne revendons ni ne louons aucune donnée personnelle.</li>
+      <li>Nous ne constituons pas de profil publicitaire pour notre propre compte.</li>
+      <li>Nous ne déposons aucun cookie de mesure ou de publicité avant votre consentement.</li>
+    </ul>
+
+    <h2>Liens d'affiliation</h2>
+    <p>
+      Cliquer sur un lien partenaire vous redirige vers le site du partenaire, qui applique sa
+      propre politique de confidentialité et peut déposer un cookie de suivi permettant de nous
+      attribuer la vente. Nous ne recevons de sa part aucune donnée nominative — seulement des
+      statistiques agrégées. Détails sur la page <a href="/affiliation">transparence et affiliation</a>.
+    </p>
+
+    <h2>Vos droits</h2>
+    <p>
+      Vous disposez d'un droit d'accès, de rectification, d'effacement, d'opposition, de limitation
+      et de portabilité sur vos données. Écrivez à
+      <a href={`mailto:${site.author.email}`}>{site.author.email}</a> : réponse sous un mois.
+      En cas de désaccord, vous pouvez saisir la CNIL
+      (<a href="https://www.cnil.fr" rel="noopener">cnil.fr</a>).
+    </p>
+
+    <h2>Modifications</h2>
+    <p>
+      Cette politique peut évoluer avec les outils utilisés sur le site. Toute modification
+      substantielle sera signalée sur cette page, avec la date de mise à jour.
+    </p>
+  </div>
+</BaseLayout>

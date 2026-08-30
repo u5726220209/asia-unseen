@@ -1,0 +1,31 @@
+---
+/**
+ * Le logo est composé à l'exécution : symbole SVG inline + wordmark en HTML.
+ * Cela garantit que la typographie de marque (Space Grotesk) est réellement
+ * utilisée, que le texte reste sélectionnable et lisible par les lecteurs
+ * d'écran, et que le rendu est net à toutes les tailles.
+ */
+interface Props {
+  variant?: 'full' | 'mark';
+  invert?: boolean;
+  class?: string;
+}
+const { variant = 'full', invert = false, class: klass = '' } = Astro.props;
+---
+
+<span class:list={['inline-flex items-center gap-2.5', klass]}>
+  <svg viewBox="0 0 64 64" aria-hidden="true" class="h-8 w-8 shrink-0">
+    <g fill="none" stroke-linecap="round" stroke-width="7">
+      <path d="M9 55 28.5 18" class={invert ? 'stroke-cream' : 'stroke-teal'} />
+      <path d="M35.5 18 55 55" class={invert ? 'stroke-cream' : 'stroke-teal'} />
+      <path d="M17 41H47" class="stroke-amber" />
+    </g>
+  </svg>
+  {variant === 'full' && (
+    <span class="font-display text-[1.06rem] font-bold tracking-[0.06em] whitespace-nowrap">
+      <span class={invert ? 'text-cream' : 'text-ink'}>ASIA</span
+      ><span class="ml-1.5 text-teal-400">UNSEEN</span>
+    </span>
+  )}
+  <span class="sr-only">Asia Unseen — accueil</span>
+</span>

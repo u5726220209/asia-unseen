@@ -1,0 +1,24 @@
+<!-- Gabarit story / reel 1080x1920. La zone sûre va de y=250 à y=1600 :
+     ne placez rien d'important en dehors, l'interface d'Instagram le recouvre. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920">
+  <rect width="1080" height="1920" fill="#F9FAFB"/>
+  <rect y="1180" width="1080" height="740" fill="#0A0A0A"/>
+
+  <g fill="none" stroke-linecap="round" stroke-width="11" transform="translate(84 290) scale(1.3)">
+    <path d="M9 55 28.5 18" stroke="#0F766E"/>
+    <path d="M35.5 18 55 55" stroke="#0F766E"/>
+    <path d="M17 41H47" stroke="#F59E0B"/>
+  </g>
+  <text x="196" y="356" font-family="Space Grotesk, Helvetica, Arial, sans-serif" font-size="30" font-weight="700" letter-spacing="3" fill="#0A0A0A">ASIA UNSEEN</text>
+
+  <text x="84" y="620" font-family="Space Grotesk, Helvetica, Arial, sans-serif" font-size="34" font-weight="600" letter-spacing="5" fill="#0F766E">GUIDE PRATIQUE</text>
+  <text x="84" y="760" font-family="Space Grotesk, Helvetica, Arial, sans-serif" font-size="94" font-weight="700" letter-spacing="-2" fill="#0A0A0A">Titre en</text>
+  <text x="84" y="872" font-family="Space Grotesk, Helvetica, Arial, sans-serif" font-size="94" font-weight="700" letter-spacing="-2" fill="#0A0A0A">deux lignes</text>
+  <rect x="84" y="932" width="88" height="7" fill="#F59E0B"/>
+
+  <text x="84" y="1330" font-family="Inter, Helvetica, Arial, sans-serif" font-size="36" fill="#F9FAFB">Un fait, un chiffre, une conséquence.</text>
+  <text x="84" y="1390" font-family="Inter, Helvetica, Arial, sans-serif" font-size="36" fill="#9CA3AF">Ce que ça change pour le lecteur.</text>
+
+  <rect x="84" y="1500" width="400" height="92" rx="6" fill="#F59E0B"/>
+  <text x="284" y="1557" text-anchor="middle" font-family="Space Grotesk, Helvetica, Arial, sans-serif" font-size="32" font-weight="600" fill="#0A0A0A">Lire le guide</text>
+</svg>

@@ -1,0 +1,109 @@
+---
+import { countries, MOIS } from '@/data/countries';
+
+const data = countries.map((c) => ({
+  slug: c.slug, nom: c.nom, saisons: c.saisons, note: c.saisonNote,
+  budget: c.budget.routard,
+}));
+const now = new Date().getMonth();
+---
+
+<div class="au-season my-10 overflow-hidden rounded-brand border border-line bg-white">
+  <div class="border-b border-line bg-cream-warm px-6 py-5">
+    <p class="eyebrow">Outil</p>
+    <h3 class="mt-1.5 font-display text-xl font-bold text-ink">Où partir, et quand ?</h3>
+    <p class="mt-1.5 text-[0.88rem] text-warm">
+      Choisissez un mois : voici les pays où la météo joue pour vous, ceux où elle est acceptable,
+      et ceux qu'il vaut mieux garder pour plus tard.
+    </p>
+  </div>
+
+  <div class="px-6 py-6">
+    <div role="tablist" aria-label="Mois de départ" class="grid grid-cols-4 gap-1.5 sm:grid-cols-6 lg:grid-cols-12">
+      {MOIS.map((m, i) => (
+        <button
+          type="button" role="tab" data-month={i}
+          aria-selected={i === now ? 'true' : 'false'}
+          class="au-month rounded-brand border border-line px-2 py-2 text-center font-display text-[0.85rem] font-semibold text-warm transition-all hover:border-teal hover:text-teal aria-selected:border-ink aria-selected:bg-ink aria-selected:text-cream"
+        >{m}</button>
+      ))}
+    </div>
+
+    <div id="se-out" class="mt-8 grid gap-6 sm:grid-cols-3"></div>
+
+    <p id="se-note" class="mt-8 border-t border-line pt-6 text-[0.9rem] leading-relaxed text-warm"></p>
+  </div>
+</div>
+
+<script type="application/json" id="se-data" set:html={JSON.stringify(data)}></script>
+
+<script>
+  type Row = { slug: string; nom: string; saisons: number[]; note: string; budget: number };
+
+  const raw = document.getElementById('se-data')?.textContent;
+  const out = document.getElementById('se-out');
+  const noteEl = document.getElementById('se-note');
+  const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('.au-month'));
+
+  if (raw && out && tabs.length) {
+    const rows: Row[] = JSON.parse(raw);
+
+    const GROUPES = [
+      { note: 3, titre: 'À privilégier',  desc: 'Météo favorable sur l’essentiel du pays', cls: 'border-teal bg-teal-50 text-teal-900' },
+      { note: 2, titre: 'Possible',       desc: 'Correct avec un itinéraire bien choisi',       cls: 'border-amber bg-amber-50 text-amber-700' },
+      { note: 1, titre: 'À éviter',       desc: 'Pluie, chaleur extrême ou affluence maximale', cls: 'border-line bg-cream-warm text-warm' },
+    ];
+
+    function render(month: number) {
+      tabs.forEach((t) => t.setAttribute('aria-selected', String(Number(t.dataset.month) === month)));
+      out!.innerHTML = '';
+
+      for (const g of GROUPES) {
+        const list = rows.filter((r) => r.saisons[month] === g.note);
+        const card = document.createElement('div');
+        card.className = `rounded-brand border-l-[3px] px-5 py-4 ${g.cls}`;
+
+        const h = document.createElement('p');
+        h.className = 'font-display text-[0.75rem] font-semibold uppercase tracking-[0.14em]';
+        h.textContent = g.titre;
+
+        const d = document.createElement('p');
+        d.className = 'mt-1 text-[0.78rem] opacity-70';
+        d.textContent = g.desc;
+
+        const ul = document.createElement('ul');
+        ul.className = 'mt-3 space-y-1.5';
+        if (!list.length) {
+          const li = document.createElement('li');
+          li.className = 'text-[0.9rem] opacity-60';
+          li.textContent = '—';
+          ul.appendChild(li);
+        }
+        for (const r of list) {
+          const li = document.createElement('li');
+          const a = document.createElement('a');
+          a.href = `/${r.slug}`;
+          a.className = 'font-display text-[0.95rem] font-semibold underline decoration-transparent underline-offset-4 transition hover:decoration-current';
+          a.textContent = r.nom;
+          const s = document.createElement('span');
+          s.className = 'ml-2 text-[0.78rem] opacity-60';
+          s.textContent = `dès ${r.budget} €/j`;
+          li.append(a, s);
+          ul.appendChild(li);
+        }
+        card.append(h, d, ul);
+        out!.appendChild(card);
+      }
+
+      const best = rows.filter((r) => r.saisons[month] === 3);
+      if (noteEl) {
+        noteEl.textContent = best.length
+          ? `${best[0].nom} — ${best[0].note}`
+          : "Aucun pays de notre sélection n'est à son meilleur ce mois-ci : c'est souvent le bon moment pour négocier les prix et voyager sans foule, à condition d'adapter l'itinéraire.";
+      }
+    }
+
+    tabs.forEach((t) => t.addEventListener('click', () => render(Number(t.dataset.month))));
+    render(new Date().getMonth());
+  }
+</script>

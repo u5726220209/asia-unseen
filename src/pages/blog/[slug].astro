@@ -1,0 +1,130 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Disclosure from '@/components/Disclosure.astro';
+import ArticleCard from '@/components/ArticleCard.astro';
+import Newsletter from '@/components/Newsletter.astro';
+import AdSlot from '@/components/AdSlot.astro';
+import FAQ from '@/components/FAQ.astro';
+import { bySlug } from '@/data/countries';
+import { site } from '@/data/site';
+
+export const getStaticPaths = (async () => {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post, posts } }));
+}) satisfies GetStaticPaths;
+
+const { post, posts } = Astro.props;
+const { Content, headings, remarkPluginFrontmatter } = await render(post);
+const d = post.data;
+
+const readingTime = d.tempsLecture ?? remarkPluginFrontmatter?.minutes ?? null;
+const toc = headings.filter((h) => h.depth === 2);
+const paysLies = d.pays.map((s) => bySlug[s]).filter(Boolean);
+
+// Suggestions : d'abord les articles partageant un pays, sinon les plus récents.
+const suite = posts
+  .filter((p) => p.id !== post.id)
+  .sort((a, b) => {
+    const shared = (x: typeof a) => x.data.pays.filter((s) => d.pays.includes(s)).length;
+    return shared(b) - shared(a) || b.data.pubDate.valueOf() - a.data.pubDate.valueOf();
+  })
+  .slice(0, 3);
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: d.heading ?? d.title,
+    description: d.description,
+    inLanguage: 'fr-FR',
+    datePublished: d.pubDate.toISOString(),
+    dateModified: (d.updatedDate ?? d.pubDate).toISOString(),
+    author: { '@type': 'Person', name: site.author.name, url: `${site.url}/a-propos` },
+    publisher: { '@id': `${site.url}/#organization` },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': `${site.url}/blog/${post.id}` },
+  },
+];
+
+const fmt = (date: Date) =>
+  new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(date);
+---
+
+<BaseLayout
+  title={d.title}
+  description={d.description}
+  type="article"
+  publishedTime={d.pubDate}
+  modifiedTime={d.updatedDate ?? d.pubDate}
+  schema={schema}
+>
+  <article>
+    <header class="border-b border-line bg-cream-warm">
+      <div class="wrap py-10 lg:py-14">
+        <Breadcrumbs items={[{ href: '/blog', label: 'Récits' }, { label: d.heading ?? d.title }]} />
+        <h1 class="mt-6 max-w-3xl text-hero">{d.heading ?? d.title}</h1>
+        <p class="mt-6 max-w-2xl text-[1.15rem] leading-relaxed text-warm">{d.accroche}</p>
+        <p class="mt-6 text-[0.82rem] text-warm-light">
+          Par {site.author.name} · {fmt(d.pubDate)}
+          {d.updatedDate && <> · mis à jour le {fmt(d.updatedDate)}</>}
+          {readingTime && <> · {readingTime} min de lecture</>}
+        </p>
+      </div>
+    </header>
+
+    <div class="wrap grid gap-14 py-14 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-16">
+      <div class="prose-au min-w-0">
+        <Disclosure compact class="!mb-10 !mt-0" />
+        <Content />
+        <AdSlot placement="in-article" />
+        <FAQ items={d.faq} />
+
+        {paysLies.length > 0 && (
+          <p class="not-prose mt-14 flex flex-wrap items-center gap-2.5 text-[0.85rem] text-warm">
+            Guides liés :
+            {paysLies.map((p) => (
+              <a href={`/${p.slug}`} class="chip !px-3.5 !py-1.5 transition-colors hover:border-teal hover:text-teal">{p.nom}</a>
+            ))}
+          </p>
+        )}
+
+        <Newsletter variant="inline" />
+      </div>
+
+      <aside class="lg:sticky lg:top-24 lg:h-fit">
+        {toc.length > 0 && (
+          <nav aria-label="Sommaire" class="rounded-brand border border-line bg-white p-5">
+            <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-warm-light">Sur cette page</p>
+            <ul class="mt-4 space-y-2.5 text-[0.88rem]">
+              {toc.map((h) => (
+                <li><a href={`#${h.slug}`} class="text-warm transition-colors hover:text-teal">{h.text}</a></li>
+              ))}
+            </ul>
+          </nav>
+        )}
+        <AdSlot placement="sidebar" class="!mt-6" />
+      </aside>
+    </div>
+
+    {suite.length > 0 && (
+      <section class="border-t border-line bg-cream-warm">
+        <div class="wrap py-16">
+          <h2 class="text-title">À lire ensuite</h2>
+          <div class="mt-4 h-[3px] w-12 bg-amber"></div>
+          <div class="mt-10 grid gap-5 sm:grid-cols-3">
+            {suite.map((p) => (
+              <ArticleCard
+                href={`/blog/${p.id}`}
+                title={p.data.heading ?? p.data.title}
+                accroche={p.data.accroche}
+                date={p.data.pubDate}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+  </article>
+</BaseLayout>

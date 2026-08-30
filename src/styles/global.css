@@ -1,0 +1,222 @@
+@import 'tailwindcss';
+
+/* ─────────────────────────────────────────────────────────────
+   ASIA UNSEEN — Design System
+   Palette "Teal & Amber". Règle 60/30/10 :
+   60 % fond clair · 30 % texte · 10 % accent (amber, réservé aux CTA)
+   ───────────────────────────────────────────────────────────── */
+
+@theme {
+  /* — Couleurs de marque — */
+  --color-ink: #0a0a0a;
+  --color-ink-soft: #1c1c1c;
+
+  --color-teal-50: #eefbf8;
+  --color-teal-100: #d3f4ee;
+  --color-teal-200: #a9e9df;
+  --color-teal-400: #34b3a3;
+  --color-teal: #0f766e;
+  --color-teal-700: #0b5b55;
+  --color-teal-900: #07403c;
+
+  --color-amber-50: #fffaeb;
+  --color-amber-100: #fef0c7;
+  --color-amber-300: #fcd34d;
+  --color-amber: #f59e0b;
+  --color-amber-700: #b45309;
+
+  --color-cream: #f9fafb;
+  --color-cream-warm: #f5f3ef;
+  --color-warm: #6b7280;
+  --color-warm-light: #9ca3af;
+  --color-line: #e5e7eb;
+
+  /* — Typographie — */
+  --font-display: 'Space Grotesk Variable', 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-accent: 'Cormorant Garamond', ui-serif, Georgia, serif;
+
+  /* — Échelle typographique — */
+  --text-hero: clamp(2.25rem, 1.2rem + 4.4vw, 4rem);       /* 36 → 64px */
+  --text-hero--line-height: 1.05;
+  --text-display: clamp(1.875rem, 1.1rem + 3vw, 3rem);     /* 30 → 48px */
+  --text-display--line-height: 1.12;
+  --text-title: clamp(1.5rem, 1.1rem + 1.6vw, 2.125rem);   /* 24 → 34px */
+  --text-title--line-height: 1.2;
+
+  /* — Rayons & ombres — */
+  --radius-brand: 0.25rem;
+  --shadow-lift: 0 1px 2px rgb(10 10 10 / 0.04), 0 12px 28px -12px rgb(10 10 10 / 0.16);
+  --shadow-lift-hover: 0 1px 2px rgb(10 10 10 / 0.05), 0 20px 40px -16px rgb(10 10 10 / 0.22);
+
+  /* — Animations — */
+  --animate-rise: rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── Base ─────────────────────────────────────────────────── */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;   /* 17px */
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+
+  p, li { text-wrap: pretty; }
+
+  ::selection {
+    background-color: var(--color-amber);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-teal);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ── Composants utilitaires ───────────────────────────────── */
+
+@layer components {
+  .wrap { @apply mx-auto w-full max-w-[76rem] px-5 sm:px-8; }
+  .wrap-narrow { @apply mx-auto w-full max-w-[46rem] px-5 sm:px-8; }
+
+  /* Étiquette de section : petites capitales espacées, teal */
+  .eyebrow {
+    @apply font-display text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-teal;
+  }
+
+  /* Bouton — l'accent amber est le seul élément « 10 % » de la page */
+  .btn,
+  .btn-primary,
+  .btn-dark,
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 rounded-brand px-6 py-3.5
+           font-display text-[0.95rem] font-semibold tracking-tight
+           transition-all duration-200 ease-out;
+  }
+  .btn-primary {
+    @apply bg-amber text-ink shadow-lift hover:-translate-y-0.5 hover:bg-amber-300 hover:shadow-lift-hover active:translate-y-0;
+  }
+  .btn-dark {
+    @apply bg-ink text-cream hover:-translate-y-0.5 hover:bg-teal;
+  }
+  .btn-outline {
+    @apply border border-ink/15 bg-transparent text-ink hover:border-teal hover:bg-teal-50 hover:text-teal-700;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-brand px-4 py-2
+           font-display text-[0.95rem] font-semibold tracking-tight text-warm
+           transition-colors hover:text-ink;
+  }
+
+  /* Lien texte souligné à l'animation */
+  .link {
+    @apply relative font-medium text-teal-700 underline decoration-teal/30 decoration-2 underline-offset-4
+           transition-colors hover:text-teal hover:decoration-amber;
+  }
+
+  .card {
+    @apply relative flex flex-col overflow-hidden rounded-brand border border-line bg-white
+           transition-all duration-300 hover:-translate-y-1 hover:border-teal-200 hover:shadow-lift-hover;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-line bg-white px-3 py-1
+           font-display text-xs font-medium text-warm;
+  }
+
+  .rule {
+    @apply h-px w-full border-0 bg-line;
+  }
+}
+
+/* ── Typographie d'article ────────────────────────────────── */
+
+.prose-au {
+  @apply text-[1.0625rem] leading-[1.75] text-ink-soft;
+}
+.prose-au > * + * { margin-top: 1.35em; }
+
+.prose-au h2 {
+  @apply mt-14 mb-1 scroll-mt-28 text-title;
+}
+.prose-au h2::after {
+  content: '';
+  @apply mt-4 block h-[3px] w-12 bg-amber;
+}
+.prose-au h3 { @apply mt-10 mb-0 scroll-mt-28 text-xl sm:text-2xl; }
+.prose-au h4 { @apply mt-8 mb-0 font-display text-lg font-semibold; }
+
+.prose-au a:not(.btn):not(.no-prose) {
+  @apply font-medium text-teal-700 underline decoration-teal/30 decoration-2 underline-offset-4
+         transition-colors hover:text-teal hover:decoration-amber;
+}
+.prose-au strong { @apply font-semibold text-ink; }
+.prose-au ul { @apply list-none space-y-2.5 pl-0; }
+.prose-au ul > li { @apply relative pl-6; }
+.prose-au ul > li::before {
+  content: '';
+  @apply absolute left-0 top-[0.72em] h-1.5 w-1.5 rounded-full bg-amber;
+}
+.prose-au ol { @apply list-decimal space-y-2.5 pl-5 marker:font-display marker:font-semibold marker:text-teal; }
+.prose-au blockquote {
+  @apply my-8 border-l-[3px] border-amber pl-6 font-accent text-2xl leading-snug text-ink;
+}
+.prose-au blockquote p { @apply m-0; }
+.prose-au code {
+  @apply rounded bg-teal-50 px-1.5 py-0.5 font-mono text-[0.85em] text-teal-900;
+}
+.prose-au img { @apply my-8 w-full rounded-brand; }
+.prose-au hr { @apply my-12 h-px border-0 bg-line; }
+
+/* Tableaux : scroll horizontal propre sur mobile */
+.prose-au .table-wrap,
+.table-wrap { @apply -mx-5 my-8 overflow-x-auto px-5 sm:mx-0 sm:px-0; }
+.prose-au table {
+  @apply w-full min-w-[34rem] border-collapse text-left text-[0.95rem];
+}
+.prose-au thead th {
+  @apply border-b-2 border-ink bg-transparent px-3 py-3 font-display text-[0.78rem]
+         font-semibold uppercase tracking-wider text-ink;
+}
+.prose-au tbody td { @apply border-b border-line px-3 py-3 align-top text-ink-soft; }
+.prose-au tbody tr:hover { @apply bg-teal-50/50; }
+
+/* Le premier paragraphe d'un article respire davantage */
+.prose-au > p:first-child {
+  @apply text-[1.2rem] leading-[1.6] text-warm;
+}

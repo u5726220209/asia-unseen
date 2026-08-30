@@ -1,0 +1,25 @@
+<!-- Gabarit post Instagram 1080x1080. Remplacez les deux lignes de titre et l'accroche.
+     Polices : Space Grotesk (titres) et Inter (texte) doivent être installées pour un rendu exact. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+  <rect width="1080" height="1080" fill="#0A0A0A"/>
+
+  <g fill="none" stroke-linecap="round" stroke-width="11" transform="translate(84 84) scale(1.3)">
+    <path d="M9 55 28.5 18" stroke="#F9FAFB"/>
+    <path d="M35.5 18 55 55" stroke="#F9FAFB"/>
+    <path d="M17 41H47" stroke="#F59E0B"/>
+  </g>
+
+  <text x="196" y="150" font-family="Space Grotesk, Helvetica, Arial, sans-serif" font-size="30" font-weight="700" letter-spacing="3" fill="#F9FAFB">ASIA UNSEEN</text>
+
+  <text x="84" y="470" font-family="Space Grotesk, Helvetica, Arial, sans-serif" font-size="86" font-weight="700" letter-spacing="-2" fill="#F9FAFB">Première ligne</text>
+  <text x="84" y="572" font-family="Space Grotesk, Helvetica, Arial, sans-serif" font-size="86" font-weight="700" letter-spacing="-2" fill="#F9FAFB">de titre ici</text>
+
+  <rect x="84" y="628" width="88" height="7" fill="#F59E0B"/>
+
+  <text x="84" y="712" font-family="Inter, Helvetica, Arial, sans-serif" font-size="34" fill="#9CA3AF">Une accroche d'une ligne, factuelle,</text>
+  <text x="84" y="760" font-family="Inter, Helvetica, Arial, sans-serif" font-size="34" fill="#9CA3AF">avec un chiffre si possible.</text>
+
+  <rect x="84" y="912" width="352" height="84" rx="6" fill="#F59E0B"/>
+  <text x="260" y="962" text-anchor="middle" font-family="Space Grotesk, Helvetica, Arial, sans-serif" font-size="30" font-weight="600" fill="#0A0A0A">Le guide complet</text>
+  <text x="470" y="962" font-family="Inter, Helvetica, Arial, sans-serif" font-size="26" fill="#6B7280">asiaunseen.com</text>
+</svg>

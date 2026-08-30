@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 64" role="img" aria-label="Asia Unseen">
+  <title>Asia Unseen</title>
+  <g fill="none" stroke-linecap="round" stroke-width="7">
+    <path d="M9 55 28.5 18" stroke="#0F766E"/>
+    <path d="M35.5 18 55 55" stroke="#0F766E"/>
+    <path d="M17 41H47" stroke="#F59E0B"/>
+  </g>
+  <text x="74" y="44" font-family="'Space Grotesk','Space Grotesk Variable',Helvetica,Arial,sans-serif"
+        font-size="27" font-weight="700" letter-spacing="1.4">
+    <tspan fill="#0A0A0A">ASIA</tspan><tspan fill="#0F766E" dx="9">UNSEEN</tspan>
+  </text>
+</svg>

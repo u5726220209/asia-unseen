@@ -1,0 +1,52 @@
+/**
+ * Registre des partenaires d'affiliation.
+ *
+ * `buildUrl` produit systématiquement une URL trackée ; si l'identifiant
+ * partenaire n'est pas renseigné, le lien reste fonctionnel (il pointe vers
+ * le partenaire, sans tracking) — le site ne casse jamais.
+ *
+ * Tous les liens sortants d'affiliation passent par <AffiliateLink>, qui
+ * ajoute rel="sponsored nofollow noopener" et une mention de transparence.
+ */
+
+const env = import.meta.env;
+
+export type PartnerKey =
+  | 'booking' | 'agoda' | 'twelvego' | 'getyourguide' | 'klook'
+  | 'airalo' | 'holafly' | 'chapka' | 'avi' | 'wise' | 'revolut' | 'skyscanner';
+
+type Partner = {
+  key: PartnerKey;
+  label: string;
+  category: 'hebergement' | 'transport' | 'activites' | 'connectivite' | 'assurance' | 'argent';
+  base: string;
+  /** Paramètre de tracking et sa valeur (issue du .env). */
+  param?: string;
+  id: string;
+  /** Fourchette de commission observée — sert au tableau de bord interne. */
+  commission: string;
+};
+
+export const partners: Record<PartnerKey, Partner> = {
+  booking:      { key: 'booking',      label: 'Booking.com',   category: 'hebergement',   base: 'https://www.booking.com/searchresults.html', param: 'aid', id: env.PUBLIC_AFF_BOOKING ?? '',      commission: '25–40 % de la commission Booking' },
+  agoda:        { key: 'agoda',        label: 'Agoda',         category: 'hebergement',   base: 'https://www.agoda.com/search',               param: 'cid', id: env.PUBLIC_AFF_AGODA ?? '',        commission: '4–7 % du montant' },
+  twelvego:     { key: 'twelvego',     label: '12Go Asia',     category: 'transport',     base: 'https://12go.asia',                          param: 'z',   id: env.PUBLIC_AFF_12GO ?? '',         commission: '5–10 %' },
+  skyscanner:   { key: 'skyscanner',   label: 'Skyscanner',    category: 'transport',     base: 'https://www.skyscanner.fr',                                id: '',                                 commission: 'CPC / CPA variable' },
+  getyourguide: { key: 'getyourguide', label: 'GetYourGuide',  category: 'activites',     base: 'https://www.getyourguide.fr',                param: 'partner_id', id: env.PUBLIC_AFF_GETYOURGUIDE ?? '', commission: '8 %' },
+  klook:        { key: 'klook',        label: 'Klook',         category: 'activites',     base: 'https://www.klook.com',                                    id: '',                                 commission: '2–5 %' },
+  airalo:       { key: 'airalo',       label: 'Airalo',        category: 'connectivite',  base: 'https://www.airalo.com',                     param: 'ref', id: env.PUBLIC_AFF_AIRALO ?? '',       commission: '10–15 %' },
+  holafly:      { key: 'holafly',      label: 'Holafly',       category: 'connectivite',  base: 'https://esim.holafly.com',                   param: 'ref', id: env.PUBLIC_AFF_HOLAFLY ?? '',      commission: '10–20 %' },
+  chapka:       { key: 'chapka',       label: 'Chapka',        category: 'assurance',     base: 'https://www.chapkadirect.fr',                param: 'ag',  id: env.PUBLIC_AFF_CHAPKA ?? '',       commission: '15–25 %' },
+  avi:          { key: 'avi',          label: 'AVI International', category: 'assurance', base: 'https://www.avi-international.com',                        id: '',                                 commission: '15–30 %' },
+  wise:         { key: 'wise',         label: 'Wise',          category: 'argent',        base: 'https://wise.com/invite',                                  id: env.PUBLIC_AFF_WISE ?? '',         commission: 'prime fixe par client actif' },
+  revolut:      { key: 'revolut',      label: 'Revolut',       category: 'argent',        base: 'https://www.revolut.com',                                  id: '',                                 commission: 'prime fixe par client actif' },
+};
+
+/** Construit l'URL trackée d'un partenaire, avec paramètres additionnels optionnels. */
+export function buildUrl(key: PartnerKey, extra: Record<string, string> = {}): string {
+  const p = partners[key];
+  const url = new URL(p.base);
+  if (p.param && p.id) url.searchParams.set(p.param, p.id);
+  for (const [k, v] of Object.entries(extra)) url.searchParams.set(k, v);
+  return url.toString();
+}

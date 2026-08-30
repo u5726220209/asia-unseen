@@ -1,0 +1,172 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import CountryView from '@/components/CountryView.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Disclosure from '@/components/Disclosure.astro';
+import VerifiedBadge from '@/components/VerifiedBadge.astro';
+import BudgetCalculator from '@/components/BudgetCalculator.astro';
+import SeasonFinder from '@/components/SeasonFinder.astro';
+import FAQ from '@/components/FAQ.astro';
+import AdSlot from '@/components/AdSlot.astro';
+import Newsletter from '@/components/Newsletter.astro';
+import { countries, bySlug, type Country } from '@/data/countries';
+import { guidesNav } from '@/data/nav';
+import { site } from '@/data/site';
+
+/**
+ * Une seule route couvre les pages pays (/vietnam) et les guides
+ * thématiques (/visas-asie), toutes deux à la racine — c'est la structure
+ * d'URL la plus courte et la plus lisible pour le référencement.
+ * Les routes statiques (index, /blog, /a-propos…) restent prioritaires.
+ */
+export const getStaticPaths = (async () => {
+  const guides = await getCollection('guides', ({ data }) => !data.draft);
+
+  return [
+    ...countries.map((c) => ({ params: { slug: c.slug }, props: { kind: 'pays' as const, country: c } })),
+    ...guides.map((g) => ({ params: { slug: g.id }, props: { kind: 'guide' as const, entry: g } })),
+  ];
+}) satisfies GetStaticPaths;
+
+type Props =
+  | { kind: 'pays'; country: Country }
+  | { kind: 'guide'; entry: CollectionEntry<'guides'> };
+
+const props = Astro.props as Props;
+
+const country = props.kind === 'pays' ? props.country : null;
+const guideEntry = props.kind === 'guide' ? props.entry : null;
+
+// ── Page pays ────────────────────────────────────────────────
+// Trois guides liés, choisis pour leur utilité immédiate sur une fiche pays.
+const relatedLinks = guidesNav
+  .filter((g) => ['/visas-asie', '/budget-voyage-asie', '/assurances-voyage', '/esim-asie'].includes(g.href))
+  .map((g) => ({ href: g.href, label: g.label, hint: g.hint }));
+
+const paysSchema = country
+  ? [{
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: `Voyager ${country.article === 'aux' ? 'aux' : country.article} ${country.nom} : le guide complet`,
+      description: country.resume,
+      inLanguage: 'fr-FR',
+      dateModified: `${country.verifieLe}-01`,
+      author: { '@type': 'Person', name: site.author.name },
+      publisher: { '@id': `${site.url}/#organization` },
+      about: { '@type': 'Country', name: country.nom },
+      mainEntityOfPage: { '@type': 'WebPage', '@id': `${site.url}/${country.slug}` },
+    }]
+  : [];
+
+// ── Guide thématique ─────────────────────────────────────────
+const rendered = guideEntry ? await render(guideEntry) : null;
+const Content = rendered?.Content;
+const toc = (rendered?.headings ?? []).filter((h) => h.depth === 2);
+const g = guideEntry?.data;
+
+const guideSchema = guideEntry && g
+  ? [{
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: g.heading ?? g.title,
+      description: g.description,
+      inLanguage: 'fr-FR',
+      datePublished: g.pubDate.toISOString(),
+      dateModified: (g.updatedDate ?? g.pubDate).toISOString(),
+      author: { '@type': 'Person', name: site.author.name },
+      publisher: { '@id': `${site.url}/#organization` },
+      mainEntityOfPage: { '@type': 'WebPage', '@id': `${site.url}/${guideEntry.id}` },
+    }]
+  : [];
+
+const paysLies = (g?.pays ?? []).map((s) => bySlug[s]).filter(Boolean);
+---
+
+{props.kind === 'pays' && (
+  <BaseLayout
+    title={`Voyager ${country!.article === 'aux' ? 'aux' : country!.article} ${country!.nom} : budget, visa, meilleure saison`}
+    description={`${country!.resume.slice(0, 130)} Budget dès ${country!.budget.routard} €/jour, formalités à jour et erreurs à éviter.`}
+    type="article"
+    schema={paysSchema}
+  >
+    <CountryView country={country!} related={relatedLinks} />
+  </BaseLayout>
+)}
+
+{props.kind === 'guide' && (
+  <BaseLayout
+    title={g!.title}
+    description={g!.description}
+    type="article"
+    publishedTime={g!.pubDate}
+    modifiedTime={g!.updatedDate ?? g!.pubDate}
+    schema={guideSchema}
+  >
+    <article>
+      <header class="border-b border-line bg-cream-warm">
+        <div class="wrap py-10 lg:py-14">
+          <Breadcrumbs items={[{ href: '/ressources', label: 'Guides pratiques' }, { label: g!.heading ?? g!.title }]} />
+          <h1 class="mt-6 max-w-3xl text-hero">{g!.heading ?? g!.title}</h1>
+          <p class="mt-6 max-w-2xl text-[1.15rem] leading-relaxed text-warm">{g!.accroche}</p>
+          <p class="mt-6 text-[0.82rem] text-warm-light">
+            Mis à jour le{' '}
+            {new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+              .format(g!.updatedDate ?? g!.pubDate)}{' '}
+            · par {site.author.name}
+          </p>
+        </div>
+      </header>
+
+      <div class="wrap grid gap-14 py-14 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-16">
+        <div class="prose-au min-w-0">
+          <Disclosure class="!mb-10 !mt-0" />
+
+          {g!.outil === 'budget' && <BudgetCalculator />}
+          {g!.outil === 'saison' && <SeasonFinder />}
+
+          {Content && <Content />}
+
+          <AdSlot placement="in-article" />
+
+          {g!.sources.length > 0 && <VerifiedBadge date={site.lastReview} sources={g!.sources} class="!my-10" />}
+
+          <FAQ items={g!.faq} />
+
+          {paysLies.length > 0 && (
+            <section class="not-prose mt-16">
+              <h2 class="text-title">Voir aussi, pays par pays</h2>
+              <div class="mt-4 h-[3px] w-12 bg-amber"></div>
+              <ul class="mt-8 flex flex-wrap gap-2.5">
+                {paysLies.map((p) => (
+                  <li>
+                    <a href={`/${p.slug}`} class="chip !px-4 !py-2 !text-[0.85rem] transition-colors hover:border-teal hover:text-teal">
+                      {p.nom}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          <Newsletter variant="inline" />
+        </div>
+
+        <aside class="lg:sticky lg:top-24 lg:h-fit">
+          {toc.length > 0 && (
+            <nav aria-label="Sommaire" class="rounded-brand border border-line bg-white p-5">
+              <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-warm-light">Sur cette page</p>
+              <ul class="mt-4 space-y-2.5 text-[0.88rem]">
+                {toc.map((h) => (
+                  <li><a href={`#${h.slug}`} class="text-warm transition-colors hover:text-teal">{h.text}</a></li>
+                ))}
+              </ul>
+            </nav>
+          )}
+          <AdSlot placement="sidebar" class="!mt-6" />
+        </aside>
+      </div>
+    </article>
+  </BaseLayout>
+)}

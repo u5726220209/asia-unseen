@@ -1,0 +1,89 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Newsletter from '@/components/Newsletter.astro';
+import AdSlot from '@/components/AdSlot.astro';
+import { countries } from '@/data/countries';
+
+const guides = (await getCollection('guides', ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.ordre - b.data.ordre,
+);
+---
+
+<BaseLayout
+  title="Guides pratiques et ressources gratuites pour voyager en Asie"
+  description="Tous nos guides pratiques : visas, budget, meilleure saison, assurance, eSIM, transports, hébergement, argent et arnaques à éviter. Plus des ressources téléchargeables."
+>
+  <header class="border-b border-line bg-cream-warm">
+    <div class="wrap py-10 lg:py-14">
+      <Breadcrumbs items={[{ label: 'Ressources' }]} />
+      <h1 class="mt-6 max-w-3xl text-hero">Tout ce dont vous avez besoin avant de partir</h1>
+      <p class="mt-6 max-w-2xl text-[1.15rem] leading-relaxed text-warm">
+        Les guides pratiques transversaux, valables pour toute l'Asie, et les fiches pays.
+        Deux outils interactifs pour trancher les questions de budget et de saison.
+      </p>
+    </div>
+  </header>
+
+  <section class="wrap py-14">
+    <p class="eyebrow">Guides pratiques</p>
+    <h2 class="mt-3 text-display">Les questions transversales</h2>
+
+    <div class="mt-10 grid gap-px overflow-hidden rounded-brand border border-line bg-line sm:grid-cols-2">
+      {guides.map((g) => (
+        <a href={`/${g.id}`} class="group bg-white p-7 transition-colors hover:bg-teal-50">
+          <h3 class="font-display text-[1.15rem] font-bold text-ink transition-colors group-hover:text-teal">
+            {g.data.heading ?? g.data.title}
+          </h3>
+          <p class="mt-2.5 text-[0.92rem] leading-relaxed text-warm">{g.data.accroche}</p>
+          {g.data.outil && (
+            <span class="mt-4 inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 font-display text-[0.72rem] font-semibold uppercase tracking-wider text-amber-700">
+              Outil interactif
+            </span>
+          )}
+        </a>
+      ))}
+    </div>
+
+    <AdSlot placement="in-feed" />
+
+    <p class="eyebrow mt-16">Fiches pays</p>
+    <h2 class="mt-3 text-display">Neuf destinations, en détail</h2>
+    <ul class="mt-10 flex flex-wrap gap-3">
+      {countries.map((c) => (
+        <li>
+          <a href={`/${c.slug}`} class="chip !px-5 !py-2.5 !text-[0.92rem] transition-colors hover:border-teal hover:text-teal">
+            {c.nom}
+            <span class="text-warm-light">dès {c.budget.routard} €/j</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <div class="mt-16 rounded-brand border border-line bg-white p-8 sm:p-10">
+      <p class="eyebrow">À télécharger</p>
+      <h2 class="mt-3 text-title">Ressources gratuites</h2>
+      <p class="mt-4 max-w-2xl text-[1rem] leading-relaxed text-warm">
+        Les checklists et itinéraires en PDF sont envoyés par email aux abonnés — c'est aussi
+        comme ça qu'on sait quoi améliorer, en lisant vos réponses.
+      </p>
+      <ul class="mt-8 grid gap-4 sm:grid-cols-2">
+        {[
+          ['5 itinéraires prêts à partir', 'Vietnam 10 j · Japon 15 j · Thaïlande–Laos 18 j · Corée 12 j · Asie du Sud-Est 3 semaines'],
+          ['Checklist départ', "Formalités, vaccins, banque, assurance, applications à installer — dans l'ordre chronologique"],
+          ['Tableau de suivi de budget', 'Un tableur simple pour noter les dépenses par poste, jour par jour'],
+          ['Fiche anti-arnaque', 'Les 20 pièges les plus fréquents, par pays, à garder sur le téléphone'],
+        ].map(([titre, desc]) => (
+          <li class="rounded-brand border border-line bg-cream p-5">
+            <p class="font-display text-[0.98rem] font-semibold text-ink">{titre}</p>
+            <p class="mt-1.5 text-[0.85rem] leading-relaxed text-warm">{desc}</p>
+          </li>
+        ))}
+      </ul>
+      <a href="/newsletter" class="btn-primary mt-8">Recevoir les ressources</a>
+    </div>
+
+    <Newsletter class="mt-16" />
+  </section>
+</BaseLayout>

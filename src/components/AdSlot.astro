@@ -1,0 +1,50 @@
+---
+import { adsense } from '@/data/site';
+
+/**
+ * Emplacement publicitaire AdSense.
+ * Tant que PUBLIC_ADSENSE_CLIENT n'est pas renseigné, rien n'est rendu en
+ * production (et un repère discret s'affiche en développement) : le site
+ * n'embarque donc aucun script tiers avant d'être réellement monétisé.
+ */
+interface Props {
+  placement?: 'in-article' | 'in-feed' | 'sidebar';
+  class?: string;
+}
+const { placement = 'in-article', class: klass = '' } = Astro.props;
+
+const slot =
+  placement === 'in-feed' ? adsense.slots.inFeed
+  : placement === 'sidebar' ? adsense.slots.sidebar
+  : adsense.slots.inArticle;
+
+const live = adsense.enabled && slot.length > 0;
+const dev = import.meta.env.DEV;
+
+const format = placement === 'in-article' ? 'fluid' : 'auto';
+---
+
+{live && (
+  <aside class:list={['my-10 text-center', klass]} aria-label="Publicité">
+    <span class="mb-1.5 block font-display text-[0.65rem] uppercase tracking-[0.2em] text-warm-light">Publicité</span>
+    <ins
+      class="adsbygoogle block"
+      style="display:block"
+      data-ad-client={adsense.client}
+      data-ad-slot={slot}
+      data-ad-format={format}
+      data-ad-layout={placement === 'in-article' ? 'in-article' : undefined}
+      data-full-width-responsive="true"
+    ></ins>
+    <script is:inline>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </aside>
+)}
+
+{!live && dev && (
+  <aside class:list={['my-10 rounded-brand border border-dashed border-line py-8 text-center', klass]}>
+    <p class="font-display text-[0.7rem] uppercase tracking-[0.2em] text-warm-light">
+      Emplacement AdSense · {placement}
+    </p>
+    <p class="mt-1 text-[0.78rem] text-warm-light">Renseignez PUBLIC_ADSENSE_CLIENT dans .env pour l'activer</p>
+  </aside>
+)}

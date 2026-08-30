@@ -1,0 +1,71 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ArticleCard from '@/components/ArticleCard.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Newsletter from '@/components/Newsletter.astro';
+import AdSlot from '@/components/AdSlot.astro';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+const LABELS: Record<string, string> = {
+  recit: 'Récit', pratique: 'Pratique', itineraire: 'Itinéraire', argent: 'Argent',
+};
+
+const [featured, ...rest] = posts;
+---
+
+<BaseLayout
+  title="Récits et retours de terrain — voyager en Asie"
+  description="Des retours d'expérience détaillés sur le voyage en Asie : itinéraires testés, erreurs commises, coûts réels, conseils pratiques pays par pays."
+>
+  <header class="border-b border-line bg-cream-warm">
+    <div class="wrap py-10 lg:py-14">
+      <Breadcrumbs items={[{ label: 'Récits' }]} />
+      <h1 class="mt-6 max-w-3xl text-hero">Récits et retours de terrain</h1>
+      <p class="mt-6 max-w-2xl text-[1.15rem] leading-relaxed text-warm">
+        Ce qui s'est réellement passé sur place : les itinéraires qui ont marché, ceux
+        qu'on referait autrement, et ce que ça a coûté.
+      </p>
+    </div>
+  </header>
+
+  <div class="wrap py-14">
+    {posts.length === 0 && (
+      <p class="py-20 text-center text-warm">
+        Les premiers articles arrivent. En attendant, les
+        <a href="/ressources" class="link">guides pratiques</a> sont déjà en ligne.
+      </p>
+    )}
+
+    {featured && (
+      <div class="mb-14">
+        <ArticleCard
+          featured
+          href={`/blog/${featured.id}`}
+          title={featured.data.heading ?? featured.data.title}
+          accroche={featured.data.accroche}
+          date={featured.data.pubDate}
+          meta={`Dernier article · ${LABELS[featured.data.categorie]}`}
+        />
+      </div>
+    )}
+
+    <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {rest.map((p) => (
+        <ArticleCard
+          href={`/blog/${p.id}`}
+          title={p.data.heading ?? p.data.title}
+          accroche={p.data.accroche}
+          date={p.data.pubDate}
+          meta={LABELS[p.data.categorie]}
+        />
+      ))}
+    </div>
+
+    <AdSlot placement="in-feed" />
+    <Newsletter class="mt-16" />
+  </div>
+</BaseLayout>

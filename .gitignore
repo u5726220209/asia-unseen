@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+.env
+.env.production
+*.log
+.vercel
+.wrangler
+
+# Archives de déploiement
+dist_*.zip

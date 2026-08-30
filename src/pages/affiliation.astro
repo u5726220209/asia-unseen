@@ -1,0 +1,106 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import { partners } from '@/data/affiliates';
+
+const byCat = Object.values(partners).reduce<Record<string, typeof partners[keyof typeof partners][]>>(
+  (acc, p) => { (acc[p.category] ??= []).push(p); return acc; }, {});
+
+const CAT_LABELS: Record<string, string> = {
+  hebergement: 'Hébergement', transport: 'Transports', activites: 'Activités',
+  connectivite: 'Connectivité', assurance: 'Assurance', argent: 'Argent et banque',
+};
+---
+
+<BaseLayout
+  title="Transparence et affiliation — comment ce site gagne de l'argent"
+  description="La liste complète de nos partenaires d'affiliation, ce qu'ils nous rapportent, et les règles que nous nous imposons pour que ça ne biaise pas nos recommandations."
+>
+  <header class="border-b border-line bg-cream-warm">
+    <div class="wrap py-10 lg:py-14">
+      <Breadcrumbs items={[{ label: 'Transparence' }]} />
+      <h1 class="mt-6 max-w-3xl text-hero">Comment ce site gagne de l'argent</h1>
+      <p class="mt-6 max-w-2xl text-[1.15rem] leading-relaxed text-warm">
+        Sans détour : la liste des partenaires, ce que chacun nous rapporte, et les règles
+        qu'on s'impose pour que ça ne déforme pas ce qu'on écrit.
+      </p>
+    </div>
+  </header>
+
+  <div class="wrap-narrow prose-au py-14">
+    <h2>Le principe, en une phrase</h2>
+    <p>
+      Quand vous réservez un hôtel, une assurance ou un billet de train via l'un de nos liens,
+      le partenaire nous reverse une commission prélevée sur <em>sa</em> marge.
+      <strong>Vous payez exactement le même prix</strong> qu'en passant directement par lui.
+    </p>
+
+    <h2>Nos quatre règles</h2>
+    <ol>
+      <li>
+        <strong>Signalement en haut de page.</strong> Toute page contenant des liens partenaires
+        l'annonce avant le premier lien, pas dans une note en bas de page.
+      </li>
+      <li>
+        <strong>Test préalable obligatoire.</strong> Nous ne mettons de lien que vers des services
+        que nous avons utilisés nous-mêmes, ou dont nous avons vérifié les conditions réelles.
+      </li>
+      <li>
+        <strong>Le défaut est dit.</strong> Un partenaire dont le service se dégrade est décrit
+        comme tel, ou retiré. La commission ne rachète pas une recommandation.
+      </li>
+      <li>
+        <strong>Les alternatives gratuites sont citées.</strong> Quand la meilleure option ne nous
+        rapporte rien — réserver en direct, passer par le site officiel — on le dit quand même.
+      </li>
+    </ol>
+
+    <h2>Ce que nous refusons</h2>
+    <ul>
+      <li>Les articles rédigés par un annonceur et publiés sous notre signature.</li>
+      <li>L'insertion de liens payants dans des contenus déjà publiés.</li>
+      <li>Les partenariats conditionnés à une note ou à un classement.</li>
+      <li>Les liens vers des services d'intermédiation de visa qui surfacturent une démarche gratuite ou peu coûteuse.</li>
+    </ul>
+
+    <h2>Nos partenaires actuels</h2>
+    <p>
+      La colonne « commission » indique l'ordre de grandeur de ce que nous percevons.
+      Elle est publiée pour que vous puissiez juger vous-même d'un éventuel conflit d'intérêt.
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Catégorie</th><th>Partenaire</th><th>Ce que nous percevons</th></tr>
+        </thead>
+        <tbody>
+          {Object.entries(byCat).map(([cat, list]) =>
+            list.map((p, i) => (
+              <tr>
+                <td>{i === 0 ? CAT_LABELS[cat] : ''}</td>
+                <td><strong>{p.label}</strong></td>
+                <td>{p.commission}</td>
+              </tr>
+            )),
+          )}
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Publicité display</h2>
+    <p>
+      Le site affiche également des annonces Google AdSense. Nous n'avons aucun contrôle éditorial
+      sur les annonceurs qui y apparaissent, et leur présence ne constitue jamais une
+      recommandation de notre part. Les emplacements sont limités pour ne pas rendre les pages
+      illisibles : jamais d'interstitiel, jamais d'annonce qui recouvre le texte.
+    </p>
+
+    <h2>Et si vous voulez soutenir sans rien acheter</h2>
+    <p>
+      Partagez une page utile, signalez-nous une information périmée, ou inscrivez-vous à la
+      <a href="/newsletter">newsletter</a>. Une liste d'abonnés fidèles a plus de valeur, pour
+      la pérennité de ce site, que n'importe quelle commission.
+    </p>
+  </div>
+</BaseLayout>

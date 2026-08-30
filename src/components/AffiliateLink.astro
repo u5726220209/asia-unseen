@@ -1,0 +1,35 @@
+---
+import { buildUrl, partners, type PartnerKey } from '@/data/affiliates';
+
+/**
+ * Lien d'affiliation. Applique systématiquement rel="sponsored nofollow noopener"
+ * (exigence Google) et ouvre dans un nouvel onglet, pour ne pas faire perdre
+ * sa lecture à l'utilisateur.
+ */
+interface Props {
+  partner: PartnerKey;
+  params?: Record<string, string>;
+  href?: string;      // pour surcharger l'URL générée (page produit précise)
+  variant?: 'button' | 'text';
+  class?: string;
+}
+const { partner, params = {}, href, variant = 'button', class: klass = '' } = Astro.props;
+const url = href ?? buildUrl(partner, params);
+const label = partners[partner].label;
+---
+
+<a
+  href={url}
+  rel="sponsored nofollow noopener"
+  target="_blank"
+  data-aff={partner}
+  class:list={[variant === 'button' ? 'btn-primary' : 'link', klass]}
+>
+  <slot>Voir sur {label}</slot>
+  {variant === 'button' && (
+    <svg viewBox="0 0 16 16" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M6 3h7v7M13 3 3.5 12.5" />
+    </svg>
+  )}
+  <span class="sr-only">(lien partenaire, s'ouvre dans un nouvel onglet)</span>
+</a>

@@ -1,0 +1,71 @@
+---
+import Logo from './Logo.astro';
+import Newsletter from './Newsletter.astro';
+import { site } from '@/data/site';
+import { paysNav, guidesNav, mainNav, footerLegal } from '@/data/nav';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-24 bg-ink text-warm-light">
+  <div class="wrap py-16">
+    <div class="grid gap-12 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
+      <div>
+        <Logo invert />
+        <p class="mt-5 max-w-xs text-[0.92rem] leading-relaxed">
+          Des guides de voyage écrits depuis l'Asie, pas depuis un bureau.
+          Testés, datés, corrigés quand la réalité change.
+        </p>
+        <p class="mt-6 font-display text-[0.78rem] font-semibold uppercase tracking-[0.16em] text-amber">
+          Rejoindre la newsletter
+        </p>
+        <Newsletter variant="compact" class="mt-3 max-w-sm" />
+      </div>
+
+      <nav aria-labelledby="f-pays">
+        <p id="f-pays" class="font-display text-[0.78rem] font-semibold uppercase tracking-[0.16em] text-cream">Destinations</p>
+        <ul class="mt-4 space-y-2.5 text-[0.9rem]">
+          {paysNav.map((i) => (
+            <li><a href={i.href} class="transition-colors hover:text-amber">{i.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+
+      <nav aria-labelledby="f-guides">
+        <p id="f-guides" class="font-display text-[0.78rem] font-semibold uppercase tracking-[0.16em] text-cream">Guides</p>
+        <ul class="mt-4 space-y-2.5 text-[0.9rem]">
+          {guidesNav.map((i) => (
+            <li><a href={i.href} class="transition-colors hover:text-amber">{i.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+
+      <nav aria-labelledby="f-site">
+        <p id="f-site" class="font-display text-[0.78rem] font-semibold uppercase tracking-[0.16em] text-cream">Le site</p>
+        <ul class="mt-4 space-y-2.5 text-[0.9rem]">
+          {mainNav.map((i) => (
+            <li><a href={i.href} class="transition-colors hover:text-amber">{i.label}</a></li>
+          ))}
+          <li><a href="/rss.xml" class="transition-colors hover:text-amber">Flux RSS</a></li>
+          {footerLegal.map((i) => (
+            <li><a href={i.href} class="transition-colors hover:text-amber">{i.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+
+    <div class="mt-14 border-t border-white/10 pt-8">
+      <p class="max-w-3xl text-[0.8rem] leading-relaxed text-warm">
+        <strong class="font-semibold text-warm-light">Transparence :</strong> certains liens de ce site
+        sont des liens d'affiliation. Si vous réservez via l'un d'eux, le partenaire nous reverse une
+        commission — <em>vous ne payez jamais plus cher</em>. Nous ne recommandons que des services que
+        nous utilisons nous-mêmes, et nous le disons quand un service ne vaut pas son prix.
+        <a href="/affiliation" class="text-amber underline underline-offset-2">Notre charte complète</a>.
+      </p>
+      <p class="mt-6 text-[0.8rem] text-warm">
+        © {year} {site.name} — {site.tagline}. Les informations de formalités et de tarifs sont
+        indicatives et doivent être vérifiées auprès des sources officielles avant tout départ.
+      </p>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,246 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import CountryCard from '@/components/CountryCard.astro';
+import ArticleCard from '@/components/ArticleCard.astro';
+import Newsletter from '@/components/Newsletter.astro';
+import Testimonials from '@/components/Testimonials.astro';
+import AdSlot from '@/components/AdSlot.astro';
+import { countries } from '@/data/countries';
+import { guidesNav } from '@/data/nav';
+import { site } from '@/data/site';
+
+const guides = (await getCollection('guides', ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.ordre - b.data.ordre,
+);
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 4);
+
+// Chiffres réels, calculés à partir du contenu publié — jamais arrondis à la hausse.
+const nbGuides = guides.length + countries.length;
+const nbPays = countries.length;
+const majLabel = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' })
+  .format(new Date(`${site.lastReview}-01T00:00:00`));
+
+const problemes = [
+  {
+    probleme: 'Les formalités changent tous les six mois',
+    solution:
+      "Chaque fiche visa porte une date de vérification et les liens vers les portails gouvernementaux. Quand une règle bouge, la page bouge — et la date le dit.",
+  },
+  {
+    probleme: 'Les « top 10 » sont écrits par des gens qui n\'y sont jamais allés',
+    solution:
+      "Ici, chaque recommandation vient d'un séjour réel. Quand une adresse a fermé ou s'est dégradée, elle saute. Quand un lieu est devenu invivable, on l'écrit.",
+  },
+  {
+    probleme: 'Les budgets annoncés sont irréalistes',
+    solution:
+      "Nos fourchettes viennent de dépenses tenues au jour le jour, poste par poste, dans trois styles de voyage. Le calculateur les applique à votre itinéraire.",
+  },
+  {
+    probleme: 'On ne sait jamais qui touche quoi',
+    solution:
+      "Les liens partenaires sont signalés en haut de page, en clair. On recommande aussi des services qui ne nous rapportent rien quand ils sont meilleurs.",
+  },
+];
+---
+
+<BaseLayout
+  title={`Guides de voyage en Asie — visas, budgets, itinéraires | ${site.name}`}
+  description={site.description}
+>
+  <!-- ═══ ATTENTION ═══════════════════════════════════════════ -->
+  <section class="relative overflow-hidden border-b border-line bg-cream">
+    <div class="wrap grid gap-14 py-20 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:py-28">
+      <div class="animate-rise">
+        <p class="eyebrow">{nbPays} pays · {nbGuides} guides · mis à jour en {majLabel}</p>
+
+        <h1 class="mt-5 text-hero">
+          L'Asie comme vous ne<br class="hidden sm:block" />
+          l'avez <span class="relative inline-block">
+            jamais vue
+            <svg viewBox="0 0 200 12" preserveAspectRatio="none" class="absolute -bottom-1 left-0 h-2.5 w-full text-amber" aria-hidden="true">
+              <path d="M2 8c40-5 90-7 196-4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" />
+            </svg>
+          </span>
+        </h1>
+
+        <p class="mt-8 max-w-xl text-[1.15rem] leading-relaxed text-warm">
+          Des guides pratiques écrits depuis le terrain : visas, budgets réels, transports,
+          où dormir, et surtout les erreurs qui coûtent cher. Pas de liste de « lieux
+          incontournables » recopiée d'un office de tourisme.
+        </p>
+
+        <div class="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <a href="/newsletter" class="btn-primary">Recevoir les 5 itinéraires (gratuit)</a>
+          <a href="#destinations" class="btn-outline">Explorer les {nbPays} pays</a>
+        </div>
+
+        <p class="mt-6 text-[0.85rem] text-warm-light">
+          Sans spam, un email tous les 15 jours, désabonnement en un clic.
+        </p>
+      </div>
+
+      <!-- Panneau « preuve » : des faits vérifiables, pas des badges décoratifs -->
+      <aside class="rounded-brand border border-line bg-white p-8 shadow-lift">
+        <p class="font-display text-[0.75rem] font-semibold uppercase tracking-[0.16em] text-teal">
+          Ce que ce site fait différemment
+        </p>
+        <ul class="mt-6 space-y-5">
+          {[
+            ['Écrit depuis l\'Asie', "Le fondateur vit au Vietnam depuis 2016. Les guides sont relus sur place, pas depuis un bureau à 10 000 km."],
+            ['Daté, donc vérifiable', 'Chaque page de formalités affiche sa date de dernière vérification et ses sources officielles.'],
+            ['Transparent sur l\'argent', "Les liens partenaires sont annoncés en haut de page. On dit aussi quand un service ne vaut pas son prix."],
+          ].map(([titre, texte]) => (
+            <li class="flex gap-4">
+              <svg viewBox="0 0 20 20" class="mt-0.5 h-5 w-5 shrink-0 text-amber" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3.5 10.5 8 15l8.5-10" />
+              </svg>
+              <div>
+                <p class="font-display text-[0.95rem] font-semibold text-ink">{titre}</p>
+                <p class="mt-1 text-[0.88rem] leading-relaxed text-warm">{texte}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ═══ INTÉRÊT — les destinations ══════════════════════════ -->
+  <section id="destinations" class="wrap scroll-mt-24 py-20 lg:py-24">
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <div class="max-w-2xl">
+        <p class="eyebrow">Destinations</p>
+        <h2 class="mt-3 text-display">Neuf pays, neuf guides complets</h2>
+        <p class="mt-4 text-[1.05rem] leading-relaxed text-warm">
+          Formalités, budget par jour, meilleure saison mois par mois, incontournables,
+          hors sentiers battus et erreurs à éviter. Tout est sur une seule page par pays.
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {countries.map((c) => <CountryCard country={c} />)}
+    </div>
+  </section>
+
+  <!-- ═══ INTÉRÊT — problème / solution ═══════════════════════ -->
+  <section class="border-y border-line bg-cream-warm">
+    <div class="wrap py-20 lg:py-24">
+      <div class="grid gap-14 lg:grid-cols-[0.9fr_1.1fr]">
+        <div>
+          <p class="eyebrow">Pourquoi ce site existe</p>
+          <h2 class="mt-3 text-display">
+            Préparer un voyage en Asie est devenu absurdement compliqué
+          </h2>
+          <p class="mt-6 text-[1.05rem] leading-relaxed text-warm">
+            Pas parce que l'information manque — parce qu'elle est partout, contradictoire,
+            périmée et souvent écrite pour placer un lien. On a fait l'inverse.
+          </p>
+          <a href="/a-propos" class="link mt-8 inline-block">Qui écrit ces guides, et pourquoi</a>
+        </div>
+
+        <ul class="grid gap-px overflow-hidden rounded-brand border border-line bg-line sm:grid-cols-2">
+          {problemes.map((p) => (
+            <li class="bg-cream-warm p-7">
+              <p class="font-display text-[1.02rem] font-semibold leading-snug text-ink">{p.probleme}</p>
+              <div class="mt-3 h-[3px] w-8 bg-amber"></div>
+              <p class="mt-3 text-[0.92rem] leading-relaxed text-warm">{p.solution}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ DÉSIR — les guides pratiques ════════════════════════ -->
+  <section class="wrap py-20 lg:py-24">
+    <div class="max-w-2xl">
+      <p class="eyebrow">Guides pratiques</p>
+      <h2 class="mt-3 text-display">Les dix questions qui reviennent toujours</h2>
+      <p class="mt-4 text-[1.05rem] leading-relaxed text-warm">
+        Avec deux outils qui répondent à votre place : un calculateur de budget et un
+        sélecteur de saison, mois par mois.
+      </p>
+    </div>
+
+    <div class="mt-12 grid gap-px overflow-hidden rounded-brand border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
+      {guidesNav.map((g, i) => (
+        <a href={g.href} class="group bg-white p-7 transition-colors hover:bg-teal-50">
+          <span class="font-display text-[0.72rem] font-semibold tracking-[0.14em] text-warm-light">
+            {String(i + 1).padStart(2, '0')}
+          </span>
+          <p class="mt-3 font-display text-[1.1rem] font-bold text-ink transition-colors group-hover:text-teal">
+            {g.label}
+          </p>
+          <p class="mt-2 text-[0.88rem] leading-relaxed text-warm">{g.hint}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <AdSlot placement="in-feed" class="wrap" />
+
+  <!-- ═══ DÉSIR — crédibilité de l'auteur ═════════════════════ -->
+  <section class="border-y border-line bg-ink">
+    <div class="wrap grid gap-12 py-20 lg:grid-cols-[1fr_1.1fr] lg:items-center lg:py-24">
+      <div>
+        <p class="eyebrow !text-amber">L'auteur</p>
+        <blockquote class="mt-6 font-accent text-[1.75rem] leading-[1.35] text-cream sm:text-[2rem]">
+          « Je vis au Vietnam depuis 2016. J'ai fait toutes les erreurs possibles : visa refusé
+          à trois jours du départ, hôtel réservé dans le mauvais quartier, train de nuit raté,
+          arnaque au change. Ce site, c'est tout ce que j'aurais voulu lire avant de partir. »
+        </blockquote>
+        <p class="mt-8 font-display text-[0.9rem] font-semibold text-cream">{site.author.name}</p>
+        <p class="text-[0.85rem] text-warm">{site.author.role}</p>
+      </div>
+
+      <dl class="grid grid-cols-2 gap-px overflow-hidden rounded-brand bg-white/10 sm:grid-cols-2">
+        {[
+          [`${nbPays}`, 'pays documentés en détail'],
+          [`${nbGuides}`, 'guides et fiches publiés'],
+          ['2016', 'installé en Asie du Sud-Est'],
+          ['0 €', 'de contenu sponsorisé déguisé'],
+        ].map(([chiffre, label]) => (
+          <div class="bg-ink p-8">
+            <dt class="font-display text-[2.6rem] font-bold leading-none tracking-tight text-amber">{chiffre}</dt>
+            <dd class="mt-2 text-[0.85rem] leading-snug text-warm-light">{label}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <Testimonials />
+
+  <!-- ═══ DÉSIR — derniers récits ═════════════════════════════ -->
+  {posts.length > 0 && (
+    <section class="wrap py-20 lg:py-24">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <div class="max-w-xl">
+          <p class="eyebrow">Sur le terrain</p>
+          <h2 class="mt-3 text-display">Derniers récits et retours d'expérience</h2>
+        </div>
+        <a href="/blog" class="btn-outline">Tous les articles</a>
+      </div>
+      <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {posts.map((p) => (
+          <ArticleCard
+            href={`/blog/${p.id}`}
+            title={p.data.heading ?? p.data.title}
+            accroche={p.data.accroche}
+            date={p.data.pubDate}
+          />
+        ))}
+      </div>
+    </section>
+  )}
+
+  <!-- ═══ ACTION ══════════════════════════════════════════════ -->
+  <div class="wrap pb-24">
+    <Newsletter />
+  </div>
+</BaseLayout>

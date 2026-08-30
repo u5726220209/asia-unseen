@@ -1,0 +1,41 @@
+---
+import type { Country } from '@/data/countries';
+import { MOIS } from '@/data/countries';
+interface Props { country: Country; }
+const { country: c } = Astro.props;
+const best = c.saisons
+  .map((s, i) => ({ s, m: MOIS[i] }))
+  .filter((x) => x.s === 3)
+  .map((x) => x.m);
+---
+
+<a href={`/${c.slug}`} class="group card p-6">
+  <div class="flex items-start justify-between gap-4">
+    <h3 class="font-display text-[1.35rem] font-bold tracking-tight text-ink transition-colors group-hover:text-teal">
+      {c.nom}
+    </h3>
+    <span class="mt-1 shrink-0 font-display text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-amber-700">
+      dès {c.budget.routard} €/j
+    </span>
+  </div>
+
+  <p class="mt-3 line-clamp-3 text-[0.92rem] leading-relaxed text-warm">{c.resume}</p>
+
+  <dl class="mt-5 space-y-1.5 border-t border-line pt-4 text-[0.82rem]">
+    <div class="flex gap-2">
+      <dt class="w-20 shrink-0 text-warm-light">Visa</dt>
+      <dd class="text-ink-soft">{c.visa.cout === 'Gratuit' ? 'Aucun pour un séjour court' : c.visa.cout}</dd>
+    </div>
+    <div class="flex gap-2">
+      <dt class="w-20 shrink-0 text-warm-light">Saison</dt>
+      <dd class="text-ink-soft">{best.length ? best.join(' · ') : 'Variable selon les régions'}</dd>
+    </div>
+  </dl>
+
+  <span class="mt-5 inline-flex items-center gap-1.5 font-display text-[0.85rem] font-semibold text-teal">
+    Le guide complet
+    <svg viewBox="0 0 16 16" class="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M2.5 8h11M9 3.5 13.5 8 9 12.5" />
+    </svg>
+  </span>
+</a>

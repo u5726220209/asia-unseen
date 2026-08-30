@@ -1,0 +1,26 @@
+---
+/**
+ * Mention de transparence affiliation. Obligatoire en haut de toute page
+ * contenant des liens partenaires (DGCCRF / FTC / conditions Google).
+ */
+interface Props { compact?: boolean; class?: string }
+const { compact = false, class: klass = '' } = Astro.props;
+---
+
+<p
+  class:list={[
+    'flex items-start gap-2.5 rounded-brand border border-line bg-white text-warm',
+    compact ? 'px-3.5 py-2.5 text-[0.78rem]' : 'px-5 py-4 text-[0.85rem] leading-relaxed',
+    klass,
+  ]}
+>
+  <svg viewBox="0 0 20 20" class="mt-0.5 h-4 w-4 shrink-0 text-teal" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+    <circle cx="10" cy="10" r="8" /><path d="M10 9v5M10 6.2v.1" stroke-linecap="round" />
+  </svg>
+  <span>
+    Cette page contient des liens partenaires. Si vous réservez via l'un d'eux, nous touchons une
+    commission — <strong class="font-semibold text-ink">sans surcoût pour vous</strong>. C'est ce qui
+    nous permet de garder ces guides gratuits et sans contenu sponsorisé déguisé.
+    <a href="/affiliation" class="whitespace-nowrap underline underline-offset-2 hover:text-teal">En savoir plus</a>.
+  </span>
+</p>

@@ -1,0 +1,102 @@
+---
+import { newsletter } from '@/data/site';
+
+interface Props {
+  variant?: 'block' | 'inline' | 'compact';
+  title?: string;
+  class?: string;
+}
+const {
+  variant = 'block',
+  title = `Recevez nos ${newsletter.leadMagnet}`,
+  class: klass = '',
+} = Astro.props;
+
+// Sans endpoint configuré, le formulaire reste inerte plutôt que d'échouer
+// silencieusement : on affiche l'adresse de contact directe.
+const action = newsletter.endpoint;
+const id = 'nl-' + Math.random().toString(36).slice(2, 8);
+---
+
+{variant === 'block' && (
+  <section class:list={['relative overflow-hidden rounded-brand bg-ink px-6 py-12 sm:px-12 sm:py-16', klass]}>
+    <svg viewBox="0 0 64 64" aria-hidden="true" class="pointer-events-none absolute -right-8 -top-8 h-56 w-56 opacity-[0.07]">
+      <g fill="none" stroke="#F9FAFB" stroke-linecap="round" stroke-width="7">
+        <path d="M9 55 28.5 18" /><path d="M35.5 18 55 55" /><path d="M17 41H47" />
+      </g>
+    </svg>
+    <div class="relative max-w-2xl">
+      <p class="eyebrow !text-amber">Gratuit · sans spam</p>
+      <h2 class="mt-3 text-display text-cream">{title}</h2>
+      <p class="mt-4 text-[1.05rem] leading-relaxed text-warm-light">
+        Cinq itinéraires testés sur le terrain — 10 jours au Vietnam, 2 semaines au Japon,
+        3 semaines en Asie du Sud-Est, une boucle Thaïlande–Laos, et un tour de Corée du Sud.
+        Avec les budgets réels, les trajets et les adresses.
+      </p>
+      <form
+        class="au-nl mt-8 flex flex-col gap-3 sm:flex-row"
+        action={action || undefined}
+        method="post"
+        data-configured={action ? 'true' : 'false'}
+      >
+        <label for={id} class="sr-only">Votre adresse email</label>
+        <input
+          id={id} type="email" name="email_address" required autocomplete="email"
+          placeholder="vous@exemple.com"
+          class="min-w-0 flex-1 rounded-brand border border-white/15 bg-white/[0.06] px-5 py-3.5 text-cream placeholder:text-warm focus:border-amber focus:outline-none"
+        />
+        <button type="submit" class="btn-primary shrink-0">Envoyez-les moi</button>
+      </form>
+      <p class="au-nl-msg mt-4 hidden text-sm text-amber-300" role="status"></p>
+      <p class="mt-4 text-[0.8rem] text-warm">{newsletter.promise}</p>
+    </div>
+  </section>
+)}
+
+{variant === 'inline' && (
+  <aside class:list={['my-12 rounded-brand border-l-[3px] border-amber bg-amber-50 px-6 py-7', klass]}>
+    <p class="eyebrow !text-amber-700">Avant d'aller plus loin</p>
+    <h3 class="mt-2 font-display text-xl font-bold text-ink">{title}</h3>
+    <p class="mt-2 text-[0.95rem] leading-relaxed text-ink-soft">
+      Les mêmes conseils, condensés en itinéraires prêts à suivre. Un email tous les 15 jours.
+    </p>
+    <form class="au-nl mt-5 flex flex-col gap-2.5 sm:flex-row" action={action || undefined} method="post" data-configured={action ? 'true' : 'false'}>
+      <label for={id} class="sr-only">Votre adresse email</label>
+      <input
+        id={id} type="email" name="email_address" required autocomplete="email" placeholder="vous@exemple.com"
+        class="min-w-0 flex-1 rounded-brand border border-ink/15 bg-white px-4 py-3 text-ink placeholder:text-warm-light focus:border-teal focus:outline-none"
+      />
+      <button type="submit" class="btn-dark shrink-0 !py-3">Je m'inscris</button>
+    </form>
+    <p class="au-nl-msg mt-3 hidden text-sm text-teal-700" role="status"></p>
+  </aside>
+)}
+
+{variant === 'compact' && (
+  <form class:list={['au-nl flex flex-col gap-2.5 sm:flex-row', klass]} action={action || undefined} method="post" data-configured={action ? 'true' : 'false'}>
+    <label for={id} class="sr-only">Votre adresse email</label>
+    <input
+      id={id} type="email" name="email_address" required autocomplete="email" placeholder="vous@exemple.com"
+      class="min-w-0 flex-1 rounded-brand border border-white/15 bg-white/[0.06] px-4 py-3 text-cream placeholder:text-warm focus:border-amber focus:outline-none"
+    />
+    <button type="submit" class="btn-primary shrink-0 !py-3 !text-[0.85rem]">S'inscrire</button>
+  </form>
+)}
+
+<script>
+  // Tant qu'aucun endpoint n'est configuré (PUBLIC_NEWSLETTER_ENDPOINT),
+  // on empêche une soumission qui échouerait et on l'explique à l'utilisateur.
+  document.querySelectorAll<HTMLFormElement>('form.au-nl').forEach((form) => {
+    form.addEventListener('submit', (e) => {
+      if (form.dataset.configured === 'true') return;
+      e.preventDefault();
+      const msg = form.parentElement?.querySelector<HTMLElement>('.au-nl-msg');
+      if (msg) {
+        msg.textContent =
+          "Le service d'emailing n'est pas encore branché sur ce site. Écrivez-nous à bonjour@asiaunseen.com en attendant.";
+        msg.hidden = false;
+        msg.classList.remove('hidden');
+      }
+    });
+  });
+</script>

@@ -1,0 +1,34 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { countries } from '@/data/countries';
+import { guidesNav } from '@/data/nav';
+---
+
+<BaseLayout title="Page introuvable" description="Cette page n'existe pas ou a été déplacée." noindex noPopup>
+  <section class="wrap py-24 text-center lg:py-32">
+    <p class="eyebrow">Erreur 404</p>
+    <h1 class="mx-auto mt-4 max-w-2xl text-hero">Il n'y a rien ici</h1>
+    <p class="mx-auto mt-6 max-w-lg text-[1.1rem] leading-relaxed text-warm">
+      La page a peut-être été renommée, ou le lien qui vous a amené ici est ancien.
+      Voici par où reprendre.
+    </p>
+
+    <div class="mx-auto mt-12 max-w-3xl">
+      <p class="eyebrow">Destinations</p>
+      <ul class="mt-4 flex flex-wrap justify-center gap-2.5">
+        {countries.map((c) => (
+          <li><a href={`/${c.slug}`} class="chip !px-4 !py-2 transition-colors hover:border-teal hover:text-teal">{c.nom}</a></li>
+        ))}
+      </ul>
+
+      <p class="eyebrow mt-10">Guides</p>
+      <ul class="mt-4 flex flex-wrap justify-center gap-2.5">
+        {guidesNav.map((g) => (
+          <li><a href={g.href} class="chip !px-4 !py-2 transition-colors hover:border-teal hover:text-teal">{g.label}</a></li>
+        ))}
+      </ul>
+    </div>
+
+    <a href="/" class="btn-dark mt-12">Retour à l'accueil</a>
+  </section>
+</BaseLayout>

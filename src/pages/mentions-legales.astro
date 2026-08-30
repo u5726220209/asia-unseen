@@ -1,0 +1,83 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import { site } from '@/data/site';
+---
+
+<BaseLayout title="Mentions légales" description="Mentions légales du site Asia Unseen : éditeur, hébergeur, propriété intellectuelle." noindex noPopup>
+  <header class="border-b border-line bg-cream-warm">
+    <div class="wrap py-10">
+      <Breadcrumbs items={[{ label: 'Mentions légales' }]} />
+      <h1 class="mt-6 text-display">Mentions légales</h1>
+    </div>
+  </header>
+
+  <div class="wrap-narrow prose-au py-14">
+    <div class="not-prose mb-10 rounded-brand border-l-[3px] border-amber bg-amber-50 px-6 py-5">
+      <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-amber-700">À compléter avant mise en ligne</p>
+      <p class="mt-2 text-[0.92rem] leading-relaxed text-ink-soft">
+        Les champs entre crochets doivent être renseignés avec vos informations réelles.
+        L'article 6 III de la loi pour la confiance dans l'économie numérique impose de publier
+        l'identité de l'éditeur : un site publié sans ces mentions expose son éditeur à des sanctions.
+      </p>
+    </div>
+
+    <h2>Éditeur du site</h2>
+    <p>
+      Le site {site.name}, accessible à l'adresse <a href={site.url}>{site.domain}</a>, est édité par :
+    </p>
+    <ul>
+      <li><strong>Dénomination :</strong> [Nom et prénom, ou raison sociale]</li>
+      <li><strong>Statut :</strong> [Entrepreneur individuel / micro-entreprise / SASU…]</li>
+      <li><strong>Adresse :</strong> [Adresse du siège ou de domiciliation]</li>
+      <li><strong>Immatriculation :</strong> [SIRET / numéro d'enregistrement]</li>
+      <li><strong>TVA intracommunautaire :</strong> [Numéro, ou « non applicable, article 293 B du CGI »]</li>
+      <li><strong>Contact :</strong> <a href={`mailto:${site.author.email}`}>{site.author.email}</a></li>
+      <li><strong>Directeur de la publication :</strong> [Nom et prénom]</li>
+    </ul>
+
+    <h2>Hébergement</h2>
+    <p>
+      Le site est hébergé par [Cloudflare, Inc. / Vercel Inc. / autre], [adresse de l'hébergeur].
+      L'hébergeur n'est pas responsable du contenu éditorial publié.
+    </p>
+
+    <h2>Propriété intellectuelle</h2>
+    <p>
+      L'ensemble des textes, de l'identité visuelle, des illustrations et de la structure du site
+      est protégé par le droit d'auteur. Toute reproduction intégrale ou substantielle sans
+      autorisation écrite préalable est interdite.
+    </p>
+    <p>
+      La citation d'extraits courts est autorisée à condition de mentionner clairement la source
+      et d'inclure un lien vers la page d'origine.
+    </p>
+
+    <h2>Responsabilité éditoriale</h2>
+    <p>
+      Les informations publiées — formalités d'entrée, tarifs, horaires, conditions d'assurance —
+      sont fournies à titre indicatif et peuvent évoluer sans préavis. Elles ne se substituent en
+      aucun cas aux sources officielles : ambassades, consulats, portails gouvernementaux,
+      conditions générales des prestataires.
+    </p>
+    <p>
+      Il appartient à chaque voyageur de vérifier sa situation personnelle auprès des autorités
+      compétentes avant tout départ. La responsabilité de l'éditeur ne saurait être engagée en cas
+      de dommage résultant de l'utilisation des informations publiées.
+    </p>
+
+    <h2>Liens sortants</h2>
+    <p>
+      Le site contient des liens vers des ressources externes, dont certains sont des liens
+      d'affiliation signalés comme tels. L'éditeur n'exerce aucun contrôle sur le contenu de ces
+      sites tiers et décline toute responsabilité à leur égard.
+      Voir la page <a href="/affiliation">transparence et affiliation</a>.
+    </p>
+
+    <h2>Signalement</h2>
+    <p>
+      Pour signaler un contenu illicite, une erreur factuelle ou une atteinte au droit d'auteur,
+      écrivez à <a href={`mailto:${site.author.email}`}>{site.author.email}</a> en précisant l'URL concernée.
+    </p>
+  </div>
+</BaseLayout>
