@@ -78,6 +78,29 @@ Ce n'est pas une raison d'abandonner Booking : la marque rassure un lecteur
 français et convertit sur les grandes villes. C'est une raison de commencer
 par le plus court.
 
+**État au 30 août 2026 :** compte créé, profil rempli à l'exception de ce qui
+n'appartient qu'à l'éditeur. Saisi : Fabrice Roy, Syllodi Service, adresse
+commerciale 60 rue Francois 1er, Île-de-France, Paris, 75008, site
+https://asiaunseen.com, et l'identité fiscale renseignée avec le **SIREN
+991954017**.
+
+Deux choix de saisie à connaître, parce qu'ils sont discutables :
+
+- « Faites-vous affaire avec Agoda sous un autre nom ? » → **Non**. Répondre
+  « oui » ouvre la déclaration d'une seconde entité juridique avec sa propre
+  adresse. Asia Unseen est un site, pas une société : déclarer une entreprise
+  qui n'existe pas aurait été faux.
+- Le champ « numéro d'identification fiscale du propriétaire » propose comme
+  alternative un passeport. J'y ai mis le SIREN, qui est l'identifiant fiscal
+  de l'entreprise et une donnée publique déjà affichée dans les mentions
+  légales. **Si Agoda attend le numéro fiscal personnel à 13 chiffres, il faut
+  le remplacer** — je ne saisis pas ce genre de donnée.
+
+**Restent à faire, et par vous seul :** date de naissance, numéro de
+téléphone, la déclaration « le propriétaire est-il fonctionnaire ? », puis
+Sauvegarder — sans quoi la saisie est perdue. Ensuite : vérifier l'adresse
+e-mail, et renseigner l'onglet Informations bancaires.
+
 **Ce que vous me rapportez :** votre identifiant de campagne, le `cid`.
 
 ## 2. 12Go Asia — inscription directe, la plus simple
