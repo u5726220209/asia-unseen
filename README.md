@@ -252,13 +252,31 @@ Sans cela, un domaine de test dupliquerait l'intégralité du contenu.
 > à la place du vôtre. Sur un domaine personnalisé — donc en production — c'est bien
 > `public/robots.txt` qui est servi. Vérifié le 30 août 2026.
 
-### Ce qu'il reste à faire après la mise en ligne
+### Search Console — fait le 30 août 2026
 
-1. **Search Console.** Créez la propriété sur `https://asiaunseen.com`, choisissez la
-   vérification par balise HTML, collez le jeton dans `PUBLIC_GSC_TOKEN` du `.env`,
-   republiez — la vérification passe sans toucher au DNS. Soumettez ensuite
-   `/sitemap-index.xml`.
-2. **GA4.** Créez la propriété, collez l'identifiant dans `PUBLIC_GA4_ID`. Le bandeau
+Propriété **de domaine** (`sc-domain:asiaunseen.com`), validée par enregistrement DNS.
+Elle couvre `http`, `https`, `www` et tous les sous-domaines d'un seul tenant — une
+propriété « préfixe d'URL » n'en aurait couvert qu'un quart.
+
+⚠️ **Ne supprimez jamais cet enregistrement TXT de la zone DNS.** Sa disparition
+révoque la propriété et vous perdez l'historique de la Search Console.
+
+```
+Type  TXT
+Nom   @   (asiaunseen.com)
+TTL   300
+Valeur  google-site-verification=hDs4GjJlgz48DUTzW97xRUfM7A73i4IvVhDVsw06iDk
+```
+
+`sitemap-index.xml` soumis et lu — état « Opération effectuée ». Indexation de la
+page d'accueil demandée.
+
+`PUBLIC_GSC_TOKEN` reste disponible dans `.env` comme méthode de secours par balise
+HTML, mais n'est pas nécessaire tant que le TXT est en place.
+
+### Ce qu'il reste à faire
+
+1. **GA4.** Créez la propriété, collez l'identifiant dans `PUBLIC_GA4_ID`. Le bandeau
    de consentement s'active alors tout seul.
 3. **Comptes affiliés et AdSense.** Le site est en ligne : les demandes qui exigeaient
    un domaine actif peuvent partir.
