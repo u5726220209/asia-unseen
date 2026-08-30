@@ -1,0 +1,43 @@
+name: Point éditorial du lundi
+
+# Les autres workflows disent ce qui ne va pas. Celui-ci dit quoi faire.
+#
+# Il ne bloque rien, ne corrige rien, ne pousse rien : il ouvre une tâche le
+# lundi matin avec les trois chiffres qui décident de la semaine — ce qui part
+# tout seul, quels pays sont trop minces pour se classer, quelles pages
+# personne n'atteint. Un rappel qui bloque devient un obstacle, et un obstacle
+# finit désactivé.
+on:
+  schedule:
+    - cron: '0 6 * * 1'   # lundi, 8 h heure de Paris
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  faire-le-point:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: npm }
+      - run: npm ci
+      - run: npm run build
+
+      - name: Rassembler le point
+        run: node scripts/editorial.mjs --markdown > point.md
+
+      - name: Ouvrir la tâche de la semaine
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const point = require('fs').readFileSync('point.md', 'utf8');
+            const semaine = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+            await github.rest.issues.create({
+              owner: context.repo.owner, repo: context.repo.repo,
+              title: `Point éditorial — semaine du ${semaine}`,
+              body: point,
+              labels: ['editorial'],
+            });

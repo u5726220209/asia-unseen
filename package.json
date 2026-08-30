@@ -25,7 +25,8 @@
     "programme": "node scripts/programme.mjs",
     "affilies": "node scripts/liens-affilies.mjs",
     "performance": "node scripts/performance.mjs",
-    "certificats": "node scripts/certificats.mjs"
+    "certificats": "node scripts/certificats.mjs",
+    "editorial": "node scripts/editorial.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.11",
