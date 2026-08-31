@@ -16,7 +16,7 @@
  * `dist/`, et c'est celle qui doit bloquer une mise en ligne.
  */
 
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
 
 const UA =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36';
@@ -34,13 +34,18 @@ const constantes = Object.fromEntries(
 const resoudre = (v) => constantes[v] ?? v.replace(/^'|'$/g, '');
 
 const chiffres = [...ts.matchAll(
-  /\{ affiche: '([^']+)', designe: '([^']+)', source: ([A-Z_0-9]+), releveLe: '([^']+)', pages: \[([^\]]*)\]/g,
+  /\{ affiche: '([^']+)', designe: "?'?([^"']+)"?'?, source: ([A-Z_0-9]+), releveLe: '([^']+)', pages: \[([^\]]*)\][^}]*\}/g,
 )].map((m) => ({
   affiche: m[1],
   designe: m[2],
   source: resoudre(m[3]),
   releveLe: m[4],
   pages: m[5].split(',').map((p) => resoudre(p.trim())).filter(Boolean),
+  // Certaines sources calculent leurs prix dans le navigateur : le montant
+  // existe à l'écran mais pas dans le HTML. Les traiter comme disparus
+  // produirait seize fausses alertes chaque matin, et une sentinelle qui crie
+  // sans raison finit ignorée — donc pire qu'absente.
+  nonRelisable: /sourceIntrouvableAttendue:\s*true/.test(m[0]),
 }));
 
 /**
@@ -73,10 +78,36 @@ const contient = (texte, affiche) => formes(affiche).some((f) => texte.includes(
 
 /* ── 1. Cohérence interne, hors ligne ───────────────────────────── */
 
+/**
+ * Les pages qui n'existent pas encore parce qu'elles attendent leur date.
+ *
+ * Un article programmé n'a pas de page tant que le jour n'est pas venu, et ses
+ * montants sont pourtant déjà déclarés — c'est même souhaitable, la sentinelle
+ * les surveille avant même la parution. Les compter comme des incohérences
+ * transformerait la programmation en défaut, alors qu'elle marche exactement
+ * comme prévu.
+ */
+const programmees = new Set();
+{
+  const aujourdhui = new Date().toISOString().slice(0, 10);
+  for (const dossier of ['src/content/blog', 'src/content/guides']) {
+    if (!existsSync(dossier)) continue;
+    for (const f of readdirSync(dossier).filter((f) => f.endsWith('.md'))) {
+      const entete = readFileSync(`${dossier}/${f}`, 'utf8').slice(0, 1400);
+      const date = entete.match(/^pubDate:\s*['"]?(\d{4}-\d{2}-\d{2})/m)?.[1];
+      if (date && date > aujourdhui) {
+        programmees.add(`/${dossier.includes('blog') ? 'blog/' : ''}${f.replace(/\.md$/, '')}`);
+      }
+    }
+  }
+}
+
 const manquantsSurLeSite = [];
+const enAttenteDeParution = [];
 if (existsSync('dist')) {
   for (const c of chiffres) {
     for (const page of c.pages) {
+      if (programmees.has(page)) { enAttenteDeParution.push({ ...c, page }); continue; }
       const f = `dist${page}/index.html`;
       if (!existsSync(f)) { manquantsSurLeSite.push({ ...c, page, motif: 'page absente' }); continue; }
       const html = readFileSync(f, 'utf8').replace(/<[^>]+>/g, ' ');
@@ -94,6 +125,8 @@ for (const c of chiffres) {
 }
 
 const disparusDeLaSource = [];
+/** Déclarés non relisables : on ne crie pas, mais on ne les oublie pas non plus. */
+const aVerifierAlaMain = [];
 const sourcesMuettes = [];
 
 if (!HORS_LIGNE) {
@@ -108,7 +141,10 @@ if (!HORS_LIGNE) {
     } catch { /* la source ne répond pas : traité plus bas */ }
 
     if (texte === null) { sourcesMuettes.push(url); continue; }
-    for (const c of liste) if (!contient(texte, c.affiche)) disparusDeLaSource.push(c);
+    for (const c of liste) {
+      if (contient(texte, c.affiche)) continue;
+      (c.nonRelisable ? aVerifierAlaMain : disparusDeLaSource).push(c);
+    }
   }
 }
 
@@ -119,6 +155,7 @@ if (JSON_OUT) {
     surveilles: chiffres.length,
     incoherencesInternes: manquantsSurLeSite,
     disparusDeLaSource: disparusDeLaSource.map(({ affiche, designe, source, pages }) => ({ affiche, designe, source, pages })),
+    aVerifierAlaMain: aVerifierAlaMain.length,
     sourcesMuettes,
   }, null, 2));
 } else {
@@ -133,6 +170,13 @@ if (JSON_OUT) {
     console.log('✓ Tous les montants déclarés figurent bien sur les pages annoncées.\n');
   }
 
+  if (enAttenteDeParution.length) {
+    const pages = [...new Set(enAttenteDeParution.map((c) => c.page))];
+    console.log(`   ${enAttenteDeParution.length} montant(s) attendent la parution de ${pages.length} article(s) programmé(s) :`);
+    for (const p of pages) console.log(`     ${p}`);
+    console.log();
+  }
+
   if (disparusDeLaSource.length) {
     console.log(`⚠  ${disparusDeLaSource.length} montant(s) ne figurent plus sur leur source :\n`);
     for (const c of disparusDeLaSource) {
@@ -144,6 +188,15 @@ if (JSON_OUT) {
     console.log('   citées, mettez le registre à jour et remontez la date de relevé.\n');
   } else if (!HORS_LIGNE) {
     console.log('✓ Tous les montants tiennent encore à leur source.\n');
+  }
+
+  if (aVerifierAlaMain.length) {
+    console.log(`   ${aVerifierAlaMain.length} montant(s) sur des sources que seul un humain peut relire :`);
+    const parSource = new Map();
+    for (const c of aVerifierAlaMain) parSource.set(c.source, (parSource.get(c.source) ?? 0) + 1);
+    for (const [u, n] of parSource) console.log(`     ${String(n).padStart(3)} × ${u}`);
+    console.log('   Ces pages calculent leurs prix dans le navigateur. Rouvrez-les de temps');
+    console.log('   en temps, à la main — le calendrier de fraîcheur vous le rappellera.\n');
   }
 
   if (sourcesMuettes.length) {
