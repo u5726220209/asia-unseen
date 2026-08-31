@@ -11,6 +11,16 @@ const seo = {
   image: z.string().optional(),
   imageAlt: z.string().optional(),
   draft: z.boolean().default(false),
+
+  /**
+   * Article rédigé automatiquement, sans relecture humaine avant publication.
+   *
+   * Ce n'est pas un détail technique : c'est une information que le lecteur a
+   * le droit d'avoir pour juger de ce qu'il lit. Le drapeau déclenche une
+   * mention visible en tête d'article. Un site qui affiche d'où viennent ses
+   * liens partenaires et ses photographies ne va pas taire qui écrit ses textes.
+   */
+  redactionAutomatique: z.boolean().default(false),
 };
 
 const guides = defineCollection({

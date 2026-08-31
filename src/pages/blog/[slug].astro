@@ -5,6 +5,7 @@ import { articlesPublies, suggestionsCroisees } from '@/lib/articles';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import Disclosure from '@/components/Disclosure.astro';
+import RedactionAuto from '@/components/RedactionAuto.astro';
 import ArticleCard from '@/components/ArticleCard.astro';
 import Newsletter from '@/components/Newsletter.astro';
 import AdSlot from '@/components/AdSlot.astro';
@@ -62,7 +63,7 @@ const fmt = (date: Date) =>
   <article>
     <header class="border-b border-line bg-cream-warm">
       <div class="wrap py-10 lg:py-14">
-        <Breadcrumbs items={[{ href: '/blog', label: 'Récits' }, { label: d.heading ?? d.title }]} />
+        <Breadcrumbs items={[{ href: '/blog', label: 'Articles' }, { label: d.heading ?? d.title }]} />
         <h1 class="mt-6 max-w-3xl text-hero">{d.heading ?? d.title}</h1>
         <p class="mt-6 max-w-2xl text-[1.15rem] leading-relaxed text-warm">{d.accroche}</p>
         <p class="mt-6 text-[0.82rem] text-warm-light">
@@ -78,6 +79,11 @@ const fmt = (date: Date) =>
     <div class="wrap grid gap-14 py-14 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-16">
       <div class="prose-au min-w-0">
         <Disclosure compact class="!mb-10 !mt-0" />
+        {/*
+          En tête d'article, avant le texte : le lecteur doit savoir comment
+          l'article a été écrit avant de le lire, pas après l'avoir cru.
+        */}
+        {d.redactionAutomatique && <RedactionAuto sources={d.sources.length} class="!mb-10" />}
         <Content />
         <AdSlot placement="in-article" />
 

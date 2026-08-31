@@ -66,8 +66,22 @@ jobs:
           cat rapport-licences.txt
           if [ $code -eq 0 ]; then echo "souci=non" >> $GITHUB_OUTPUT; else echo "souci=oui" >> $GITHUB_OUTPUT; fi
 
+      # Le seul garde-fou tourné vers l'extérieur. Une sanction de Google
+      # n'arrive pas par courrier : les pages sortent de l'index et le site
+      # continue de répondre parfaitement. Sans ce relevé, on s'en aperçoit
+      # à la baisse des revenus, des mois plus tard.
+      - name: Trafic
+        id: trafic
+        run: |
+          code=0
+          node scripts/trafic.mjs > rapport-trafic.txt 2>&1 || code=$?
+          cat rapport-trafic.txt
+          if [ $code -eq 0 ]; then echo "chute=non" >> $GITHUB_OUTPUT; else echo "chute=oui" >> $GITHUB_OUTPUT; fi
+        env:
+          GSC_CLE_JSON: ${{ secrets.GSC_CLE_JSON }}
+
       - name: Ouvrir une tâche si quelque chose a bougé
-        if: steps.sentinelle.outputs.change == 'oui' || steps.fraicheur.outputs.du == 'oui' || steps.chiffres.outputs.faux == 'oui' || steps.certificats.outputs.risque == 'oui' || steps.licences.outputs.souci == 'oui'
+        if: steps.sentinelle.outputs.change == 'oui' || steps.fraicheur.outputs.du == 'oui' || steps.chiffres.outputs.faux == 'oui' || steps.certificats.outputs.risque == 'oui' || steps.licences.outputs.souci == 'oui' || steps.trafic.outputs.chute == 'oui'
         uses: actions/github-script@v7
         with:
           script: |
@@ -77,6 +91,7 @@ jobs:
             const chiffres = fs.readFileSync('rapport-chiffres.txt', 'utf8');
             const certificats = fs.readFileSync('rapport-certificats.txt', 'utf8');
             const licences = fs.readFileSync('rapport-licences.txt', 'utf8');
+            const trafic = fs.readFileSync('rapport-trafic.txt', 'utf8');
             const titre = 'Veille — des sources ont bougé ou des fiches sont dues';
             const corps = [
               '_Rapport automatique. La machine signale, elle ne conclut pas._',
@@ -95,6 +110,9 @@ jobs:
               '',
               '## Licences photographiques',
               '```', licences.trim(), '```',
+              '',
+              '## Trafic',
+              '```', trafic.trim(), '```',
               '',
               '## Ce qu\'il reste à faire, à la main',
               '1. Ouvrir la source et lire la règle, ou le tarif, tel qu\'il est écrit.',
@@ -121,7 +139,7 @@ jobs:
             }
 
       - name: Refermer la tâche si tout est stable
-        if: steps.sentinelle.outputs.change == 'non' && steps.fraicheur.outputs.du == 'non' && steps.chiffres.outputs.faux == 'non' && steps.certificats.outputs.risque == 'non' && steps.licences.outputs.souci == 'non'
+        if: steps.sentinelle.outputs.change == 'non' && steps.fraicheur.outputs.du == 'non' && steps.chiffres.outputs.faux == 'non' && steps.certificats.outputs.risque == 'non' && steps.licences.outputs.souci == 'non' && steps.trafic.outputs.chute == 'non'
         uses: actions/github-script@v7
         with:
           script: |

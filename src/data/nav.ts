@@ -21,7 +21,7 @@ export const paysNav = countries.map((c) => ({
 }));
 
 export const mainNav = [
-  { href: '/blog', label: 'Récits' },
+  { href: '/blog', label: 'Articles' },
   { href: '/mises-a-jour', label: 'Corrections' },
   { href: '/ressources', label: 'Ressources' },
   { href: '/a-propos', label: 'À propos' },

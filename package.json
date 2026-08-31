@@ -19,7 +19,7 @@
     "veille:init": "node scripts/veille.mjs --init",
     "fraicheur": "node scripts/fraicheur.mjs",
     "audit": "node scripts/audit-seo.mjs",
-    "controle": "npm run build && node scripts/verifier-config.mjs && node scripts/audit-seo.mjs && node scripts/verifier-liens.mjs && node scripts/verifier-chiffres.mjs --hors-ligne && node scripts/liens-affilies.mjs --hors-ligne && node scripts/performance.mjs && node scripts/fraicheur.mjs",
+    "controle": "npm run build && node scripts/verifier-config.mjs && node scripts/garde-fous.mjs && node scripts/audit-seo.mjs && node scripts/verifier-liens.mjs && node scripts/verifier-chiffres.mjs --hors-ligne && node scripts/liens-affilies.mjs --hors-ligne && node scripts/performance.mjs && node scripts/fraicheur.mjs",
     "chiffres": "node scripts/verifier-chiffres.mjs",
     "gardien": "node scripts/gardien.mjs",
     "programme": "node scripts/programme.mjs",
@@ -30,7 +30,10 @@
     "config": "node scripts/verifier-config.mjs",
     "commons": "node scripts/commons.mjs",
     "licences": "node scripts/licences.mjs",
-    "planche": "node scripts/planche.mjs"
+    "planche": "node scripts/planche.mjs",
+    "garde-fous": "node scripts/garde-fous.mjs",
+    "trafic": "node scripts/trafic.mjs",
+    "bilan": "node scripts/bilan.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.11",

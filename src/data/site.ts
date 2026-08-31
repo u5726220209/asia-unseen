@@ -14,9 +14,11 @@ export const site = {
   locale: 'fr_FR',
   lang: 'fr',
   tagline: "L'Asie, sans filtre",
-  baseline: "Guides pratiques, conseils de terrain et adresses confidentielles",
+  // La promesse du site est la vérifiabilité, pas le vécu. Elle a l'avantage
+  // d'être démontrable : chaque fait porte sa source et sa date de relevé.
+  baseline: "Guides pratiques, faits vérifiés et sources datées",
   description:
-    "Guides de voyage en Asie écrits sur le terrain : visas, budgets, transports, hébergement et erreurs à éviter. Vietnam, Thaïlande, Japon, Chine, Laos, Cambodge, Corée du Sud, Indonésie, Philippines.",
+    "Guides de voyage en Asie vérifiés aux sources officielles : visas, budgets, transports, hébergement et erreurs à éviter. Vietnam, Thaïlande, Japon, Chine, Laos, Cambodge, Corée du Sud, Indonésie, Philippines.",
   author: {
     name: 'Tri Hung',
     role: 'Éditeur',

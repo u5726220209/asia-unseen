@@ -1,0 +1,52 @@
+---
+/**
+ * Mention de rédaction automatique.
+ *
+ * Ce site publie certains articles rédigés par une machine, sans relecture
+ * humaine avant mise en ligne. Le lecteur a le droit de le savoir avant de
+ * lire, pas après — d'où la position en tête d'article et non en pied de page.
+ *
+ * La formulation dit trois choses, dans cet ordre : qui écrit, comment les
+ * faits sont établis, et qui reste responsable. La troisième est la plus
+ * importante : l'automatisation ne dilue pas la responsabilité de l'éditeur,
+ * elle la laisse entière.
+ */
+import { site } from '@/data/site';
+
+interface Props {
+  /** Sources officielles citées par l'article, pour dire combien il y en a. */
+  sources?: number;
+  class?: string;
+}
+const { sources = 0, class: klass = '' } = Astro.props;
+---
+
+<aside
+  data-pagefind-ignore
+  class:list={[
+    'not-prose rounded-brand border border-line bg-cream-warm/60 px-5 py-4 text-[0.86rem] leading-relaxed text-warm',
+    klass,
+  ]}
+  aria-label="Mode de rédaction de cet article"
+>
+  <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-warm-light">
+    Comment cet article a été écrit
+  </p>
+  <p class="mt-2">
+    Il a été <strong class="font-semibold text-ink">rédigé automatiquement</strong>, sans relecture
+    humaine avant publication.
+    {sources > 0 && (
+      <>
+        {' '}Chaque fait avancé a été vérifié à
+        <strong class="font-semibold text-ink"> {sources} source{sources > 1 ? 's' : ''} officielle{sources > 1 ? 's' : ''}</strong>,
+        listée{sources > 1 ? 's' : ''} en bas de page, et les montants cités sont
+        <a href="/mises-a-jour" class="underline decoration-warm-light/50 underline-offset-2 hover:text-ink"> recontrôlés chaque matin</a>.
+      </>
+    )}
+  </p>
+  <p class="mt-2">
+    La responsabilité éditoriale reste entière : elle incombe à {site.author.name}, dont les
+    coordonnées figurent dans les <a href="/mentions-legales" class="underline decoration-warm-light/50 underline-offset-2 hover:text-ink">mentions légales</a>.
+    Une erreur ? <a href="/contact" class="underline decoration-warm-light/50 underline-offset-2 hover:text-ink">Signalez-la</a> — les corrections sont publiées.
+  </p>
+</aside>

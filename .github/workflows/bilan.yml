@@ -1,0 +1,63 @@
+name: Bilan mensuel
+
+# Le premier de chaque mois, une tâche récapitule ce que la machine a publié
+# sans que personne le lise.
+#
+# Son rôle n'est pas de vous faire travailler : c'est un relevé, comme un relevé
+# bancaire. Vous pouvez ne jamais l'ouvrir. Mais le jour où vous vous demandez
+# ce que contient votre site, ou le jour où quelque chose cloche, il est là — et
+# il permet un contrôle par sondage sans avoir à tout relire.
+on:
+  schedule:
+    - cron: '0 7 1 * *'   # le 1er du mois, 9 h heure de Paris
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  faire-le-bilan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: npm }
+      - run: npm ci
+      - run: npm run build
+
+      - name: Rassembler le bilan
+        run: |
+          {
+            echo "## Ce qui a été publié"
+            echo
+            node scripts/bilan.mjs
+            echo
+            echo "## État des garde-fous"
+            echo '```'
+            node scripts/garde-fous.mjs || true
+            echo '```'
+            echo
+            echo "## Trafic"
+            echo '```'
+            node scripts/trafic.mjs || true
+            echo '```'
+            echo
+            echo "## Où en est le site"
+            node scripts/editorial.mjs --markdown
+          } > bilan.md
+        env:
+          GSC_CLE_JSON: ${{ secrets.GSC_CLE_JSON }}
+
+      - name: Ouvrir le bilan
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const corps = require('fs').readFileSync('bilan.md', 'utf8');
+            const mois = new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+            await github.rest.issues.create({
+              owner: context.repo.owner, repo: context.repo.repo,
+              title: `Bilan — ${mois}`,
+              body: corps.slice(0, 60000),
+              labels: ['bilan'],
+            });
