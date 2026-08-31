@@ -6,6 +6,9 @@ accroche: "Sur trois semaines en Asie, la plupart des gens portent 40 % de ce qu
 pubDate: 2026-06-30
 categorie: pratique
 pays: [vietnam, thailande, japon, chine, laos, cambodge, coree-du-sud, indonesie, philippines]
+sources:
+  - { label: "Autorité de l'aviation civile du Vietnam (CAAV)", url: "https://caa.gov.vn/en" }
+  - { label: "France Diplomatie — conseils aux voyageurs par pays", url: "https://www.diplomatie.gouv.fr/fr/conseils-aux-voyageurs/conseils-par-pays-destination/" }
 faq:
   - q: "Quel volume de sac pour trois semaines en Asie ?"
     r: "40 à 45 litres suffisent largement, y compris pour un mois. Un sac plus grand ne se remplit pas de choses utiles : il se remplit parce qu'il est grand. En dessous de 40 litres, on gagne le passage en cabine sur la plupart des compagnies, ce qui économise du temps à chaque vol intérieur."
@@ -52,7 +55,7 @@ Une lessive coûte l'équivalent de 1 à 3 € au kilo dans la plupart des pays 
 - Écouteurs
 - Une liseuse si vous lisez — plus légère que deux livres, et utile sur douze heures de bus
 
-**Ce dont vous n'avez pas besoin :** un ordinateur portable si vous ne travaillez pas, un appareil photo reflex si vous ne photographiez pas déjà régulièrement chez vous, un drone (interdit ou strictement réglementé dans plusieurs pays de la région, et confisqué à l'entrée dans certains cas).
+**Ce dont vous n'avez pas besoin :** un ordinateur portable si vous ne travaillez pas, un appareil photo reflex si vous ne photographiez pas déjà régulièrement chez vous, un drone. Ce dernier mérite un mot : au Vietnam, faire voler un drone suppose une autorisation de l'aviation civile **et** du ministère de la Défense, quel que soit son poids — y compris sous 250 grammes. Les douanes peuvent le retenir ou le confisquer à l'entrée si vous ne l'avez pas. L'Indonésie exige un permis de la direction générale de l'aviation civile, à demander une semaine à l'avance. Emporter un drone « au cas où » revient donc à emporter un objet qu'on ne pourra pas utiliser et qu'on risque de perdre à l'arrivée.
 
 ## Les papiers et l'argent
 

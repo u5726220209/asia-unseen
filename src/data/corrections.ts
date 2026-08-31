@@ -30,6 +30,20 @@ export type Correction = {
 export const corrections: Correction[] = [
   {
     date: '2026-08-31',
+    page: '/blog/ou-dormir-a-bangkok',
+    pageLabel: 'Où dormir à Bangkok',
+    gravite: 'precision',
+    titre: "Le réseau à tarif unique compte huit lignes, pas treize",
+    avant: "13 lignes, près de 200 stations.",
+    apres:
+      "Huit lignes et treize tracés, 194 stations, environ 277 kilomètres. La confusion venait du décompte des tracés, souvent présenté comme un nombre de lignes. Le point qui compte pour le voyageur est inchangé : ce tarif est réservé aux ressortissants thaïlandais.",
+    source: {
+      label: 'The Nation Thailand — mise en œuvre du tarif unique à 20 bahts',
+      url: 'https://www.nationthailand.com/news/policy/40054115',
+    },
+  },
+  {
+    date: '2026-08-31',
     page: '/coree-du-sud',
     pageLabel: 'Corée du Sud',
     gravite: 'precision',

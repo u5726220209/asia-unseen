@@ -110,6 +110,23 @@ export const adsense = {
 /* ── Newsletter ────────────────────────────────────────────── */
 export const newsletter = {
   endpoint: env.PUBLIC_NEWSLETTER_ENDPOINT ?? '',
-  leadMagnet: '5 itinéraires Asie prêts à partir',
+  leadMagnet: 'Les fiches de départ — une par pays d\'Asie',
   promise: "Un email tous les 15 jours. Du concret, jamais de remplissage. Désabonnement en un clic.",
+
+  /**
+   * Mention d'information, affichée sous chaque formulaire.
+   *
+   * Le RGPD exige que la personne soit informée **au moment où elle donne son
+   * adresse**, pas seulement sur une page de politique qu'elle n'ouvrira
+   * jamais. Un lien vers la page ne suffit pas à lui seul : il faut dire ici
+   * ce qu'on collecte, pour quoi faire, et comment repartir.
+   *
+   * Trois phrases, parce qu'une mention que personne ne lit ne protège
+   * personne — ni le lecteur, ni l'éditeur.
+   */
+  rgpd: {
+    texte: "Votre adresse sert uniquement à vous envoyer les fiches et leurs mises à jour. Une confirmation vous sera demandée par email. Désabonnement en un clic, à tout moment.",
+    lienTexte: 'Comment vos données sont traitées',
+    lienUrl: '/confidentialite',
+  },
 };

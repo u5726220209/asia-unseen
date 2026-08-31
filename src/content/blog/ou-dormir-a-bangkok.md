@@ -6,6 +6,10 @@ accroche: "À Bangkok, le trafic transforme deux kilomètres en quarante minutes
 pubDate: 2026-08-30
 categorie: pratique
 pays: [thailande]
+sources:
+  - { label: "BTS Skytrain — tarifs officiels", url: "https://www.bts.co.th/eng/" }
+  - { label: "MRT Bangkok (BEM) — tarifs officiels", url: "https://metro.bemplc.co.th/?lang=en" }
+  - { label: "The Nation Thailand — mise en œuvre du tarif unique à 20 bahts", url: "https://www.nationthailand.com/news/policy/40054115" }
 faq:
   - q: "Dans quel quartier dormir à Bangkok pour un premier séjour ?"
     r: "Sukhumvit entre les stations Asok et Phrom Phong, ou Silom autour de Sala Daeng. Les deux sont sur une ligne de BTS, à moins de dix minutes à pied d'une station, avec de quoi dîner à toute heure. C'est la combinaison qui évite le plus de temps perdu dans les embouteillages."
@@ -63,7 +67,7 @@ Si Khao San est ce que vous venez chercher, allez-y. Si vous y allez « parce qu
 
 C'est le point où la plupart des articles se trompent, alors autant être net.
 
-Depuis le 1er octobre 2025, un tarif plafonné à **20 bahts par trajet** s'applique sur le réseau ferroviaire de la région de Bangkok — 13 lignes, près de 200 stations. C'est une réforme majeure, largement relayée.
+Depuis le 1er octobre 2025, un tarif plafonné à **20 bahts par trajet** s'applique sur le réseau ferroviaire de la région de Bangkok — huit lignes, treize tracés, 194 stations, soit près de 277 kilomètres. C'est une réforme majeure, largement relayée.
 
 **Elle est réservée aux ressortissants thaïlandais.** Le dispositif suppose une inscription via une application officielle avec un numéro d'identité national à 13 chiffres. Les visiteurs étrangers, y compris les résidents de longue durée, paient le tarif normal calculé à la distance.
 

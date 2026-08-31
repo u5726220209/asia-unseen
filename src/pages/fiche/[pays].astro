@@ -142,6 +142,30 @@ const court = (t: string) => t.split(/(?<=\.)\s/)[0];
         complet du pays se trouve dans le <a href={`/${c.slug}`}>guide {c.nom}</a>.
       </p>
     </div>
+
+    {/*
+      Le PDF des neuf fiches, à télécharger d'un clic.
+      Il existait sans être lié : un document que personne ne peut atteindre
+      n'a aucune valeur, si bon soit-il.
+    */}
+    <a
+      href="/telechargements/fiches-depart-asie.pdf"
+      download
+      class="not-prose mt-10 flex items-center gap-4 rounded-brand border border-line bg-cream-warm px-5 py-4 transition-colors hover:border-teal"
+    >
+      <svg viewBox="0 0 24 24" class="h-8 w-8 shrink-0 text-teal" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 3v12m0 0-4-4m4 4 4-4" /><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+      </svg>
+      <span>
+        <span class="block font-display text-[0.98rem] font-semibold text-ink">
+          Les neuf fiches en un seul PDF
+        </span>
+        <span class="mt-0.5 block text-[0.86rem] leading-relaxed text-warm">
+          Une page par pays : urgences, ambassade, visa, budget. À garder sur le téléphone,
+          il fonctionne sans réseau.
+        </span>
+      </span>
+    </a>
   </div>
 </BaseLayout>
 

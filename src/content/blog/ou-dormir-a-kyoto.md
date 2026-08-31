@@ -6,6 +6,9 @@ accroche: "Kyoto est deux fois plus étendue qu'elle n'en a l'air, et son métro
 pubDate: 2026-08-30
 categorie: pratique
 pays: [japon]
+sources:
+  - { label: "Régie des transports de la ville de Kyoto — métro et bus", url: "https://www2.city.kyoto.lg.jp/kotsu/webguide/en/" }
+  - { label: "Ville de Kyoto — informations aux visiteurs", url: "https://www.city.kyoto.lg.jp/" }
 faq:
   - q: "Faut-il dormir près de la gare de Kyoto ?"
     r: "Seulement si votre séjour est court et centré sur des excursions vers Nara, Osaka ou Hiroshima. Pour visiter Kyoto elle-même, la gare est mal placée : elle se trouve au sud de la ville, à trente ou quarante minutes de bus des quartiers historiques de l'est, et le trajet se fait à l'heure où tout le monde le fait."
