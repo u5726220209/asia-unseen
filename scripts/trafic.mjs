@@ -108,9 +108,26 @@ const chute = moyennePrecedente > 0 ? 1 - recente.impressions / moyennePrecedent
 
 /* ── Mémoire, pour lire une tendance et pas un point ─────────────── */
 
+/**
+ * On relève une fois par semaine, pas une fois par jour.
+ *
+ * L'alerte, elle, ne dépend pas de ce fichier : elle interroge Search Console
+ * sur deux fenêtres à chaque passage. L'historique sert à autre chose — lire
+ * une tendance sur des mois, et donner au bilan mensuel de quoi montrer une
+ * courbe plutôt qu'un point.
+ *
+ * Un relevé quotidien produirait un commit par nuit pour une information qui
+ * bouge lentement. Une entrée hebdomadaire suffit, et deux ans tiennent en
+ * cent quatre lignes.
+ */
 const historique = existsSync(ETAT) ? JSON.parse(readFileSync(ETAT, 'utf8')) : [];
-historique.push({ date: jour(0), impressions: recente.impressions, clics: recente.clics });
-writeFileSync(ETAT, JSON.stringify(historique.slice(-104), null, 2) + '\n');
+const dernier = historique.at(-1);
+const joursDepuis = dernier ? (Date.now() - new Date(dernier.date)) / 86_400_000 : Infinity;
+
+if (joursDepuis >= 6) {
+  historique.push({ date: jour(0), impressions: recente.impressions, clics: recente.clics });
+  writeFileSync(ETAT, JSON.stringify(historique.slice(-104), null, 2) + '\n');
+}
 
 /* ── Rapport ────────────────────────────────────────────────────── */
 

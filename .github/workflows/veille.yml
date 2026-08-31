@@ -163,14 +163,20 @@ jobs:
       # condition, la sentinelle réécrirait le fichier chaque matin, ce qui
       # déclencherait un contrôle puis une mise en ligne quotidiens pour rien.
       # Le marqueur [skip ci] empêche par ailleurs toute réaction en chaîne.
-      - name: Mémoriser le nouvel état des sources
-        if: steps.sentinelle.outputs.change == 'oui'
+      # Deux fichiers de mémoire, enregistrés ensemble : l'empreinte des sources
+      # officielles, et le relevé hebdomadaire de trafic. Ce dernier était écrit
+      # puis perdu à chaque passage, faute d'être enregistré — l'alerte
+      # fonctionnait, mais aucune tendance ne pouvait se construire.
+      - name: Mémoriser l'état des sources et le relevé de trafic
+        if: always()
         run: |
-          node scripts/veille.mjs --init > /dev/null 2>&1 || true
-          if ! git diff --quiet src/data/veille-empreintes.json; then
+          if [ "${{ steps.sentinelle.outputs.change }}" = "oui" ]; then
+            node scripts/veille.mjs --init > /dev/null 2>&1 || true
+          fi
+          if ! git diff --quiet src/data/veille-empreintes.json src/data/trafic-historique.json 2>/dev/null; then
             git config user.name  "Sentinelle"
             git config user.email "actions@users.noreply.github.com"
-            git add src/data/veille-empreintes.json
-            git commit -m "Veille : nouvel état des sources officielles [skip ci]"
+            git add -- src/data/veille-empreintes.json src/data/trafic-historique.json
+            git commit -m "Veille : état des sources et relevé de trafic [skip ci]"
             git push
           fi
