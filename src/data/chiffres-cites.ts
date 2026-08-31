@@ -47,6 +47,10 @@ const HOLAFLY = 'https://esim.holafly.com/fr/esim-asie/';
 const KETA = 'https://www.k-eta.go.kr/portal/apply/index.do';
 const AIS = 'https://www.ais.th/en/consumers/package/international/tourist-plan';
 
+const FD_INDONESIE = 'https://www.diplomatie.gouv.fr/fr/information-par-pays/indonesie/conseils-aux-voyageurs-entree-sejour';
+const FD_PHILIPPINES = 'https://www.diplomatie.gouv.fr/fr/information-par-pays/philippines/conseils-aux-voyageurs-entree-sejour';
+const ARTICLE_INDONESIE = '/blog/visa-indonesie-prolongation';
+const ARTICLE_PHILIPPINES = '/blog/etravel-philippines';
 const ARTICLE_KETA = '/blog/k-eta-coree-2026';
 const COMPARATIF_ASSURANCE = '/blog/assurance-voyage-asie-comparatif';
 const COMPARATIF_ESIM = '/blog/esim-asie-comparatif-prix';
@@ -76,4 +80,6 @@ export const chiffresCites: ChiffreCite[] = [
   { affiche: '699', designe: 'SIM touriste AIS, 15 jours, en THB', source: AIS, releveLe: '2026-08-30', pages: [COMPARATIF_ESIM] },
   { affiche: '1 199', designe: 'SIM touriste AIS, 30 jours, en THB', source: AIS, releveLe: '2026-08-30', pages: [COMPARATIF_ESIM] },
   { affiche: '10 000', designe: 'K-ETA facultatif, frais de demande en wons', source: KETA, releveLe: '2026-08-31', pages: [ARTICLE_KETA] },
+  { affiche: '150 000', designe: 'taxe touristique de Bali, en roupies, à chaque entrée', source: FD_INDONESIE, releveLe: '2026-08-31', pages: [ARTICLE_INDONESIE] },
+  { affiche: '3 030', designe: 'prolongation de séjour aux Philippines, en pesos', source: FD_PHILIPPINES, releveLe: '2026-08-31', pages: [ARTICLE_PHILIPPINES] },
 ];

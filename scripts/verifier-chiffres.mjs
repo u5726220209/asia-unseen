@@ -47,14 +47,24 @@ const chiffres = [...ts.matchAll(
  * Un montant s'écrit de plusieurs façons : « 28,82 », « 28.82 », « 1 199 »,
  * « 1199 ». On cherche toutes les formes, sinon on crie au loup à chaque
  * différence de séparateur de milliers.
+ *
+ * Le point comme séparateur de milliers a été ajouté après une fausse alerte :
+ * France Diplomatie écrit « 150.000 roupies » là où nous écrivons « 150 000 ».
+ * Une sentinelle qui signale des écarts inexistants finit ignorée, ce qui la
+ * rend pire qu'inutile.
  */
 function formes(affiche) {
   const brut = affiche.replace(/[  ]/g, '');
   const s = new Set([affiche, brut, brut.replace(',', '.'), brut.replace('.', ',')]);
   if (/^\d{4,}$/.test(brut)) {
-    s.add(brut.replace(/\B(?=(\d{3})+(?!\d))/g, ' '));
-    s.add(brut.replace(/\B(?=(\d{3})+(?!\d))/g, ' '));
-    s.add(brut.replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+    // Tous les séparateurs de milliers rencontrés dans la nature : espace fine,
+    // espace insécable, espace ordinaire, virgule, point, apostrophe. Le point a
+    // été ajouté après une fausse alerte — France Diplomatie écrit
+    // « 150.000 roupies » là où nous écrivons « 150 000 ». Une sentinelle qui
+    // signale des écarts inexistants finit ignorée, ce qui la rend pire qu'inutile.
+    for (const sep of [' ', '\u202f', '\u00a0', ',', '.', "'"]) {
+      s.add(brut.replace(/\B(?=(\d{3})+(?!\d))/g, sep));
+    }
   }
   return [...s];
 }
