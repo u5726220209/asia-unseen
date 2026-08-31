@@ -44,8 +44,10 @@ const CHAPKA = 'https://www.chapkadirect.fr/index.php?action=produit&id=924';
 const AIRALO_ASIE = 'https://www.airalo.com/fr/asia-esim';
 const AIRALO_VN = 'https://www.airalo.com/fr/vietnam-esim';
 const HOLAFLY = 'https://esim.holafly.com/fr/esim-asie/';
+const KETA = 'https://www.k-eta.go.kr/portal/apply/index.do';
 const AIS = 'https://www.ais.th/en/consumers/package/international/tourist-plan';
 
+const ARTICLE_KETA = '/blog/k-eta-coree-2026';
 const COMPARATIF_ASSURANCE = '/blog/assurance-voyage-asie-comparatif';
 const COMPARATIF_ESIM = '/blog/esim-asie-comparatif-prix';
 
@@ -73,4 +75,5 @@ export const chiffresCites: ChiffreCite[] = [
   { affiche: '68,90', designe: 'Holafly Asie, 30 jours', source: HOLAFLY, releveLe: '2026-08-30', pages: [COMPARATIF_ESIM] },
   { affiche: '699', designe: 'SIM touriste AIS, 15 jours, en THB', source: AIS, releveLe: '2026-08-30', pages: [COMPARATIF_ESIM] },
   { affiche: '1 199', designe: 'SIM touriste AIS, 30 jours, en THB', source: AIS, releveLe: '2026-08-30', pages: [COMPARATIF_ESIM] },
+  { affiche: '10 000', designe: 'K-ETA facultatif, frais de demande en wons', source: KETA, releveLe: '2026-08-31', pages: [ARTICLE_KETA] },
 ];

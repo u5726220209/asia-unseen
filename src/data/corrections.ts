@@ -29,6 +29,20 @@ export type Correction = {
 
 export const corrections: Correction[] = [
   {
+    date: '2026-08-31',
+    page: '/coree-du-sud',
+    pageLabel: 'Corée du Sud',
+    gravite: 'precision',
+    titre: "Le K-ETA facultatif n'est pas gratuit, contrairement à ce qui était écrit",
+    avant: "Coût : gratuit.",
+    apres:
+      "Gratuit parce que le K-ETA n'est pas exigé jusqu'au 31 décembre 2026 — mais le demander volontairement coûte 10 000 wons, non remboursables même en cas de refus. La mention « gratuit », sans cette nuance, laissait croire que la démarche facultative l'était aussi. La date de fin est par ailleurs celle fixée par un avis du 20 mars 2026, et non une échéance annuelle.",
+    source: {
+      label: 'K-ETA — portail officiel du ministère de la Justice coréen',
+      url: 'https://www.k-eta.go.kr/portal/apply/index.do',
+    },
+  },
+  {
     date: '2026-08-30',
     page: '/thailande',
     pageLabel: 'Thaïlande',

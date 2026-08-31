@@ -383,8 +383,8 @@ export const countries: Country[] = [
       "Avril à juin et septembre à octobre : les deux fenêtres évidentes. Juillet-août : chaleur lourde et jangma, la saison des pluies. Décembre à février : très froid mais lumineux, et la saison de ski est correcte. L'automne coréen, en octobre, est l'un des plus beaux d'Asie.",
     visa: {
       resume: "Pas de visa pour un séjour touristique court. L'autorisation électronique K-ETA est actuellement suspendue pour les ressortissants français.",
-      duree: "Jusqu'à 90 jours sans visa. Exemption de K-ETA en vigueur du 1er janvier au 31 décembre 2026.",
-      cout: 'Gratuit',
+      duree: "Jusqu'à 90 jours sans visa. Exemption de K-ETA prolongée jusqu'au 31 décembre 2026 par un avis du 20 mars 2026.",
+      cout: "Gratuit — le K-ETA n'étant pas exigé. Le demander volontairement coûte 10 000 wons, non remboursables.",
       procedure: "Le K-ETA n'est pas exigé sur cette période, mais reste facultatif : le demander dispense de remplir la carte d'arrivée à l'atterrissage. Sans K-ETA, la carte d'arrivée électronique est à compléter avant l'entrée. L'exemption prend fin le 31 décembre 2026 : revérifiez pour tout voyage en 2027.",
     },
     sourcesVisa: [
