@@ -51,6 +51,10 @@ const FD_INDONESIE = 'https://www.diplomatie.gouv.fr/fr/information-par-pays/ind
 const FD_PHILIPPINES = 'https://www.diplomatie.gouv.fr/fr/information-par-pays/philippines/conseils-aux-voyageurs-entree-sejour';
 const ARTICLE_INDONESIE = '/blog/visa-indonesie-prolongation';
 const ARTICLE_PHILIPPINES = '/blog/etravel-philippines';
+const DSVN_TARIFS = 'https://giotaugiave.dsvn.vn/giave/thongnhat.aspx';
+const NOIBAI_TRANSPORT = 'https://noibaiairport.vn/vi/phuong-tien-van-chuyen-cong-cong-nid1.html';
+const ARTICLE_TRAIN_VIETNAM = '/blog/train-hanoi-saigon';
+const ARTICLE_AEROPORT_HANOI = '/blog/aeroport-noi-bai-hanoi';
 const ARTICLE_KETA = '/blog/k-eta-coree-2026';
 const COMPARATIF_ASSURANCE = '/blog/assurance-voyage-asie-comparatif';
 const COMPARATIF_ESIM = '/blog/esim-asie-comparatif-prix';
@@ -82,4 +86,24 @@ export const chiffresCites: ChiffreCite[] = [
   { affiche: '10 000', designe: 'K-ETA facultatif, frais de demande en wons', source: KETA, releveLe: '2026-08-31', pages: [ARTICLE_KETA] },
   { affiche: '150 000', designe: 'taxe touristique de Bali, en roupies, à chaque entrée', source: FD_INDONESIE, releveLe: '2026-08-31', pages: [ARTICLE_INDONESIE] },
   { affiche: '3 030', designe: 'prolongation de séjour aux Philippines, en pesos', source: FD_PHILIPPINES, releveLe: '2026-08-31', pages: [ARTICLE_PHILIPPINES] },
+
+  /* ── Train Hanoï-Saigon ─────────────────────────────────────── */
+  { affiche: '1 726', designe: 'distance ferroviaire Hanoï-Saigon, en km', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM] },
+  { affiche: '1 122 000', designe: 'train SE1 Hanoï-Saigon, siège inclinable climatisé', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM] },
+  { affiche: '1 516 000', designe: 'train SE1 Hanoï-Saigon, couchette molle 6 places, étage haut', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM] },
+  { affiche: '1 664 000', designe: 'train SE1 Hanoï-Saigon, couchette molle 6 places, étage milieu', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM] },
+  { affiche: '1 894 000', designe: 'train SE1 Hanoï-Saigon, couchette molle 6 places, étage bas', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM] },
+  { affiche: '1 884 000', designe: 'train SE1 Hanoï-Saigon, couchette molle climatisée 4 places, étage haut', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM] },
+  { affiche: '2 051 000', designe: 'train SE1 Hanoï-Saigon, couchette molle climatisée 4 places, étage bas', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM] },
+  { affiche: '3 077 000', designe: 'train SE1 Hanoï-Saigon, compartiment privé 2 couchettes', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM] },
+  { affiche: '4 510 000', designe: 'train SE1 Hanoï-Saigon, compartiment privé VIP 2 couchettes', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM] },
+  { affiche: '378 000', designe: "écart de prix entre étage bas et étage haut, couchette molle 6 places", source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
+
+  /* ── Aéroport de Hanoï (Noi Bai) ────────────────────────────── */
+  { affiche: '12 000', designe: 'bus Noi Bai, lignes 07 et 109, le trajet', source: NOIBAI_TRANSPORT, releveLe: '2026-08-31', pages: [ARTICLE_AEROPORT_HANOI] },
+  { affiche: '15 000', designe: 'bus Noi Bai, lignes 17 et 90, le trajet', source: NOIBAI_TRANSPORT, releveLe: '2026-08-31', pages: [ARTICLE_AEROPORT_HANOI] },
+  { affiche: '20 000', designe: 'bus Noi Bai, ligne E10, le trajet', source: NOIBAI_TRANSPORT, releveLe: '2026-08-31', pages: [ARTICLE_AEROPORT_HANOI] },
+  { affiche: '50 000', designe: 'bus Noi Bai, ligne 86 vers la gare de Hanoï, le trajet', source: NOIBAI_TRANSPORT, releveLe: '2026-08-31', pages: [ARTICLE_AEROPORT_HANOI] },
+  { affiche: '55 000', designe: 'bus Noi Bai, ligne 68 vers Hà Đông, le trajet', source: NOIBAI_TRANSPORT, releveLe: '2026-08-31', pages: [ARTICLE_AEROPORT_HANOI] },
+  { affiche: '90 000', designe: 'navette Hải Vân, lignes NB01/NB02, le trajet', source: NOIBAI_TRANSPORT, releveLe: '2026-08-31', pages: [ARTICLE_AEROPORT_HANOI] },
 ];
