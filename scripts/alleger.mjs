@@ -77,6 +77,10 @@ for (const f of lister('-name "*.html"')) {
 
 let gagneImages = 0;
 let retireesImages = 0;
+// Volontairement limité à dist/_astro : c'est là que le générateur recopie
+// ses originaux. Le reste du dossier contient des fichiers que le navigateur
+// ou un robot demande sans qu'aucune balise les nomme — icônes, PDF, plan du
+// site — et les supprimer serait une catastrophe silencieuse.
 for (const f of lister('-path "dist/_astro/*" \\( -name "*.jpg" -o -name "*.jpeg" -o -name "*.png" \\)')) {
   if (references.has(f.replace(/^dist\//, ''))) continue;
   gagneImages += statSync(f).size;
