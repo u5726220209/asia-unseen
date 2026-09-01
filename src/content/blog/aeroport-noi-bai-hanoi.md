@@ -3,7 +3,7 @@ title: "Aéroport de Hanoï : rejoindre le centre, prix officiels"
 heading: "Aéroport de Noi Bai : bus, taxi et prix officiels pour rejoindre Hanoï"
 description: "Bus public à partir de 12 000 VND, taxi au compteur réglementé : la liste officielle des tarifs pour aller de l'aéroport de Noi Bai au centre de Hanoï, ligne par ligne."
 accroche: "Entre le bus à 12 000 VND et la navette la plus chère à 90 000 VND, l'écart de prix pour rejoindre Hanoï depuis l'aéroport dépasse déjà un facteur sept. Voici ce que l'exploitant publie officiellement, ligne par ligne."
-pubDate: 2026-09-03
+pubDate: 2026-08-31
 categorie: pratique
 pays: [vietnam]
 redactionAutomatique: true

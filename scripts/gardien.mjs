@@ -119,7 +119,18 @@ try {
  * ligne juste après un transfert. Sans argument, il se contente de dire quelle
  * version est en ligne et depuis quand.
  */
-const attendu = process.argv[process.argv.indexOf('--attendu') + 1];
+/*
+  `indexOf` rend -1 quand l'option est absente, et argv[0] est alors le chemin
+  de l'exécutable Node. Le gardien comparait donc la version du site à
+  « /usr/local/bin/node » et ouvrait une alerte critique toutes les six heures.
+
+  Une alerte fausse et récurrente est le pire état possible pour une
+  surveillance : elle apprend à ignorer le messager, et le jour où le signal
+  est vrai, personne ne le lit. D'où la vérification explicite de la présence
+  de l'option.
+*/
+const iAttendu = process.argv.indexOf('--attendu');
+const attendu = iAttendu >= 0 ? process.argv[iAttendu + 1] : null;
 const versionEnLigne = await chercher('/version.txt');
 let version = null;
 
