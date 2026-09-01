@@ -1,0 +1,81 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Visuel from '@/components/Visuel.astro';
+
+/**
+ * Page d'arrivée après le clic de double confirmation.
+ *
+ * La double confirmation crée deux moments distincts, et les confondre serait
+ * une faute d'attention : `/merci` s'affiche après l'envoi du formulaire et ne
+ * sait rien de plus qu'« un e-mail est parti » ; celle-ci s'affiche après le
+ * clic dans cet e-mail, et c'est le seul instant où l'inscription est
+ * réellement acquise.
+ *
+ * C'est donc ici que les fiches sont remises. Les faire attendre un envoi
+ * ultérieur ajouterait une attente que rien ne justifie : le document existe,
+ * il est en ligne, et la personne vient de faire tout ce qu'on lui demandait.
+ */
+---
+
+<BaseLayout
+  title="Inscription confirmée — vos fiches de départ"
+  description="Votre inscription à la lettre d'Asia Unseen est confirmée. Les neuf fiches de départ sont téléchargeables sur cette page."
+  noindex
+  noPopup
+>
+  <Visuel page="/bienvenue" seed="bienvenue" prioritaire />
+
+  <section class="wrap-narrow py-16 lg:py-24">
+    <p class="eyebrow">Inscription confirmée</p>
+    <h1 class="mt-4 text-hero">Voilà vos fiches</h1>
+
+    <div class="prose-au mt-8">
+      <p class="text-[1.15rem] leading-relaxed">
+        C'est fait : votre adresse est confirmée. Les neuf fiches sont dans le document
+        ci-dessous, et le même lien vous a été envoyé par e-mail — inutile de garder cette
+        page ouverte.
+      </p>
+    </div>
+
+    <a
+      href="/telechargements/fiches-depart-asie.pdf"
+      download
+      class="not-prose mt-8 flex items-center gap-4 rounded-brand border border-line bg-cream-warm px-5 py-4 transition-colors hover:border-teal"
+    >
+      <svg viewBox="0 0 24 24" class="h-8 w-8 shrink-0 text-teal" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 3v12m0 0-4-4m4 4 4-4" /><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+      </svg>
+      <span>
+        <span class="block font-display text-[0.98rem] font-semibold text-ink">
+          Les neuf fiches de départ en un seul PDF
+        </span>
+        <span class="mt-0.5 block text-[0.86rem] leading-relaxed text-warm">
+          Une page par pays : urgences, ambassade, règle de visa, budget réel.
+          Il fonctionne sans réseau — gardez-le sur le téléphone.
+        </span>
+      </span>
+    </a>
+
+    <div class="prose-au mt-10">
+      <h2>Ce que vous recevrez ensuite</h2>
+      <p>
+        Quand une règle officielle change — un tarif de visa, une durée d'exemption, un
+        numéro d'urgence —, la fiche corrigée vous parvient avec l'avant, l'après et la
+        source. Rien d'autre : ni promotion, ni relance, ni message pour vous dire qu'il
+        n'y a rien à dire.
+      </p>
+      <p>
+        Un lien de désabonnement figure dans chaque envoi, et il fonctionne en un clic.
+        Voir aussi <a href="/confidentialite">comment vos données sont traitées</a>.
+      </p>
+
+      <h2>Par où commencer</h2>
+      <p>
+        Le <a href="/comparer-visas">comparateur de visas</a> met les neuf pays côte à côte,
+        et le <a href="/visas-asie">guide des visas</a> reprend chaque règle dans son contexte,
+        avec sa date de dernière vérification. Le <a href="/mises-a-jour">journal des corrections</a>
+        montre ce qui a changé depuis l'ouverture du site, et pourquoi.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
