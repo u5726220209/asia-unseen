@@ -46,10 +46,20 @@ async function sourcesDuSite() {
   const ts = readFileSync('src/data/countries.ts', 'utf8');
   const vues = new Map();
 
-  // sourcesVisa : { label: '…', url: 'https://…' }
-  for (const m of ts.matchAll(/label:\s*"([^"]+)"|label:\s*'([^']+)'/g)) void m;
-  const bloc = /\{\s*label:\s*(?:"([^"]*)"|'([^']*)'),\s*url:\s*'([^']+)'\s*\}/g;
+  // sourcesVisa : { label: '…', url: 'https://…' }, éventuellement suivi de
+  // `surveillee: false`.
+  //
+  // Toutes les sources citées ne sont pas surveillables. L'accueil de
+  // l'ambassade de Chine, par exemple, est un fil d'actualité : son texte
+  // change intégralement chaque jour, et il ne documente aucune règle de visa.
+  // Le surveiller produisait une alerte quotidienne au motif « similarité
+  // 0,0 % » — du bruit pur, et le bruit finit par faire ignorer le signal.
+  // La retirer des sources citées serait pire : elle reste la référence
+  // officielle pour le lecteur. On la cite donc, sans la surveiller, et la
+  // raison est écrite à côté dans countries.ts.
+  const bloc = /\{\s*label:\s*(?:"([^"]*)"|'([^']*)'),\s*url:\s*'([^']+)'\s*(,\s*surveillee:\s*(true|false)\s*)?\}/g;
   for (const m of ts.matchAll(bloc)) {
+    if (m[5] === 'false') continue;
     const label = m[1] ?? m[2];
     const url = m[3];
     if (!vues.has(url)) vues.set(url, { url, label, origine: 'countries.ts' });

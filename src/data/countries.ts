@@ -27,7 +27,13 @@ export type Country = {
   saisons: [Saison, Saison, Saison, Saison, Saison, Saison, Saison, Saison, Saison, Saison, Saison, Saison];
   saisonNote: string;
   visa: { resume: string; duree: string; cout: string; procedure: string };
-  sourcesVisa: { label: string; url: string }[];
+  /**
+   * Les sources officielles citées sur la fiche. `surveillee: false` les garde
+   * visibles pour le lecteur tout en les retirant de la sentinelle : certaines
+   * pages officielles sont des fils d'actualité dont le texte change tous les
+   * jours sans qu'aucune règle bouge. Voir scripts/veille.mjs.
+   */
+  sourcesVisa: { label: string; url: string; surveillee?: boolean }[];
   /**
    * Démarches datées propres au pays, consommées par la checklist de départ.
    * `jours` est le nombre de jours avant le départ où la démarche doit être faite.
@@ -232,7 +238,12 @@ export const countries: Country[] = [
       procedure: "Passeport valide 6 mois après la date de sortie du territoire. Les passeports d'urgence sont exclus du dispositif. Enregistrement obligatoire auprès de la police locale dans les 24 h suivant l'arrivée — l'hôtel s'en charge, mais pas une location entre particuliers. Pour un visa L : dépôt en centre avec biométrie, 4 à 10 jours ouvrés.",
     },
     sourcesVisa: [
-      { label: "Ambassade de Chine en France", url: 'http://fr.china-embassy.gov.cn/' },
+      // Citée, pas surveillée : cette adresse est un fil d'actualité en chinois
+      // qui se renouvelle chaque jour et ne documente aucune règle d'entrée.
+      // La sentinelle y voyait donc « 0,0 % de similarité » tous les matins.
+      // Elle reste la référence officielle pour le lecteur ; la règle, elle,
+      // se vérifie sur les deux sources suivantes.
+      { label: "Ambassade de Chine en France", url: 'http://fr.china-embassy.gov.cn/', surveillee: false },
       { label: 'Centre de demande de visa pour la Chine', url: 'https://bio.visaforchina.cn/' },
       SOURCE_FD,
     ],
