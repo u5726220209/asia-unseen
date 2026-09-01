@@ -70,7 +70,7 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
     <div class="flex items-center gap-2">
       <Search />
       <a href="/newsletter" class="btn-primary hidden !px-5 !py-2.5 !text-[0.85rem] sm:inline-flex">
-        Recevoir les itinéraires
+        Recevoir les fiches
       </a>
       <button
         type="button"
@@ -107,7 +107,7 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
           <li><a href={i.href} class="block py-2 font-display text-[0.95rem] font-medium">{i.label}</a></li>
         ))}
       </ul>
-      <a href="/newsletter" class="btn-primary w-full">Recevoir les 5 itinéraires</a>
+      <a href="/newsletter" class="btn-primary w-full">Recevoir les fiches de départ</a>
     </nav>
   </div>
 </header>

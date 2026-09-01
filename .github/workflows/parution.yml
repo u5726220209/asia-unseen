@@ -55,6 +55,7 @@ jobs:
           PUBLIC_AFF_CHAPKA=${{ secrets.PUBLIC_AFF_CHAPKA }}
           PUBLIC_AFF_WISE=${{ secrets.PUBLIC_AFF_WISE }}
           PUBLIC_NEWSLETTER_ENDPOINT=${{ secrets.PUBLIC_NEWSLETTER_ENDPOINT }}
+          PUBLIC_NEWSLETTER_CHAMP=${{ secrets.PUBLIC_NEWSLETTER_CHAMP }}
           FIN
 
       - run: npm run build

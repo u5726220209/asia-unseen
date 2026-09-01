@@ -15,19 +15,19 @@ import { newsletter } from '@/data/site';
   <section class="wrap grid gap-14 py-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-start lg:py-24">
     <div>
       <p class="eyebrow">Newsletter · gratuite</p>
-      <h1 class="mt-4 text-hero">Cinq itinéraires,<br />prêts à suivre</h1>
+      <h1 class="mt-4 text-hero">Neuf fiches,<br />une par pays</h1>
       <p class="mt-7 max-w-xl text-[1.15rem] leading-relaxed text-warm">
-        Pas des « inspirations » : des itinéraires jour par jour, avec les trajets réels,
-        les temps de transport réels, et ce que ça a coûté.
+        Un document de dix pages, à garder sur le téléphone. Il répond à trois questions
+        et pas une de plus : à qui téléphoner en cas d'urgence, ce qu'on a le droit de
+        faire, ce que ça coûte. Il fonctionne sans réseau.
       </p>
 
       <ul class="mt-10 space-y-5">
         {[
-          ['Vietnam en 10 jours', "Hanoï, Ha Giang, Ninh Binh — l'itinéraire qui évite le piège du nord-sud express"],
-          ['Japon en 15 jours', 'Tokyo, Alpes japonaises, Kanazawa, Kyoto — sans JR Pass, en optimisant les trajets'],
-          ['Thaïlande–Laos en 18 jours', 'Bangkok, Chiang Mai, bateau lent sur le Mékong, Luang Prabang'],
-          ['Corée du Sud en 12 jours', 'Séoul, Gyeongju, Busan, Jeju — le pays le plus sous-estimé de la région'],
-          ['Asie du Sud-Est en 3 semaines', 'Vietnam–Cambodge–Thaïlande, la boucle classique faite correctement'],
+          ["Les numéros d'urgence", "Police, pompiers, secours médicaux, et l'ambassade de France — relevés un par un sur les pages officielles, jamais de mémoire"],
+          ["La règle d'entrée", 'Visa ou exemption, durée autorisée, coût réel : la règle telle que la publie le pays, à la date où elle a été relevée'],
+          ['Le budget par jour', 'Trois niveaux, hors vol, pour savoir en une seconde si le voyage tient dans ce que vous avez'],
+          ['Rééditée quand ça change', "C'est ce que personne d'autre ne fait : le site revérifie ces règles chaque matin, et vous renvoie la fiche corrigée quand l'une d'elles bouge"],
         ].map(([titre, desc]) => (
           <li class="flex gap-4">
             <svg viewBox="0 0 20 20" class="mt-1 h-4 w-4 shrink-0 text-amber" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -51,7 +51,7 @@ import { newsletter } from '@/data/site';
           Ce à quoi vous vous engagez
         </p>
         <ul class="mt-4 space-y-2.5 text-[0.88rem] leading-relaxed text-warm">
-          <li>Un email tous les 15 jours, jamais plus.</li>
+          <li>Un email quand une règle change, pas pour meubler.</li>
           <li>{newsletter.promise}</li>
           <li>Votre adresse n'est ni revendue ni partagée. <a href="/confidentialite" class="link">Notre politique</a>.</li>
         </ul>

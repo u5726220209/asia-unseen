@@ -1,0 +1,71 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Visuel from '@/components/Visuel.astro';
+import { site } from '@/data/site';
+
+/**
+ * Page de retour après inscription à la lettre.
+ *
+ * Les prestataires d'emailing affichent par défaut leur propre page de
+ * confirmation, sur leur domaine, avec leur logo. L'inscrit quitte donc le
+ * site au moment précis où il vient d'accorder sa confiance — et se retrouve
+ * sur une marque qu'il ne connaît pas.
+ *
+ * Cette page reprend la main. Elle dit trois choses, dans l'ordre où elles
+ * comptent : ce qui va arriver dans la boîte, ce qu'il faut faire pour que ça
+ * arrive, et où aller en attendant.
+ */
+---
+
+<BaseLayout
+  title="Presque inscrit — confirmez dans votre boîte mail"
+  description="Votre inscription à la lettre d'Asia Unseen est enregistrée. Un dernier clic est nécessaire dans l'e-mail de confirmation pour la valider."
+  noindex
+  noPopup
+>
+  <Visuel page="/merci" seed="merci" prioritaire />
+
+  <section class="wrap-narrow py-16 lg:py-24">
+    <p class="eyebrow">Inscription</p>
+    <h1 class="mt-4 text-hero">Un dernier clic</h1>
+
+    <div class="prose-au mt-8">
+      <p class="text-[1.15rem] leading-relaxed">
+        Votre adresse est enregistrée, mais l'inscription n'est pas encore active. Un e-mail
+        vient de partir : <strong>ouvrez-le et cliquez sur le lien de confirmation</strong>.
+      </p>
+      <p>
+        Cette double confirmation n'est pas une formalité administrative. Elle garantit que
+        personne ne peut inscrire quelqu'un d'autre à sa place — y compris vous, à votre insu.
+        Sans ce clic, votre adresse ne sera jamais utilisée et disparaîtra d'elle-même.
+      </p>
+
+      <h2>Si vous ne le voyez pas</h2>
+      <p>
+        Regardez dans les indésirables, et cherchez <strong>{site.name}</strong>. Les
+        messages de confirmation y atterrissent souvent au premier envoi. Marquer l'expéditeur
+        comme fiable évite que les suivants s'y perdent aussi.
+      </p>
+
+      <h2>Ce que vous recevrez ensuite</h2>
+      <p>
+        Les fiches de départ, une par pays — visa, numéros d'urgence, budget réel. Puis, quand
+        une règle officielle change, la fiche corrigée, avec l'avant, l'après et la source.
+        Rien d'autre : ni promotion, ni relance, ni message pour vous dire qu'il n'y a rien à dire.
+      </p>
+      <p>
+        Un lien de désabonnement figure dans chaque envoi, et il fonctionne en un clic. Voir
+        aussi <a href="/confidentialite">comment vos données sont traitées</a>.
+      </p>
+
+      <h2>En attendant</h2>
+      <p>
+        Les fiches sont déjà consultables sans inscription :
+        <a href="/fiche/vietnam">celle du Vietnam</a>, par exemple, ou
+        <a href="/comparer-visas">le comparateur de visas</a> des neuf pays. Le site ne garde
+        rien derrière un formulaire — la lettre sert à vous prévenir quand ça change, pas à
+        vous donner accès.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

@@ -41,7 +41,7 @@ const id = 'nl-' + Math.random().toString(36).slice(2, 8);
       >
         <label for={id} class="sr-only">Votre adresse email</label>
         <input
-          id={id} type="email" name="email_address" required autocomplete="email"
+          id={id} type="email" name={newsletter.champEmail} required autocomplete="email"
           placeholder="vous@exemple.com"
           class="min-w-0 flex-1 rounded-brand border border-white/15 bg-white/[0.06] px-5 py-3.5 text-cream placeholder:text-warm focus:border-amber focus:outline-none"
         />
@@ -63,12 +63,12 @@ const id = 'nl-' + Math.random().toString(36).slice(2, 8);
     <p class="eyebrow !text-amber-700">Avant d'aller plus loin</p>
     <h3 class="mt-2 font-display text-xl font-bold text-ink">{title}</h3>
     <p class="mt-2 text-[0.95rem] leading-relaxed text-ink-soft">
-      Les mêmes conseils, condensés en itinéraires prêts à suivre. Un email tous les 15 jours.
+      Une fiche par pays : urgences, visa, budget. Rééditée quand une règle officielle change.
     </p>
     <form class="au-nl mt-5 flex flex-col gap-2.5 sm:flex-row" action={action || undefined} method="post" data-configured={action ? 'true' : 'false'}>
       <label for={id} class="sr-only">Votre adresse email</label>
       <input
-        id={id} type="email" name="email_address" required autocomplete="email" placeholder="vous@exemple.com"
+        id={id} type="email" name={newsletter.champEmail} required autocomplete="email" placeholder="vous@exemple.com"
         class="min-w-0 flex-1 rounded-brand border border-ink/15 bg-white px-4 py-3 text-ink placeholder:text-warm-light focus:border-teal focus:outline-none"
       />
       <button type="submit" class="btn-dark shrink-0 !py-3">Je m'inscris</button>
@@ -87,7 +87,7 @@ const id = 'nl-' + Math.random().toString(36).slice(2, 8);
   <form data-pagefind-ignore class:list={['au-nl flex flex-col gap-2.5 sm:flex-row', klass]} action={action || undefined} method="post" data-configured={action ? 'true' : 'false'}>
     <label for={id} class="sr-only">Votre adresse email</label>
     <input
-      id={id} type="email" name="email_address" required autocomplete="email" placeholder="vous@exemple.com"
+      id={id} type="email" name={newsletter.champEmail} required autocomplete="email" placeholder="vous@exemple.com"
       class="min-w-0 flex-1 rounded-brand border border-white/15 bg-white/[0.06] px-4 py-3 text-cream placeholder:text-warm focus:border-amber focus:outline-none"
     />
     <button type="submit" class="btn-primary shrink-0 !py-3 !text-[0.85rem]">S'inscrire</button>

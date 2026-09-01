@@ -109,7 +109,25 @@ export const adsense = {
 
 /* ── Newsletter ────────────────────────────────────────────── */
 export const newsletter = {
+  /**
+   * Adresse à laquelle le formulaire envoie l'inscription.
+   *
+   * Vide, le formulaire reste inerte et le dit — plutôt que d'échouer en
+   * silence et de laisser croire à l'inscrit qu'il est inscrit.
+   */
   endpoint: env.PUBLIC_NEWSLETTER_ENDPOINT ?? '',
+
+  /**
+   * Nom du champ e-mail attendu par le prestataire.
+   *
+   * Chacun a le sien : Brevo attend `EMAIL`, Mailchimp `EMAIL` aussi,
+   * Buttondown `email`. Le mettre en réglage plutôt qu'en dur évite de
+   * réécrire trois formulaires le jour où l'on change de service — et surtout
+   * évite le pire des cas : un formulaire qui poste sagement un champ que
+   * personne ne lit, donc des inscriptions perdues sans le moindre message
+   * d'erreur.
+   */
+  champEmail: env.PUBLIC_NEWSLETTER_CHAMP ?? 'EMAIL',
   leadMagnet: 'Les fiches de départ — une par pays d\'Asie',
   promise: "Un email tous les 15 jours. Du concret, jamais de remplissage. Désabonnement en un clic.",
 
