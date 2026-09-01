@@ -1,6 +1,6 @@
 ---
 interface Props {
-  type?: 'astuce' | 'attention' | 'terrain' | 'economie';
+  type?: 'astuce' | 'attention' | 'verifie' | 'economie';
   title?: string;
   class?: string;
 }
@@ -9,7 +9,11 @@ const { type = 'astuce', title, class: klass = '' } = Astro.props;
 const styles = {
   astuce:    { border: 'border-teal',   bg: 'bg-teal-50',   label: 'text-teal-700',   defaultTitle: 'Astuce' },
   attention: { border: 'border-amber-700', bg: 'bg-amber-50', label: 'text-amber-700', defaultTitle: 'Attention' },
-  terrain:   { border: 'border-ink',    bg: 'bg-cream-warm', label: 'text-ink',       defaultTitle: 'Vu sur le terrain' },
+  // Cet encart s'appelait « Vu sur le terrain ». Il n'a jamais servi, mais il
+  // restait disponible : le premier article qui l'aurait employé aurait affirmé
+  // une présence sur place que ce site n'a pas. On ne laisse pas traîner un
+  // outil dont le seul usage possible est de mentir.
+  verifie:   { border: 'border-ink',    bg: 'bg-cream-warm', label: 'text-ink',       defaultTitle: 'Vérifié à la source' },
   // La palette de marque tient en deux couleurs : l'amber est réservé à ce qui
   // alerte ou appelle à l'action. Les encarts positifs partagent donc le
   // traitement teal — c'est le libellé qui les distingue, pas la couleur.

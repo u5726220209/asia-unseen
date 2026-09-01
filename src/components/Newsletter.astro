@@ -84,30 +84,66 @@ const id = 'nl-' + Math.random().toString(36).slice(2, 8);
 )}
 
 {variant === 'compact' && (
-  <form data-pagefind-ignore class:list={['au-nl flex flex-col gap-2.5 sm:flex-row', klass]} action={action || undefined} method="post" data-configured={action ? 'true' : 'false'}>
-    <label for={id} class="sr-only">Votre adresse email</label>
-    <input
-      id={id} type="email" name={newsletter.champEmail} required autocomplete="email" placeholder="vous@exemple.com"
-      class="min-w-0 flex-1 rounded-brand border border-white/15 bg-white/[0.06] px-4 py-3 text-cream placeholder:text-warm focus:border-amber focus:outline-none"
-    />
-    <button type="submit" class="btn-primary shrink-0 !py-3 !text-[0.85rem]">S'inscrire</button>
-  </form>
+  <div data-pagefind-ignore class:list={[klass]}>
+    <form class="au-nl flex flex-col gap-2.5 sm:flex-row" action={action || undefined} method="post" data-configured={action ? 'true' : 'false'}>
+      <label for={id} class="sr-only">Votre adresse email</label>
+      <input
+        id={id} type="email" name={newsletter.champEmail} required autocomplete="email" placeholder="vous@exemple.com"
+        class="min-w-0 flex-1 rounded-brand border border-white/15 bg-white/[0.06] px-4 py-3 text-cream placeholder:text-warm focus:border-amber focus:outline-none"
+      />
+      <button type="submit" class="btn-primary shrink-0 !py-3 !text-[0.85rem]">S'inscrire</button>
+    </form>
+    {/*
+      Cette variante s'affiche sur deux fonds opposés : l'encre du pied de page
+      et le blanc de la fenêtre de sortie. Une couleur de texte seule serait
+      illisible sur l'un des deux, alors le message peint son propre fond.
+    */}
+    <p class="au-nl-msg mt-3 hidden rounded-brand bg-cream-warm px-4 py-3 text-sm leading-relaxed text-ink-soft" role="status"></p>
+  </div>
 )}
 
 <script>
-  // Tant qu'aucun endpoint n'est configuré (PUBLIC_NEWSLETTER_ENDPOINT),
-  // on empêche une soumission qui échouerait et on l'explique à l'utilisateur.
+  // Tant qu'aucun endpoint n'est configuré (PUBLIC_NEWSLETTER_ENDPOINT), une
+  // soumission partirait dans le vide. On l'intercepte et on l'explique.
+  //
+  // Le message a déjà manqué une fois : la variante compacte, celle du pied de
+  // page et de la fenêtre de sortie, n'avait pas de <p class="au-nl-msg">. Le
+  // clic était donc annulé sans rien afficher — un formulaire qui ne réagit pas
+  // du tout est pire qu'un formulaire qui échoue, parce que le visiteur croit
+  // que c'est lui qui s'y prend mal. D'où le repli : si l'élément manque, on le
+  // fabrique. Aucune variante future ne pourra plus avaler le clic en silence.
+  // Ce que promettent ces formulaires — les neuf fiches de départ — existe déjà
+  // et se télécharge en un clic. Tant que l'envoi d'emails n'est pas ouvert, le
+  // repli livre donc le document au lieu de s'excuser : la promesse faite en
+  // haut de page est tenue, et l'inscription ne sert plus qu'aux rééditions.
+  const MESSAGE =
+    "Les inscriptions ne sont pas encore ouvertes. Mais les fiches, elles, sont prêtes :";
+  const LIEN = '/telechargements/fiches-depart-asie.pdf';
+  const LIBELLE = 'télécharger les neuf fiches (PDF)';
+
   document.querySelectorAll<HTMLFormElement>('form.au-nl').forEach((form) => {
     form.addEventListener('submit', (e) => {
       if (form.dataset.configured === 'true') return;
       e.preventDefault();
-      const msg = form.parentElement?.querySelector<HTMLElement>('.au-nl-msg');
-      if (msg) {
-        msg.textContent =
-          "Le service d'emailing n'est pas encore branché sur ce site. Écrivez-nous à contact@racinesvietnam.com en attendant.";
-        msg.hidden = false;
-        msg.classList.remove('hidden');
+
+      let msg = form.parentElement?.querySelector<HTMLElement>('.au-nl-msg') ?? null;
+      if (!msg) {
+        msg = document.createElement('p');
+        msg.className = 'au-nl-msg mt-3 rounded-brand bg-cream-warm px-4 py-3 text-sm leading-relaxed text-ink-soft';
+        msg.setAttribute('role', 'status');
+        form.insertAdjacentElement('afterend', msg);
       }
+      // Construit sans innerHTML : rien ici ne vient de l'utilisateur, mais un
+      // composant réutilisé partout n'est pas l'endroit où prendre l'habitude.
+      msg.textContent = MESSAGE + ' ';
+      const a = document.createElement('a');
+      a.href = LIEN;
+      a.setAttribute('download', '');
+      a.className = 'underline underline-offset-2 font-semibold';
+      a.textContent = LIBELLE;
+      msg.appendChild(a);
+      msg.hidden = false;
+      msg.classList.remove('hidden');
     });
   });
 </script>

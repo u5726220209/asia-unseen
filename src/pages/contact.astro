@@ -3,6 +3,14 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import Visuel from '@/components/Visuel.astro';
 import { site } from '@/data/site';
+
+/*
+ * Le formulaire de contact n'a volontairement pas de backend : son attribut
+ * `action` reste vide tant qu'aucun service (Formspree, Web3Forms, une fonction
+ * Cloudflare…) n'est branché, et le script de bas de page renvoie alors vers
+ * l'adresse email. Ce commentaire vivait dans le HTML, donc dans la source que
+ * lit le visiteur ; il n'a rien à y faire.
+ */
 ---
 
 <BaseLayout
@@ -24,11 +32,6 @@ import { site } from '@/data/site';
 
   <div class="wrap grid gap-14 py-14 lg:grid-cols-[1.1fr_0.9fr]">
     <div>
-      <!--
-        Formulaire volontairement sans backend : voir README → « Brancher le formulaire ».
-        Il suffit de renseigner l'attribut `action` avec un service (Formspree, Web3Forms,
-        Cloudflare Pages Functions…). Sans action, le lien mailto sert de repli.
-      -->
       <form
         id="au-contact" method="POST"
         class="grid gap-5 rounded-brand border border-line bg-white p-7 sm:p-9"
@@ -122,7 +125,7 @@ import { site } from '@/data/site';
     const msg = document.getElementById('au-contact-msg');
     if (msg) {
       msg.textContent =
-        "Le formulaire n'est pas encore relié à un service d'envoi. Écrivez-nous directement à contact@racinesvietnam.com — voir README, section « Brancher le formulaire ».";
+        "Le formulaire n'est pas encore relié à un service d'envoi. Écrivez-nous directement à contact@racinesvietnam.com : la boîte est relevée tous les jours.";
       msg.classList.remove('hidden');
     }
   });
