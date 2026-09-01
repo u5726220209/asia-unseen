@@ -1,0 +1,26 @@
+---
+/**
+ * Les trois champs que Brevo attend en plus de l'adresse.
+ *
+ * Ils sont invisibles, et chacun a une raison d'être précise :
+ *
+ * · `html_type=simple` dit à Brevo que la soumission ne vient pas de son
+ *   script maison. Sans lui, Brevo répond en attendant du JavaScript qui
+ *   n'existe pas de notre côté, et la redirection vers /merci ne part jamais.
+ *   C'est le champ qui fait toute la différence entre un formulaire qui
+ *   fonctionne et un formulaire qui semble fonctionner.
+ *
+ * · `email_address_check` est un piège à robots. Il doit rester vide : un
+ *   automate qui remplit tous les champs d'un formulaire le remplit aussi, et
+ *   Brevo rejette alors l'inscription. D'où le `type="text"` — un champ caché
+ *   par `type="hidden"` n'attire aucun robot et le piège ne servirait plus à
+ *   rien. Il est donc masqué visuellement, sorti du parcours au clavier et de
+ *   la lecture d'écran, mais reste un vrai champ de texte pour qui le lit dans
+ *   la source.
+ *
+ * · `locale=fr` fixe la langue des messages d'erreur renvoyés par Brevo.
+ */
+---
+<input type="text" name="email_address_check" value="" tabindex="-1" autocomplete="off" aria-hidden="true" class="absolute h-px w-px -translate-x-[9999px] overflow-hidden opacity-0" />
+<input type="hidden" name="locale" value="fr" />
+<input type="hidden" name="html_type" value="simple" />

@@ -7,6 +7,25 @@
 
 const env = import.meta.env;
 
+/**
+ * Lit un réglage d'environnement en traitant le vide comme une absence.
+ *
+ * `??` ne se déclenche que sur `null` et `undefined`, jamais sur `''`. Or les
+ * workflows écrivent `REGLAGE=${{ secrets.REGLAGE }}` : un secret non défini
+ * ne produit pas une variable absente, il produit une variable vide. Le repli
+ * ne partait donc pas, et `champEmail` valait `''` — l'attribut `name` du
+ * champ e-mail sortait sans valeur, le formulaire postait une adresse que
+ * personne ne lisait, et chaque inscription se perdait en silence pendant que
+ * la page de remerciement s'affichait normalement.
+ *
+ * C'est précisément le cas contre lequel met en garde le commentaire de
+ * `champEmail`, à quelques lignes d'ici. Il ne suffisait pas de l'écrire.
+ */
+const reglage = (valeur: unknown, defaut = ''): string => {
+  const v = typeof valeur === 'string' ? valeur.trim() : '';
+  return v || defaut;
+};
+
 export const site = {
   name: 'Asia Unseen',
   domain: (env.PUBLIC_SITE_URL || 'https://asiaunseen.com').replace(/^https?:\/\//, ''),
@@ -94,14 +113,14 @@ export const analytics = {
 
 /* ── Monétisation display ──────────────────────────────────── */
 export const adsense = {
-  client: env.PUBLIC_ADSENSE_CLIENT ?? '',
+  client: reglage(env.PUBLIC_ADSENSE_CLIENT),
   slots: {
-    inArticle: env.PUBLIC_ADSENSE_SLOT_IN_ARTICLE ?? '',
-    inFeed: env.PUBLIC_ADSENSE_SLOT_IN_FEED ?? '',
-    sidebar: env.PUBLIC_ADSENSE_SLOT_SIDEBAR ?? '',
+    inArticle: reglage(env.PUBLIC_ADSENSE_SLOT_IN_ARTICLE),
+    inFeed: reglage(env.PUBLIC_ADSENSE_SLOT_IN_FEED),
+    sidebar: reglage(env.PUBLIC_ADSENSE_SLOT_SIDEBAR),
   },
   // Gabarit du bloc In-Feed, généré par AdSense en même temps que le bloc.
-  layoutInFeed: env.PUBLIC_ADSENSE_LAYOUT_IN_FEED ?? '',
+  layoutInFeed: reglage(env.PUBLIC_ADSENSE_LAYOUT_IN_FEED),
   get enabled() {
     return this.client.length > 0;
   },
@@ -115,7 +134,7 @@ export const newsletter = {
    * Vide, le formulaire reste inerte et le dit — plutôt que d'échouer en
    * silence et de laisser croire à l'inscrit qu'il est inscrit.
    */
-  endpoint: env.PUBLIC_NEWSLETTER_ENDPOINT ?? '',
+  endpoint: reglage(env.PUBLIC_NEWSLETTER_ENDPOINT),
 
   /**
    * Nom du champ e-mail attendu par le prestataire.
@@ -127,7 +146,7 @@ export const newsletter = {
    * personne ne lit, donc des inscriptions perdues sans le moindre message
    * d'erreur.
    */
-  champEmail: env.PUBLIC_NEWSLETTER_CHAMP ?? 'EMAIL',
+  champEmail: reglage(env.PUBLIC_NEWSLETTER_CHAMP, 'EMAIL'),
   leadMagnet: 'Les fiches de départ — une par pays d\'Asie',
   promise: "Un email tous les 15 jours. Du concret, jamais de remplissage. Désabonnement en un clic.",
 

@@ -1,5 +1,6 @@
 ---
 import { newsletter } from '@/data/site';
+import ChampsBrevo from '@/components/ChampsBrevo.astro';
 
 interface Props {
   variant?: 'block' | 'inline' | 'compact';
@@ -45,6 +46,7 @@ const id = 'nl-' + Math.random().toString(36).slice(2, 8);
           placeholder="vous@exemple.com"
           class="min-w-0 flex-1 rounded-brand border border-white/15 bg-white/[0.06] px-5 py-3.5 text-cream placeholder:text-warm focus:border-amber focus:outline-none"
         />
+        <ChampsBrevo />
         <button type="submit" class="btn-primary shrink-0">Envoyez-les moi</button>
       </form>
       <p class="au-nl-msg mt-4 hidden text-sm text-amber-300" role="status"></p>
@@ -71,6 +73,7 @@ const id = 'nl-' + Math.random().toString(36).slice(2, 8);
         id={id} type="email" name={newsletter.champEmail} required autocomplete="email" placeholder="vous@exemple.com"
         class="min-w-0 flex-1 rounded-brand border border-ink/15 bg-white px-4 py-3 text-ink placeholder:text-warm-light focus:border-teal focus:outline-none"
       />
+      <ChampsBrevo />
       <button type="submit" class="btn-dark shrink-0 !py-3">Je m'inscris</button>
     </form>
     <p class="au-nl-msg mt-3 hidden text-sm text-teal-700" role="status"></p>
@@ -91,6 +94,7 @@ const id = 'nl-' + Math.random().toString(36).slice(2, 8);
         id={id} type="email" name={newsletter.champEmail} required autocomplete="email" placeholder="vous@exemple.com"
         class="min-w-0 flex-1 rounded-brand border border-white/15 bg-white/[0.06] px-4 py-3 text-cream placeholder:text-warm focus:border-amber focus:outline-none"
       />
+      <ChampsBrevo />
       <button type="submit" class="btn-primary shrink-0 !py-3 !text-[0.85rem]">S'inscrire</button>
     </form>
     {/*
