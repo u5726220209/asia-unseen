@@ -148,7 +148,20 @@ export const newsletter = {
    */
   champEmail: reglage(env.PUBLIC_NEWSLETTER_CHAMP, 'EMAIL'),
   leadMagnet: 'Les fiches de départ — une par pays d\'Asie',
-  promise: "Un email tous les 15 jours. Du concret, jamais de remplissage. Désabonnement en un clic.",
+  /**
+   * Le rythme annoncé.
+   *
+   * Il disait « un email tous les 15 jours ». C'était faux à deux titres :
+   * rien n'envoie à ce rythme, et la page d'inscription affichait la phrase
+   * juste sous « un email quand une règle change, pas pour meubler » — qui la
+   * contredit mot pour mot. Un calendrier fixe oblige à écrire quand il n'y a
+   * rien à dire ; c'est précisément ce que ce site refuse de faire.
+   *
+   * Ce qui existe vraiment, c'est la veille quotidienne des sources
+   * officielles. Le rythme des envois est donc celui des changements, et
+   * l'irrégularité est une garantie, pas un défaut.
+   */
+  promise: "Certains mois, deux envois. D'autres, aucun — c'est le signe qu'aucune règle n'a bougé. Désabonnement en un clic.",
 
   /**
    * Mention d'information, affichée sous chaque formulaire.
