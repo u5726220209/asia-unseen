@@ -1,0 +1,308 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Visuel from '@/components/Visuel.astro';
+import Newsletter from '@/components/Newsletter.astro';
+import { corrections, nbCorrections, verificateurs } from '@/data/corrections';
+import { site } from '@/data/site';
+import { plusAncienneVerification, moisEnLettres, nbSourcesSurveillees } from '@/lib/fraicheur';
+
+/**
+ * L'appel aux vérificateurs.
+ *
+ * Ce site n'a pas de commentaires, pas de forum, pas de compteur d'abonnés.
+ * Ce n'est pas un oubli : une communauté de voyage se construit d'habitude sur
+ * l'enthousiasme, et l'enthousiasme ne vérifie rien. Celle-ci se construit sur
+ * la seule chose que le site sache faire — constater qu'une règle a bougé.
+ *
+ * Le lecteur qui rentre d'Asie sait quelque chose qu'aucune veille automatique
+ * ne peut savoir : ce qui s'est réellement passé au guichet. C'est la seule
+ * source que ce site ne peut pas aller chercher lui-même, et c'est aussi la
+ * plus fraîche. D'où cette page : elle ne demande pas de l'attention, elle
+ * demande un fait — et elle dit ce qu'elle en fera.
+ *
+ * Le crédit est la contrepartie, et il est nominatif : voir `signalePar` dans
+ * src/data/corrections.ts. Tant que personne n'a rien signalé, la page le dit
+ * plutôt que d'inventer des noms.
+ */
+
+const noms = verificateurs();
+const depuis = moisEnLettres(plusAncienneVerification);
+
+/** Les corrections qui viennent d'un signalement, pour les montrer en exemple. */
+const signalees = corrections.filter((c) => c.signalePar);
+
+const sujet = 'Signalement — une règle a changé';
+const corps = [
+  'Page concernée (l\'adresse suffit) :',
+  '',
+  '',
+  'Ce que le site affirme :',
+  '',
+  '',
+  'Ce que vous avez constaté, et où :',
+  '',
+  '',
+  'Quand (date approximative) :',
+  '',
+  '',
+  'Une source, si vous en avez une (photo, page officielle, reçu) :',
+  '',
+  '',
+  'Le prénom sous lequel créditer le signalement, si la correction est publiée :',
+  '',
+].join('\n');
+const mailto = `mailto:${site.author.email}?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(corps)}`;
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'Devenir vérificateur',
+    description:
+      "Comment signaler une règle de voyage périmée sur Asia Unseen, ce qui fait un bon signalement, et comment les contributions sont créditées.",
+    inLanguage: 'fr-FR',
+    isPartOf: { '@id': `${site.url}/#organization` },
+  },
+];
+
+const bonSignalement = [
+  {
+    titre: 'Une chose précise, pas une impression',
+    texte:
+      "« Le e-visa cambodgien est passé à 36 USD, frais de service compris, payé le 12 août » se vérifie en deux minutes. « Je crois que les prix ont augmenté » ne se vérifie pas, et ne peut donc rien corriger.",
+  },
+  {
+    titre: 'Où, et quand',
+    texte:
+      "Une règle de visa peut différer selon le point d'entrée et la date. Hanoï et Hô Chi Minh-Ville n'appliquent pas toujours la même chose le même mois. La date et le lieu font la moitié de la valeur du signalement.",
+  },
+  {
+    titre: "Ce que vous avez sous les yeux, si vous l'avez",
+    texte:
+      "Une photo de l'affiche au guichet, un reçu, une capture du portail officiel. Rien de tout cela n'est obligatoire — mais avec, une correction peut être publiée le jour même plutôt qu'après recoupement.",
+  },
+  {
+    titre: "Le doute compte aussi",
+    texte:
+      "Si une page vous a fait hésiter, c'est déjà une information. Une formulation ambiguë sur une règle d'entrée envoie quelqu'un à l'aéroport avec la mauvaise idée en tête. Dites-le, même sans certitude.",
+  },
+];
+---
+
+<BaseLayout
+  title="Devenir vérificateur — aidez ce site à rester juste"
+  description="Vous rentrez d'Asie et une règle a changé ? Signalez-le. Chaque correction est publiée avec sa source, sa date, et le nom de la personne qui l'a repérée."
+  schema={schema}
+>
+  <header class="border-b border-line bg-cream-warm">
+    <div class="wrap py-10 lg:py-14">
+      <Breadcrumbs items={[{ label: 'Devenir vérificateur' }]} />
+      <p class="eyebrow mt-6">La seule chose qu'on vous demande</p>
+      <h1 class="mt-4 max-w-3xl text-hero">Vous étiez là-bas.<br class="hidden sm:block" /> Pas nous.</h1>
+      <p class="mt-6 max-w-2xl text-[1.15rem] leading-relaxed text-warm">
+        Ce site relit chaque jour {nbSourcesSurveillees} pages officielles. Il ne saura jamais ce qui
+        s'est passé au guichet devant vous, ni ce que disait l'affiche à l'aéroport la
+        semaine dernière. Vous, si.
+      </p>
+
+      <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <a href={mailto} class="btn-primary">Signaler un changement</a>
+        <a href="/mises-a-jour" class="btn-outline">Voir les corrections publiées</a>
+      </div>
+      <p class="mt-4 text-[0.85rem] text-warm-light">
+        Pas de compte à créer, pas de formulaire à remplir. Un e-mail, deux lignes suffisent.
+      </p>
+    </div>
+  </header>
+
+  <Visuel page="/verifier" seed="verifier" prioritaire accent="ink" />
+
+  <div class="wrap grid gap-14 py-14 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-16">
+    <div class="min-w-0">
+      <section>
+        <h2 class="text-display">Pourquoi ce site a besoin de vous</h2>
+        <div class="prose-au mt-6">
+          <p>
+            Une veille automatique sait dire qu'une page officielle a changé. Elle ne sait
+            pas dire qu'un portail affiche encore l'ancienne règle alors que le guichet
+            applique déjà la nouvelle — et c'est pourtant le cas le plus fréquent, et le
+            plus coûteux pour un voyageur.
+          </p>
+          <p>
+            Entre le moment où une administration décide et celui où sa page web le dit, il
+            s'écoule des semaines. Pendant ces semaines, la seule source fiable au monde
+            est quelqu'un qui vient de passer la frontière.
+          </p>
+          <p>
+            C'est pour cette raison qu'il n'y a ni commentaires ni forum ici. Un espace de
+            discussion produit de l'opinion ; ce site n'a pas besoin d'opinions, il a besoin
+            de constats. Un constat tient en trois lignes et se vérifie.
+          </p>
+        </div>
+      </section>
+
+      <section class="mt-16">
+        <h2 class="text-display">Ce qui fait un signalement utile</h2>
+        <p class="mt-4 max-w-2xl text-[1.05rem] leading-relaxed text-warm">
+          Aucune de ces conditions n'est obligatoire. Elles décrivent seulement ce qui
+          permet de corriger vite, plutôt que d'ouvrir une enquête.
+        </p>
+
+        <ol class="mt-8 grid gap-5 sm:grid-cols-2">
+          {bonSignalement.map((b, i) => (
+            <li class="rounded-brand border border-line bg-white p-6">
+              <span class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-teal">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <h3 class="mt-2 font-display text-[1.05rem] font-bold leading-snug text-ink">{b.titre}</h3>
+              <p class="mt-2 text-[0.92rem] leading-relaxed text-warm">{b.texte}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section class="mt-16">
+        <h2 class="text-display">Ce qu'il advient de votre signalement</h2>
+
+        <ol class="mt-8 space-y-6">
+          <li class="flex gap-5">
+            <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink font-display text-[0.8rem] font-bold text-cream">1</span>
+            <div>
+              <h3 class="font-display text-[1.05rem] font-bold text-ink">Il est recoupé avec la source officielle</h3>
+              <p class="mt-1.5 text-[0.95rem] leading-relaxed text-warm">
+                Systématiquement, même quand vous joignez une preuve. Si la source officielle
+                dit encore autre chose, la page l'indiquera — la contradiction est elle-même
+                une information utile pour qui part demain.
+              </p>
+            </div>
+          </li>
+          <li class="flex gap-5">
+            <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink font-display text-[0.8rem] font-bold text-cream">2</span>
+            <div>
+              <h3 class="font-display text-[1.05rem] font-bold text-ink">La page est corrigée, et la correction est publiée</h3>
+              <p class="mt-1.5 text-[0.95rem] leading-relaxed text-warm">
+                Dans le <a href="/mises-a-jour" class="link">journal des corrections</a>, avec ce
+                que le site affirmait, ce que dit la source, et la date. Rien n'est effacé :
+                une erreur corrigée en silence est une erreur qu'on peut refaire.
+              </p>
+            </div>
+          </li>
+          <li class="flex gap-5">
+            <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink font-display text-[0.8rem] font-bold text-cream">3</span>
+            <div>
+              <h3 class="font-display text-[1.05rem] font-bold text-ink">Votre nom figure sur la correction</h3>
+              <p class="mt-1.5 text-[0.95rem] leading-relaxed text-warm">
+                Le prénom de votre choix, ou rien du tout si vous préférez. C'est la seule
+                contrepartie que ce site puisse offrir, et il n'en offrira pas d'autre : ni
+                code promo, ni tirage au sort, ni « statut ». Un fait juste vaut d'être signé.
+              </p>
+            </div>
+          </li>
+          <li class="flex gap-5">
+            <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber font-display text-[0.8rem] font-bold text-ink">4</span>
+            <div>
+              <h3 class="font-display text-[1.05rem] font-bold text-ink">Les inscrits sont prévenus</h3>
+              <p class="mt-1.5 text-[0.95rem] leading-relaxed text-warm">
+                Quand la correction touche une règle d'entrée, la fiche rééditée part par
+                e-mail. Votre signalement peut littéralement éviter à quelqu'un d'être
+                refoulé à une frontière.
+              </p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section class="mt-16">
+        <h2 class="text-display">Les vérificateurs</h2>
+        {noms.length > 0 ? (
+          <>
+            <p class="mt-4 max-w-2xl text-[1.05rem] leading-relaxed text-warm">
+              {noms.length === 1
+                ? 'Une personne a signalé une correction publiée sur ce site.'
+                : `${noms.length} personnes ont signalé une correction publiée sur ce site.`}
+            </p>
+            <ul class="mt-6 flex flex-wrap gap-2.5">
+              {noms.map((n) => (
+                <li class="rounded-full border border-line bg-white px-4 py-2 font-display text-[0.85rem] font-semibold text-ink">{n}</li>
+              ))}
+            </ul>
+            {signalees.length > 0 && (
+              <p class="mt-6 text-[0.9rem] text-warm">
+                Leurs signalements sont visibles dans le <a href="/mises-a-jour" class="link">journal des corrections</a>.
+              </p>
+            )}
+          </>
+        ) : (
+          <div class="mt-6 rounded-brand border-l-[3px] border-amber bg-amber-50 px-6 py-5">
+            <p class="text-[0.98rem] leading-relaxed text-ink-soft">
+              <strong>Personne, pour l'instant.</strong> Les {nbCorrections} corrections
+              publiées viennent toutes de la veille automatique et des audits internes. Cette
+              liste restera vide tant qu'elle n'aura pas de raison de ne plus l'être : un site
+              qui remercierait des gens qui n'ont rien fait aurait déjà cessé d'être fiable.
+            </p>
+            <p class="mt-3 text-[0.98rem] leading-relaxed text-ink-soft">
+              Le premier nom qui s'y inscrira sera celui de quelqu'un qui rentrait d'Asie et
+              a pris trois minutes.
+            </p>
+          </div>
+        )}
+      </section>
+
+      <section class="mt-16 rounded-brand bg-ink px-6 py-10 sm:px-10">
+        <p class="eyebrow !text-amber">Trois minutes</p>
+        <h2 class="mt-3 text-display text-cream">Une règle a changé sous vos yeux ?</h2>
+        <p class="mt-4 max-w-2xl text-[1.05rem] leading-relaxed text-warm-light">
+          Pas besoin d'être sûr. Pas besoin de source. Dites ce que vous avez vu, où, et
+          quand — le recoupement, c'est notre travail.
+        </p>
+        <a href={mailto} class="btn-primary mt-8 inline-flex">Écrire le signalement</a>
+        <p class="mt-4 text-[0.82rem] text-warm">
+          L'e-mail s'ouvre pré-rempli avec les questions utiles. Effacez celles auxquelles
+          vous ne pouvez pas répondre.
+        </p>
+      </section>
+
+      <div class="mt-14">
+        <Newsletter variant="inline" title="Être prévenu quand une règle change" />
+      </div>
+    </div>
+
+    <aside class="space-y-6 lg:sticky lg:top-24 lg:self-start">
+      <div class="rounded-brand border border-line bg-white p-6">
+        <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-warm-light">
+          Où en est le site
+        </p>
+        <dl class="mt-5 space-y-5">
+          <div>
+            <dt class="text-[0.82rem] text-warm">Corrections publiées</dt>
+            <dd class="mt-0.5 font-display text-[2rem] font-bold leading-none tracking-tight text-ink">{nbCorrections}</dd>
+          </div>
+          <div>
+            <dt class="text-[0.82rem] text-warm">Pages officielles relues chaque jour</dt>
+            <dd class="mt-0.5 font-display text-[2rem] font-bold leading-none tracking-tight text-ink">{nbSourcesSurveillees}</dd>
+          </div>
+          <div>
+            <dt class="text-[0.82rem] text-warm">Aucune fiche plus ancienne que</dt>
+            <dd class="mt-0.5 font-display text-[1.35rem] font-bold leading-none tracking-tight capitalize text-ink">{depuis}</dd>
+          </div>
+        </dl>
+        <p class="mt-6 border-t border-line pt-4 text-[0.82rem] leading-relaxed text-warm">
+          Aucune correction n'a jamais été retirée de ce journal.
+        </p>
+      </div>
+
+      <div class="rounded-brand border-l-[3px] border-teal bg-teal-50 px-5 py-4">
+        <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-teal-700">
+          Ce qu'on ne vous demandera jamais
+        </p>
+        <ul class="mt-3 space-y-2 text-[0.88rem] leading-relaxed text-ink-soft">
+          <li>De créer un compte.</li>
+          <li>De partager la page.</li>
+          <li>De laisser un avis.</li>
+          <li>De parrainer qui que ce soit.</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>

@@ -20,12 +20,25 @@ export const paysNav = countries.map((c) => ({
   hint: `Dès ${c.budget.routard} €/jour · ${c.visa.duree.split(',')[0]}`,
 }));
 
+/**
+ * L'en-tête. Sept entrées y tenaient déjà juste ; « Signaler » en faisait une
+ * huitième, et « À propos » passait à la ligne.
+ *
+ * « Ressources » en sort plutôt que « Signaler » : c'est une page d'outils et
+ * de liens, qu'on cherche quand on en a besoin, tandis qu'une invitation à
+ * contribuer ne fonctionne que si elle est vue par quelqu'un qui ne la
+ * cherchait pas. Elle reste dans le pied de page et reçoit soixante-dix-neuf
+ * liens internes : elle ne devient invisible pour personne.
+ */
 export const mainNav = [
   { href: '/blog', label: 'Articles' },
   { href: '/mises-a-jour', label: 'Corrections' },
-  { href: '/ressources', label: 'Ressources' },
+  { href: '/verifier', label: 'Signaler' },
   { href: '/a-propos', label: 'À propos' },
 ];
+
+/** Le pied de page, lui, a la place — il reprend l'en-tête et l'élargit. */
+export const footerNav = [...mainNav, { href: '/ressources', label: 'Ressources' }];
 
 export const footerLegal = [
   { href: '/mentions-legales', label: 'Mentions légales' },

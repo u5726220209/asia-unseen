@@ -57,13 +57,15 @@ const mailto = `mailto:${site.author.email}?subject=${encodeURIComponent(sujet)}
         <path d="M2.5 8.5 6 12l7.5-8" />
       </svg>
     )}
-    Vérifié en {label}
+    {sources.length > 0 ? 'Vérifié en' : 'Mis à jour en'} {label}
     <span class="font-normal normal-case tracking-normal opacity-70">— {anciennete}</span>
   </p>
 
   <p class="mt-2 text-[0.85rem] leading-relaxed text-warm">
     {perime
       ? "Cette page n'a pas été revérifiée depuis six mois. Les règles de visa en Asie changent plusieurs fois par an : considérez ces informations comme indicatives et confirmez-les à la source avant de réserver."
+      : sources.length === 0
+      ? "Cette page ne cite pas encore de source officielle : elle porte sa date de mise à jour, et rien de plus. Si quelque chose vous paraît faux ou périmé, dites-le — c'est ainsi que le site se corrige."
       : "Les formalités et les tarifs changent sans préavis. Confirmez systématiquement auprès des sources officielles avant de réserver — c'est la seule chose qui fasse foi."}
   </p>
 
@@ -85,8 +87,14 @@ const mailto = `mailto:${site.author.email}?subject=${encodeURIComponent(sujet)}
         {liees.length === 1 ? '1 correction publiée' : `${liees.length} corrections publiées`} sur cette page
       </a>
     )}
-    <a href={mailto} class="text-warm underline decoration-warm-light/50 underline-offset-4 transition-colors hover:text-ink">
-      Signaler une information périmée
+    <a href={mailto} class="inline-flex items-center gap-1.5 font-medium text-warm underline decoration-warm-light/50 underline-offset-4 transition-colors hover:text-ink">
+      <svg viewBox="0 0 16 16" class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 14V3a1 1 0 0 1 1-1h5l.5 1.5H13v6H9.5L9 8H4" />
+      </svg>
+      Vous savez que c'est faux ? Dites-le
+    </a>
+    <a href="/verifier" class="ml-auto text-warm-light underline decoration-warm-light/40 underline-offset-4 transition-colors hover:text-warm">
+      Comment ça marche
     </a>
   </div>
 </div>

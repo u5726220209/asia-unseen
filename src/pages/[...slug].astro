@@ -182,7 +182,16 @@ const paysLies = (g?.pays ?? []).map((s) => bySlug[s]).filter(Boolean);
             sa propre `updatedDate` dans son en-tête : c'est elle qui compte,
             et elle seule engage quelque chose.
           */}
-          {g!.sources.length > 0 && (
+          {/*
+            Le bandeau ne s'affichait que si le guide citait des sources. Huit
+            guides sur onze n'en citent aucune : ce sont donc les pages les
+            moins étayées qui n'offraient ni date, ni moyen de signaler une
+            erreur. Exactement l'inverse de ce qu'il faut. Le bandeau s'affiche
+            désormais toujours ; sans source, il dit « mis à jour » au lieu de
+            « vérifié » — le mot qui engage quelque chose est réservé aux pages
+            qui peuvent le prouver.
+          */}
+          {(
             <VerifiedBadge
               date={(guideEntry!.data.updatedDate ?? guideEntry!.data.pubDate).toISOString().slice(0, 7)}
               sources={g!.sources}

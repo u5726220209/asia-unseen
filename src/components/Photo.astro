@@ -17,7 +17,7 @@ import type { Photo } from '@/data/photos';
  */
 interface Props {
   photo: Photo;
-  variant?: 'hero' | 'bande';
+  variant?: 'hero' | 'bande' | 'carte';
   /** Chargement immédiat pour la première image visible d'une page. */
   prioritaire?: boolean;
   class?: string;
@@ -41,19 +41,34 @@ if (!mod) {
 }
 
 const source = (await mod()).default;
-const hauteurs = variant === 'hero' ? 'h-56 sm:h-72 lg:h-[26rem]' : 'h-40 sm:h-52';
+
+/**
+ * La variante « carte » coiffe une vignette dans une grille.
+ *
+ * Elle ne demande que 400 px de large environ : lui servir le même srcset
+ * qu'un bandeau pleine largeur ferait télécharger neuf images de 1280 px pour
+ * les afficher en 400. D'où des largeurs et un `sizes` qui lui sont propres.
+ */
+const hauteurs =
+  variant === 'hero' ? 'h-56 sm:h-72 lg:h-[26rem]'
+  : variant === 'carte' ? 'h-40'
+  : 'h-40 sm:h-52';
+
+const carte = variant === 'carte';
+const largeurs = carte ? [400, 600, 800] : [640, 960, 1280, 1920];
+const tailles = carte ? '(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw' : '100vw';
 ---
 
-<figure class:list={['not-prose m-0', klass]}>
+<figure class:list={['not-prose m-0', carte && 'relative', klass]}>
   <div class:list={['w-full overflow-hidden bg-cream-warm', hauteurs]}>
     <Picture
       src={source}
       formats={['avif', 'webp']}
       fallbackFormat="webp"
       alt={photo.alt}
-      width={Math.min(source.width, 1920)}
-      widths={[640, 960, 1280, 1920]}
-      sizes="100vw"
+      width={Math.min(source.width, carte ? 800 : 1920)}
+      widths={largeurs}
+      sizes={tailles}
       {/*
         Astro applique le même nombre aux deux formats. 65 donne un AVIF net —
         le format que reçoit la quasi-totalité des navigateurs — et un WebP de
@@ -68,7 +83,20 @@ const hauteurs = variant === 'hero' ? 'h-56 sm:h-72 lg:h-[26rem]' : 'h-40 sm:h-5
     />
   </div>
 
-  {(photo.legende || photo.credit) && (
+  {/*
+    La licence CC BY exige le crédit là où l'image est montrée, pas seulement
+    sur la page où elle est grande. Une légende sous une vignette ajouterait
+    neuf lignes de texte à la grille d'accueil ; l'usage de presse — un filet
+    en surimpression dans un coin — dit la même chose sans rien coûter à la
+    lecture. Le nom reste sélectionnable et lu par les lecteurs d'écran.
+  */}
+  {carte && photo.credit && (
+    <figcaption class="pointer-events-none absolute bottom-0 right-0 bg-ink/55 px-2 py-1 text-[0.62rem] leading-none tracking-wide text-cream/90">
+      {photo.credit.auteur}{photo.licence ? ` · ${photo.licence.nom}` : ''}
+    </figcaption>
+  )}
+
+  {!carte && (photo.legende || photo.credit) && (
     <figcaption class="wrap flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-3 text-[0.78rem] text-warm">
       {photo.legende && <span class="max-w-2xl leading-relaxed">{photo.legende}</span>}
       {photo.credit && (

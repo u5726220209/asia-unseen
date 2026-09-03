@@ -25,7 +25,22 @@ export type Correction = {
   /** Ce que dit la source officielle. */
   apres: string;
   source: { label: string; url: string };
+  /**
+   * Le prénom, ou le nom, de la personne qui a signalé le changement.
+   *
+   * Absent quand la correction vient de la veille automatique ou d'un audit
+   * interne — ce qui est le cas de toutes les entrées d'ouverture. Il n'y a
+   * donc rien à inventer ici : un crédit se gagne, il ne se fabrique pas, et
+   * une page qui remercierait des gens qui n'ont rien fait serait la première
+   * chose fausse de ce site.
+   */
+  signalePar?: string;
 };
+
+/** Les personnes qui ont signalé au moins une correction publiée. */
+export function verificateurs(): string[] {
+  return [...new Set(corrections.map((c) => c.signalePar).filter(Boolean) as string[])];
+}
 
 export const corrections: Correction[] = [
   {

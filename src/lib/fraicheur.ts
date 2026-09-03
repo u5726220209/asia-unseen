@@ -1,4 +1,5 @@
 import { countries } from '@/data/countries';
+import { sourcesTarifaires } from '@/data/assurances';
 
 /**
  * La fraîcheur, calculée plutôt qu'affirmée.
@@ -47,3 +48,25 @@ export function queMois(aaaaMm: string): string {
   if (!mois) return '';
   return /^[aeiouyâàéèêîôû]/i.test(mois) ? `qu'${mois}` : `que ${mois}`;
 }
+
+/**
+ * Le nombre de pages officielles que la veille relit chaque jour.
+ *
+ * Il est écrit noir sur blanc sur plusieurs pages du site, et c'est le genre
+ * de chiffre qu'on pose une fois à la main puis qu'on oublie. Il doit donc se
+ * déduire — mais se déduire de la MÊME chose que scripts/veille.mjs, sans quoi
+ * le site annoncerait un nombre et la machine en surveillerait un autre.
+ *
+ * Un premier calcul ne comptait que `sourcesVisa` et donnait seize au lieu de
+ * vingt-cinq : il oubliait les pages « Contacts utiles » de France Diplomatie,
+ * déclarées une par pays sous `urgences.source`. La veille, elle, les lit —
+ * son extraction ratisse toutes les paires { label, url } du fichier. Les deux
+ * gisements sont donc réunis ici, et dédoublonnés par adresse comme là-bas :
+ * la source générique de France Diplomatie est partagée par les neuf fiches et
+ * ne compte qu'une fois, ses neuf pages « Contacts utiles » comptent chacune.
+ */
+export const nbSourcesSurveillees = new Set([
+  ...countries.flatMap((c) => c.sourcesVisa.filter((s) => s.surveillee !== false).map((s) => s.url)),
+  ...countries.map((c) => c.urgences?.source?.url).filter(Boolean),
+  ...sourcesTarifaires.map((s) => s.url),
+]).size;

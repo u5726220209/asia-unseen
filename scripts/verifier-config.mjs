@@ -107,4 +107,44 @@ if (defautsFormulaire.length) {
   console.log('✓ Le formulaire produit porte un nom de champ et le type attendu.\n');
 }
 
-process.exit(jamaisEcrits.length || jamaisLus.length || defautsFormulaire.length ? 1 : 0);
+/* ── Le chiffre annoncé au lecteur est-il celui que la machine surveille ? ─ */
+
+/**
+ * La page « Devenir vérificateur » annonce « ce site relit chaque jour N pages
+ * officielles ». C'est un argument de confiance : il doit être vrai.
+ *
+ * Le premier calcul en donnait seize là où la veille en lit vingt-cinq — il
+ * oubliait les pages « Contacts utiles » déclarées sous `urgences.source`. Un
+ * écart de cette nature ne se voit pas : les deux nombres sont plausibles, ils
+ * vivent dans deux fichiers différents, et rien ne les confronte. D'où ce
+ * contrôle, qui compare la phrase publiée à la liste réellement surveillée.
+ */
+let ecartSources = null;
+if (existsSync('dist/verifier/index.html')) {
+  const html = readFileSync('dist/verifier/index.html', 'utf8').replace(/<[^>]+>/g, ' ');
+  const annonce = Number(html.match(/relit chaque jour\s+(\d+)\s+pages officielles/)?.[1]);
+
+  const src = readFileSync('scripts/veille.mjs', 'utf8');
+  const debut = src.indexOf('async function sourcesDuSite');
+  const fin = src.indexOf('/* ── Normalisation');
+  const extraire = new Function(
+    'readFileSync', 'existsSync',
+    src.slice(debut, fin).replace('async function sourcesDuSite', 'return async function sourcesDuSite'),
+  )(readFileSync, existsSync);
+  const reelles = (await extraire()).length;
+
+  if (!Number.isFinite(annonce)) ecartSources = { annonce: 'introuvable', reelles };
+  else if (annonce !== reelles) ecartSources = { annonce, reelles };
+}
+
+if (ecartSources) {
+  console.log('⛔ Le nombre de sources annoncé au lecteur ne correspond pas à la réalité :\n');
+  console.log(`   annoncé sur /verifier : ${ecartSources.annonce}`);
+  console.log(`   réellement surveillé  : ${ecartSources.reelles}\n`);
+  console.log('   Voir nbSourcesSurveillees dans src/lib/fraicheur.ts, qui doit compter');
+  console.log('   exactement ce que sourcesDuSite() extrait dans scripts/veille.mjs.\n');
+} else if (existsSync('dist/verifier/index.html')) {
+  console.log('✓ Le nombre de sources annoncé est celui qui est surveillé.\n');
+}
+
+process.exit(jamaisEcrits.length || jamaisLus.length || defautsFormulaire.length || ecartSources ? 1 : 0);

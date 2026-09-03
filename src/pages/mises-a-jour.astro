@@ -14,6 +14,9 @@ import { site } from '@/data/site';
  * « daté, donc vérifiable » réellement vérifiable.
  */
 
+/** Combien de corrections doivent leur existence à un lecteur. */
+const nbSignalees = corrections.filter((c) => c.signalePar).length;
+
 const parMois = corrections.reduce<Record<string, typeof corrections>>((acc, c) => {
   const mois = c.date.slice(0, 7);
   (acc[mois] ??= []).push(c);
@@ -76,6 +79,10 @@ const schema = [
           <dd class="mt-1 font-display text-[2.2rem] font-bold leading-none tracking-tight text-ink">{fmtJour(corrections[0].date)}</dd>
         </div>
         <div>
+          <dt class="font-display text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-warm-light">Signalées par un lecteur</dt>
+          <dd class="mt-1 font-display text-[2.2rem] font-bold leading-none tracking-tight text-ink">{nbSignalees}</dd>
+        </div>
+        <div>
           <dt class="font-display text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-warm-light">Suivre les corrections</dt>
           <dd class="mt-2"><a href="/mises-a-jour/rss.xml" class="link">Flux RSS dédié</a></dd>
         </div>
@@ -87,7 +94,22 @@ const schema = [
 
   <div class="wrap grid gap-14 py-14 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-16">
     <div class="min-w-0">
-      <div class="rounded-brand border-l-[3px] border-teal bg-teal-50 px-6 py-5">
+      {/*
+        L'invitation vient avant le mode d'emploi, et c'est délibéré : quelqu'un
+        qui arrive ici a déjà compris que le site se corrige en public. Ce qu'il
+        ignore, c'est qu'il peut en être la cause.
+      */}
+      <div class="rounded-brand bg-ink px-6 py-6 sm:px-8 sm:py-7">
+        <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-amber">Vous pouvez remplir cette page</p>
+        <p class="mt-3 text-[1.02rem] leading-relaxed text-cream">
+          Une veille automatique voit qu'une page officielle a changé. Elle ne voit pas
+          qu'un guichet applique déjà une règle que le portail n'annonce pas encore.
+          Quelqu'un qui rentre d'Asie, si.
+        </p>
+        <a href="/verifier" class="btn-primary mt-6 inline-flex !py-2.5 !text-[0.88rem]">Comment signaler un changement</a>
+      </div>
+
+      <div class="mt-5 rounded-brand border-l-[3px] border-teal bg-teal-50 px-6 py-5">
         <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-teal-700">Comment lire cette page</p>
         <p class="mt-2 text-[0.95rem] leading-relaxed text-ink-soft">
           Chaque entrée indique ce que le site affirmait, ce que dit la source officielle, et
@@ -129,11 +151,19 @@ const schema = [
                     </div>
                   </dl>
 
-                  <p class="mt-4 text-[0.8rem]">
+                  <div class="mt-4 flex flex-wrap items-baseline gap-x-5 gap-y-2 text-[0.8rem]">
                     <a href={c.source.url} target="_blank" rel="noopener nofollow" class="font-medium text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">
                       {c.source.label} ↗
                     </a>
-                  </p>
+                    {c.signalePar && (
+                      <span class="ml-auto inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-[0.76rem] font-medium text-amber-700">
+                        <svg viewBox="0 0 16 16" class="h-3 w-3 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <path d="M8 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM2.5 14a5.5 5.5 0 0 1 11 0" />
+                        </svg>
+                        Signalé par {c.signalePar}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </li>
             ))}
