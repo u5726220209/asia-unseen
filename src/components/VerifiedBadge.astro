@@ -1,5 +1,5 @@
 ---
-import { correctionsPourPage } from '@/data/corrections';
+import { correctionsPourPage, lienCorrection } from '@/data/corrections';
 import { site } from '@/data/site';
 
 /**
@@ -81,9 +81,25 @@ const mailto = `mailto:${site.author.email}?subject=${encodeURIComponent(sujet)}
     </ul>
   )}
 
+  {/*
+    La correction la plus récente, affichée sur la page qu'elle concerne.
+    Elle vivait uniquement dans le journal — c'est-à-dire à un clic de là où
+    elle sert. Un lecteur qui consulte une règle de visa a besoin de savoir
+    qu'elle a bougé récemment, sans avoir à aller le chercher ailleurs.
+  */}
+  {liees.length > 0 && (
+    <div class="mt-4 rounded-brand bg-cream-warm px-4 py-3.5">
+      <p class="font-display text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-warm-light">
+        Dernière correction sur cette page — {new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${liees[0].date}T00:00:00`))}
+      </p>
+      <p class="mt-1.5 text-[0.9rem] font-medium leading-snug text-ink">{liees[0].titre}</p>
+      <p class="mt-1.5 text-[0.84rem] leading-relaxed text-warm">{liees[0].apres.length > 190 ? liees[0].apres.slice(0, 190).replace(/\s\S*$/, '') + '…' : liees[0].apres}</p>
+    </div>
+  )}
+
   <div class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-line pt-3.5 text-[0.8rem]">
     {liees.length > 0 && (
-      <a href="/mises-a-jour" class="font-medium text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">
+      <a href={lienCorrection(liees[0])} class="font-medium text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">
         {liees.length === 1 ? '1 correction publiée' : `${liees.length} corrections publiées`} sur cette page
       </a>
     )}

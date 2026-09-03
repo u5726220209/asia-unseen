@@ -209,6 +209,28 @@ export const dernierAudit = corrections
   .at(-1)!;
 
 /** Corrections concernant une page donnée, les plus récentes d'abord. */
+/**
+ * L'ancre stable d'une correction, pour pouvoir la citer.
+ *
+ * Une correction est une unité d'information complète — un fait, une date, une
+ * source, un avant et un après — mais courte. Lui donner une page à elle seule
+ * produirait onze pages de trois cents mots, c'est-à-dire exactement ce que
+ * Google appelle du contenu mince, sur un site dont la crédibilité est le seul
+ * actif. Une ancre stable donne la même chose qu'une URL — un lien qu'on peut
+ * envoyer, citer, ouvrir — sans le risque.
+ *
+ * Elle est construite sur la date et la page, jamais sur le titre : un titre se
+ * reformule, et un lien envoyé la semaine dernière doit continuer de marcher.
+ */
+export function ancre(c: Correction): string {
+  return `c-${c.date}-${c.page.replace(/^\//, '').replace(/\//g, '-') || 'accueil'}`;
+}
+
+/** L'adresse complète et citable d'une correction. */
+export function lienCorrection(c: Correction): string {
+  return `/mises-a-jour#${ancre(c)}`;
+}
+
 export function correctionsPourPage(page: string): Correction[] {
   return corrections.filter((c) => c.page === page).sort((a, b) => b.date.localeCompare(a.date));
 }

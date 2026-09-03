@@ -3,7 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import Visuel from '@/components/Visuel.astro';
 import Newsletter from '@/components/Newsletter.astro';
-import { corrections, nbCorrections } from '@/data/corrections';
+import { corrections, nbCorrections, ancre } from '@/data/corrections';
 import { site } from '@/data/site';
 
 /**
@@ -128,7 +128,7 @@ const schema = [
 
           <ol class="mt-8 space-y-5">
             {list.map((c) => (
-              <li class="overflow-hidden rounded-brand border border-line bg-white">
+              <li id={ancre(c)} class="scroll-mt-24 overflow-hidden rounded-brand border border-line bg-white target:ring-2 target:ring-amber">
                 <div class={`h-[3px] w-full ${STYLES[c.gravite].bar}`}></div>
                 <div class="p-6">
                   <div class="flex flex-wrap items-center gap-3">
@@ -138,7 +138,9 @@ const schema = [
                     <a href={c.page} class="font-display text-[0.82rem] font-semibold text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">
                       {c.pageLabel}
                     </a>
-                    <time datetime={c.date} class="ml-auto text-[0.78rem] text-warm-light">{fmtJour(c.date)}</time>
+                    <a href={`#${ancre(c)}`} class="ml-auto text-[0.78rem] text-warm-light underline decoration-transparent underline-offset-4 transition hover:decoration-warm-light" title="Lien permanent vers cette correction">
+                      <time datetime={c.date}>{fmtJour(c.date)}</time>
+                    </a>
                   </div>
 
                   <h3 class="mt-4 font-display text-[1.1rem] font-bold leading-snug text-ink">{c.titre}</h3>

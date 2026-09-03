@@ -1,5 +1,5 @@
 import rss from '@astrojs/rss';
-import { corrections } from '@/data/corrections';
+import { corrections, lienCorrection } from '@/data/corrections';
 import { site } from '@/data/site';
 import type { APIContext } from 'astro';
 
@@ -19,7 +19,11 @@ export async function GET(context: APIContext) {
       title: `${c.pageLabel} — ${c.titre}`,
       description: `Le site indiquait : « ${c.avant} » — La source officielle indique : « ${c.apres} » (${c.source.label})`,
       pubDate: new Date(`${c.date}T09:00:00Z`),
-      link: c.page,
+      // Le lien pointait vers la page corrigée. Un abonné qui reçoit « ce qui a
+      // changé » y arrivait sans voir ce qui avait changé : la page affiche la
+      // règle actuelle, pas l'écart. L'ancre du journal montre l'avant, l'après
+      // et la source — c'est-à-dire ce que le flux annonce.
+      link: lienCorrection(c),
       categories: [c.gravite, c.pageLabel],
     })),
     customData: '<language>fr-FR</language>',
