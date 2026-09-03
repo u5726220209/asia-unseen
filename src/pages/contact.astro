@@ -33,7 +33,7 @@ import { site } from '@/data/site';
   <div class="wrap grid gap-14 py-14 lg:grid-cols-[1.1fr_0.9fr]">
     <div>
       <form
-        id="au-contact" method="POST"
+        id="au-contact" method="POST" data-adresse={site.author.email}
         class="grid gap-5 rounded-brand border border-line bg-white p-7 sm:p-9"
       >
         <div class="grid gap-5 sm:grid-cols-2">
@@ -70,18 +70,14 @@ import { site } from '@/data/site';
         <!-- Piège à robots : un champ invisible que seuls les scripts remplissent. -->
         <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
 
-        <label class="flex items-start gap-3 text-[0.85rem] leading-relaxed text-warm">
-          <input type="checkbox" name="rgpd" required class="mt-1 h-4 w-4 shrink-0 accent-teal" />
-          <span>
-            J'accepte que ces informations soient utilisées pour me répondre.
-            Elles ne sont ni revendues ni utilisées à d'autres fins.
-            <a href="/confidentialite" class="link">En savoir plus</a>.
-          </span>
-        </label>
-
         <div>
-          <button type="submit" class="btn-primary">Envoyer le message</button>
-          <p id="au-contact-msg" class="mt-4 hidden text-[0.88rem] text-teal-700" role="status"></p>
+          <button type="submit" class="btn-primary">Préparer le message</button>
+          <p class="mt-3 text-[0.82rem] leading-relaxed text-warm">
+            Ce formulaire n'envoie rien lui-même : il ouvre votre messagerie avec le message
+            déjà rédigé. Rien ne quitte votre navigateur avant que vous n'appuyiez sur envoyer,
+            et aucun service tiers ne voit ce que vous écrivez.
+          </p>
+          <div id="au-contact-msg" class="mt-4 hidden" role="status"></div>
         </div>
       </form>
     </div>
@@ -118,15 +114,80 @@ import { site } from '@/data/site';
 </BaseLayout>
 
 <script>
+  /**
+   * Le formulaire compose le message, il ne l'envoie pas.
+   *
+   * Il demandait cinq champs, une case RGPD et un piège à robots — puis
+   * n'envoyait rien : deux minutes de saisie récompensées par une ligne de
+   * texte renvoyant à l'adresse e-mail. Sur un site qui fait de l'honnêteté
+   * son argument, c'était le pire endroit possible pour un faux-semblant.
+   *
+   * Le brancher sur un service d'envoi demanderait un compte tiers, une
+   * dépendance et une surface de données supplémentaire. Or le formulaire a
+   * une valeur propre, indépendante de l'envoi : il dit quoi écrire. On la
+   * garde, et on laisse la messagerie du visiteur faire ce qu'elle sait faire.
+   *
+   * Conséquence heureuse : rien ne transite par un tiers, et le message
+   * n'existe que dans le brouillon de son auteur tant qu'il ne l'envoie pas.
+   *
+   * Le repli compte autant que le geste principal : une messagerie non
+   * configurée n'ouvre rien, et le visiteur croirait avoir écrit dans le vide.
+   * Le message composé s'affiche donc aussi à l'écran, copiable en un clic.
+   */
   const form = document.getElementById('au-contact') as HTMLFormElement | null;
+  const zone = document.getElementById('au-contact-msg');
+  const ADRESSE = (document.getElementById('au-contact') as HTMLElement | null)?.dataset.adresse ?? '';
+
   form?.addEventListener('submit', (e) => {
-    if (form.getAttribute('action')) return; // un backend est branché : on le laisse faire
     e.preventDefault();
-    const msg = document.getElementById('au-contact-msg');
-    if (msg) {
-      msg.textContent =
-        "Le formulaire n'est pas encore relié à un service d'envoi. Écrivez-nous directement à contact@racinesvietnam.com : la boîte est relevée tous les jours.";
-      msg.classList.remove('hidden');
-    }
+    if (!zone) return;
+
+    const val = (n: string) =>
+      (form.querySelector<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(`[name="${n}"]`)?.value ?? '').trim();
+
+    // Le piège à robots : rempli, on ne fait rien et on ne le dit pas.
+    if (val('_gotcha')) return;
+
+    const sujet = val('sujet') || 'Message depuis le site';
+    const corps = [
+      val('message'),
+      '',
+      '—',
+      val('nom'),
+      val('email'),
+      `Envoyé depuis ${location.origin}${location.pathname}`,
+    ].join('\n');
+
+    const lien = `mailto:${ADRESSE}?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(corps)}`;
+
+    zone.innerHTML = '';
+    zone.classList.remove('hidden');
+
+    const p = document.createElement('p');
+    p.className = 'text-[0.9rem] leading-relaxed text-ink-soft';
+    p.textContent = 'Votre messagerie devrait s\'ouvrir avec le message prêt. Si rien ne se passe, copiez-le et envoyez-le à ' + ADRESSE + '.';
+    zone.appendChild(p);
+
+    const pre = document.createElement('pre');
+    pre.className = 'mt-3 max-h-56 overflow-auto whitespace-pre-wrap rounded-brand border border-line bg-cream-warm p-4 text-[0.82rem] leading-relaxed text-ink-soft';
+    pre.textContent = `À : ${ADRESSE}\nObjet : ${sujet}\n\n${corps}`;
+    zone.appendChild(pre);
+
+    const bouton = document.createElement('button');
+    bouton.type = 'button';
+    bouton.className = 'btn-outline mt-3 !py-2.5 !text-[0.85rem]';
+    bouton.textContent = 'Copier le message';
+    bouton.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(pre.textContent ?? '');
+        bouton.textContent = 'Copié';
+      } catch {
+        // Presse-papiers refusé : le texte reste sélectionnable au-dessus.
+        bouton.textContent = 'Sélectionnez le texte ci-dessus';
+      }
+    });
+    zone.appendChild(bouton);
+
+    window.location.href = lien;
   });
 </script>
