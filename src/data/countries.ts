@@ -26,7 +26,27 @@ export type Country = {
   /** Note mensuelle, de janvier à décembre. */
   saisons: [Saison, Saison, Saison, Saison, Saison, Saison, Saison, Saison, Saison, Saison, Saison, Saison];
   saisonNote: string;
-  visa: { resume: string; duree: string; cout: string; procedure: string };
+  visa: {
+    resume: string;
+    duree: string;
+    cout: string;
+    procedure: string;
+    /**
+     * Nombre de jours de séjour autorisés SANS aucune démarche, passeport
+     * français ordinaire. Zéro quand un visa est exigé dès le premier jour,
+     * même s'il s'obtient à l'arrivée ou en ligne.
+     *
+     * Ce nombre est transcrit de `duree`, jamais déduit : il sert uniquement à
+     * trancher « ce séjour tient-il dans l'exemption ». Tout le reste — le
+     * coût, la procédure, les pièges — est cité tel quel. Un outil qui
+     * reformulerait une règle d'entrée finirait par en inventer une.
+     *
+     * `scripts/verifier-config.mjs` vérifie que ce nombre figure bien dans le
+     * texte de `duree` : si la règle change et que le texte est corrigé sans
+     * l'entier, la mise en ligne s'arrête.
+     */
+    sansVisaJours: number;
+  };
   /**
    * Les sources officielles citées sur la fiche. `surveillee: false` les garde
    * visibles pour le lecteur tout en les retirant de la sentinelle : certaines
@@ -80,6 +100,7 @@ export const countries: Country[] = [
       duree: "45 jours sans visa. E-visa jusqu'à 90 jours, entrées simples ou multiples. Ni l'exemption ni l'e-visa ne sont prolongeables sur place.",
       cout: "Gratuit sous exemption ; ≈ 25 USD (entrée simple) / 50 USD (entrées multiples) pour l'e-visa",
       procedure: "E-visa sur le portail officiel de l'immigration, réponse en 3 à 5 jours ouvrés. N'utilisez jamais les sites intermédiaires qui facturent 3 à 5 fois le tarif. Passeport valide 6 mois à la date d'entrée. Un enregistrement en ligne dans les 72 h précédant l'arrivée est demandé à l'aéroport de Hô Chi Minh-Ville.",
+      sansVisaJours: 45,
     },
     sourcesVisa: [
       { label: "Portail e-visa officiel du Vietnam", url: 'https://evisa.gov.vn/' },
@@ -133,6 +154,7 @@ export const countries: Country[] = [
       duree: "60 jours à ce jour, mais une réduction à 30 jours est annoncée comme imminente par les autorités françaises. Tout séjour planifié au-delà de 30 jours doit être reconfirmé avant le départ.",
       cout: "Gratuit à l'entrée ; ≈ 1 900 THB pour une prolongation sur place",
       procedure: "La Thailand Digital Arrival Card (TDAC) est obligatoire depuis le 1er mai 2025 pour toute entrée par air, terre ou mer : à remplir en ligne dans les 3 jours précédant l'arrivée sur tdac.immigration.go.th. Un billet de sortie du territoire peut être réclamé à l'embarquement.",
+      sansVisaJours: 60,
     },
     sourcesVisa: [
       { label: 'Thailand Digital Arrival Card (TDAC) — portail officiel', url: 'https://tdac.immigration.go.th/' },
@@ -185,6 +207,7 @@ export const countries: Country[] = [
       duree: "Jusqu'à 90 jours sans visa, sans démarche préalable.",
       cout: "Gratuit",
       procedure: "Une déclaration douanière et d'immigration en ligne (Visit Japan Web) accélère considérablement le passage à l'aéroport. Faites-la la veille du départ.",
+      sansVisaJours: 90,
     },
     sourcesVisa: [
       { label: "Ambassade du Japon en France", url: 'https://www.fr.emb-japan.go.jp/' },
@@ -236,6 +259,7 @@ export const countries: Country[] = [
       duree: "30 jours sans visa, pour le tourisme, les affaires, les visites familiales, les échanges culturels et le transit. Non prolongeable sur place. Visa L classique au-delà de 30 jours.",
       cout: "Gratuit sous exemption ; ≈ 126 € pour un visa L déposé en centre",
       procedure: "Passeport valide 6 mois après la date de sortie du territoire. Les passeports d'urgence sont exclus du dispositif. Enregistrement obligatoire auprès de la police locale dans les 24 h suivant l'arrivée — l'hôtel s'en charge, mais pas une location entre particuliers. Pour un visa L : dépôt en centre avec biométrie, 4 à 10 jours ouvrés.",
+      sansVisaJours: 30,
     },
     sourcesVisa: [
       // Citée, pas surveillée : cette adresse est un fil d'actualité en chinois
@@ -296,6 +320,7 @@ export const countries: Country[] = [
       duree: "30 jours, prolongeable sur place.",
       cout: "≈ 30 à 50 USD selon la nationalité et le point d'entrée ; prolongation à 2 USD par jour à Vientiane",
       procedure: "E-visa en ligne pour éviter la file, ou visa à l'arrivée aux principaux postes frontières. Attention : les points de passage terrestres délivrant un visa à l'arrivée ou acceptant l'e-visa sont limités — vérifiez le vôtre avant de vous y présenter. Exigez le tampon d'entrée sur votre passeport : son absence est sanctionnée d'au moins 200 USD. Prévoyez une photo d'identité et des dollars en espèces en bon état.",
+      sansVisaJours: 0,
     },
     sourcesVisa: [
       { label: 'Portail e-visa officiel du Laos', url: 'https://laoevisa.gov.la/' },
@@ -346,6 +371,7 @@ export const countries: Country[] = [
       duree: '30 jours.',
       cout: '≈ 36 USD (e-visa, frais de service inclus) ; ≈ 40 USD en espèces aux postes-frontières terrestres',
       procedure: "Demandez uniquement sur le portail gouvernemental officiel — les sites clones facturant 80 à 100 USD sont nombreux et bien référencés. L'application « Cambodia e-arrival » est obligatoire depuis le 1er septembre 2024 pour toute arrivée par avion. Une assurance couvrant hospitalisation et rapatriement est exigée. Visa touristique prolongeable une fois d'un mois.",
+      sansVisaJours: 0,
     },
     sourcesVisa: [
       { label: 'E-visa officiel du Cambodge', url: 'https://www.evisa.gov.kh/' },
@@ -397,6 +423,7 @@ export const countries: Country[] = [
       duree: "Jusqu'à 90 jours sans visa. Exemption de K-ETA prolongée jusqu'au 31 décembre 2026 par un avis du 20 mars 2026.",
       cout: "Gratuit — le K-ETA n'étant pas exigé. Le demander volontairement coûte 10 000 wons, non remboursables.",
       procedure: "Le K-ETA n'est pas exigé sur cette période, mais reste facultatif : le demander dispense de remplir la carte d'arrivée à l'atterrissage. Sans K-ETA, la carte d'arrivée électronique est à compléter avant l'entrée. L'exemption prend fin le 31 décembre 2026 : revérifiez pour tout voyage en 2027.",
+      sansVisaJours: 90,
     },
     sourcesVisa: [
       { label: 'Portail officiel K-ETA', url: 'https://www.k-eta.go.kr/' },
@@ -447,6 +474,7 @@ export const countries: Country[] = [
       duree: "30 jours, prolongeable une fois de 30 jours.",
       cout: '≈ 500 000 IDR (≈ 30 €), plus 150 000 IDR (≈ 7,50 €) de taxe touristique à Bali',
       procedure: "L'e-VOA se demande en ligne quelques jours avant le départ et évite une file d'attente réelle à Denpasar. Le formulaire douanier « All Indonesia » se remplit dans les 72 h précédant l'arrivée. Un billet de sortie du territoire est exigé, et le passeport doit être en excellent état — un document abîmé entraîne un refus d'entrée.",
+      sansVisaJours: 0,
     },
     sourcesVisa: [
       { label: "Direction générale de l'immigration indonésienne", url: 'https://evisa.imigrasi.go.id/' },
@@ -499,6 +527,7 @@ export const countries: Country[] = [
       duree: "30 jours à l'entrée, prolongeables de 29 jours supplémentaires auprès du Bureau of Immigration, soit 59 jours au total.",
       cout: "Gratuit à l'entrée ; ≈ 3 030 PHP pour la prolongation sur place",
       procedure: "Un billet de sortie ou de continuation est exigé à l'embarquement. La carte eTravel est obligatoire : remplissez-la 72 h avant le départ, le QR code généré est réclamé par la compagnie et à l'arrivée. Une taxe d'aéroport peut s'ajouter si elle n'est pas incluse dans le billet.",
+      sansVisaJours: 30,
     },
     sourcesVisa: [
       { label: 'Bureau of Immigration', url: 'https://immigration.gov.ph/' },

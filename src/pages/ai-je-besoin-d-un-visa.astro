@@ -1,0 +1,220 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Visuel from '@/components/Visuel.astro';
+import PuisJeEntrer from '@/components/PuisJeEntrer.astro';
+import Newsletter from '@/components/Newsletter.astro';
+import FAQ from '@/components/FAQ.astro';
+import { countries } from '@/data/countries';
+import { site } from '@/data/site';
+import { plusAncienneVerification, queMois } from '@/lib/fraicheur';
+
+/**
+ * La question la plus posée de cette catégorie, et la seule réponse qui compte.
+ *
+ * Le comparateur de visas met deux pays côte à côte : il sert quelqu'un qui
+ * hésite entre deux destinations. Cette page sert quelqu'un qui a déjà choisi
+ * et veut une certitude — c'est un besoin différent, et de très loin le plus
+ * fréquent.
+ *
+ * Une seule page, pas neuf. « Faut-il un visa pour le Vietnam », « …pour la
+ * Thaïlande » et les sept autres appellent la même réponse structurée : neuf
+ * pages quasi identiques seraient du contenu dupliqué, et les fiches pays
+ * couvrent déjà chaque destination en profondeur.
+ */
+
+const sansVisa = countries.filter((c) => c.visa.sansVisaJours > 0);
+const avecVisa = countries.filter((c) => c.visa.sansVisaJours === 0);
+const plusLongue = [...countries].sort((a, b) => b.visa.sansVisaJours - a.visa.sansVisaJours)[0];
+
+const faq = [
+  {
+    q: 'Faut-il un visa pour voyager en Asie avec un passeport français ?',
+    r: `Cela dépend du pays et de la durée. Sur les ${countries.length} pays couverts ici, ${sansVisa.length} accordent une exemption de visa pour un séjour touristique court — de ${Math.min(...sansVisa.map((c) => c.visa.sansVisaJours))} à ${plusLongue.visa.sansVisaJours} jours selon la destination. Les ${avecVisa.length} autres exigent un visa dès le premier jour, même s'il s'obtient en ligne ou à l'arrivée.`,
+  },
+  {
+    q: 'Que se passe-t-il si je dépasse la durée autorisée ?',
+    r: "Un dépassement se paie à la sortie, sous forme d'amende quotidienne, et peut entraîner une interdiction de retour. Certains pays autorisent une prolongation sur place, d'autres non — c'est indiqué sur chaque fiche pays. La règle à retenir : la durée d'exemption se compte en jours de présence, pas en nombre de nuits, et le jour d'arrivée compte.",
+  },
+  {
+    q: "Cet outil vaut-il pour tous les passeports ?",
+    r: "Non. Toutes les règles publiées ici concernent le passeport français ordinaire, pour un séjour touristique. Les passeports d'urgence, les passeports de service et les autres nationalités relèvent de règles différentes, parfois très différentes — le Laos, par exemple, module le coût du visa selon la nationalité.",
+  },
+  {
+    q: 'À quelle fréquence ces règles sont-elles vérifiées ?',
+    r: `Les pages officielles des ${countries.length} pays sont relues chaque nuit par une veille automatique, et chaque fiche porte sa date de vérification. Quand une règle change, la correction est publiée avec l'avant, l'après et la source — le journal des corrections en garde la trace, et rien n'y est jamais effacé.`,
+  },
+];
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'Ai-je besoin d\'un visa pour l\'Asie ?',
+    applicationCategory: 'TravelApplication',
+    operatingSystem: 'Web',
+    inLanguage: 'fr-FR',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+    isPartOf: { '@id': `${site.url}/#organization` },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.r },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title="Ai-je besoin d'un visa pour l'Asie ? La réponse, datée"
+  description="Votre destination et la durée de votre séjour : la règle d'entrée pour un passeport français, avec sa date de vérification et sa source officielle."
+  schema={schema}
+>
+  <header class="border-b border-line bg-cream-warm">
+    <div class="wrap py-10 lg:py-14">
+      <Breadcrumbs items={[{ label: 'Ai-je besoin d\'un visa ?' }]} />
+      <p class="eyebrow mt-6">Passeport français · séjour touristique</p>
+      <h1 class="mt-4 max-w-3xl text-hero">Ai-je besoin<br class="hidden sm:block" /> d'un visa&nbsp;?</h1>
+      <p class="mt-6 max-w-2xl text-[1.15rem] leading-relaxed text-warm">
+        Votre destination, la durée de votre séjour, et la réponse — avec la règle
+        telle qu'elle est publiée, la date à laquelle elle a été vérifiée, et le lien
+        vers la source officielle. Aucune fiche n'est plus ancienne {queMois(plusAncienneVerification)}.
+      </p>
+    </div>
+  </header>
+
+  <div class="wrap py-12 lg:py-14">
+    <PuisJeEntrer />
+
+    <div class="mt-14 grid gap-14 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-16">
+      <div class="min-w-0">
+        <section>
+          <h2 class="text-display">Ce que cet outil fait, et ce qu'il ne fera pas</h2>
+          <div class="prose-au mt-6">
+            <p>
+              Il compare une durée de séjour à une durée d'exemption, et c'est tout ce
+              qu'il calcule. Le coût, la procédure et les pièges sont affichés
+              <strong>tels qu'ils sont écrits sur la fiche du pays</strong>, avec leur
+              date et leurs sources. Rien n'est reformulé.
+            </p>
+            <p>
+              Ce n'est pas de la prudence excessive. Un outil qui paraphraserait une
+              règle d'entrée finirait par en inventer une, et une règle d'entrée
+              inventée se paie à une frontière — pas devant un écran. C'est aussi
+              pourquoi il ne dit jamais « vous pouvez entrer » : seule l'autorité du
+              pays décide, et elle décide au guichet.
+            </p>
+            <p>
+              Enfin, une règle peut changer entre la dernière vérification et votre
+              départ. C'est pour cette raison que chaque réponse porte sa date, et que
+              le <a href="/mises-a-jour">journal des corrections</a> existe.
+            </p>
+          </div>
+        </section>
+
+        <section class="mt-14">
+          <h2 class="text-display">Les deux familles de règles</h2>
+          <p class="mt-4 max-w-2xl text-[1.05rem] leading-relaxed text-warm">
+            Sur les {countries.length} pays couverts, la distinction qui compte n'est pas
+            « visa ou pas visa » : c'est « une démarche avant de partir, ou rien ».
+          </p>
+
+          <div class="mt-8 grid gap-5 sm:grid-cols-2">
+            <div class="rounded-brand border-l-[3px] border-teal bg-teal-50 px-6 py-5">
+              <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-teal-700">
+                Exemption pour un séjour court
+              </p>
+              <p class="mt-1 font-display text-[2rem] font-bold leading-none tracking-tight text-ink">{sansVisa.length} pays</p>
+              <ul class="mt-4 space-y-1.5 text-[0.9rem] text-ink-soft">
+                {sansVisa.map((c) => (
+                  <li class="flex items-baseline justify-between gap-4">
+                    <a href={`/${c.slug}`} class="underline decoration-teal/25 underline-offset-4 hover:decoration-amber">{c.nom}</a>
+                    <span class="shrink-0 font-mono text-[0.82rem] tabular-nums text-teal-700">{c.visa.sansVisaJours} j</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div class="rounded-brand border-l-[3px] border-amber-700 bg-amber-50 px-6 py-5">
+              <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-amber-700">
+                Visa exigé dès le premier jour
+              </p>
+              <p class="mt-1 font-display text-[2rem] font-bold leading-none tracking-tight text-ink">{avecVisa.length} pays</p>
+              <ul class="mt-4 space-y-1.5 text-[0.9rem] text-ink-soft">
+                {avecVisa.map((c) => (
+                  <li>
+                    <a href={`/${c.slug}`} class="underline decoration-amber-700/25 underline-offset-4 hover:decoration-amber">{c.nom}</a>
+                  </li>
+                ))}
+              </ul>
+              <p class="mt-4 text-[0.84rem] leading-relaxed text-warm">
+                Le visa s'obtient en ligne ou à l'arrivée selon le pays — ce n'est pas
+                un obstacle, mais c'est une démarche à ne pas découvrir à l'aéroport.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="mt-14">
+          <h2 class="text-display">Aller plus loin</h2>
+          <div class="mt-6 grid gap-4 sm:grid-cols-2">
+            <a href="/comparer-visas" class="card p-5 transition-colors hover:border-teal">
+              <p class="font-display text-[1.02rem] font-bold text-ink">Comparer deux pays</p>
+              <p class="mt-1.5 text-[0.88rem] leading-relaxed text-warm">Deux ou trois règles côte à côte, quand la destination n'est pas encore choisie.</p>
+            </a>
+            <a href="/checklist-depart" class="card p-5 transition-colors hover:border-teal">
+              <p class="font-display text-[1.02rem] font-bold text-ink">Le calendrier à rebours</p>
+              <p class="mt-1.5 text-[0.88rem] leading-relaxed text-warm">À quelle date faire chaque démarche, calculé depuis votre date de départ.</p>
+            </a>
+            <a href="/visas-asie" class="card p-5 transition-colors hover:border-teal">
+              <p class="font-display text-[1.02rem] font-bold text-ink">Le guide des visas</p>
+              <p class="mt-1.5 text-[0.88rem] leading-relaxed text-warm">Chaque règle dans son contexte, avec les cas particuliers.</p>
+            </a>
+            <a href="/veille" class="card p-5 transition-colors hover:border-teal">
+              <p class="font-display text-[1.02rem] font-bold text-ink">L'état de la veille</p>
+              <p class="mt-1.5 text-[0.88rem] leading-relaxed text-warm">Les pages officielles relues cette nuit, et celles qui n'ont pas répondu.</p>
+            </a>
+          </div>
+        </section>
+
+        <div class="mt-14">
+          <FAQ items={faq} />
+        </div>
+
+        <div class="mt-14">
+          <Newsletter variant="inline" title="Être prévenu quand une règle change" />
+        </div>
+      </div>
+
+      <aside class="space-y-6 lg:sticky lg:top-24 lg:self-start">
+        <div class="rounded-brand border border-line bg-white p-6">
+          <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-warm-light">
+            Ce que la réponse suppose
+          </p>
+          <ul class="mt-4 space-y-3 text-[0.88rem] leading-relaxed text-ink-soft">
+            <li>Un passeport <strong>français ordinaire</strong>, valide au-delà du séjour.</li>
+            <li>Un séjour <strong>touristique</strong>, pas professionnel ni d'études.</li>
+            <li>Une <strong>entrée unique</strong>, sans sortie ni retour dans la période.</li>
+          </ul>
+          <p class="mt-5 border-t border-line pt-4 text-[0.82rem] leading-relaxed text-warm">
+            En dehors de ces trois conditions, la règle est souvent différente. La fiche
+            du pays le précise au cas par cas.
+          </p>
+        </div>
+
+        <div class="rounded-brand bg-ink px-5 py-5">
+          <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-amber">Une règle a changé ?</p>
+          <p class="mt-2.5 text-[0.9rem] leading-relaxed text-warm-light">
+            Si le guichet vous a dit autre chose que cette page, c'est le guichet qui a
+            raison — et nous voulons le savoir.
+          </p>
+          <a href="/verifier" class="btn-primary mt-5 inline-flex !py-2.5 !text-[0.85rem]">Le signaler</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</BaseLayout>

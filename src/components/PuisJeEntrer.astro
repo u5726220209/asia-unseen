@@ -1,0 +1,181 @@
+---
+import { countries } from '@/data/countries';
+
+/**
+ * « Puis-je entrer ? » — une réponse, pas un tableau.
+ *
+ * La question que les gens tapent n'est pas « guide du Vietnam », c'est
+ * « faut-il un visa pour le Vietnam ». Le comparateur existant sert quelqu'un
+ * qui hésite entre deux destinations ; celui-ci sert quelqu'un qui a déjà
+ * choisi et veut une certitude.
+ *
+ * CE QU'IL CALCULE, ET CE QU'IL NE CALCULERA JAMAIS
+ * Il compare une durée de séjour à `visa.sansVisaJours`, et c'est tout. Il ne
+ * reformule aucune règle : le résumé, le coût, la procédure et les pièges sont
+ * affichés tels qu'ils sont écrits sur la fiche, avec leur date de vérification
+ * et leurs sources. Un outil qui paraphraserait une règle d'entrée finirait par
+ * en inventer une, et une règle d'entrée inventée se paie à une frontière.
+ *
+ * D'où aussi le vocabulaire : il ne dit jamais « vous pouvez entrer ». Il dit
+ * ce que la règle publiée prévoit pour cette durée, et rappelle que seule
+ * l'autorité du pays décide.
+ */
+
+const data = countries.map((c) => ({
+  slug: c.slug,
+  nom: c.nom,
+  article: c.article,
+  sansVisaJours: c.visa.sansVisaJours,
+  resume: c.visa.resume,
+  duree: c.visa.duree,
+  cout: c.visa.cout,
+  procedure: c.visa.procedure,
+  verifieLe: c.verifieLe,
+  sources: c.sourcesVisa,
+  premiereDemarche: c.demarches.length ? Math.max(...c.demarches.map((d) => d.jours)) : null,
+}));
+
+const id = 'pje-' + Math.random().toString(36).slice(2, 7);
+---
+
+<div class="au-pje my-10 overflow-hidden rounded-brand border border-line bg-white" data-pays={JSON.stringify(data)}>
+  <div class="border-b border-line bg-cream-warm px-6 py-5">
+    <p class="eyebrow">Outil</p>
+    <h3 class="mt-1.5 font-display text-xl font-bold text-ink">Ai-je besoin d'un visa&nbsp;?</h3>
+    <p class="mt-1.5 text-[0.88rem] leading-relaxed text-warm">
+      Passeport français ordinaire, séjour touristique. La réponse cite la règle telle
+      qu'elle est publiée, avec la date à laquelle elle a été vérifiée.
+    </p>
+  </div>
+
+  <div class="grid gap-4 px-6 py-6 sm:grid-cols-[1fr_auto] sm:items-end">
+    <div class="grid gap-4 sm:grid-cols-2">
+      <div>
+        <label for={`${id}-pays`} class="mb-2 block font-display text-[0.78rem] font-semibold uppercase tracking-wider text-ink">
+          Destination
+        </label>
+        <select id={`${id}-pays`} class="au-pje-pays w-full rounded-brand border border-line bg-cream px-4 py-3 text-ink focus:border-teal focus:outline-none">
+          {countries.map((c) => <option value={c.slug}>{c.nom}</option>)}
+        </select>
+      </div>
+      <div>
+        <label for={`${id}-jours`} class="mb-2 block font-display text-[0.78rem] font-semibold uppercase tracking-wider text-ink">
+          Durée du séjour
+        </label>
+        <div class="flex items-center gap-3">
+          <input
+            id={`${id}-jours`} type="number" min="1" max="365" value="15" inputmode="numeric"
+            class="au-pje-jours w-24 rounded-brand border border-line bg-cream px-4 py-3 text-ink tabular-nums focus:border-teal focus:outline-none"
+          />
+          <span class="text-[0.9rem] text-warm">jours</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="au-pje-out border-t border-line px-6 py-6" role="status" aria-live="polite"></div>
+</div>
+
+<script>
+  type Pays = {
+    slug: string; nom: string; article: string; sansVisaJours: number;
+    resume: string; duree: string; cout: string; procedure: string;
+    verifieLe: string; sources: { label: string; url: string }[];
+    premiereDemarche: number | null;
+  };
+
+  const echappe = (s: string) =>
+    s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+  const mois = (aaaaMm: string) => {
+    const [y, m] = aaaaMm.split('-').map(Number);
+    return new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' })
+      .format(new Date(y, m - 1, 1));
+  };
+
+  document.querySelectorAll<HTMLElement>('.au-pje').forEach((bloc) => {
+    const pays: Pays[] = JSON.parse(bloc.dataset.pays || '[]');
+    const selPays = bloc.querySelector<HTMLSelectElement>('.au-pje-pays')!;
+    const inJours = bloc.querySelector<HTMLInputElement>('.au-pje-jours')!;
+    const sortie = bloc.querySelector<HTMLElement>('.au-pje-out')!;
+
+    function rendre() {
+      const p = pays.find((x) => x.slug === selPays.value);
+      if (!p) return;
+
+      const jours = Math.max(1, Math.min(365, Number(inJours.value) || 1));
+
+      // La seule décision prise ici. Tout le reste est cité.
+      const dansExemption = p.sansVisaJours > 0 && jours <= p.sansVisaJours;
+
+      const verdict = dansExemption
+        ? {
+            ton: 'teal',
+            titre: 'Aucune démarche de visa prévue pour cette durée',
+            detail: `La règle publiée autorise ${p.sansVisaJours} jours sans visa. Votre séjour de ${jours} jours tient dedans.`,
+          }
+        : p.sansVisaJours === 0
+          ? {
+              ton: 'amber',
+              titre: 'Une démarche est nécessaire, quelle que soit la durée',
+              detail: `Aucune exemption ne s'applique : un visa est exigé dès le premier jour.`,
+            }
+          : {
+              ton: 'amber',
+              titre: 'Une démarche est nécessaire pour cette durée',
+              detail: `L'exemption couvre ${p.sansVisaJours} jours. Votre séjour de ${jours} jours la dépasse de ${jours - p.sansVisaJours} jour${jours - p.sansVisaJours > 1 ? 's' : ''}.`,
+            };
+
+      const couleurs = verdict.ton === 'teal'
+        ? { bord: 'border-teal', fond: 'bg-teal-50', texte: 'text-teal-700' }
+        : { bord: 'border-amber-700', fond: 'bg-amber-50', texte: 'text-amber-700' };
+
+      const sources = p.sources
+        .map((s) => `<a href="${echappe(s.url)}" target="_blank" rel="noopener nofollow" class="text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">${echappe(s.label)} ↗</a>`)
+        .join(' · ');
+
+      const alerte = p.premiereDemarche
+        ? `<p class="mt-4 text-[0.86rem] leading-relaxed text-warm">La première démarche à faire pour ${echappe(p.nom)} se situe environ <strong class="text-ink">${p.premiereDemarche} jours avant le départ</strong>. <a href="/checklist-depart" class="text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">Voir le calendrier daté</a>.</p>`
+        : '';
+
+      sortie.innerHTML = `
+        <div class="rounded-brand border-l-[3px] ${couleurs.bord} ${couleurs.fond} px-5 py-4">
+          <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] ${couleurs.texte}">${echappe(p.nom)} · ${jours} jours</p>
+          <p class="mt-2 font-display text-[1.1rem] font-bold leading-snug text-ink">${echappe(verdict.titre)}</p>
+          <p class="mt-1.5 text-[0.92rem] leading-relaxed text-ink-soft">${echappe(verdict.detail)}</p>
+        </div>
+
+        <dl class="mt-5 grid gap-px overflow-hidden rounded-brand border border-line bg-line sm:grid-cols-2">
+          <div class="bg-white p-4">
+            <dt class="font-display text-[0.68rem] font-semibold uppercase tracking-wider text-warm-light">La règle, telle qu'elle est publiée</dt>
+            <dd class="mt-1.5 text-[0.88rem] leading-relaxed text-ink-soft">${echappe(p.duree)}</dd>
+          </div>
+          <div class="bg-white p-4">
+            <dt class="font-display text-[0.68rem] font-semibold uppercase tracking-wider text-warm-light">Coût officiel</dt>
+            <dd class="mt-1.5 text-[0.88rem] leading-relaxed text-ink-soft">${echappe(p.cout)}</dd>
+          </div>
+          <div class="bg-white p-4 sm:col-span-2">
+            <dt class="font-display text-[0.68rem] font-semibold uppercase tracking-wider text-warm-light">Procédure et pièges</dt>
+            <dd class="mt-1.5 text-[0.88rem] leading-relaxed text-ink-soft">${echappe(p.procedure)}</dd>
+          </div>
+        </dl>
+
+        ${alerte}
+
+        <p class="mt-5 border-t border-line pt-4 text-[0.8rem] leading-relaxed text-warm">
+          Vérifié en ${mois(p.verifieLe)} · ${sources}
+        </p>
+        <p class="mt-2 text-[0.8rem] leading-relaxed text-warm-light">
+          Cet outil compare une durée à une règle. Il ne remplace pas la décision de
+          l'autorité du pays, seule à décider d'une entrée — et une règle peut changer
+          entre cette vérification et votre départ.
+          <a href="/${p.slug}" class="text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">Voir la fiche ${echappe(p.nom)}</a>.
+        </p>
+      `;
+    }
+
+    selPays.addEventListener('change', rendre);
+    inJours.addEventListener('input', rendre);
+    rendre();
+  });
+</script>

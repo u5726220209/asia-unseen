@@ -1,6 +1,9 @@
 import { countries } from './countries';
 
 export const guidesNav = [
+  // L'outil avant le guide : « faut-il un visa pour X » est une question à
+  // laquelle on veut une réponse, pas une lecture.
+  { href: '/ai-je-besoin-d-un-visa', label: 'Ai-je besoin d\'un visa ?', hint: 'La réponse pour votre durée, avec sa date' },
   { href: '/visas-asie',            label: 'Visas',                  hint: 'Formalités, coûts, délais — pays par pays' },
   { href: '/budget-voyage-asie',    label: 'Budget',                 hint: 'Calculateur et coûts réels par pays' },
   { href: '/meilleure-saison-asie', label: 'Meilleure saison',       hint: 'Où partir, mois par mois' },

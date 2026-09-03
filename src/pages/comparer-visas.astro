@@ -41,6 +41,12 @@ const sansVisa = countries.filter((c) => /exemption|sans visa/i.test(c.visa.resu
   <Visuel page="/comparer-visas" seed="comparer-visas" prioritaire accent="teal" />
 
   <div class="wrap-narrow py-12">
+    <p class="mb-6 rounded-brand border-l-[3px] border-teal bg-teal-50 px-5 py-4 text-[0.95rem] leading-relaxed text-ink-soft">
+      Votre destination est déjà choisie&nbsp;? <a href="/ai-je-besoin-d-un-visa" class="font-medium text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">Ai-je besoin d'un visa&nbsp;?</a>
+      répond directement pour une durée de séjour donnée. Ce tableau sert à comparer,
+      quand elle ne l'est pas encore.
+    </p>
+
     <ComparateurVisas />
 
     <div class="prose-au mt-14">

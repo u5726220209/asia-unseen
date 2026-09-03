@@ -147,4 +147,53 @@ if (ecartSources) {
   console.log('✓ Le nombre de sources annoncé est celui qui est surveillé.\n');
 }
 
-process.exit(jamaisEcrits.length || jamaisLus.length || defautsFormulaire.length || ecartSources ? 1 : 0);
+/* ── L'entier de l'exemption dit-il la même chose que la phrase ? ── */
+
+/**
+ * `visa.sansVisaJours` est transcrit de `visa.duree`. Deux écritures de la même
+ * règle, dans le même objet, et rien ne les oblige à rester d'accord.
+ *
+ * Le jour où une exemption passe de soixante à trente jours, c'est la phrase
+ * qu'on corrige — elle est lue par des humains, elle saute aux yeux. L'entier,
+ * lui, ne se voit pas : il continuerait de répondre « aucun visa nécessaire »
+ * pour un séjour de quarante jours devenu illégal. C'est le pire type d'erreur
+ * que ce site puisse produire, et elle serait invisible.
+ *
+ * On vérifie donc que le nombre figure bien dans le texte. Zéro est le cas
+ * particulier — « un visa est exigé dès le premier jour » ne s'écrit pas avec
+ * un zéro — et se reconnaît à l'absence de « sans visa » dans la phrase.
+ */
+const visasIncoherents = [];
+{
+  const ts = readFileSync('src/data/countries.ts', 'utf8');
+  for (const m of ts.matchAll(/slug: '([a-z-]+)'/g)) {
+    const bloc = ts.slice(m.index, m.index + 8000);
+    const i = bloc.indexOf('visa: {');
+    if (i < 0) continue;
+    const visa = bloc.slice(i, bloc.indexOf('\n    },', i));
+    const duree = (visa.match(/duree:\s*"([^"]*)"/) ?? visa.match(/duree:\s*'([^']*)'/))?.[1] ?? '';
+    const n = Number(visa.match(/sansVisaJours:\s*(\d+)/)?.[1] ?? NaN);
+    if (!Number.isFinite(n)) { visasIncoherents.push({ pays: m[1], motif: 'sansVisaJours absent' }); continue; }
+
+    const sansVisa = /sans visa|sans démarche|exemption/i.test(duree);
+    if (n === 0 && sansVisa) {
+      visasIncoherents.push({ pays: m[1], motif: 'annoncé à 0 alors que la phrase parle d\'exemption', duree });
+    } else if (n > 0 && !new RegExp(`\\b${n}\\b`).test(duree)) {
+      visasIncoherents.push({ pays: m[1], motif: `${n} ne figure pas dans la phrase`, duree });
+    }
+  }
+}
+
+if (visasIncoherents.length) {
+  console.log(`⛔ ${visasIncoherents.length} règle(s) de visa où le chiffre et la phrase divergent :\n`);
+  for (const v of visasIncoherents) {
+    console.log(`   ${v.pays} — ${v.motif}`);
+    if (v.duree) console.log(`      « ${v.duree.slice(0, 90)}… »`);
+  }
+  console.log('\n   L\'outil « Puis-je entrer ? » répondrait à partir du chiffre.');
+  console.log('   Une divergence ici autorise un séjour que la règle interdit.\n');
+} else {
+  console.log('✓ Chaque durée d\'exemption chiffrée correspond à sa phrase.\n');
+}
+
+process.exit(jamaisEcrits.length || jamaisLus.length || defautsFormulaire.length || ecartSources || visasIncoherents.length ? 1 : 0);
