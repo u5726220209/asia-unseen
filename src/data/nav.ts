@@ -44,6 +44,7 @@ export const mainNav = [
 export const footerNav = [
   ...mainNav,
   { href: '/veille', label: 'État de la veille' },
+  { href: '/integrer', label: 'Intégrer nos données' },
   { href: '/ressources', label: 'Ressources' },
 ];
 

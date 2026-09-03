@@ -58,6 +58,10 @@ export const GET: APIRoute = () => {
       capitale: c.capitale,
       monnaie: c.monnaie,
       langue: c.langue,
+      // « au Vietnam », « en Thaïlande », « aux Philippines » : sans cet
+      // article, le bloc citable écrirait « Entrer en Vietnam » sur le site
+      // de quelqu'un d'autre, sous notre nom.
+      article: c.article,
       decalageHoraire: c.decalage,
       visa: {
         resume: c.visa.resume,

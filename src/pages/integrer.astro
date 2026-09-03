@@ -1,0 +1,205 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Newsletter from '@/components/Newsletter.astro';
+import { countries } from '@/data/countries';
+import { site } from '@/data/site';
+import { plusAncienneVerification, queMois, nbSourcesSurveillees } from '@/lib/fraicheur';
+
+/**
+ * Le bloc citable, et son mode d'emploi.
+ *
+ * Ce site n'a ni budget ni réseau. Le seul levier de croissance qu'il puisse
+ * actionner est celui-ci : donner à d'autres une raison de le citer, et rendre
+ * la citation utile à celui qui la pose plutôt qu'à nous seuls.
+ *
+ * Un blog de voyage qui parle du Vietnam a un vrai problème : la règle de visa
+ * qu'il a écrite en 2024 est fausse aujourd'hui, et il n'a ni le temps ni les
+ * moyens de la surveiller. Trois lignes de code lui donnent une règle qui se
+ * met à jour toute seule. Le lien de retour n'est pas un péage, c'est
+ * l'attribution qu'exige la licence — et il vient avec un service réel.
+ */
+
+const exemple = `<div class="asiaunseen-visa" data-pays="vietnam"></div>
+<script src="${site.url}/embed/visa.js" async><\/script>`;
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'Intégrer les règles de visa sur votre site',
+    description:
+      "Un bloc à coller sur votre site : la règle d'entrée d'un pays d'Asie, mise à jour automatiquement, avec sa date de vérification.",
+    inLanguage: 'fr-FR',
+    isPartOf: { '@id': `${site.url}/#organization` },
+  },
+];
+---
+
+<BaseLayout
+  title="Intégrer nos règles de visa sur votre site — gratuit"
+  description="Trois lignes à coller : la règle d'entrée d'un pays d'Asie s'affiche sur votre site et se met à jour toute seule, avec sa date de vérification."
+  schema={schema}
+>
+  <header class="border-b border-line bg-cream-warm">
+    <div class="wrap py-10 lg:py-14">
+      <Breadcrumbs items={[{ label: 'Intégrer nos données' }]} />
+      <p class="eyebrow mt-6">Gratuit · sans inscription · CC BY 4.0</p>
+      <h1 class="mt-4 max-w-3xl text-hero">Votre règle de visa<br class="hidden sm:block" /> ne vieillira plus</h1>
+      <p class="mt-6 max-w-2xl text-[1.15rem] leading-relaxed text-warm">
+        Si vous tenez un blog, un forum ou une page qui parle de voyage en Asie, vous
+        avez un problème que nous avons déjà résolu : la règle d'entrée que vous avez
+        écrite un jour est probablement fausse aujourd'hui, et la surveiller demande
+        de relire {nbSourcesSurveillees} pages officielles chaque semaine.
+      </p>
+      <p class="mt-4 max-w-2xl text-[1.05rem] leading-relaxed text-warm">
+        Collez trois lignes. La règle s'affiche chez vous, avec sa date, et elle se
+        met à jour quand nous la corrigeons.
+      </p>
+    </div>
+  </header>
+
+  <div class="wrap grid gap-14 py-14 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-16">
+    <div class="min-w-0">
+
+      <section>
+        <h2 class="text-display">Le code</h2>
+        <p class="mt-4 max-w-2xl text-[1.05rem] leading-relaxed text-warm">
+          Le <code class="rounded bg-cream-warm px-1.5 py-0.5 font-mono text-[0.85em]">div</code> se
+          place où vous voulez l'encart. La balise <code class="rounded bg-cream-warm px-1.5 py-0.5 font-mono text-[0.85em]">script</code> ne
+          se met qu'une fois par page, même avec plusieurs pays.
+        </p>
+
+        <div class="mt-6 overflow-x-auto rounded-brand bg-ink px-5 py-4">
+          <pre class="font-mono text-[0.82rem] leading-relaxed text-cream"><code>{exemple}</code></pre>
+        </div>
+
+        <p class="mt-4 text-[0.9rem] leading-relaxed text-warm">
+          Remplacez <code class="rounded bg-cream-warm px-1.5 py-0.5 font-mono text-[0.85em]">vietnam</code> par
+          l'identifiant du pays voulu&nbsp;:
+        </p>
+        <ul class="mt-3 flex flex-wrap gap-2">
+          {countries.map((c) => (
+            <li class="rounded-full border border-line bg-white px-3 py-1.5 font-mono text-[0.8rem] text-ink-soft">{c.slug}</li>
+          ))}
+        </ul>
+      </section>
+
+      <section class="mt-14">
+        <h2 class="text-display">À quoi ça ressemble</h2>
+        <p class="mt-4 max-w-2xl text-[1.05rem] leading-relaxed text-warm">
+          Le rendu ci-dessous est le bloc réel, chargé depuis nos données comme il le
+          serait chez vous.
+        </p>
+        <div class="mt-6 rounded-brand border border-dashed border-line-strong bg-cream-warm p-5">
+          <p class="mb-3 font-mono text-[0.72rem] uppercase tracking-wider text-warm-light">Aperçu</p>
+          <div class="asiaunseen-visa" data-pays="vietnam"></div>
+        </div>
+      </section>
+
+      <section class="mt-14">
+        <h2 class="text-display">Ce qu'il fait, et ce qu'il ne fait pas</h2>
+
+        <dl class="mt-8 space-y-6">
+          <div>
+            <dt class="font-display text-[1.05rem] font-bold text-ink">Il lit la donnée en direct</dt>
+            <dd class="mt-1.5 text-[0.96rem] leading-relaxed text-warm">
+              Rien n'est figé au moment du copier-coller. Un bloc qui gèlerait la règle
+              vieillirait chez vous, afficherait une durée de visa périmée sous notre
+              nom, et abîmerait exactement la confiance qu'il est censé apporter. S'il
+              ne peut pas charger la donnée, il affiche un lien — jamais un chiffre.
+            </dd>
+          </div>
+          <div>
+            <dt class="font-display text-[1.05rem] font-bold text-ink">Il montre toujours sa date</dt>
+            <dd class="mt-1.5 text-[0.96rem] leading-relaxed text-warm">
+              Une règle d'entrée sans date de vérification est inutilisable. C'est
+              l'argument central de ce site, il serait absurde de l'abandonner en
+              sortant de chez nous.
+            </dd>
+          </div>
+          <div>
+            <dt class="font-display text-[1.05rem] font-bold text-ink">Il ne mesure rien, ne pose aucun cookie</dt>
+            <dd class="mt-1.5 text-[0.96rem] leading-relaxed text-warm">
+              Pas de traceur, pas d'identifiant, pas de requête vers un tiers. Vos
+              visiteurs n'ont rien à consentir, et vous n'avez rien à déclarer.
+            </dd>
+          </div>
+          <div>
+            <dt class="font-display text-[1.05rem] font-bold text-ink">Il n'écrit aucun style sur votre page</dt>
+            <dd class="mt-1.5 text-[0.96rem] leading-relaxed text-warm">
+              Tout est en ligne dans le bloc, et le bloc n'hérite de rien. Il aura la
+              même tête chez vous que dans l'aperçu ci-dessus, quel que soit votre thème.
+            </dd>
+          </div>
+          <div>
+            <dt class="font-display text-[1.05rem] font-bold text-ink">Il n'est pas paramétrable</dt>
+            <dd class="mt-1.5 text-[0.96rem] leading-relaxed text-warm">
+              Ni couleurs, ni masquage de la mention. La licence CC BY exige
+              l'attribution, et un bloc dont on pourrait retirer la source deviendrait
+              une règle de visa anonyme — c'est-à-dire le problème que ce site existe
+              pour résoudre.
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="mt-14">
+        <h2 class="text-display">Licence et conditions</h2>
+        <div class="prose-au mt-6">
+          <p>
+            Les données sont publiées sous <a href="https://creativecommons.org/licenses/by/4.0/deed.fr" target="_blank" rel="noopener">Creative Commons Attribution 4.0</a>.
+            Vous pouvez les réutiliser librement, y compris commercialement, à condition
+            de citer la source — ce que le bloc fait pour vous.
+          </p>
+          <p>
+            Si vous préférez traiter les données vous-même plutôt que d'utiliser le
+            bloc, le <a href="/donnees">jeu de données complet</a> est en accès libre au
+            format JSON, sources et dates comprises. La seule chose que nous demandons
+            est la mention&nbsp;: <em>Données&nbsp;: Asia Unseen, sous licence CC BY 4.0</em>.
+          </p>
+          <p>
+            Une réserve, et elle est sérieuse : ces règles concernent le passeport
+            français ordinaire pour un séjour touristique. Si votre audience est
+            différente, dites-le clairement — une règle juste appliquée au mauvais
+            passeport reste une règle fausse. Aucune fiche n'est plus ancienne
+            {queMois(plusAncienneVerification)}.
+          </p>
+        </div>
+      </section>
+
+      <div class="mt-14">
+        <Newsletter variant="inline" title="Être prévenu quand une règle change" />
+      </div>
+    </div>
+
+    <aside class="space-y-6 lg:sticky lg:top-24 lg:self-start">
+      <div class="rounded-brand border border-line bg-white p-6">
+        <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-warm-light">
+          Pourquoi c'est gratuit
+        </p>
+        <p class="mt-3 text-[0.9rem] leading-relaxed text-warm">
+          Parce que le lien de retour nous suffit. Ce site n'a ni budget publicitaire
+          ni réseau ; donner une raison de le citer est le seul levier dont il dispose.
+        </p>
+        <p class="mt-3 text-[0.9rem] leading-relaxed text-warm">
+          Et parce qu'une règle de visa juste, affichée sur dix sites plutôt qu'un,
+          évite dix fois plus de mauvaises surprises à une frontière.
+        </p>
+      </div>
+
+      <div class="rounded-brand border-l-[3px] border-teal bg-teal-50 px-5 py-4">
+        <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-teal-700">
+          Vérifier avant d'intégrer
+        </p>
+        <ul class="mt-3 space-y-2 text-[0.88rem] leading-relaxed text-ink-soft">
+          <li><a href="/veille" class="link">L'état de la veille</a> — les pages relues cette nuit.</li>
+          <li><a href="/mises-a-jour" class="link">Le journal des corrections</a> — ce qui a changé, et pourquoi.</li>
+          <li><a href="/donnees" class="link">Le jeu de données</a> — la source brute.</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
+
+<script src="/embed/visa.js" async is:inline></script>

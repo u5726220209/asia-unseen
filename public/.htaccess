@@ -57,6 +57,15 @@ ErrorDocument 404 /404/index.html
   <FilesMatch "\.(js|css|woff2|png|jpg|jpeg|webp|svg|ico)$">
     Header set Cache-Control "public, max-age=31536000, immutable"
   </FilesMatch>
+
+  # Sauf le bloc citable. Son adresse ne porte pas d'empreinte — c'est tout
+  # l'intérêt, les sites qui l'intègrent collent une ligne une fois pour
+  # toutes. Le mettre en cache un an gèlerait donc le moindre défaut chez
+  # tous les intégrateurs, sans aucun moyen de le corriger.
+  <FilesMatch "^visa\.js$">
+    Header set Cache-Control "public, max-age=3600"
+    Header set Access-Control-Allow-Origin "*"
+  </FilesMatch>
   <FilesMatch "\.(html|xml|txt)$">
     Header set Cache-Control "public, max-age=0, must-revalidate"
   </FilesMatch>
