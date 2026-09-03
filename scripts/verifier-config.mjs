@@ -217,4 +217,62 @@ if (visasIncoherents.length) {
   console.log('✓ Chaque durée d\'exemption chiffrée correspond à sa phrase.\n');
 }
 
-process.exit(jamaisEcrits.length || jamaisLus.length || defautsFormulaire.length || ecartSources || visasIncoherents.length ? 1 : 0);
+/* ── Une correction publiée a-t-elle vraiment été faite ? ────────── */
+
+/**
+ * Le journal des corrections affirme, pour chaque entrée, « le site disait
+ * ceci, la source dit cela ». C'est la page la plus exigeante du site : elle
+ * ne décrit pas une intention, elle atteste d'un fait accompli.
+ *
+ * Rien ne le vérifiait. Le 3 septembre 2026, une correction annonçant que
+ * l'exemption thaïlandaise passait de soixante à trente jours a été publiée
+ * pendant que la fiche pays affichait toujours l'ancienne règle — un script
+ * avait échoué sur une assertion après avoir modifié le texte en mémoire,
+ * sans jamais écrire le fichier. Le site se félicitait donc d'une correction
+ * qu'il n'avait pas appliquée, sur sa page de confiance.
+ *
+ * Le contrôle est simple et il aurait suffi : si le texte cité comme « avant »
+ * figure encore sur la page concernée, la correction n'a pas eu lieu.
+ *
+ * Les `avant` qui ne sont pas des phrases de la page — une adresse remplacée,
+ * une source retirée — ne déclenchent naturellement rien, puisqu'ils n'y
+ * figuraient pas non plus auparavant.
+ */
+const correctionsNonFaites = [];
+if (existsSync('dist')) {
+  const ts = readFileSync('src/data/corrections.ts', 'utf8');
+  const propre = (t) =>
+    t.replace(/\s+/g, ' ').replace(/[«»""'']/g, "'").trim();
+
+  for (const m of ts.matchAll(/page: '([^']+)',[\s\S]{0,400}?avant:\s*\n?\s*"([^"]+)"/g)) {
+    const page = m[1];
+    const avant = propre(m[2]);
+    // Trop court pour être discriminant : un fragment de trois mots se
+    // retrouve partout et produirait de fausses alertes.
+    if (avant.length < 40) continue;
+
+    const f = `dist${page}/index.html`;
+    if (!existsSync(f)) continue;
+    const texte = propre(readFileSync(f, 'utf8').replace(/<[^>]+>/g, ' ').replace(/&#39;|&rsquo;/g, "'"));
+    if (texte.includes(avant)) correctionsNonFaites.push({ page, avant });
+  }
+}
+
+if (correctionsNonFaites.length) {
+  console.log(`⛔ ${correctionsNonFaites.length} correction(s) publiée(s) mais pas appliquée(s) :\n`);
+  for (const c of correctionsNonFaites) {
+    console.log(`   ${c.page}`);
+    console.log(`   le texte cité comme « avant » figure encore sur la page :`);
+    console.log(`   « ${c.avant.slice(0, 100)}… »\n`);
+  }
+  console.log('   Le journal des corrections atteste de faits accomplis, pas');
+  console.log('   d\'intentions. Publier une correction non faite est la seule');
+  console.log('   chose que cette page ne peut pas se permettre.\n');
+} else if (existsSync('dist')) {
+  console.log('✓ Chaque correction publiée est appliquée sur sa page.\n');
+}
+
+process.exit(
+  jamaisEcrits.length || jamaisLus.length || defautsFormulaire.length ||
+  ecartSources || visasIncoherents.length || correctionsNonFaites.length ? 1 : 0,
+);

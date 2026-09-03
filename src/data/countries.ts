@@ -150,11 +150,11 @@ export const countries: Country[] = [
     saisonNote:
       "Novembre à mars : sec, respirable, c'est la haute saison et les prix suivent. Avril : 40 °C à Bangkok, mais c'est le mois de Songkran. Mai à octobre : mousson côté Andaman (Phuket, Krabi) — en revanche le golfe (Koh Samui, Koh Phangan) reste correct jusqu'en septembre et ne prend l'eau qu'en octobre-novembre. Les deux côtes n'ont pas la même saison : c'est la clé pour voyager hors des périodes chères.",
     visa: {
-      resume: "Exemption de visa pour les séjours touristiques courts. La durée est en cours de réduction : à revérifier impérativement avant de réserver.",
-      duree: "60 jours à ce jour, mais une réduction à 30 jours est annoncée comme imminente par les autorités françaises. Tout séjour planifié au-delà de 30 jours doit être reconfirmé avant le départ.",
+      resume: "Exemption de visa de 30 jours pour les séjours touristiques, depuis le 15 septembre 2026. Elle était de 60 jours auparavant.",
+      duree: "30 jours sans visa depuis le 15 septembre 2026, contre 60 jours auparavant. Une extension unique pouvant aller jusqu'à 30 jours se demande sur place, auprès d'un bureau de l'immigration. Par voie terrestre, deux passages sans visa seulement par année civile.",
       cout: "Gratuit à l'entrée ; ≈ 1 900 THB pour une prolongation sur place",
-      procedure: "La Thailand Digital Arrival Card (TDAC) est obligatoire depuis le 1er mai 2025 pour toute entrée par air, terre ou mer : à remplir en ligne dans les 3 jours précédant l'arrivée sur tdac.immigration.go.th. Un billet de sortie du territoire peut être réclamé à l'embarquement.",
-      sansVisaJours: 60,
+      procedure: "La Thailand Digital Arrival Card (TDAC) est obligatoire depuis le 1er mai 2025 pour toute entrée par air, terre ou mer : à remplir en ligne dans les 3 jours précédant l'arrivée sur tdac.immigration.go.th — gratuitement, les sites qui la facturent sont des intermédiaires. Passeport valide 6 mois à compter de la date d'entrée. Un billet de sortie du territoire peut être réclamé à l'embarquement.",
+      sansVisaJours: 30,
     },
     sourcesVisa: [
       { label: 'Thailand Digital Arrival Card (TDAC) — portail officiel', url: 'https://tdac.immigration.go.th/' },
