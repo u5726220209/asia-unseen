@@ -79,7 +79,7 @@ if (!jamaisEcrits.length && !jamaisLus.length) console.log('✓ Les deux listes 
  */
 const defautsFormulaire = [];
 if (existsSync('dist')) {
-  const pages = execFileSync('bash', ['-c', 'ls dist/index.html dist/newsletter/index.html 2>/dev/null'], { encoding: 'utf8' })
+  const pages = execFileSync('bash', ['-c', 'ls dist/index.html dist/newsletter/index.html dist/vietnam/index.html 2>/dev/null'], { encoding: 'utf8' })
     .split('\n').filter(Boolean);
 
   for (const page of pages) {
@@ -91,9 +91,30 @@ if (existsSync('dist')) {
     // Un formulaire branché doit aussi porter html_type=simple, sans quoi Brevo
     // attend un script maison que ce site ne charge pas, et la redirection de
     // confirmation ne part jamais.
-    const branche = /<form[^>]*class="au-nl[^>]*action="https?:/.test(html);
-    if (branche && !html.includes('name="html_type" value="simple"')) {
-      defautsFormulaire.push({ page, motif: 'formulaire branché sans html_type=simple' });
+    //
+    // Le contrôle ne visait que la classe `au-nl`. La veille personnelle des
+    // fiches pays porte `au-vp` : elle serait passée à travers, et c'est
+    // exactement le genre d'angle mort qui rend un contrôle rassurant plutôt
+    // qu'utile. On teste donc toute soumission vers un service externe.
+    for (const f of html.match(/<form[^>]*action="https?:[^"]*"[^>]*>/g) ?? []) {
+      if (!/class="au-(nl|vp)/.test(f)) continue;
+      if (!html.includes('name="html_type" value="simple"')) {
+        defautsFormulaire.push({ page, motif: 'formulaire branché sans html_type=simple' });
+      }
+    }
+
+    // La date de départ doit partir au format que Brevo exige — jj-mm-aaaa, là
+    // où <input type="date"> produit aaaa-mm-jj. Un attribut mal formé est
+    // rejeté sans bruit : l'inscription réussit, la date se perd.
+    //
+    // Le contrôle cherchait d'abord la classe de conversion n'importe où dans
+    // la page. Elle y figure aussi dans le script qui s'en sert, si bien qu'il
+    // constatait sa propre existence et ne pouvait jamais échouer. On vise
+    // maintenant la balise elle-même.
+    for (const champ of html.match(/<input[^>]*name="DATE_DEPART"[^>]*>/g) ?? []) {
+      if (!/au-vp-date-brevo/.test(champ)) {
+        defautsFormulaire.push({ page, motif: 'DATE_DEPART sans conversion jj-mm-aaaa' });
+      }
     }
   }
 }

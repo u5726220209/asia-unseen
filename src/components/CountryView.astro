@@ -9,6 +9,7 @@ import Callout from './Callout.astro';
 import FAQ from './FAQ.astro';
 import AdSlot from './AdSlot.astro';
 import Newsletter from './Newsletter.astro';
+import VeillePersonnelle from './VeillePersonnelle.astro';
 import Visuel from './Visuel.astro';
 import ArticleCard from './ArticleCard.astro';
 import VeillePays from './VeillePays.astro';
@@ -263,7 +264,12 @@ const faq = [
 
       <FAQ items={faq} title={`${c.nom} : les questions qu'on nous pose`} />
 
-      <Newsletter variant="inline" />
+      {/*
+        Sur une fiche pays, la lettre générique laisse la place à la veille
+        personnelle : le lecteur est déjà là pour ce pays, la question de sa
+        date de départ ne lui coûte rien, et la promesse devient vérifiable.
+      */}
+      <VeillePersonnelle country={c} class="mt-12" />
     </div>
 
     <!-- Colonne latérale -->
