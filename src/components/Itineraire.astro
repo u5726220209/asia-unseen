@@ -1,0 +1,303 @@
+---
+import { countries } from '@/data/countries';
+
+/**
+ * L'itinéraire multi-pays.
+ *
+ * LE CALCUL QUI N'EXISTE NULLE PART AILLEURS
+ * Toutes les checklists de voyage, celle de ce site comprise, comptent les
+ * démarches en jours avant le départ. Sur un seul pays, c'est juste. Sur trois,
+ * c'est faux : l'e-visa cambodgien doit être prêt avant d'entrer au Cambodge —
+ * pas avant de quitter la France. Quelqu'un qui passe cinq semaines au Vietnam
+ * et au Laos avant d'arriver à Phnom Penh a cinq semaines de plus qu'il ne le
+ * croit ; quelqu'un qui commence par le Cambodge en a beaucoup moins.
+ *
+ * Cet outil replace donc chaque démarche par rapport à l'entrée dans SON pays,
+ * et signale celles qui tombent avant le départ de France — c'est-à-dire
+ * celles qu'il faudra avoir faites depuis chez soi, faute de pouvoir les faire
+ * en route.
+ *
+ * CE QU'IL NE FAIT PAS
+ * Il ne dit pas si une frontière terrestre applique la même règle qu'un
+ * aéroport, ni si une exemption se recharge en sortant puis rentrant. Ces deux
+ * questions ont des réponses qui varient par pays et par poste-frontière, et
+ * les inventer serait pire que se taire : chaque étape renvoie à la fiche du
+ * pays, qui les traite au cas par cas.
+ */
+
+const data = countries.map((c) => ({
+  slug: c.slug,
+  nom: c.nom,
+  article: c.article,
+  sansVisaJours: c.visa.sansVisaJours,
+  resume: c.visa.resume,
+  duree: c.visa.duree,
+  demarches: c.demarches.map((d) => ({ jours: d.jours, titre: d.titre, detail: d.detail })),
+}));
+
+const auj = new Date();
+const defaut = new Date(auj.getFullYear(), auj.getMonth(), auj.getDate() + 60)
+  .toISOString().slice(0, 10);
+---
+
+<div class="au-itin my-10 overflow-hidden rounded-brand border border-line bg-white" data-pays={JSON.stringify(data)}>
+  <div class="border-b border-line bg-cream-warm px-6 py-5">
+    <p class="eyebrow">Outil</p>
+    <h3 class="mt-1.5 font-display text-xl font-bold text-ink">Plusieurs pays, dans quel ordre&nbsp;?</h3>
+    <p class="mt-1.5 text-[0.88rem] leading-relaxed text-warm">
+      Ajoutez vos étapes dans l'ordre du voyage. Chaque démarche est datée par rapport
+      à l'entrée dans son pays — pas à votre départ de France.
+    </p>
+  </div>
+
+  <div class="border-b border-line px-6 py-5">
+    <label class="mb-2 block font-display text-[0.78rem] font-semibold uppercase tracking-wider text-ink" for="itin-depart">
+      Date de départ de France
+    </label>
+    <input
+      id="itin-depart" type="date" value={defaut}
+      class="au-itin-depart rounded-brand border border-line bg-cream px-4 py-3 text-ink focus:border-teal focus:outline-none"
+    />
+  </div>
+
+  <div class="au-itin-etapes px-6 py-5"></div>
+
+  <div class="flex flex-wrap gap-3 border-t border-line px-6 py-4">
+    <button type="button" class="au-itin-ajout btn-outline !py-2.5 !text-[0.85rem]">Ajouter une étape</button>
+    <button type="button" class="au-itin-vide text-[0.85rem] text-warm underline decoration-warm-light/50 underline-offset-4 hover:text-ink">Tout effacer</button>
+  </div>
+
+  <div class="au-itin-out border-t border-line bg-cream-warm px-6 py-6" role="status" aria-live="polite"></div>
+</div>
+
+<script>
+  type Demarche = { jours: number; titre: string; detail: string };
+  type Pays = {
+    slug: string; nom: string; article: string; sansVisaJours: number;
+    resume: string; duree: string; demarches: Demarche[];
+  };
+  type Etape = { slug: string; jours: number };
+
+  const CLE = 'au_itineraire';
+
+  const ech = (s: string) =>
+    s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+  const jourFr = (d: Date) =>
+    new Intl.DateTimeFormat('fr-FR', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' }).format(d);
+  const jourCourt = (d: Date) =>
+    new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' }).format(d);
+
+  const ajouterJours = (d: Date, n: number) => {
+    const x = new Date(d.getTime());
+    x.setDate(x.getDate() + n);
+    return x;
+  };
+
+  document.querySelectorAll<HTMLElement>('.au-itin').forEach((bloc) => {
+    const pays: Pays[] = JSON.parse(bloc.dataset.pays || '[]');
+    const index: Record<string, Pays> = {};
+    pays.forEach((p) => { index[p.slug] = p; });
+
+    const inDepart = bloc.querySelector<HTMLInputElement>('.au-itin-depart')!;
+    const zone = bloc.querySelector<HTMLElement>('.au-itin-etapes')!;
+    const sortie = bloc.querySelector<HTMLElement>('.au-itin-out')!;
+    const btnAjout = bloc.querySelector<HTMLButtonElement>('.au-itin-ajout')!;
+    const btnVide = bloc.querySelector<HTMLButtonElement>('.au-itin-vide')!;
+
+    let etapes: Etape[] = [];
+
+    /* Préparer un voyage prend des semaines : l'itinéraire doit survivre à la
+       fermeture de l'onglet. Rien ne sort du navigateur. */
+    function charger() {
+      try {
+        const brut = localStorage.getItem(CLE);
+        if (brut) {
+          const d = JSON.parse(brut);
+          if (Array.isArray(d.etapes)) etapes = d.etapes.filter((e: Etape) => index[e.slug]);
+          if (typeof d.depart === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d.depart)) inDepart.value = d.depart;
+        }
+      } catch { /* stockage indisponible : l'outil marche, il n'oublie simplement rien */ }
+      if (!etapes.length) etapes = [{ slug: pays[0].slug, jours: 14 }];
+    }
+
+    function retenir() {
+      try {
+        localStorage.setItem(CLE, JSON.stringify({ depart: inDepart.value, etapes }));
+      } catch { /* idem */ }
+    }
+
+    function dessinerEtapes() {
+      zone.innerHTML = etapes.map((e, i) => `
+        <div class="au-itin-etape flex flex-wrap items-end gap-3 ${i > 0 ? 'mt-4 border-t border-line pt-4' : ''}" data-i="${i}">
+          <span class="mt-2 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink font-display text-[0.72rem] font-bold text-cream">${i + 1}</span>
+          <div class="min-w-[10rem] flex-1">
+            <label class="mb-1.5 block font-display text-[0.7rem] font-semibold uppercase tracking-wider text-warm-light">Pays</label>
+            <select class="au-itin-pays w-full rounded-brand border border-line bg-cream px-3 py-2.5 text-[0.92rem] text-ink focus:border-teal focus:outline-none">
+              ${pays.map((p) => `<option value="${p.slug}"${p.slug === e.slug ? ' selected' : ''}>${ech(p.nom)}</option>`).join('')}
+            </select>
+          </div>
+          <div>
+            <label class="mb-1.5 block font-display text-[0.7rem] font-semibold uppercase tracking-wider text-warm-light">Jours</label>
+            <input type="number" min="1" max="365" value="${e.jours}" inputmode="numeric"
+              class="au-itin-jours w-20 rounded-brand border border-line bg-cream px-3 py-2.5 text-[0.92rem] tabular-nums text-ink focus:border-teal focus:outline-none" />
+          </div>
+          ${etapes.length > 1 ? `<button type="button" class="au-itin-suppr mb-1 text-[0.8rem] text-warm underline decoration-warm-light/50 underline-offset-4 hover:text-amber-700" aria-label="Retirer l'étape ${i + 1}">retirer</button>` : ''}
+        </div>
+      `).join('');
+
+      zone.querySelectorAll<HTMLElement>('.au-itin-etape').forEach((n) => {
+        const i = Number(n.dataset.i);
+        n.querySelector<HTMLSelectElement>('.au-itin-pays')!.addEventListener('change', (ev) => {
+          etapes[i].slug = (ev.target as HTMLSelectElement).value; tout();
+        });
+        n.querySelector<HTMLInputElement>('.au-itin-jours')!.addEventListener('input', (ev) => {
+          etapes[i].jours = Math.max(1, Math.min(365, Number((ev.target as HTMLInputElement).value) || 1));
+          calculer(); retenir();
+        });
+        n.querySelector<HTMLButtonElement>('.au-itin-suppr')?.addEventListener('click', () => {
+          etapes.splice(i, 1); tout();
+        });
+      });
+    }
+
+    function calculer() {
+      const depart = new Date(`${inDepart.value}T00:00:00`);
+      if (Number.isNaN(depart.getTime())) { sortie.innerHTML = ''; return; }
+
+      let curseur = new Date(depart.getTime());
+      const total = etapes.reduce((s, e) => s + e.jours, 0);
+
+      // Les démarches à faire depuis la France, tous pays confondus.
+      const avantDepart: { quand: Date; pays: string; titre: string; detail: string; urgent: boolean }[] = [];
+
+      const cartes = etapes.map((e, i) => {
+        const p = index[e.slug];
+        const entree = new Date(curseur.getTime());
+        const sortiePays = ajouterJours(entree, e.jours - 1);
+        curseur = ajouterJours(sortiePays, 1);
+
+        const tient = p.sansVisaJours > 0 && e.jours <= p.sansVisaJours;
+        const jamais = p.sansVisaJours === 0;
+
+        const lignes = p.demarches
+          .slice()
+          .sort((a, b) => b.jours - a.jours)
+          .map((d) => {
+            const quand = ajouterJours(entree, -d.jours);
+            const enFrance = quand < depart;
+            if (enFrance) {
+              avantDepart.push({ quand, pays: p.nom, titre: d.titre, detail: d.detail, urgent: quand < new Date() });
+            }
+            return { quand, enFrance, ...d };
+          });
+
+        const ton = jamais || !tient
+          ? { bord: 'border-amber-700', chip: 'bg-amber-50 text-amber-700' }
+          : { bord: 'border-teal', chip: 'bg-teal-50 text-teal-700' };
+
+        const verdict = jamais
+          ? 'Visa exigé dès le premier jour'
+          : tient
+            ? `Dans l'exemption de ${p.sansVisaJours} jours`
+            : `Dépasse l'exemption de ${e.jours - p.sansVisaJours} jour${e.jours - p.sansVisaJours > 1 ? 's' : ''}`;
+
+        return `
+          <li class="overflow-hidden rounded-brand border border-line bg-white">
+            <div class="border-l-[3px] ${ton.bord} px-5 py-4">
+              <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                <span class="font-display text-[1.05rem] font-bold text-ink">${i + 1}. ${ech(p.nom)}</span>
+                <span class="font-mono text-[0.8rem] tabular-nums text-warm">${jourCourt(entree)} → ${jourCourt(sortiePays)}</span>
+                <span class="ml-auto rounded-full px-3 py-1 font-display text-[0.68rem] font-semibold uppercase tracking-wider ${ton.chip}">${e.jours} j · ${ech(verdict)}</span>
+              </div>
+              <p class="mt-2 text-[0.86rem] leading-relaxed text-warm">${ech(p.duree)}</p>
+              ${lignes.length ? `
+                <ul class="mt-3 space-y-1.5 border-t border-line pt-3">
+                  ${lignes.map((l) => `
+                    <li class="flex flex-wrap items-baseline gap-x-2.5 text-[0.84rem]">
+                      <span class="font-mono tabular-nums ${l.enFrance ? 'text-amber-700' : 'text-teal-700'}">${jourCourt(l.quand)}</span>
+                      <span class="text-ink-soft">${ech(l.titre)}</span>
+                      ${l.enFrance ? '<span class="rounded bg-amber-50 px-1.5 py-0.5 font-display text-[0.6rem] font-semibold uppercase tracking-wider text-amber-700">à faire en France</span>' : ''}
+                    </li>
+                  `).join('')}
+                </ul>` : ''}
+              <p class="mt-3 text-[0.8rem]"><a href="/${p.slug}" class="text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">La fiche ${ech(p.nom)} et ses sources</a></p>
+            </div>
+          </li>`;
+      });
+
+      const retour = ajouterJours(depart, total - 1);
+      const enRetard = avantDepart.filter((a) => a.urgent);
+
+      sortie.innerHTML = `
+        <div class="flex flex-wrap items-baseline gap-x-8 gap-y-3">
+          <div>
+            <p class="font-display text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-warm-light">Durée totale</p>
+            <p class="mt-0.5 font-display text-[1.8rem] font-bold leading-none tracking-tight text-ink">${total} jours</p>
+          </div>
+          <div>
+            <p class="font-display text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-warm-light">Départ</p>
+            <p class="mt-0.5 font-display text-[1.05rem] font-bold leading-none text-ink">${jourFr(depart)}</p>
+          </div>
+          <div>
+            <p class="font-display text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-warm-light">Dernier jour</p>
+            <p class="mt-0.5 font-display text-[1.05rem] font-bold leading-none text-ink">${jourFr(retour)}</p>
+          </div>
+        </div>
+
+        ${enRetard.length ? `
+          <div class="mt-5 rounded-brand border-l-[3px] border-amber-700 bg-amber-50 px-5 py-4">
+            <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-amber-700">${enRetard.length} démarche${enRetard.length > 1 ? 's' : ''} déjà en retard</p>
+            <p class="mt-2 text-[0.9rem] leading-relaxed text-ink-soft">
+              Avec cette date de départ, ${enRetard.length > 1 ? 'ces démarches auraient dû' : 'cette démarche aurait dû'} être ${enRetard.length > 1 ? 'engagées' : 'engagée'} avant aujourd'hui&nbsp;:
+              ${enRetard.map((a) => `<strong>${ech(a.titre)}</strong> (${ech(a.pays)})`).join(', ')}. Il reste souvent des procédures accélérées — la fiche du pays les indique.
+            </p>
+          </div>` : ''}
+
+        <ol class="mt-5 space-y-4">${cartes.join('')}</ol>
+
+        ${avantDepart.length ? `
+          <div class="mt-5 rounded-brand border border-line bg-white px-5 py-4">
+            <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-teal">${avantDepart.length} démarche${avantDepart.length > 1 ? 's' : ''} à faire depuis la France</p>
+            <p class="mt-2 text-[0.86rem] leading-relaxed text-warm">
+              Leur échéance tombe avant votre départ : vous ne pourrez pas ${avantDepart.length > 1 ? 'les' : 'la'} faire en route.
+            </p>
+            <ul class="mt-3 space-y-1.5">
+              ${avantDepart.sort((a, b) => a.quand.getTime() - b.quand.getTime()).map((a) => `
+                <li class="flex flex-wrap items-baseline gap-x-2.5 text-[0.86rem]">
+                  <span class="font-mono tabular-nums text-warm">${jourCourt(a.quand)}</span>
+                  <span class="text-ink-soft">${ech(a.titre)}</span>
+                  <span class="text-[0.78rem] text-warm-light">${ech(a.pays)}</span>
+                </li>`).join('')}
+            </ul>
+          </div>` : ''}
+
+        <p class="mt-5 text-[0.8rem] leading-relaxed text-warm-light">
+          Les durées d'exemption sont comptées par entrée. Une frontière terrestre
+          n'applique pas toujours la même règle qu'un aéroport, et toutes les
+          exemptions ne se rechargent pas en ressortant puis rentrant — ces deux
+          points varient par pays et par poste, et sont traités sur chaque fiche.
+        </p>
+      `;
+    }
+
+    function tout() { dessinerEtapes(); calculer(); retenir(); }
+
+    btnAjout.addEventListener('click', () => {
+      const dejaLa = new Set(etapes.map((e) => e.slug));
+      const suivant = pays.find((p) => !dejaLa.has(p.slug)) ?? pays[0];
+      etapes.push({ slug: suivant.slug, jours: 14 });
+      tout();
+    });
+
+    btnVide.addEventListener('click', () => {
+      etapes = [{ slug: pays[0].slug, jours: 14 }];
+      tout();
+    });
+
+    inDepart.addEventListener('change', () => { calculer(); retenir(); });
+
+    charger();
+    tout();
+  });
+</script>

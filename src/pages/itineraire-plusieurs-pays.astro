@@ -1,0 +1,192 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Itineraire from '@/components/Itineraire.astro';
+import Newsletter from '@/components/Newsletter.astro';
+import FAQ from '@/components/FAQ.astro';
+import { countries } from '@/data/countries';
+import { site } from '@/data/site';
+
+/**
+ * L'itinéraire multi-pays.
+ *
+ * Les vrais voyages en Asie du Sud-Est traversent des frontières, et toute la
+ * documentation disponible — celle de ce site comprise, jusqu'ici — raisonne
+ * pays par pays. Trois pays, ce ne sont pas trois problèmes séparés : c'est un
+ * ordre, et l'ordre change les dates.
+ */
+
+const faq = [
+  {
+    q: 'Les démarches se comptent-elles avant le départ ou avant chaque frontière ?',
+    r: "Avant chaque frontière, et c'est la principale source d'erreur des checklists classiques. Un e-visa doit être valide au moment d'entrer dans le pays concerné, pas au moment de quitter la France. Quelqu'un qui passe cinq semaines au Vietnam et au Laos avant d'arriver au Cambodge a cinq semaines de plus qu'il ne le croit pour cette démarche — et quelqu'un qui commence par le Cambodge en a beaucoup moins.",
+  },
+  {
+    q: 'Une exemption de visa se recharge-t-elle si je sors puis rentre dans le pays ?',
+    r: "Parfois, et c'est trop variable pour être répondu en général. Certains pays remettent le compteur à zéro à chaque entrée, d'autres plafonnent le total sur une période glissante, d'autres encore distinguent l'entrée aérienne de l'entrée terrestre. Chaque fiche pays traite ce point à partir de sa source officielle : ne partez jamais du principe que le compteur repart.",
+  },
+  {
+    q: 'Les frontières terrestres appliquent-elles les mêmes règles que les aéroports ?',
+    r: "Pas toujours. Plusieurs pays d'Asie du Sud-Est réservent certaines exemptions ou certains visas à l'arrivée aux entrées aériennes, ou limitent le nombre d'entrées terrestres par an. Si votre itinéraire prévoit un passage par la route, vérifiez explicitement ce point sur la fiche du pays d'arrivée avant de réserver quoi que ce soit.",
+  },
+  {
+    q: 'Dans quel ordre vaut-il mieux enchaîner les pays ?',
+    r: "L'ordre optimal dépend de trois choses : la saison, les démarches à faire depuis la France, et les durées d'exemption. Cet outil éclaire les deux dernières — il vous montre quelles démarches tombent avant votre départ selon l'ordre choisi. Pour la saison, chaque fiche pays donne les mois favorables, et le guide de la meilleure saison les met en regard.",
+  },
+];
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'Itinéraire multi-pays en Asie',
+    applicationCategory: 'TravelApplication',
+    operatingSystem: 'Web',
+    inLanguage: 'fr-FR',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+    isPartOf: { '@id': `${site.url}/#organization` },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.r },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title="Itinéraire plusieurs pays en Asie : dates et formalités"
+  description="Vos étapes dans l'ordre du voyage : dates d'entrée et de sortie, durées d'exemption, et chaque démarche datée par rapport à la frontière concernée."
+  schema={schema}
+>
+  <header class="border-b border-line bg-cream-warm">
+    <div class="wrap py-10 lg:py-14">
+      <Breadcrumbs items={[{ label: 'Itinéraire plusieurs pays' }]} />
+      <p class="eyebrow mt-6">Outil · {countries.length} pays</p>
+      <h1 class="mt-4 max-w-3xl text-hero">Trois pays,<br class="hidden sm:block" /> ce n'est pas trois fois un pays</h1>
+      <p class="mt-6 max-w-2xl text-[1.15rem] leading-relaxed text-warm">
+        C'est un ordre — et l'ordre change les dates. L'e-visa cambodgien doit être prêt
+        avant d'entrer au Cambodge, pas avant de quitter la France. Toutes les listes de
+        préparation comptent pourtant en jours avant le départ.
+      </p>
+    </div>
+  </header>
+
+  <div class="wrap py-12 lg:py-14">
+    <Itineraire />
+
+    <div class="mt-14 grid gap-14 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-16">
+      <div class="min-w-0">
+        <section>
+          <h2 class="text-display">L'erreur que fait toute la documentation</h2>
+          <div class="prose-au mt-6">
+            <p>
+              Une checklist de départ classique — y compris
+              <a href="/checklist-depart">la nôtre</a> — dit « déposer l'e-visa à J-28 ».
+              Sur un voyage d'un seul pays, c'est juste. Sur un itinéraire, c'est faux
+              deux fois plutôt qu'une.
+            </p>
+            <p>
+              Faux dans un sens&nbsp;: si le Cambodge est votre troisième étape, à six
+              semaines du décollage, vous avez six semaines de plus que ce que la liste
+              indique. Faux dans l'autre&nbsp;: si le Cambodge est votre première étape,
+              l'échéance tombe <strong>avant</strong> votre départ — et vous ne pourrez
+              pas la rattraper en route.
+            </p>
+            <p>
+              C'est tout ce que fait cet outil. Il replace chaque démarche par rapport à
+              l'entrée dans son pays, puis il isole celles qui tombent avant le départ&nbsp;:
+              ce sont les seules que vous devez absolument avoir faites depuis chez vous.
+            </p>
+          </div>
+        </section>
+
+        <section class="mt-14">
+          <h2 class="text-display">Ce qu'il ne calcule pas, et pourquoi</h2>
+          <div class="prose-au mt-6">
+            <p>
+              Il ne dit pas si une frontière terrestre applique la même règle qu'un
+              aéroport, ni si une exemption se recharge quand on ressort puis qu'on
+              rentre. Ces deux questions ont des réponses différentes selon le pays, et
+              parfois selon le poste-frontière.
+            </p>
+            <p>
+              Ce ne sont pas des détails&nbsp;: ce sont exactement les deux points sur
+              lesquels un voyageur se fait refouler. Les inventer serait pire que se
+              taire, donc chaque étape renvoie à la fiche du pays, qui les traite à
+              partir de sa source officielle.
+            </p>
+          </div>
+        </section>
+
+        <section class="mt-14">
+          <h2 class="text-display">Trois enchaînements courants</h2>
+          <div class="mt-8 grid gap-4 sm:grid-cols-3">
+            <div class="rounded-brand border border-line bg-white p-5">
+              <p class="font-display text-[0.98rem] font-bold text-ink">La boucle Mékong</p>
+              <p class="mt-1.5 font-mono text-[0.8rem] text-teal-700">Vietnam · Laos · Cambodge</p>
+              <p class="mt-2 text-[0.88rem] leading-relaxed text-warm">
+                Trois règles différentes&nbsp;: exemption au Vietnam, visa payant au Laos
+                et au Cambodge. L'ordre décide de ce qui doit être prêt au départ.
+              </p>
+            </div>
+            <div class="rounded-brand border border-line bg-white p-5">
+              <p class="font-display text-[0.98rem] font-bold text-ink">Le grand Nord</p>
+              <p class="mt-1.5 font-mono text-[0.8rem] text-teal-700">Japon · Corée du Sud</p>
+              <p class="mt-2 text-[0.88rem] leading-relaxed text-warm">
+                Quatre-vingt-dix jours de chaque côté&nbsp;: la durée n'est presque jamais
+                le sujet. Les démarches préalables, si.
+              </p>
+            </div>
+            <div class="rounded-brand border border-line bg-white p-5">
+              <p class="font-display text-[0.98rem] font-bold text-ink">Le classique</p>
+              <p class="mt-1.5 font-mono text-[0.8rem] text-teal-700">Thaïlande · Cambodge</p>
+              <p class="mt-2 text-[0.88rem] leading-relaxed text-warm">
+                L'enchaînement le plus fréquent, et celui où la réduction annoncée de
+                l'exemption thaïlandaise change le plus de choses.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <div class="mt-14">
+          <FAQ items={faq} />
+        </div>
+
+        <div class="mt-14">
+          <Newsletter variant="inline" title="Être prévenu quand une règle change" />
+        </div>
+      </div>
+
+      <aside class="space-y-6 lg:sticky lg:top-24 lg:self-start">
+        <div class="rounded-brand border border-line bg-white p-6">
+          <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-warm-light">
+            À vérifier avant de réserver
+          </p>
+          <ul class="mt-4 space-y-3 text-[0.88rem] leading-relaxed text-ink-soft">
+            <li><a href="/ai-je-besoin-d-un-visa" class="link">Chaque étape prise isolément</a> — la règle et sa date.</li>
+            <li><a href="/meilleure-saison-asie" class="link">La saison</a> — l'ordre optimal dépend aussi de la mousson.</li>
+            <li><a href="/checklist-depart" class="link">Le calendrier de départ</a> — les démarches communes à tout voyage.</li>
+            <li><a href="/mises-a-jour" class="link">Le journal des corrections</a> — ce qui a bougé depuis.</li>
+          </ul>
+        </div>
+
+        <div class="rounded-brand border-l-[3px] border-amber bg-amber-50 px-5 py-4">
+          <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-amber-700">
+            Le piège de l'itinéraire
+          </p>
+          <p class="mt-2.5 text-[0.88rem] leading-relaxed text-ink-soft">
+            Un vol de retour depuis un pays où l'on entre en dernier suppose que la
+            frontière précédente vous laisse sortir dans les temps. Une exemption
+            dépassée d'un jour se paie à la sortie, pas à l'entrée — et l'amende se
+            règle avant l'embarquement.
+          </p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</BaseLayout>

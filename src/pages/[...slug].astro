@@ -167,7 +167,24 @@ const paysLies = (g?.pays ?? []).map((s) => bySlug[s]).filter(Boolean);
 
           {g!.outil === 'budget' && <BudgetCalculator />}
           {g!.outil === 'saison' && <SeasonFinder />}
-          {g!.outil === 'checklist' && <ChecklistDepart />}
+          {g!.outil === 'checklist' && (
+            <>
+              <ChecklistDepart />
+              {/*
+                Cette liste compte en jours avant le départ, ce qui est juste pour
+                un pays et faux pour trois : un e-visa doit être valide à la
+                frontière concernée, pas au décollage. On le dit ici plutôt que
+                de laisser le lecteur s'en apercevoir trop tard.
+              */}
+              <p class="not-prose my-8 rounded-brand border-l-[3px] border-amber bg-amber-50 px-5 py-4 text-[0.95rem] leading-relaxed text-ink-soft">
+                <strong>Vous passez par plusieurs pays&nbsp;?</strong> Cette liste compte en
+                jours avant le départ. Sur un itinéraire, une démarche se date par rapport
+                à la frontière concernée — l'e-visa cambodgien doit être prêt avant d'entrer
+                au Cambodge, pas avant de quitter la France.
+                <a href="/itineraire-plusieurs-pays" class="font-medium text-amber-700 underline decoration-amber-700/30 underline-offset-4 hover:decoration-amber"> Voir l'outil d'itinéraire</a>.
+              </p>
+            </>
+          )}
           {g!.outil === 'assurance' && <ComparateurAssurances />}
           {g!.outil === 'visas' && <ComparateurVisas />}
 
