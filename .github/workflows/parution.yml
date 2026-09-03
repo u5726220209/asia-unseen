@@ -88,8 +88,31 @@ jobs:
 
       - name: Le gardien confirme
         run: |
-          sleep 30
-          # --attendu : le gardien exige que la version servie soit celle qu'on
-          # vient de déployer. Sans cela, un transfert parti au mauvais endroit
-          # se conclut par un succès, sur un site resté figé.
-          node scripts/gardien.mjs --attendu "$(git rev-parse --short HEAD)"
+          # ── Attendre que le serveur ait fini de se poser ────────────
+          #
+          # Le contrôle était un `sleep 30` suivi d'une seule tentative. Il a
+          # échoué quatorze fois sur trente-sept, toujours de la même façon :
+          # 403 sur tout — sitemap, robots.txt, jeu de données — et version.txt
+          # absent. Ce n'est pas un déploiement raté, c'est un déploiement
+          # photographié pendant qu'il se fait. Le transfert remplace aussi
+          # .htaccess, et pendant ce remplacement Apache refuse tout.
+          #
+          # Un échec sur trois est pire qu'aucun contrôle : il apprend à
+          # ignorer la croix rouge, et le jour où elle signale une vraie panne,
+          # personne ne la regarde. On attend donc que la version servie soit
+          # la bonne, jusqu'à quatre minutes — puis on lance le gardien complet.
+          #
+          # La rigueur est intacte : si la bonne version n'apparaît jamais, ou
+          # si le gardien trouve autre chose, l'étape échoue toujours.
+          attendu="$(git rev-parse --short HEAD)"
+          for i in $(seq 1 24); do
+            servi="$(curl -sf --max-time 10 https://asiaunseen.com/version.txt | head -1 | tr -d '[:space:]' || true)"
+            if [ "$servi" = "$attendu" ]; then
+              echo "Version $attendu servie après $((i * 10)) s."
+              break
+            fi
+            [ "$i" = "24" ] && echo "Toujours « ${servi:-rien} » après 4 min — le gardien va le dire."
+            sleep 10
+          done
+
+          node scripts/gardien.mjs --attendu "$attendu"
