@@ -1,0 +1,256 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Newsletter from '@/components/Newsletter.astro';
+import { sourcesSurveillees, nbSourcesSurveillees } from '@/lib/fraicheur';
+import { nbCorrections } from '@/data/corrections';
+import { site } from '@/data/site';
+import empreintes from '@/data/veille-empreintes.json';
+
+/**
+ * L'état de la veille, en public.
+ *
+ * Le site affirme partout qu'il relit chaque jour les portails officiels des
+ * neuf pays. C'est vrai, et c'est invérifiable : le lecteur doit croire sur
+ * parole un site dont l'argument principal est justement qu'il ne demande pas
+ * qu'on le croie sur parole. Cette page referme la contradiction.
+ *
+ * Elle ne raconte rien : elle affiche le contenu de `veille-empreintes.json`,
+ * écrit chaque nuit par scripts/veille.mjs. Une source qui n'a pas répondu
+ * n'y figure pas — et c'est précisément ce qu'il faut montrer, parce qu'une
+ * page d'état qui ne montrerait que ce qui marche ne serait pas un état.
+ *
+ * Le commit nocturne de la veille déclenche volontairement une republication
+ * (voir .github/workflows/veille.yml) : sans cela, les dates affichées ici
+ * seraient celles de la dernière mise en ligne, pas celles du dernier relevé.
+ */
+
+const releves = empreintes.pages as Record<string, { label: string; releveLe: string }>;
+const genereLe = (empreintes as { genereLe?: string }).genereLe ?? '';
+
+const cle = (u: string) => u.replace(/\/$/, '');
+const trouver = (u: string) =>
+  releves[u] ?? releves[cle(u)] ?? releves[`${cle(u)}/`] ?? null;
+
+const lignes = sourcesSurveillees.map((s) => {
+  const r = trouver(s.url);
+  return {
+    ...s,
+    domaine: new URL(s.url).hostname.replace(/^www\./, ''),
+    releveLe: r?.releveLe ?? null,
+    muette: !r,
+  };
+});
+
+const muettes = lignes.filter((l) => l.muette);
+const relevees = lignes.filter((l) => !l.muette);
+
+/** La date du relevé le plus récent : l'âge réel de cette page. */
+const dernierReleve = relevees.map((l) => l.releveLe!).sort().at(-1) ?? genereLe;
+
+const fmtJour = (d: string) =>
+  d
+    ? new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+        .format(new Date(`${d}T00:00:00`))
+    : '—';
+
+/** Combien de jours nous séparent du dernier relevé. Zéro est la valeur normale. */
+const joursDepuis = dernierReleve
+  ? Math.round((Date.now() - new Date(`${dernierReleve}T00:00:00`).getTime()) / 86_400_000)
+  : null;
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'État de la veille',
+    description:
+      "Les pages officielles surveillées chaque jour par Asia Unseen, la date de leur dernier relevé, et celles qui n'ont pas répondu.",
+    inLanguage: 'fr-FR',
+    isPartOf: { '@id': `${site.url}/#organization` },
+  },
+];
+---
+
+<BaseLayout
+  title="État de la veille — ce que la machine a relu aujourd'hui"
+  description="La liste des pages officielles surveillées chaque jour, la date de leur dernier relevé, et celles qui n'ont pas répondu. La preuve, plutôt que l'affirmation."
+  schema={schema}
+>
+  <header class="border-b border-line bg-cream-warm">
+    <div class="wrap py-10 lg:py-14">
+      <Breadcrumbs items={[{ label: 'État de la veille' }]} />
+      <p class="eyebrow mt-6">Sous le capot</p>
+      <h1 class="mt-4 max-w-3xl text-hero">Ce que la machine<br class="hidden sm:block" /> a relu cette nuit</h1>
+      <p class="mt-6 max-w-2xl text-[1.15rem] leading-relaxed text-warm">
+        Le site répète qu'il surveille les portails officiels chaque jour. Voici la
+        liste, avec la date du dernier passage sur chacun. Y compris ceux qui n'ont
+        pas répondu.
+      </p>
+
+      <dl class="mt-10 flex flex-wrap gap-x-12 gap-y-5">
+        <div>
+          <dt class="font-display text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-warm-light">Pages surveillées</dt>
+          <dd class="mt-1 font-display text-[2.2rem] font-bold leading-none tracking-tight text-ink">{nbSourcesSurveillees}</dd>
+        </div>
+        <div>
+          <dt class="font-display text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-warm-light">Relevées au dernier passage</dt>
+          <dd class="mt-1 font-display text-[2.2rem] font-bold leading-none tracking-tight text-ink">{relevees.length}</dd>
+        </div>
+        <div>
+          <dt class="font-display text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-warm-light">Sans réponse</dt>
+          <dd class:list={['mt-1 font-display text-[2.2rem] font-bold leading-none tracking-tight', muettes.length ? 'text-amber-700' : 'text-ink']}>{muettes.length}</dd>
+        </div>
+        <div>
+          <dt class="font-display text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-warm-light">Dernier passage</dt>
+          <dd class="mt-1 font-display text-[1.5rem] font-bold leading-none tracking-tight text-ink">{fmtJour(dernierReleve)}</dd>
+        </div>
+      </dl>
+    </div>
+  </header>
+
+  <div class="wrap grid gap-14 py-14 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-16">
+    <div class="min-w-0">
+
+      {joursDepuis !== null && joursDepuis > 2 && (
+        <div class="mb-8 rounded-brand border-l-[3px] border-amber-700 bg-amber-50 px-6 py-5">
+          <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-amber-700">La veille a pris du retard</p>
+          <p class="mt-2 text-[0.95rem] leading-relaxed text-ink-soft">
+            Le dernier relevé date d'il y a {joursDepuis} jours. Elle doit passer chaque
+            nuit : au-delà de deux jours, quelque chose s'est arrêté. Les dates de
+            vérification affichées sur les fiches restent justes — mais un changement
+            survenu depuis n'a pas été vu.
+          </p>
+        </div>
+      )}
+
+      <div class="rounded-brand border-l-[3px] border-teal bg-teal-50 px-6 py-5">
+        <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-teal-700">Ce que fait exactement cette veille</p>
+        <p class="mt-2 text-[0.95rem] leading-relaxed text-ink-soft">
+          Chaque nuit, elle télécharge ces pages, en retire le texte signifiant et le
+          compare au relevé de la veille. Quand une valeur chiffrée bouge — un tarif,
+          une durée, un plafond —, elle le signale. <strong>Elle ne conclut rien et ne
+          modifie aucune page&nbsp;:</strong> lire un texte administratif ambigu et décider
+          de ce qu'il faut écrire est un travail de jugement, et c'est exactement là que
+          naissent les affirmations fausses.
+        </p>
+      </div>
+
+      {muettes.length > 0 && (
+        <section class="mt-12">
+          <h2 class="text-title">Les {muettes.length} qui n'ont pas répondu</h2>
+          <div class="mt-3 h-[3px] w-12 bg-amber"></div>
+          <p class="mt-5 max-w-2xl text-[0.98rem] leading-relaxed text-warm">
+            Le plus souvent un blocage anti-robot, pas un lien mort : plusieurs portails
+            d'immigration refusent les requêtes automatiques. Ces pages doivent être
+            rouvertes à la main, et le calendrier de fraîcheur le rappelle.
+          </p>
+          <ul class="mt-6 space-y-2.5">
+            {muettes.map((l) => (
+              <li class="flex flex-wrap items-baseline gap-x-3 gap-y-1 rounded-brand border border-amber-700/30 bg-amber-50 px-5 py-3.5">
+                <span class="font-display text-[0.95rem] font-semibold text-ink">{l.label}</span>
+                {l.pays && <span class="text-[0.8rem] text-warm-light">{l.pays}</span>}
+                <a href={l.url} target="_blank" rel="noopener nofollow" class="ml-auto font-mono text-[0.78rem] text-amber-700 underline decoration-amber-700/30 underline-offset-4">
+                  {l.domaine} ↗
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <section class="mt-12">
+        <h2 class="text-title">Les {relevees.length} relevées au dernier passage</h2>
+        <div class="mt-3 h-[3px] w-12 bg-teal"></div>
+
+        <div class="mt-6 overflow-x-auto">
+          <table class="w-full min-w-[34rem] border-collapse text-left">
+            <thead>
+              <tr class="border-b border-line">
+                <th scope="col" class="pb-3 pr-4 font-display text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-warm-light">Page officielle</th>
+                <th scope="col" class="pb-3 pr-4 font-display text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-warm-light">Pays</th>
+                <th scope="col" class="pb-3 text-right font-display text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-warm-light">Dernier relevé</th>
+              </tr>
+            </thead>
+            <tbody>
+              {relevees.map((l) => (
+                <tr class="border-b border-line/70 align-baseline">
+                  <td class="py-3.5 pr-4">
+                    <a href={l.url} target="_blank" rel="noopener nofollow" class="font-medium text-ink-soft underline decoration-line underline-offset-4 hover:decoration-amber">
+                      {l.label}
+                    </a>
+                    <span class="mt-0.5 block font-mono text-[0.74rem] text-warm-light">{l.domaine}</span>
+                  </td>
+                  <td class="py-3.5 pr-4 text-[0.85rem] text-warm">{l.pays ?? '—'}</td>
+                  <td class="py-3.5 text-right">
+                    <span class="inline-flex items-center gap-1.5 font-mono text-[0.78rem] tabular-nums text-teal-700">
+                      <svg viewBox="0 0 16 16" class="h-3 w-3 shrink-0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M2.5 8.5 6 12l7.5-8" />
+                      </svg>
+                      {l.releveLe}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="mt-14">
+        <h2 class="text-title">Ce que cette page ne prouve pas</h2>
+        <div class="mt-3 h-[3px] w-12 bg-ink"></div>
+        <div class="prose-au mt-6">
+          <p>
+            Qu'une page a été relue ne veut pas dire que son contenu est juste, ni que
+            le site l'a correctement interprétée. La veille constate qu'un texte a bougé.
+            Ce qu'il faut en écrire reste une décision humaine, et les
+            <a href="/mises-a-jour"> {nbCorrections} corrections publiées</a> sont la
+            trace de ces décisions.
+          </p>
+          <p>
+            Elle ne voit pas non plus ce qui se passe aux guichets. Un portail peut
+            afficher l'ancienne règle pendant des semaines après un changement effectif —
+            c'est même le cas le plus fréquent. C'est pour cette raison que
+            <a href="/verifier"> les signalements de lecteurs</a> valent autant que la
+            machine.
+          </p>
+        </div>
+      </section>
+
+      <div class="mt-12">
+        <Newsletter variant="inline" title="Être prévenu quand une règle change" />
+      </div>
+    </div>
+
+    <aside class="space-y-6 lg:sticky lg:top-24 lg:self-start">
+      <div class="rounded-brand border border-line bg-white p-6">
+        <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-warm-light">
+          Comment lire ce tableau
+        </p>
+        <dl class="mt-5 space-y-4 text-[0.88rem] leading-relaxed">
+          <div>
+            <dt class="font-semibold text-ink">Dernier relevé</dt>
+            <dd class="mt-0.5 text-warm">La date à laquelle la page a été téléchargée et comparée. Elle devrait être celle d'aujourd'hui ou d'hier.</dd>
+          </div>
+          <div>
+            <dt class="font-semibold text-ink">Sans réponse</dt>
+            <dd class="mt-0.5 text-warm">La page a refusé la requête. Elle reste surveillée, et sera retentée la nuit suivante.</dd>
+          </div>
+        </dl>
+        <p class="mt-6 border-t border-line pt-4 text-[0.82rem] leading-relaxed text-warm">
+          Cette page est régénérée à chaque passage de la veille. Elle n'est donc jamais
+          plus vieille que le relevé qu'elle affiche.
+        </p>
+      </div>
+
+      <div class="rounded-brand bg-ink px-5 py-5">
+        <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-amber">Vous voyez une erreur ?</p>
+        <p class="mt-2.5 text-[0.9rem] leading-relaxed text-warm-light">
+          La machine ne voit pas les guichets. Vous, si.
+        </p>
+        <a href="/verifier" class="btn-primary mt-5 inline-flex !py-2.5 !text-[0.85rem]">Signaler un changement</a>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>

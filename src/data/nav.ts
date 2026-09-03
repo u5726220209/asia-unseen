@@ -38,7 +38,11 @@ export const mainNav = [
 ];
 
 /** Le pied de page, lui, a la place — il reprend l'en-tête et l'élargit. */
-export const footerNav = [...mainNav, { href: '/ressources', label: 'Ressources' }];
+export const footerNav = [
+  ...mainNav,
+  { href: '/veille', label: 'État de la veille' },
+  { href: '/ressources', label: 'Ressources' },
+];
 
 export const footerLegal = [
   { href: '/mentions-legales', label: 'Mentions légales' },

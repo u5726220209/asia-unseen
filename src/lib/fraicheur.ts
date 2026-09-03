@@ -65,8 +65,23 @@ export function queMois(aaaaMm: string): string {
  * la source générique de France Diplomatie est partagée par les neuf fiches et
  * ne compte qu'une fois, ses neuf pages « Contacts utiles » comptent chacune.
  */
-export const nbSourcesSurveillees = new Set([
-  ...countries.flatMap((c) => c.sourcesVisa.filter((s) => s.surveillee !== false).map((s) => s.url)),
-  ...countries.map((c) => c.urgences?.source?.url).filter(Boolean),
-  ...sourcesTarifaires.map((s) => s.url),
-]).size;
+export type SourceSurveillee = { label: string; url: string; pays?: string };
+
+/** La liste elle-même, dédoublonnée par adresse, dans l'ordre des fiches. */
+export const sourcesSurveillees: SourceSurveillee[] = (() => {
+  const vues = new Map<string, SourceSurveillee>();
+  for (const c of countries) {
+    for (const s of c.sourcesVisa) {
+      if (s.surveillee === false) continue;
+      if (!vues.has(s.url)) vues.set(s.url, { label: s.label, url: s.url, pays: c.nom });
+    }
+    const u = c.urgences?.source;
+    if (u && !vues.has(u.url)) vues.set(u.url, { label: u.label, url: u.url, pays: c.nom });
+  }
+  for (const s of sourcesTarifaires) {
+    if (!vues.has(s.url)) vues.set(s.url, { label: s.label, url: s.url });
+  }
+  return [...vues.values()];
+})();
+
+export const nbSourcesSurveillees = sourcesSurveillees.length;

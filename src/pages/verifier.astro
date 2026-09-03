@@ -101,7 +101,7 @@ const bonSignalement = [
       <p class="eyebrow mt-6">La seule chose qu'on vous demande</p>
       <h1 class="mt-4 max-w-3xl text-hero">Vous étiez là-bas.<br class="hidden sm:block" /> Pas nous.</h1>
       <p class="mt-6 max-w-2xl text-[1.15rem] leading-relaxed text-warm">
-        Ce site relit chaque jour {nbSourcesSurveillees} pages officielles. Il ne saura jamais ce qui
+        Ce site relit chaque jour <a href="/veille" class="underline decoration-teal/40 underline-offset-4 hover:decoration-amber">{nbSourcesSurveillees} pages officielles</a>. Il ne saura jamais ce qui
         s'est passé au guichet devant vous, ni ce que disait l'affiche à l'aéroport la
         semaine dernière. Vous, si.
       </p>
@@ -280,7 +280,9 @@ const bonSignalement = [
           </div>
           <div>
             <dt class="text-[0.82rem] text-warm">Pages officielles relues chaque jour</dt>
-            <dd class="mt-0.5 font-display text-[2rem] font-bold leading-none tracking-tight text-ink">{nbSourcesSurveillees}</dd>
+            <dd class="mt-0.5 font-display text-[2rem] font-bold leading-none tracking-tight text-ink">
+              <a href="/veille" class="hover:text-teal">{nbSourcesSurveillees}</a>
+            </dd>
           </div>
           <div>
             <dt class="text-[0.82rem] text-warm">Aucune fiche plus ancienne que</dt>

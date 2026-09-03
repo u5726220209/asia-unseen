@@ -162,7 +162,11 @@ jobs:
       # L'état n'est mémorisé que si une source a réellement bougé. Sans cette
       # condition, la sentinelle réécrirait le fichier chaque matin, ce qui
       # déclencherait un contrôle puis une mise en ligne quotidiens pour rien.
-      # Le marqueur [skip ci] empêche par ailleurs toute réaction en chaîne.
+      # Ce commit déclenche volontairement une republication. La page « État de
+      # la veille » affiche la date du dernier relevé de chaque source : sans
+      # reconstruction, elle montrerait celle de la dernière mise en ligne, ce
+      # qui en ferait une page d'état périmée — le contraire de son objet.
+      # Aucune réaction en chaîne à craindre : la mise en ligne ne pousse rien.
       # Deux fichiers de mémoire, enregistrés ensemble : l'empreinte des sources
       # officielles, et le relevé hebdomadaire de trafic. Ce dernier était écrit
       # puis perdu à chaque passage, faute d'être enregistré — l'alerte
@@ -177,6 +181,6 @@ jobs:
             git config user.name  "Sentinelle"
             git config user.email "actions@users.noreply.github.com"
             git add -- src/data/veille-empreintes.json src/data/trafic-historique.json
-            git commit -m "Veille : état des sources et relevé de trafic [skip ci]"
+            git commit -m "Veille : état des sources et relevé de trafic"
             git push
           fi
