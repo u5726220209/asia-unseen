@@ -44,6 +44,36 @@ export function verificateurs(): string[] {
 
 export const corrections: Correction[] = [
   {
+    date: '2026-09-03',
+    page: '/thailande',
+    pageLabel: 'Thaïlande',
+    gravite: 'critique',
+    titre: "L'exemption de visa passe de 60 à 30 jours le 15 septembre 2026",
+    avant:
+      "60 jours à ce jour, mais une réduction à 30 jours est annoncée comme imminente par les autorités françaises.",
+    apres:
+      "La réduction n'est plus une annonce : elle a une date. Le ministère de l'Intérieur thaïlandais a publié quatre règlements à la Gazette royale le 31 août 2026, et l'exemption passe à 30 jours le 15 septembre. Deux points ne figuraient nulle part sur cette fiche : les entrées par voie terrestre sont désormais limitées à deux passages sans visa par année civile, et une extension unique pouvant aller jusqu'à 30 jours se demande auprès d'un bureau de l'immigration. Un voyageur entré avant le 15 septembre conserve la durée qui lui a été accordée à l'arrivée.",
+    source: {
+      label: 'France Diplomatie — Thaïlande, entrée et séjour',
+      url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/thailande/conseils-aux-voyageurs-entree-sejour',
+    },
+  },
+  {
+    date: '2026-09-03',
+    page: '/thailande',
+    pageLabel: 'Thaïlande',
+    gravite: 'correction',
+    titre: "Une source officielle citée depuis l'ouverture ne menait plus nulle part",
+    avant:
+      "Ministère thaïlandais des Affaires étrangères — https://www.mfa.go.th/en/publicservice/visa",
+    apres:
+      "Cette adresse sert une page « PAGE NOT FOUND » tout en répondant HTTP 200. La veille quotidienne ne pouvait pas le voir : la page répond, son contenu ne bouge plus, aucune alerte ne se déclenche. Elle est remplacée par le portail de la carte d'arrivée numérique, qui correspond à la démarche réellement exigée. Un faux 404 est plus dangereux qu'un lien mort — il a l'air d'une source.",
+    source: {
+      label: 'Thailand Digital Arrival Card — portail officiel',
+      url: 'https://tdac.immigration.go.th/',
+    },
+  },
+  {
     date: '2026-08-31',
     page: '/blog/ou-dormir-a-bangkok',
     pageLabel: 'Où dormir à Bangkok',

@@ -158,7 +158,11 @@ export const countries: Country[] = [
     },
     sourcesVisa: [
       { label: 'Thailand Digital Arrival Card (TDAC) — portail officiel', url: 'https://tdac.immigration.go.th/' },
-      { label: "Ministère thaïlandais des Affaires étrangères", url: 'https://www.mfa.go.th/en/publicservice/visa' },
+      // Cette adresse répondait 200 en servant une page « PAGE NOT FOUND » — un
+      // faux 404, invisible pour la veille : la page répond, son contenu ne
+      // bouge plus, aucune alerte ne se déclenche jamais. Remplacée par le
+      // portail de la carte d'arrivée, qui est la démarche réellement exigée.
+      { label: "Thailand Digital Arrival Card — portail officiel", url: 'https://tdac.immigration.go.th/' },
       SOURCE_FD,
     ],
     demarches: [
@@ -170,7 +174,7 @@ export const countries: Country[] = [
       ambassade: { ville: 'Bangkok', adresse: '35 Charoenkrung soi 36, Bangrak, Bangkok 10500', telephone: '+66 2 844 7005' },
       source: { label: 'France Diplomatie — Contacts utiles', url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/thailande/conseils-aux-voyageurs-contacts-utiles' },
     },
-    verifieLe: '2026-08',
+    verifieLe: '2026-09',
     volDepuisParis: '≈ 11 h en direct vers Bangkok',
     accent: 'amber',
     resume:
