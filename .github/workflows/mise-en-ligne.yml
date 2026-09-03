@@ -54,7 +54,21 @@ jobs:
 
       - run: npm run build
 
+      # ── Le transfert, avec une seconde chance ──────────────────────
+      #
+      # « Error: Timeout (control socket) » : la connexion FTP n'aboutit pas.
+      # Cela n'a rien à voir avec le contenu envoyé — c'est l'hébergeur ou le
+      # réseau qui n'a pas répondu à temps, et cela se produit assez souvent
+      # pour qu'un passage sur trois échoue sans qu'aucun code n'ait bougé.
+      #
+      # Un seul essai transforme donc un incident réseau de dix secondes en
+      # correction non publiée. Le premier essai peut échouer sans faire
+      # tomber le job ; le second, lui, engage. Si les deux échouent, l'étape
+      # échoue vraiment — et le gardien qui suit refuse de toute façon de
+      # valider un site resté sur l'ancienne version.
       - name: Envoyer sur l'hébergement
+        id: envoi
+        continue-on-error: true
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOTE }}
@@ -72,6 +86,21 @@ jobs:
             **/.git*
             **/.git*/**
             **/node_modules/**
+
+      - name: Réessayer le transfert
+        if: steps.envoi.outcome == 'failure'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOTE }}
+          username: ${{ secrets.FTP_UTILISATEUR }}
+          password: ${{ secrets.FTP_MOTDEPASSE }}
+          local-dir: ./dist/
+          server-dir: ./
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+
 
       # Le gardien, aussitôt après le transfert. Il ne se contente pas de trois
       # codes 200 : il vérifie que rien de vital n'est tombé pendant l'envoi —

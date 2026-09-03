@@ -69,7 +69,13 @@ jobs:
           node scripts/verifier-chiffres.mjs --hors-ligne
           node scripts/liens-affilies.mjs --hors-ligne
 
+      # Une seconde chance : « Timeout (control socket) » est un incident
+      # réseau côté hébergeur, sans rapport avec le contenu envoyé, et il
+      # transformait sinon dix secondes d'indisponibilité en article non
+      # publié. Si les deux essais échouent, l'étape échoue vraiment.
       - name: Envoyer sur l'hébergement
+        id: envoi
+        continue-on-error: true
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOTE }}
@@ -80,6 +86,20 @@ jobs:
           # y arrive déjà. Ajouter « public_html/ » créait un public_html dans
           # public_html — le transfert réussissait, le site ne changeait pas,
           # et le double devenait du contenu dupliqué indexable.
+          server-dir: ./
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+
+      - name: Réessayer le transfert
+        if: steps.envoi.outcome == 'failure'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOTE }}
+          username: ${{ secrets.FTP_UTILISATEUR }}
+          password: ${{ secrets.FTP_MOTDEPASSE }}
+          local-dir: ./dist/
           server-dir: ./
           exclude: |
             **/.git*
