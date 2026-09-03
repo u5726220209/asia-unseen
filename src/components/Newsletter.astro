@@ -1,5 +1,6 @@
 ---
 import { newsletter } from '@/data/site';
+import { countries } from '@/data/countries';
 import ChampsBrevo from '@/components/ChampsBrevo.astro';
 
 interface Props {
@@ -7,9 +8,23 @@ interface Props {
   title?: string;
   class?: string;
 }
+/**
+ * Le titre par défaut valait `Recevez nos ${newsletter.leadMagnet}`, et
+ * `leadMagnet` commence par « Les ». Cinquante-neuf pages affichaient donc
+ * « Recevez nos Les fiches de départ — une par pays d'Asie », en titre du
+ * seul élément de conversion du site. Une phrase composée par concaténation
+ * n'est pas une phrase : il faut la lire une fois assemblée.
+ *
+ * Le nombre vient du contenu plutôt que d'un mot écrit à la main — le jour où
+ * un dixième pays s'ajoute, « neuf » deviendrait faux partout à la fois.
+ */
+const enLettres = ['zéro', 'une', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix'];
+const nb = countries.length;
+const combien = enLettres[nb] ?? String(nb);
+
 const {
   variant = 'block',
-  title = `Recevez nos ${newsletter.leadMagnet}`,
+  title = `Recevez les ${combien} fiches de départ`,
   class: klass = '',
 } = Astro.props;
 

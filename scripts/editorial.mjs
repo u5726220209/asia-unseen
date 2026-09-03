@@ -122,6 +122,42 @@ if (orphelines.length) {
   lignes.push('Aucune. Chaque page est liée depuis au moins trois endroits.', '');
 }
 
+/* ── 4. Les pages qui promettent des sources et n'en citent aucune ─ */
+
+/**
+ * La page d'accueil affirme : « les sources sont citées et cliquables ».
+ * Un guide sans source ne porte donc pas seulement un manque — il contredit
+ * la promesse affichée à l'entrée du site, et il n'affiche même pas de date
+ * de vérification, puisque le bandeau ne s'affiche que s'il y a des sources.
+ *
+ * On ne peut pas inventer une source : la trouver, la lire et la citer est
+ * un travail de jugement. Mais on peut refuser de l'oublier.
+ */
+const sansSource = [];
+for (const f of readdirSync('src/content/guides').filter((f) => f.endsWith('.md'))) {
+  const entete = readFileSync(`src/content/guides/${f}`, 'utf8').split('---')[1] ?? '';
+  if (!/^sources:/m.test(entete)) sansSource.push(f.replace(/\.md$/, ''));
+}
+
+lignes.push('## Guides qui ne citent aucune source', '');
+if (sansSource.length) {
+  lignes.push(
+    `**${sansSource.length} guide(s) sur ${readdirSync('src/content/guides').filter((f) => f.endsWith('.md')).length}** n'ont pas de bloc \`sources:\` :`,
+    '',
+  );
+  for (const g of sansSource) lignes.push(`- \`/${g}\``);
+  lignes.push(
+    '',
+    "Ces pages n'affichent aucun bandeau de vérification — le bandeau dépend",
+    "des sources. Elles contredisent donc la promesse faite en page d'accueil,",
+    '« les sources sont citées et cliquables », sur le site qui en fait son',
+    'argument principal. Une source par guide suffit à refermer l\'écart.',
+    '',
+  );
+} else {
+  lignes.push('Aucun. Chaque guide cite au moins une source vérifiable.', '');
+}
+
 lignes.push(
   '## Rappel',
   '',

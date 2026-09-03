@@ -11,6 +11,7 @@ import Visuel from '@/components/Visuel.astro';
 import { countries } from '@/data/countries';
 import { guidesNav } from '@/data/nav';
 import { site } from '@/data/site';
+import { plusAncienneVerification, queMois } from '@/lib/fraicheur';
 import { nbCorrections } from '@/data/corrections';
 
 const guides = (await guidesPublies()).sort(
@@ -24,8 +25,10 @@ const posts = allPosts.slice(0, 4);
 // Chiffres réels, calculés à partir du contenu publié — jamais arrondis à la hausse.
 const nbPages = guides.length + countries.length + allPosts.length;
 const nbPays = countries.length;
-const majLabel = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' })
-  .format(new Date(`${site.lastReview}-01T00:00:00`));
+// La date affichée se déduit des fiches elles-mêmes, et c'est la plus
+// ancienne : « aucune fiche n'est plus vieille que » se vérifie, « mis à jour
+// en » ne se vérifie pas. Voir src/lib/fraicheur.ts.
+const majLabel = queMois(plusAncienneVerification);
 
 const problemes = [
   {
@@ -59,7 +62,7 @@ const problemes = [
   <section class="relative overflow-hidden border-b border-line bg-cream">
     <div class="wrap grid gap-14 py-20 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:py-28">
       <div class="animate-rise">
-        <p class="eyebrow">{nbPays} pays · {nbPages} guides et articles · mis à jour en {majLabel}</p>
+        <p class="eyebrow">{nbPays} pays · {nbPages} guides et articles · aucune fiche plus ancienne {majLabel}</p>
 
         <h1 class="mt-5 text-hero">
           L'Asie comme vous ne<br class="hidden sm:block" />
