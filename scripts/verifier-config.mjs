@@ -221,6 +221,81 @@ const visasIncoherents = [];
   }
 }
 
+/**
+ * Tout tarif d'entrée publié doit être inscrit au registre des chiffres.
+ *
+ * La veille relit chaque nuit vingt-quatre portails officiels et cinquante
+ * montants. Elle ne relisait aucun des tarifs de visa que ces portails fixent
+ * : ils étaient publiés sur les fiches pays sans être déclarés nulle part. Les
+ * 45 € chinois ont été corrigés à la main, et rien n'aurait signalé la
+ * prochaine hausse — alors que c'est précisément le chiffre sur lequel un
+ * voyageur fait son budget.
+ *
+ * Inscrire les treize tarifs existants ne suffisait pas : le quatorzième,
+ * publié dans six mois, serait retombé dans le même trou. Ce contrôle ferme le
+ * trou. Un montant peut être déclaré tarif officiel ou estimation assumée — il
+ * ne peut pas n'être rien.
+ */
+const tarifsNonSuivis = [];
+{
+  const registre = readFileSync('src/data/chiffres-cites.ts', 'utf8');
+  /**
+   * Inscrit ET rattaché à la bonne page.
+   *
+   * Comparer les seuls nombres laissait le « 30 » du Laos satisfaire celui de
+   * l'Indonésie : deux tarifs sans rapport, un contrôle content. On exige donc
+   * que l'entrée du registre déclare la page du pays concerné — c'est ce qui
+   * fait la différence entre un montant surveillé et un montant qui a la même
+   * valeur qu'un autre.
+   */
+  const inscrits = new Map();
+  for (const e of registre.matchAll(/affiche: '([^']+)'[\s\S]{0,400}?pages: \[([^\]]*)\]/g)) {
+    const v = e[1].replace(/[  \u202f\u00a0]/g, '');
+    if (!inscrits.has(v)) inscrits.set(v, new Set());
+    for (const p of e[2].split(',')) {
+      const brut = p.trim();
+      if (!brut) continue;
+      const litteral = brut.match(/^'([^']*)'$/)?.[1];
+      // Une page déclarée via une constante : on résout sur sa valeur.
+      const parConstante = litteral ?? registre.match(new RegExp(`^const ${brut} = '([^']+)';$`, 'm'))?.[1];
+      if (parConstante) inscrits.get(v).add(parConstante);
+    }
+  }
+  const ts = readFileSync('src/data/countries.ts', 'utf8');
+  const DEVISES = /(\d[\d  \u202f\u00a0.,]*\d|\d)\s*(€|euros?|USD|dollars?|THB|bahts?|IDR|PHP|wons?|VND|dongs?|LAK|kips?|riels?)/g;
+
+  for (const m of ts.matchAll(/slug: '([a-z-]+)'/g)) {
+    const bloc = ts.slice(m.index, m.index + 8000);
+    const i = bloc.indexOf('visa: {');
+    if (i < 0) continue;
+    const visa = bloc.slice(i, bloc.indexOf('\n    },', i));
+    const cout = (visa.match(/cout:\s*"([^"]*)"/) ?? visa.match(/cout:\s*'([^']*)'/))?.[1] ?? '';
+    for (const t of cout.matchAll(DEVISES)) {
+      const brut = t[1].replace(/[  \u202f\u00a0]/g, '').trim();
+      const page = `/${m[1]}`;
+      const suivi = [brut, brut.replace('.', ','), brut.replace(',', '.')]
+        .some((v) => inscrits.get(v)?.has(page));
+      if (suivi) continue;
+      tarifsNonSuivis.push({
+        pays: m[1],
+        montant: `${t[1].trim()} ${t[2]}`,
+        motif: inscrits.has(brut) ? 'inscrit, mais pas pour cette page' : 'absent du registre',
+      });
+    }
+  }
+}
+
+if (!tarifsNonSuivis.length) console.log("✓ Chaque tarif d'entrée publié est inscrit au registre.\n");
+
+if (tarifsNonSuivis.length) {
+  console.log(`⛔ ${tarifsNonSuivis.length} tarif(s) d'entrée publiés sans être surveillés :\n`);
+  for (const t of tarifsNonSuivis) console.log(`   ${t.pays.padEnd(14)} ${t.montant.padEnd(14)} — ${t.motif}`);
+  console.log('\n   Un tarif de visa absent du registre ne sera relu par personne :');
+  console.log('   il restera affiché tel quel le jour où le consulat l\'augmentera.');
+  console.log('   Inscrivez-le dans src/data/chiffres-cites.ts — comme tarif officiel');
+  console.log('   avec sa source, ou comme estimation assumée avec sa raison.\n');
+}
+
 if (visasIncoherents.length) {
   console.log(`⛔ ${visasIncoherents.length} règle(s) de visa où le chiffre et la phrase divergent :\n`);
   for (const v of visasIncoherents) {
@@ -290,5 +365,6 @@ if (correctionsNonFaites.length) {
 
 process.exit(
   jamaisEcrits.length || jamaisLus.length || defautsFormulaire.length ||
-  ecartSources || visasIncoherents.length || correctionsNonFaites.length ? 1 : 0,
+  ecartSources || visasIncoherents.length || correctionsNonFaites.length ||
+  tarifsNonSuivis.length ? 1 : 0,
 );

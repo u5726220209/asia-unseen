@@ -118,6 +118,7 @@ export const countries: Country[] = [
       sansVisaJours: 45,
     },
     sourcesVisa: [
+      { label: "France Diplomatie — Vietnam, entrée et séjour", url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/vietnam/conseils-aux-voyageurs-entree-sejour' },
       { label: "Portail e-visa officiel du Vietnam", url: 'https://evisa.gov.vn/' },
       { label: "Enregistrement préalable (aéroport de Hô Chi Minh-Ville)", url: 'https://prearrival.immigration.gov.vn/' },
       SOURCE_FD,
@@ -173,6 +174,7 @@ export const countries: Country[] = [
       sansVisaJoursApres: { date: '2026-09-15', jours: 30 },
     },
     sourcesVisa: [
+      { label: "France Diplomatie — Thaïlande, entrée et séjour", url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/thailande/conseils-aux-voyageurs-entree-sejour' },
       { label: 'Thailand Digital Arrival Card (TDAC) — portail officiel', url: 'https://tdac.immigration.go.th/' },
       // Cette adresse répondait 200 en servant une page « PAGE NOT FOUND » — un
       // faux 404, invisible pour la veille : la page répond, son contenu ne
@@ -230,6 +232,7 @@ export const countries: Country[] = [
       sansVisaJours: 90,
     },
     sourcesVisa: [
+      { label: "France Diplomatie — Japon, entrée et séjour", url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/japon/conseils-aux-voyageurs-entree-sejour' },
       { label: "Ambassade du Japon en France", url: 'https://www.fr.emb-japan.go.jp/' },
       { label: 'Visit Japan Web', url: 'https://www.vjw.digital.go.jp/' },
       SOURCE_FD,
@@ -282,6 +285,7 @@ export const countries: Country[] = [
       sansVisaJours: 30,
     },
     sourcesVisa: [
+      { label: "France Diplomatie — Chine, entrée et séjour", url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/chine/conseils-aux-voyageurs-entree-sejour' },
       // Citée, pas surveillée : cette adresse est un fil d'actualité en chinois
       // qui se renouvelle chaque jour et ne documente aucune règle d'entrée.
       // La sentinelle y voyait donc « 0,0 % de similarité » tous les matins.
@@ -343,6 +347,7 @@ export const countries: Country[] = [
       sansVisaJours: 0,
     },
     sourcesVisa: [
+      { label: "France Diplomatie — Laos, entrée et séjour", url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/laos/conseils-aux-voyageurs-entree-sejour' },
       { label: 'Portail e-visa officiel du Laos', url: 'https://laoevisa.gov.la/' },
       SOURCE_FD,
     ],
@@ -394,6 +399,7 @@ export const countries: Country[] = [
       sansVisaJours: 0,
     },
     sourcesVisa: [
+      { label: "France Diplomatie — Cambodge, entrée et séjour", url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/cambodge/conseils-aux-voyageurs-entree-sejour' },
       { label: 'E-visa officiel du Cambodge', url: 'https://www.evisa.gov.kh/' },
       SOURCE_FD,
     ],
@@ -446,6 +452,7 @@ export const countries: Country[] = [
       sansVisaJours: 90,
     },
     sourcesVisa: [
+      { label: "France Diplomatie — Corée du Sud, entrée et séjour", url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/coree-du-sud/conseils-aux-voyageurs-entree-sejour' },
       { label: 'Portail officiel K-ETA', url: 'https://www.k-eta.go.kr/' },
       SOURCE_FD,
     ],
@@ -497,6 +504,7 @@ export const countries: Country[] = [
       sansVisaJours: 0,
     },
     sourcesVisa: [
+      { label: "France Diplomatie — Indonésie, entrée et séjour", url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/indonesie/conseils-aux-voyageurs-entree-sejour' },
       { label: "Direction générale de l'immigration indonésienne", url: 'https://evisa.imigrasi.go.id/' },
       SOURCE_FD,
     ],
@@ -550,6 +558,7 @@ export const countries: Country[] = [
       sansVisaJours: 30,
     },
     sourcesVisa: [
+      { label: "France Diplomatie — Philippines, entrée et séjour", url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/philippines/conseils-aux-voyageurs-entree-sejour' },
       { label: 'Bureau of Immigration', url: 'https://immigration.gov.ph/' },
       { label: 'eTravel Philippines', url: 'https://etravel.gov.ph/' },
       SOURCE_FD,

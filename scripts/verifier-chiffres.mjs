@@ -33,25 +33,55 @@ const constantes = Object.fromEntries(
 );
 const resoudre = (v) => constantes[v] ?? v.replace(/^'|'$/g, '');
 
+/**
+ * Le libellé peut être entre guillemets doubles et contenir une apostrophe,
+ * ou entre apostrophes avec une apostrophe échappée. L'ancien motif ne savait
+ * lire ni l'un ni l'autre : il sautait l'entrée en silence, et le montant
+ * passait pour surveillé alors que personne ne le regardait. Trois tarifs de
+ * visa étaient dans ce cas le jour où ils ont été inscrits.
+ */
 const chiffres = [...ts.matchAll(
-  /\{ affiche: '([^']+)', designe: "?'?([^"']+)"?'?, source: ([A-Z_0-9]+), releveLe: '([^']+)', pages: \[([^\]]*)\][^}]*\}/g,
+  /\{ affiche: '([^']+)', designe: (?:"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)'), source: ([A-Z_0-9]+), releveLe: '([^']+)', pages: \[([^\]]*)\][^}]*\}/g,
 )].map((m) => ({
   affiche: m[1],
-  designe: m[2],
-  source: resoudre(m[3]),
-  releveLe: m[4],
-  pages: m[5].split(',').map((p) => resoudre(p.trim())).filter(Boolean),
+  designe: m[2] ?? m[3],
+  source: resoudre(m[4]),
+  releveLe: m[5],
+  pages: m[6].split(',').map((p) => resoudre(p.trim())).filter(Boolean),
   // Certaines sources calculent leurs prix dans le navigateur : le montant
   // existe à l'écran mais pas dans le HTML. Les traiter comme disparus
   // produirait seize fausses alertes chaque matin, et une sentinelle qui crie
   // sans raison finit ignorée — donc pire qu'absente.
-  nonRelisable: /sourceIntrouvableAttendue:\s*true/.test(m[0]),
+  // Une estimation assumée — une conversion de devise, un total dont la
+  // grille n'est pas publique — n'a pas à être retrouvée à la source. La
+  // relire chaque matin produirait une alerte permanente sur un écart normal.
+  nonRelisable: /sourceIntrouvableAttendue:\s*true/.test(m[0]) || /estimation:/.test(m[0]),
   // Les formes fausses que ce chiffre remplace. Déclarées en clair dans le
   // registre, elles ne sont pas résolues par `resoudre` : ce sont des
   // fragments de phrase, pas des constantes d'URL.
   contredit: (m[0].match(/contredit:\s*\[([^\]]*)\]/)?.[1] ?? '')
     .split(',').map((v) => v.trim().replace(/^'|'$/g, '')).filter(Boolean),
 }));
+
+/**
+ * Le registre doit être lu en entier, ou pas du tout.
+ *
+ * Une entrée que le motif ne sait pas lire disparaît sans bruit : elle est
+ * inscrite, elle a l'air surveillée, et rien ne la regarde. C'est le défaut le
+ * plus vicieux possible pour une sentinelle, parce qu'il se présente comme un
+ * succès. On compare donc ce qui est déclaré à ce qui est lu, et on refuse de
+ * tourner en cas d'écart.
+ */
+{
+  const declares = (ts.match(/^\s*\{ affiche: '/gm) ?? []).length;
+  if (chiffres.length !== declares) {
+    console.error(`⛔ Registre illisible : ${declares} montants inscrits, ${chiffres.length} relus.`);
+    console.error('   Une entrée que ce contrôle ne sait pas lire passe pour surveillée');
+    console.error('   alors que personne ne la regarde. Corrigez le motif de lecture');
+    console.error("   avant d'aller plus loin — ne corrigez pas l'entrée pour lui plaire.\n");
+    process.exit(1);
+  }
+}
 
 /**
  * Un montant s'écrit de plusieurs façons : « 28,82 », « 28.82 », « 1 199 »,

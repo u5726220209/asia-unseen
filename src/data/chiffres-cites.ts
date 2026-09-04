@@ -51,6 +51,21 @@ export type ChiffreCite = {
    * précisément de citer ce qui était écrit avant.
    */
   contredit?: string[];
+  /**
+   * Pourquoi ce montant n'est pas un tarif officiel relevé, mais une
+   * estimation assumée — une conversion de devise, un total qui inclut des
+   * frais de service dont la grille n'est pas publique.
+   *
+   * Le distinguer n'est pas un détail de classement. Un tarif consulaire est
+   * faux ou vrai ; une conversion en euros est périmée dès que le change
+   * bouge, et la surveiller à la source n'aurait aucun sens. Les mélanger
+   * ferait crier la sentinelle tous les matins sur des écarts normaux, et une
+   * sentinelle qui crie pour rien finit ignorée.
+   *
+   * Ce qui compte : tout montant publié comme une règle d'entrée doit être
+   * ici, dans l'une des deux catégories. Aucun ne doit manquer.
+   */
+  estimation?: string;
 };
 
 const AVI = 'https://www.avi-international.com/assurance-voyage/assurance-routard';
@@ -75,7 +90,41 @@ const COMPARATIF_ESIM = '/blog/esim-asie-comparatif-prix';
 const GUIDE_TRANSPORTS = '/transports-asie';
 const GUIDE_ERREURS = '/erreurs-a-eviter';
 
+/* Portails officiels des formalités d'entrée. Ce sont les tarifs les plus
+   lourds du site : ceux sur lesquels un voyageur fait son budget. */
+const EVISA_VN = 'https://evisa.gov.vn/';
+const IMMIGRATION_TH = 'https://www.immigration.go.th/';
+const AMBASSADE_CN = 'https://fr.china-embassy.gov.cn/fra/zgzfg/zgsg/lsb/202512/t20251226_11788011.htm';
+const EVISA_LA = 'https://laoevisa.gov.la/';
+const EVISA_KH = 'https://www.evisa.gov.kh/';
+const EVISA_ID = 'https://evisa.imigrasi.go.id/';
+const IMMIGRATION_PH = 'https://immigration.gov.ph/';
+
 export const chiffresCites: ChiffreCite[] = [
+  /* ── Formalités d'entrée ────────────────────────────────────────
+     Les tarifs de visa des neuf fiches pays. Ils étaient publiés sans être
+     inscrits ici : la veille relisait chaque nuit vingt-quatre portails
+     officiels, mais aucun des montants que ces portails fixent. Les 45 €
+     chinois ont été corrigés à la main le 2 septembre, et rien ne les
+     surveillait. `verifier-config.mjs` refuse désormais un tarif de visa
+     absent de cette liste. */
+  { affiche: '25', designe: 'e-visa vietnamien, entrée simple (USD)', source: EVISA_VN, releveLe: '2026-09-04', pages: ['/vietnam'], sourceIntrouvableAttendue: true },
+  { affiche: '50', designe: 'e-visa vietnamien, entrées multiples (USD)', source: EVISA_VN, releveLe: '2026-09-04', pages: ['/vietnam'], sourceIntrouvableAttendue: true },
+  { affiche: '1 900', designe: "prolongation de séjour en Thaïlande, sur place (THB)", source: IMMIGRATION_TH, releveLe: '2026-09-04', pages: ['/thailande'], sourceIntrouvableAttendue: true },
+  { affiche: '45', designe: 'visa L chinois, entrée simple — frais consulaires, tarif réduit jusqu\'au 31/12/2026', source: AMBASSADE_CN, releveLe: '2026-09-02', pages: ['/chine'] },
+  { affiche: '110', designe: 'visa chinois, total constaté frais de service inclus', source: AMBASSADE_CN, releveLe: '2026-09-02', pages: ['/chine'], estimation: "la grille tarifaire du centre de dépôt parisien n'est pas publique : ce total est un ordre de grandeur, et la page le dit" },
+  { affiche: '30', designe: "visa à l'arrivée au Laos, borne basse selon nationalité (USD)", source: EVISA_LA, releveLe: '2026-09-04', pages: ['/laos'], sourceIntrouvableAttendue: true },
+  { affiche: '50', designe: "visa à l'arrivée au Laos, borne haute selon nationalité (USD)", source: EVISA_LA, releveLe: '2026-09-04', pages: ['/laos'], sourceIntrouvableAttendue: true },
+  { affiche: '2', designe: 'prolongation de séjour au Laos, par jour à Vientiane (USD)', source: EVISA_LA, releveLe: '2026-09-04', pages: ['/laos'], sourceIntrouvableAttendue: true },
+  { affiche: '36', designe: 'e-visa cambodgien, frais de service inclus (USD)', source: EVISA_KH, releveLe: '2026-09-04', pages: ['/cambodge'], sourceIntrouvableAttendue: true },
+  { affiche: '40', designe: 'visa cambodgien aux postes-frontières terrestres, en espèces (USD)', source: EVISA_KH, releveLe: '2026-09-04', pages: ['/cambodge'], sourceIntrouvableAttendue: true },
+  { affiche: '10 000', designe: 'K-ETA coréen demandé volontairement, non remboursable (wons)', source: KETA, releveLe: '2026-09-04', pages: ['/coree-du-sud'], sourceIntrouvableAttendue: true },
+  { affiche: '500 000', designe: "visa à l'arrivée en Indonésie (IDR)", source: EVISA_ID, releveLe: '2026-09-04', pages: ['/indonesie'], sourceIntrouvableAttendue: true },
+  { affiche: '150 000', designe: 'taxe touristique de Bali (IDR)', source: EVISA_ID, releveLe: '2026-09-04', pages: ['/indonesie'], sourceIntrouvableAttendue: true },
+  { affiche: '30', designe: "visa à l'arrivée en Indonésie, converti en euros", source: EVISA_ID, releveLe: '2026-09-04', pages: ['/indonesie'], estimation: 'conversion de 500 000 IDR : elle bouge avec le change, pas avec la règle' },
+  { affiche: '7,50', designe: 'taxe touristique de Bali, convertie en euros', source: EVISA_ID, releveLe: '2026-09-04', pages: ['/indonesie'], estimation: 'conversion de 150 000 IDR : elle bouge avec le change, pas avec la règle' },
+  { affiche: '3 030', designe: 'prolongation de séjour aux Philippines, sur place (PHP)', source: IMMIGRATION_PH, releveLe: '2026-09-04', pages: ['/philippines'], sourceIntrouvableAttendue: true },
+
   /* ── Assurance ──────────────────────────────────────────────── */
   { affiche: '28,82', designe: 'AVI Routard, zone B, 19-35 ans, la semaine', source: AVI, releveLe: '2026-08-30', pages: [COMPARATIF_ASSURANCE] },
   { affiche: '33,90', designe: 'AVI Routard, zone A, 19-35 ans, la semaine', source: AVI, releveLe: '2026-08-30', pages: [COMPARATIF_ASSURANCE] },
