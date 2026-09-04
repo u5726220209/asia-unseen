@@ -46,6 +46,11 @@ const chiffres = [...ts.matchAll(
   // produirait seize fausses alertes chaque matin, et une sentinelle qui crie
   // sans raison finit ignorée — donc pire qu'absente.
   nonRelisable: /sourceIntrouvableAttendue:\s*true/.test(m[0]),
+  // Les formes fausses que ce chiffre remplace. Déclarées en clair dans le
+  // registre, elles ne sont pas résolues par `resoudre` : ce sont des
+  // fragments de phrase, pas des constantes d'URL.
+  contredit: (m[0].match(/contredit:\s*\[([^\]]*)\]/)?.[1] ?? '')
+    .split(',').map((v) => v.trim().replace(/^'|'$/g, '')).filter(Boolean),
 }));
 
 /**
@@ -116,6 +121,64 @@ if (existsSync('dist')) {
   }
 }
 
+/* ── 1 bis. Une forme fausse traîne-t-elle encore quelque part ? ── */
+
+/**
+ * La question inverse de la précédente, et celle qui manquait.
+ *
+ * Vérifier qu'un montant figure là où on l'attend ne dit rien de ce qui se dit
+ * ailleurs. « 32 h 45 » était bien présent sur ses trois pages ; « 33 heures »
+ * vivait pendant ce temps dans les données du Vietnam, donc sur la fiche pays
+ * et sur sa version imprimable. Le site se contredisait, et le contrôle
+ * regardait exactement à côté.
+ *
+ * On balaie donc toutes les pages produites, à la recherche des formes que le
+ * registre déclare périmées. Deux exclusions, et elles ne sont pas des
+ * commodités :
+ *
+ *   — le journal des corrections cite l'avant et l'après, c'est son objet même ;
+ *   — les pages d'un article programmé n'existent pas encore.
+ */
+const contradictions = [];
+{
+  const EXCLUES = new Set(['/mises-a-jour']);
+  const declarees = chiffres.flatMap((c) =>
+    c.contredit.map((forme) => ({ forme, attendu: c.affiche, designe: c.designe })),
+  );
+
+  if (existsSync('dist') && declarees.length) {
+    const pages = [];
+    const parcourir = (dir) => {
+      for (const e of readdirSync(dir, { withFileTypes: true })) {
+        const chemin = `${dir}/${e.name}`;
+        if (e.isDirectory()) parcourir(chemin);
+        else if (e.name === 'index.html') pages.push(chemin);
+      }
+    };
+    parcourir('dist');
+
+    for (const f of pages) {
+      const url = f.replace(/^dist/, '').replace(/\/index\.html$/, '') || '/';
+      if (EXCLUES.has(url)) continue;
+      // L'encart « dernière correction » cite l'ancienne formulation sur la
+      // page même qu'il corrige : le laisser dans le texte ferait crier le
+      // contrôle sur la page la mieux corrigée du site. On retire l'encart,
+      // pas la page — sinon on aveuglerait le contrôle là où il sert le plus.
+      const texte = readFileSync(f, 'utf8')
+        .replace(/<div data-correction[\s\S]*?<\/div>/g, ' ')
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/&#39;|&rsquo;/g, "'")
+        .replace(/&nbsp;|&#160;/g, ' ');
+      for (const d of declarees) {
+        // Le garde devant le chiffre évite qu'un « 133 heures » déclenche une
+        // alerte pour « 33 heures ».
+        const motif = new RegExp(`(?<![\\d,.])${d.forme.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/ /g, '[  \\u202f\\u00a0]')}`);
+        if (motif.test(texte)) contradictions.push({ ...d, page: url });
+      }
+    }
+  }
+}
+
 /* ── 2. Le chiffre tient-il encore à la source ? ─────────────────── */
 
 const parSource = new Map();
@@ -154,6 +217,7 @@ if (JSON_OUT) {
   console.log(JSON.stringify({
     surveilles: chiffres.length,
     incoherencesInternes: manquantsSurLeSite,
+    contradictions,
     disparusDeLaSource: disparusDeLaSource.map(({ affiche, designe, source, pages }) => ({ affiche, designe, source, pages })),
     aVerifierAlaMain: aVerifierAlaMain.length,
     sourcesMuettes,
@@ -168,6 +232,19 @@ if (JSON_OUT) {
     console.log('   Soit la page a changé sans le registre, soit l\'inverse.\n');
   } else {
     console.log('✓ Tous les montants déclarés figurent bien sur les pages annoncées.\n');
+  }
+
+  if (contradictions.length) {
+    console.log(`⛔ ${contradictions.length} page(s) affichent encore un chiffre corrigé :\n`);
+    for (const c of contradictions) {
+      console.log(`   ${c.page}`);
+      console.log(`      dit encore « ${c.forme} » — la valeur retenue est « ${c.attendu} »`);
+      console.log(`      ${c.designe}\n`);
+    }
+    console.log('   Une correction faite à moitié laisse le site se contredire lui-même,');
+    console.log('   pendant que le journal des corrections annonce le contraire au lecteur.\n');
+  } else {
+    console.log('✓ Aucune page ne rappelle un chiffre corrigé.\n');
   }
 
   if (enAttenteDeParution.length) {
@@ -207,9 +284,11 @@ if (JSON_OUT) {
 }
 
 // Trois issues distinctes, parce qu'elles appellent trois réactions :
-//   1 — incohérence interne : c'est notre faute, elle est réparable tout de
-//       suite, et elle doit bloquer une mise en ligne ;
+//   1 — incohérence interne, dans les deux sens : un chiffre déclaré absent de
+//       sa page, ou une page qui affiche encore une valeur corrigée. C'est
+//       notre faute, c'est réparable tout de suite, et ça bloque la mise en
+//       ligne — le journal des corrections promet au lecteur que ça bloque ;
 //   2 — un montant a disparu de sa source : il faut aller lire le nouveau
 //       tarif, ce qui demande un jugement humain. On alerte sans bloquer ;
 //   0 — rien à signaler.
-process.exit(manquantsSurLeSite.length ? 1 : disparusDeLaSource.length ? 2 : 0);
+process.exit(manquantsSurLeSite.length || contradictions.length ? 1 : disparusDeLaSource.length ? 2 : 0);

@@ -98,7 +98,7 @@ const mailto = `mailto:${site.author.email}?subject=${encodeURIComponent(sujet)}
     qu'elle a bougé récemment, sans avoir à aller le chercher ailleurs.
   */}
   {liees.length > 0 && (
-    <div class="mt-4 rounded-brand bg-cream-warm px-4 py-3.5">
+    <div data-correction class="mt-4 rounded-brand bg-cream-warm px-4 py-3.5">
       <p class="font-display text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-warm-light">
         Dernière correction sur cette page — {new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${liees[0].date}T00:00:00`))}
       </p>

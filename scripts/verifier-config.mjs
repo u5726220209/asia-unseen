@@ -202,6 +202,22 @@ const visasIncoherents = [];
     } else if (n > 0 && !new RegExp(`\\b${n}\\b`).test(duree)) {
       visasIncoherents.push({ pays: m[1], motif: `${n} ne figure pas dans la phrase`, duree });
     }
+
+    // Une règle datée bascule toute seule le jour dit. Si le second régime
+    // n'est pas annoncé dans la phrase, la fiche changera de réponse un matin
+    // sans que rien ne l'ait dit au lecteur — exactement le contraire de ce
+    // que ce site promet.
+    const apres = visa.match(/sansVisaJoursApres:\s*\{\s*date:\s*'(\d{4}-\d{2}-\d{2})',\s*jours:\s*(\d+)/);
+    if (apres) {
+      const [, date, jours] = apres;
+      const jour = Number(date.slice(8, 10));
+      const mois = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'][Number(date.slice(5, 7)) - 1];
+      if (!new RegExp(`\\b${jours}\\b`).test(duree)) {
+        visasIncoherents.push({ pays: m[1], motif: `la règle bascule à ${jours} jours le ${date}, mais ${jours} ne figure pas dans la phrase`, duree });
+      } else if (!duree.includes(`${jour} ${mois}`)) {
+        visasIncoherents.push({ pays: m[1], motif: `la bascule du ${jour} ${mois} n'est pas annoncée dans la phrase`, duree });
+      }
+    }
   }
 }
 

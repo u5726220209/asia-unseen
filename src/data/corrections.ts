@@ -45,6 +45,36 @@ export function verificateurs(): string[] {
 export const corrections: Correction[] = [
   {
     date: '2026-09-04',
+    page: '/thailande',
+    pageLabel: 'Thaïlande',
+    gravite: 'critique',
+    titre: "La fiche annonçait la règle du 15 septembre onze jours avant qu'elle s'applique",
+    avant:
+      "Exemption de visa de 30 jours pour les séjours touristiques, depuis le 15 septembre 2026. Elle était de 60 jours auparavant.",
+    apres:
+      "60 jours pour une entrée jusqu'au 14 septembre 2026, 30 jours pour une entrée à partir du 15. La réduction a été publiée le 31 août, et la fiche l'écrivait déjà au passé : quelqu'un qui partait cette semaine y lisait qu'il avait droit à trente jours, alors qu'il en a soixante. Le guide des visas disait au même moment l'inverse, et c'est lui qui avait raison. La fiche porte désormais les deux régimes avec leur date, et le nombre sur lequel les outils tranchent bascule tout seul le 15 au matin — sans que personne ait à s'en souvenir. Le contrôle de mise en ligne refuse maintenant une règle datée dont le second régime n'est pas annoncé au lecteur.",
+    source: {
+      label: 'France Diplomatie — Thaïlande, entrée et séjour',
+      url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/thailande/conseils-aux-voyageurs-entree-sejour',
+    },
+  },
+  {
+    date: '2026-09-04',
+    page: '/vietnam',
+    pageLabel: 'Vietnam',
+    gravite: 'correction',
+    titre: "La correction de la durée du train Hanoï-Saigon avait oublié la fiche pays",
+    avant:
+      "Sous-estimer les distances : Hanoï–Saïgon en train, c'est 33 heures",
+    apres:
+      "32 h 45, la durée relevée sur les horaires officiels du SE1. Le chiffre avait été corrigé la veille dans deux guides, et le journal annonçait au lecteur qu'une sentinelle refuserait désormais toute page qui dirait autre chose. Elle ne l'aurait pas fait : elle vérifiait qu'un montant figure là où on l'attend, jamais qu'une valeur périmée traîne ailleurs. Elle traînait ici, sur la fiche pays et sur sa version imprimable. Le contrôle pose maintenant la question dans les deux sens, et il a été mis en échec sur ce cas précis avant d'être adopté.",
+    source: {
+      label: 'Đường sắt Việt Nam — grille tarifaire officielle, train SE1',
+      url: 'https://giotaugiave.dsvn.vn/giave/thongnhat.aspx',
+    },
+  },
+  {
+    date: '2026-09-04',
     page: '/chine',
     pageLabel: 'Chine',
     gravite: 'correction',

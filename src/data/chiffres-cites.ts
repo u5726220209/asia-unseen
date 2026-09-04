@@ -37,6 +37,20 @@ export type ChiffreCite = {
    * alors que la cohérence interne du site.
    */
   sourceIntrouvableAttendue?: boolean;
+  /**
+   * Les formes fausses que ce chiffre remplace, et qui ne doivent plus
+   * apparaître nulle part.
+   *
+   * Vérifier qu'un montant est présent là où on l'attend ne dit rien de ce qui
+   * se dit ailleurs. Un chiffre corrigé dans deux guides et oublié dans les
+   * données d'un pays laisse le site se contredire lui-même, et la présence du
+   * bon chiffre sur les bonnes pages ne le signale pas — elle le masque.
+   *
+   * Ce champ inverse la question : cette valeur-là ne doit plus exister sur le
+   * site. Le journal des corrections en est exclu, puisque son travail est
+   * précisément de citer ce qui était écrit avant.
+   */
+  contredit?: string[];
 };
 
 const AVI = 'https://www.avi-international.com/assurance-voyage/assurance-routard';
@@ -96,7 +110,7 @@ export const chiffresCites: ChiffreCite[] = [
   // mais il prouvait que rien ne reliait ces trois pages entre elles. La durée
   // est désormais au registre : la sentinelle refuse la mise en ligne si l'une
   // d'elles se met à dire autre chose.
-  { affiche: '32 h 45', designe: 'durée du train SE1, Hanoï-Saigon', source: DSVN_TARIFS, releveLe: '2026-09-04', pages: [ARTICLE_TRAIN_VIETNAM, GUIDE_TRANSPORTS, GUIDE_ERREURS], sourceIntrouvableAttendue: true },
+  { affiche: '32 h 45', designe: 'durée du train SE1, Hanoï-Saigon', source: DSVN_TARIFS, releveLe: '2026-09-04', pages: [ARTICLE_TRAIN_VIETNAM, GUIDE_TRANSPORTS, GUIDE_ERREURS], sourceIntrouvableAttendue: true, contredit: ['33 heures', '33 h de train'] },
   { affiche: '1 122 000', designe: 'train SE1 Hanoï-Saigon, siège inclinable climatisé', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
   { affiche: '1 516 000', designe: 'train SE1 Hanoï-Saigon, couchette molle 6 places, étage haut', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
   { affiche: '1 664 000', designe: 'train SE1 Hanoï-Saigon, couchette molle 6 places, étage milieu', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },

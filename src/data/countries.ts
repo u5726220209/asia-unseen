@@ -46,6 +46,21 @@ export type Country = {
      * l'entier, la mise en ligne s'arrête.
      */
     sansVisaJours: number;
+    /**
+     * Une règle dont la date d'effet est connue et encore à venir.
+     *
+     * La Thaïlande a publié le 31 août 2026 une réduction applicable le
+     * 15 septembre. Entre les deux, la fiche a le choix entre deux erreurs :
+     * annoncer l'ancienne règle et se périmer sans prévenir, ou annoncer la
+     * nouvelle et se tromper pendant quinze jours — c'est ce second travers
+     * qui s'était installé, et il répondait « 30 jours » à quelqu'un qui
+     * partait le lendemain avec droit à 60.
+     *
+     * Le champ tient les deux régimes. La bascule se fait toute seule le jour
+     * dit, à la reconstruction quotidienne : personne n'a à s'en souvenir.
+     * `duree` doit annoncer les deux nombres et leur date — c'est vérifié.
+     */
+    sansVisaJoursApres?: { date: string; jours: number };
   };
   /**
    * Les sources officielles citées sur la fiche. `surveillee: false` les garde
@@ -137,7 +152,7 @@ export const countries: Country[] = [
     erreurs: [
       "Réserver la baie d'Ha Long depuis la rue à Hanoï : la moitié des bateaux vendus n'existent pas sous le nom annoncé",
       "Changer de l'argent à l'aéroport — le taux y est 5 à 8 % moins bon qu'en ville",
-      "Sous-estimer les distances : Hanoï–Saïgon en train, c'est 33 heures",
+      "Sous-estimer les distances : Hanoï–Saïgon en train, c'est 32 h 45",
       "Louer un scooter sans permis international valable : votre assurance ne couvrira rien",
     ],
   },
@@ -150,11 +165,12 @@ export const countries: Country[] = [
     saisonNote:
       "Novembre à mars : sec, respirable, c'est la haute saison et les prix suivent. Avril : 40 °C à Bangkok, mais c'est le mois de Songkran. Mai à octobre : mousson côté Andaman (Phuket, Krabi) — en revanche le golfe (Koh Samui, Koh Phangan) reste correct jusqu'en septembre et ne prend l'eau qu'en octobre-novembre. Les deux côtes n'ont pas la même saison : c'est la clé pour voyager hors des périodes chères.",
     visa: {
-      resume: "Exemption de visa de 30 jours pour les séjours touristiques, depuis le 15 septembre 2026. Elle était de 60 jours auparavant.",
-      duree: "30 jours sans visa depuis le 15 septembre 2026, contre 60 jours auparavant. Une extension unique pouvant aller jusqu'à 30 jours se demande sur place, auprès d'un bureau de l'immigration. Par voie terrestre, deux passages sans visa seulement par année civile.",
+      resume: "Exemption de visa pour les séjours touristiques : 60 jours pour une entrée jusqu'au 14 septembre 2026, 30 jours pour une entrée à partir du 15 septembre 2026.",
+      duree: "60 jours sans visa pour une entrée jusqu'au 14 septembre 2026 ; 30 jours pour une entrée à partir du 15 septembre 2026. C'est la date d'entrée sur le territoire qui fixe la durée, pas la date de sortie : une arrivée le 14 septembre garde ses 60 jours jusqu'à leur terme. Une extension unique pouvant aller jusqu'à 30 jours se demande sur place, auprès d'un bureau de l'immigration.",
       cout: "Gratuit à l'entrée ; ≈ 1 900 THB pour une prolongation sur place",
       procedure: "La Thailand Digital Arrival Card (TDAC) est obligatoire depuis le 1er mai 2025 pour toute entrée par air, terre ou mer : à remplir en ligne dans les 3 jours précédant l'arrivée sur tdac.immigration.go.th — gratuitement, les sites qui la facturent sont des intermédiaires. Passeport valide 6 mois à compter de la date d'entrée. Un billet de sortie du territoire peut être réclamé à l'embarquement.",
-      sansVisaJours: 30,
+      sansVisaJours: 60,
+      sansVisaJoursApres: { date: '2026-09-15', jours: 30 },
     },
     sourcesVisa: [
       { label: 'Thailand Digital Arrival Card (TDAC) — portail officiel', url: 'https://tdac.immigration.go.th/' },
@@ -166,7 +182,7 @@ export const countries: Country[] = [
       SOURCE_FD,
     ],
     demarches: [
-      { jours: 30, titre: "Reconfirmer la durée d'exemption", detail: "Une réduction de 60 à 30 jours est annoncée comme imminente. Vérifiez avant de bloquer vos vols si votre séjour dépasse 30 jours." },
+      { jours: 30, titre: "Reconfirmer la durée d'exemption", detail: "L'exemption passe de 60 à 30 jours pour toute entrée à partir du 15 septembre 2026. C'est la date d'entrée qui compte : si la vôtre est postérieure et votre séjour plus long qu'un mois, prévoyez l'extension sur place avant de bloquer vos vols." },
       { jours: 3, titre: 'Remplir la Thailand Digital Arrival Card', detail: "Obligatoire pour toute entrée par air, terre ou mer, dans les 3 jours précédant l'arrivée, sur tdac.immigration.go.th." },
     ],
     urgences: {
@@ -572,6 +588,26 @@ export const countries: Country[] = [
     ],
   },
 ];
+
+/**
+ * La bascule des règles datées.
+ *
+ * Une règle annoncée pour une date future doit rester fausse jusqu'à cette
+ * date, puis devenir vraie sans intervention. Les outils « Puis-je entrer ? »
+ * et « Itinéraire » lisent `sansVisaJours` et tranchent un séjour dessus :
+ * s'il anticipe, ils refusent un séjour encore autorisé ; s'il retarde, ils
+ * autorisent un séjour qui vaudra une amende à la sortie.
+ *
+ * Le site se reconstruit chaque jour. La bascule se fait donc d'elle-même le
+ * matin du jour dit, et le texte de `duree` — qui annonce les deux régimes et
+ * leurs dates — reste exact des deux côtés.
+ */
+for (const c of countries) {
+  const bascule = c.visa.sansVisaJoursApres;
+  if (bascule && new Date().toISOString().slice(0, 10) >= bascule.date) {
+    c.visa.sansVisaJours = bascule.jours;
+  }
+}
 
 export const bySlug = Object.fromEntries(countries.map((c) => [c.slug, c]));
 

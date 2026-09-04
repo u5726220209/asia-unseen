@@ -44,13 +44,13 @@ Pour un passeport français et un séjour touristique, ces quatre pays ne demand
 | Pays | Durée autorisée | Formalité en ligne | Coût |
 | --- | --- | --- | --- |
 | Japon | 90 jours | Visit Japan Web (recommandé, pas obligatoire) | Gratuit |
-| Thaïlande | 60 jours — réduction à 30 annoncée | **TDAC obligatoire**, dans les 3 jours avant l'arrivée | Gratuit |
+| Thaïlande | 60 j, puis 30 j dès le 15/09/2026 | **TDAC obligatoire**, dans les 3 jours avant l'arrivée | Gratuit |
 | Corée du Sud | 90 jours | K-ETA **suspendu** jusqu'au 31/12/2026 ; carte d'arrivée à remplir | Gratuit |
 | Philippines | 30 jours (+29 possibles) | **eTravel obligatoire**, 72 h avant le vol | Gratuit |
 
 Trois points d'attention.
 
-D'abord, la **Thaïlande**, et c'est le plus important de cette page. L'exemption est de 60 jours à ce jour, mais **une réduction à 30 jours est annoncée comme imminente** par les autorités françaises. Si vous planifiez plus de 30 jours sur place, reconfirmez la règle avant de réserver vos vols. Par ailleurs, la *Thailand Digital Arrival Card* est obligatoire depuis le 1er mai 2025 pour toute entrée par air, terre ou mer, à remplir dans les 3 jours précédant l'arrivée.
+D'abord, la **Thaïlande**, et c'est le plus important de cette page. L'exemption est de 60 jours pour une entrée jusqu'au 14 septembre 2026, et **de 30 jours pour une entrée à partir du 15 septembre 2026** — réduction publiée à la Gazette royale le 31 août. C'est la date d'entrée sur le territoire qui fixe la durée, pas la date de sortie : une arrivée le 14 conserve ses 60 jours jusqu'à leur terme. Le détail, y compris la nouvelle limite de deux entrées terrestres par année civile, est dans [notre article consacré à ce changement](/blog/visa-thailande-30-jours-2026). Par ailleurs, la *Thailand Digital Arrival Card* est obligatoire depuis le 1er mai 2025 pour toute entrée par air, terre ou mer, à remplir dans les 3 jours précédant l'arrivée.
 
 Ensuite, la **Corée du Sud** : l'exemption de K-ETA pour les ressortissants français a été accordée, prolongée, puis remise en question à plusieurs reprises. Elle court actuellement du 1er janvier au 31 décembre 2026. Le K-ETA reste facultatif — le demander dispense de remplir la carte d'arrivée. Pour un voyage en 2027, revérifiez.
 
