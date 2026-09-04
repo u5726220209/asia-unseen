@@ -24,8 +24,23 @@ jobs:
       - name: Sources officielles
         id: sentinelle
         run: |
-          node scripts/veille.mjs > rapport-veille.txt 2>&1 && echo "change=non" >> $GITHUB_OUTPUT || echo "change=oui" >> $GITHUB_OUTPUT
+          node scripts/veille.mjs --json-vers rapport-veille.json > rapport-veille.txt 2>&1 && echo "change=non" >> $GITHUB_OUTPUT || echo "change=oui" >> $GITHUB_OUTPUT
           cat rapport-veille.txt
+
+      # La seule chose que cette veille corrige d'elle-même, et elle ne corrige
+      # rien d'autre : la date affichée sur une fiche.
+      #
+      # Cette date était saisie à la main, donc figée dès que personne n'y
+      # pensait — sept fiches sur neuf affichaient août au 4 septembre pendant
+      # que la sentinelle relisait leurs sources chaque nuit. La machine
+      # vérifiait, et la page prétendait le contraire.
+      #
+      # La condition est stricte : toutes les sources du pays relues, aucune
+      # qui ait bougé. Une source injoignable suffit à ne rien toucher. Écrire
+      # une règle reste humain ; constater qu'une source n'a pas bougé ne l'est
+      # pas, et n'a jamais eu de raison de l'être.
+      - name: Fraîcheur des fiches
+        run: node scripts/rafraichir.mjs --veille rapport-veille.json
 
       - name: Échéances de vérification
         id: fraicheur
@@ -177,10 +192,14 @@ jobs:
           if [ "${{ steps.sentinelle.outputs.change }}" = "oui" ]; then
             node scripts/veille.mjs --init > /dev/null 2>&1 || true
           fi
-          if ! git diff --quiet src/data/veille-empreintes.json src/data/trafic-historique.json 2>/dev/null; then
+          SUIVIS="src/data/veille-empreintes.json src/data/trafic-historique.json src/data/countries.ts"
+          if ! git diff --quiet -- $SUIVIS 2>/dev/null; then
             git config user.name  "Sentinelle"
             git config user.email "actions@users.noreply.github.com"
-            git add -- src/data/veille-empreintes.json src/data/trafic-historique.json
-            git commit -m "Veille : état des sources et relevé de trafic"
+            git add -- $SUIVIS
+            # Pas de [skip ci] : une date de vérification qui remonte doit
+            # atteindre le site, sinon elle n'aura bougé que dans le dépôt.
+            # Le contrôle mécanique passe derrière et bloque si besoin.
+            git commit -m "Veille : état des sources, fraîcheur des fiches et relevé de trafic"
             git push
           fi

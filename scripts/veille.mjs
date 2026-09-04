@@ -39,6 +39,15 @@ const PARALLELE = 4;
 const args = process.argv.slice(2);
 const INIT = args.includes('--init');
 const JSON_OUT = args.includes('--json');
+/**
+ * Écrire le rapport machine en même temps que le rapport lisible.
+ *
+ * `rafraichir.mjs` a besoin de savoir quelles sources sont inchangées. Le
+ * faire relancer la sentinelle relirait trente-trois portails officiels une
+ * seconde fois chaque nuit — pour rien, et en doublant les chances qu'un
+ * serveur nous prenne pour un robot trop insistant.
+ */
+const JSON_VERS = args.includes('--json-vers') ? args[args.indexOf('--json-vers') + 1] : null;
 
 /* ── Les adresses surveillées, extraites des données du site ───── */
 
@@ -109,9 +118,30 @@ function normaliser(html) {
  * revanche, un « 45 » qui devient « 30 » ou un tarif qui monte, c'est
  * exactement ce qu'on veut voir le lendemain matin.
  */
+/**
+ * Les dates portées par la page elle-même.
+ *
+ * France Diplomatie affiche « date de mise à jour le : 10 août 2026 » en tête
+ * de chaque fiche. Ce quantième change chaque fois que le ministère relit sa
+ * page — souvent sans qu'une seule règle bouge. Comparé brut, il déclenche une
+ * alerte « valeurs chiffrées » au motif qu'un 10 est devenu un 04, et il
+ * empêche surtout la fiche pays de voir sa fraîcheur remonter : le pays
+ * resterait figé à son vieux mois pour toujours.
+ *
+ * Les années étaient déjà écartées ; les quantièmes ne l'étaient pas. On
+ * retire donc les dates entières avant de comparer, plutôt que d'écarter tous
+ * les nombres à deux chiffres — « 30 jours » et « 60 jours » sont exactement
+ * ce qu'on veut voir bouger.
+ */
+const MOIS = 'janvier|février|fevrier|mars|avril|mai|juin|juillet|août|aout|septembre|octobre|novembre|décembre|decembre';
+const sansDates = (t) => t
+  .replace(new RegExp(`\\b\\d{1,2}(er)?\\s+(${MOIS})\\s+\\d{4}\\b`, 'gi'), ' ')
+  .replace(/\b\d{1,2}[/.-]\d{1,2}[/.-]\d{2,4}\b/g, ' ')
+  .replace(/\b\d{4}-\d{2}-\d{2}\b/g, ' ');
+
 function chiffres(texte) {
   const out = new Set();
-  for (const m of texte.matchAll(/\d[\d  .]*(?:,\d+)?/g)) {
+  for (const m of sansDates(texte).matchAll(/\d[\d  .]*(?:,\d+)?/g)) {
     const v = m[0].replace(/[  .]/g, '').replace(',', '.');
     // Les années et les nombres à rallonge — numéros de téléphone, identifiants —
     // bougent pour des raisons qui n'ont rien à voir avec une règle.
@@ -230,13 +260,23 @@ if (INIT || nouvelles.length) {
   writeFileSync(EMPREINTES, JSON.stringify({ genereLe: new Date().toISOString().slice(0, 10), pages }, null, 0));
 }
 
-if (JSON_OUT) {
-  console.log(JSON.stringify({
+const rapportMachine = () => ({
     date: new Date().toISOString().slice(0, 10),
     surveillees: sources.length,
+    // Les sources relues avec succès et identiques au dernier passage.
+    // C'est sur cette liste que `rafraichir.mjs` décide qu'une fiche pays a
+    // réellement été vérifiée cette nuit : sans elle, il faudrait déduire
+    // l'inchangé par soustraction, et une source oubliée passerait pour
+    // vérifiée alors que personne ne l'a lue.
+    inchangees: par('inchangée').map((m) => m.url),
     modifiees: modifiees.map((m) => ({ url: m.url, label: m.label, motif: m.motif, similarite: +(m.sim ?? 0).toFixed(3), chiffres: m.chiffres })),
     inaccessibles: inaccessibles.map((m) => ({ url: m.url, detail: m.detail })),
-  }, null, 2));
+});
+
+if (JSON_VERS) writeFileSync(JSON_VERS, JSON.stringify(rapportMachine(), null, 2));
+
+if (JSON_OUT) {
+  console.log(JSON.stringify(rapportMachine(), null, 2));
 } else {
   if (modifiees.length) {
     console.log(`⚠  ${modifiees.length} source(s) ont changé depuis le dernier relevé :\n`);

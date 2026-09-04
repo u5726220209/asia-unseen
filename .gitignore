@@ -10,3 +10,4 @@ dist/
 
 # Archives de déploiement
 dist_*.zip
+rapport-veille.json

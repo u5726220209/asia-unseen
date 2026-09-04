@@ -119,7 +119,10 @@ export const countries: Country[] = [
     },
     sourcesVisa: [
       { label: "France Diplomatie — Vietnam, entrée et séjour", url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/vietnam/conseils-aux-voyageurs-entree-sejour' },
-      { label: "Portail e-visa officiel du Vietnam", url: 'https://evisa.gov.vn/' },
+      // Chaîne de certificats incomplète : ce portail ne sert pas son
+      // intermédiaire, et aucune machine ne peut valider la connexion. Le
+      // navigateur du lecteur, lui, l'accepte — on le cite donc sans le surveiller.
+      { label: "Portail e-visa officiel du Vietnam", url: 'https://evisa.gov.vn/', surveillee: false },
       { label: "Enregistrement préalable (aéroport de Hô Chi Minh-Ville)", url: 'https://prearrival.immigration.gov.vn/' },
       SOURCE_FD,
     ],
@@ -132,7 +135,7 @@ export const countries: Country[] = [
       ambassade: { ville: 'Hanoï', adresse: '57 Tran Hung Dao, Hanoï', telephone: '+84 24 3944 5700' },
       source: { label: 'France Diplomatie — Contacts utiles', url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/vietnam/conseils-aux-voyageurs-contacts-utiles' },
     },
-    verifieLe: '2026-08',
+    verifieLe: '2026-09',
     volDepuisParis: '≈ 12 h en direct vers Hanoï ou Hô Chi Minh-Ville',
     accent: 'teal',
     resume:
@@ -245,7 +248,7 @@ export const countries: Country[] = [
       ambassade: { ville: 'Tokyo', adresse: '4-11-44 Minami-Azabu, Minato-ku, Tokyo 106-8514', telephone: '+81 3 5798 6000' },
       source: { label: 'France Diplomatie — Contacts utiles', url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/japon/conseils-aux-voyageurs-contacts-utiles' },
     },
-    verifieLe: '2026-08',
+    verifieLe: '2026-09',
     volDepuisParis: '≈ 12 h à 14 h selon la route',
     accent: 'ink',
     resume:
@@ -360,7 +363,7 @@ export const countries: Country[] = [
       ambassade: { ville: 'Vientiane', adresse: 'Rue Setthathirath, BP 06, Vientiane', telephone: '+856 21 267400' },
       source: { label: 'France Diplomatie — Contacts utiles', url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/laos/conseils-aux-voyageurs-contacts-utiles' },
     },
-    verifieLe: '2026-08',
+    verifieLe: '2026-09',
     volDepuisParis: '≈ 15 h avec une escale (Bangkok, Hanoï ou Singapour)',
     accent: 'teal',
     resume:
@@ -400,7 +403,8 @@ export const countries: Country[] = [
     },
     sourcesVisa: [
       { label: "France Diplomatie — Cambodge, entrée et séjour", url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/cambodge/conseils-aux-voyageurs-entree-sejour' },
-      { label: 'E-visa officiel du Cambodge', url: 'https://www.evisa.gov.kh/' },
+      // Refuse toute requête automatisée. Cité pour le lecteur, hors veille.
+      { label: 'E-visa officiel du Cambodge', url: 'https://www.evisa.gov.kh/', surveillee: false },
       SOURCE_FD,
     ],
     demarches: [
@@ -412,7 +416,7 @@ export const countries: Country[] = [
       ambassade: { ville: 'Phnom Penh', adresse: '1 boulevard Monivong, BP 18, Phnom Penh', telephone: '+855 23 260 010' },
       source: { label: 'France Diplomatie — Contacts utiles', url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/cambodge/conseils-aux-voyageurs-contacts-utiles' },
     },
-    verifieLe: '2026-08',
+    verifieLe: '2026-09',
     volDepuisParis: '≈ 14 h avec une escale',
     accent: 'amber',
     resume:
@@ -465,7 +469,7 @@ export const countries: Country[] = [
       ambassade: { ville: 'Séoul', adresse: '43-12 Seosomun-ro, Seodaemun-gu, Séoul 03741', telephone: '+82 2 3149 4300' },
       source: { label: 'France Diplomatie — Contacts utiles', url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/coree-du-sud/conseils-aux-voyageurs-contacts-utiles' },
     },
-    verifieLe: '2026-08',
+    verifieLe: '2026-09',
     volDepuisParis: '≈ 11 h à 13 h en direct vers Séoul-Incheon',
     accent: 'ink',
     resume:
@@ -505,7 +509,8 @@ export const countries: Country[] = [
     },
     sourcesVisa: [
       { label: "France Diplomatie — Indonésie, entrée et séjour", url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/indonesie/conseils-aux-voyageurs-entree-sejour' },
-      { label: "Direction générale de l'immigration indonésienne", url: 'https://evisa.imigrasi.go.id/' },
+      // Répond 403 à tout robot, systématiquement. Cité pour le lecteur, hors veille.
+      { label: "Direction générale de l'immigration indonésienne", url: 'https://evisa.imigrasi.go.id/', surveillee: false },
       SOURCE_FD,
     ],
     demarches: [
@@ -518,7 +523,7 @@ export const countries: Country[] = [
       ambassade: { ville: 'Jakarta', adresse: 'Jl. M.H. Thamrin 20, Jakarta 10350', telephone: '+62 21 2355 8000' },
       source: { label: 'France Diplomatie — Contacts utiles', url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/indonesie/conseils-aux-voyageurs-contacts-utiles' },
     },
-    verifieLe: '2026-08',
+    verifieLe: '2026-09',
     volDepuisParis: '≈ 16 h à 18 h avec une escale',
     accent: 'teal',
     resume:
@@ -572,7 +577,7 @@ export const countries: Country[] = [
       ambassade: { ville: 'Manille', adresse: '21e étage, Ayala Triangle Gardens Tower 2, Paseo de Roxas, 1226 Makati, Metro Manila', telephone: '+63 2 8857 6900' },
       source: { label: 'France Diplomatie — Contacts utiles', url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/philippines/conseils-aux-voyageurs-contacts-utiles' },
     },
-    verifieLe: '2026-08',
+    verifieLe: '2026-09',
     volDepuisParis: '≈ 16 h à 18 h avec une escale',
     accent: 'amber',
     resume:
