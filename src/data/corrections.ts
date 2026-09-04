@@ -45,6 +45,20 @@ export function verificateurs(): string[] {
 export const corrections: Correction[] = [
   {
     date: '2026-09-04',
+    page: '/chine',
+    pageLabel: 'Chine',
+    gravite: 'correction',
+    titre: "Le visa chinois était annoncé à 126 €, il coûte 45 € de frais consulaires",
+    avant: "Gratuit sous exemption ; ≈ 126 € pour un visa L déposé en centre",
+    apres:
+      "L'ambassade de Chine en France affiche 45 € de frais consulaires pour un visa à entrée simple, tarif réduit prolongé jusqu'au 31 décembre 2026 pour les ressortissants de l'espace Schengen. Les 126 € correspondaient au tarif plein d'avant les réductions successives des deux dernières années. S'y ajoutent les frais de service du centre de dépôt, qui portent le total autour de 110 € : nous n'avons pas pu ouvrir la grille officielle du centre parisien, dont le lien mène à un PDF inaccessible, et ce total reste donc un ordre de grandeur. Les 45 € viennent de l'ambassade elle-même.",
+    source: {
+      label: "Ambassade de Chine en France — prolongation de la réduction des tarifs de visa",
+      url: 'https://fr.china-embassy.gov.cn/fra/zgzfg/zgsg/lsb/202512/t20251226_11788011.htm',
+    },
+  },
+  {
+    date: '2026-09-04',
     page: '/transports-asie',
     pageLabel: 'Transports en Asie',
     gravite: 'correction',

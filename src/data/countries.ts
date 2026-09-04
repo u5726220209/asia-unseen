@@ -261,7 +261,7 @@ export const countries: Country[] = [
     visa: {
       resume: "Exemption de visa de 30 jours pour les passeports français ordinaires, en vigueur jusqu'au 31 décembre 2026. Le dispositif est reconduit d'année en année : à revérifier avant chaque départ.",
       duree: "30 jours sans visa, pour le tourisme, les affaires, les visites familiales, les échanges culturels et le transit. Non prolongeable sur place. Visa L classique au-delà de 30 jours.",
-      cout: "Gratuit sous exemption ; ≈ 126 € pour un visa L déposé en centre",
+      cout: "Gratuit sous exemption ; 45 € de frais consulaires pour un visa L à entrée simple — tarif réduit prolongé jusqu'au 31 décembre 2026 —, plus les frais de service du centre de dépôt, soit environ 110 € au total",
       procedure: "Passeport valide 6 mois après la date de sortie du territoire. Les passeports d'urgence sont exclus du dispositif. Enregistrement obligatoire auprès de la police locale dans les 24 h suivant l'arrivée — l'hôtel s'en charge, mais pas une location entre particuliers. Pour un visa L : dépôt en centre avec biométrie, 4 à 10 jours ouvrés.",
       sansVisaJours: 30,
     },
@@ -287,7 +287,7 @@ export const countries: Country[] = [
       ambassade: { ville: 'Pékin', adresse: '60 Tianze Lu, Pékin 100600', telephone: '+86 10 8531 2000' },
       source: { label: 'France Diplomatie — Contacts utiles', url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/chine/conseils-aux-voyageurs-contacts-utiles' },
     },
-    verifieLe: '2026-08',
+    verifieLe: '2026-09',
     volDepuisParis: '≈ 11 h vers Pékin, 12 h vers Shanghai',
     accent: 'teal',
     resume:
