@@ -44,6 +44,21 @@ export function verificateurs(): string[] {
 
 export const corrections: Correction[] = [
   {
+    date: '2026-09-04',
+    page: '/transports-asie',
+    pageLabel: 'Transports en Asie',
+    gravite: 'correction',
+    titre: "Deux guides annonçaient 33 heures de train là où le site en écrivait 32 h 45 ailleurs",
+    avant:
+      "Hanoï–Saïgon d'une traite, c'est 33 heures : personne ne devrait faire ça.",
+    apres:
+      "32 h 45 sur le train de nuit SE1 — départ de Hanoï à 21 h 45, arrivée à Saigon à 6 h 30 le surlendemain. C'est la durée que l'article consacré à cette ligne publiait depuis l'ouverture, horaires officiels à l'appui ; deux guides en annonçaient une autre. Un quart d'heure d'écart n'a jamais blessé personne, mais il prouvait que rien ne reliait ces trois pages entre elles. La durée est désormais au registre des chiffres cités : la sentinelle refuse la mise en ligne si l'une d'elles se remet à dire autre chose.",
+    source: {
+      label: 'Đường sắt Việt Nam — grille tarifaire officielle, train SE1',
+      url: 'https://giotaugiave.dsvn.vn/giave/thongnhat.aspx',
+    },
+  },
+  {
     date: '2026-09-03',
     page: '/thailande',
     pageLabel: 'Thaïlande',

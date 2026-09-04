@@ -7,6 +7,7 @@ pubDate: 2026-07-28
 updatedDate: 2026-08-28
 ordre: 80
 pays: [vietnam, thailande, japon, chine, laos, cambodge, indonesie, philippines]
+nature: editorial
 faq:
   - q: "Faut-il réserver les activités à l'avance en Asie ?"
     r: "Réservez à l'avance ce qui est contingenté ou saisonnier : permis de trek, plongée avec certification, spectacles, entrées à quota comme certains temples japonais. Tout le reste — excursions à la journée, cours de cuisine, guides locaux — est presque toujours moins cher réservé sur place, la veille."

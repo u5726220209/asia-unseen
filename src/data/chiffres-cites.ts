@@ -58,6 +58,8 @@ const ARTICLE_AEROPORT_HANOI = '/blog/aeroport-noi-bai-hanoi';
 const ARTICLE_KETA = '/blog/k-eta-coree-2026';
 const COMPARATIF_ASSURANCE = '/blog/assurance-voyage-asie-comparatif';
 const COMPARATIF_ESIM = '/blog/esim-asie-comparatif-prix';
+const GUIDE_TRANSPORTS = '/transports-asie';
+const GUIDE_ERREURS = '/erreurs-a-eviter';
 
 export const chiffresCites: ChiffreCite[] = [
   /* ── Assurance ──────────────────────────────────────────────── */
@@ -88,7 +90,13 @@ export const chiffresCites: ChiffreCite[] = [
   { affiche: '3 030', designe: 'prolongation de séjour aux Philippines, en pesos', source: FD_PHILIPPINES, releveLe: '2026-08-31', pages: [ARTICLE_PHILIPPINES] },
 
   /* ── Train Hanoï-Saigon ─────────────────────────────────────── */
-  { affiche: '1 726', designe: 'distance ferroviaire Hanoï-Saigon, en km', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
+  { affiche: '1 726', designe: 'distance ferroviaire Hanoï-Saigon, en km', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM, GUIDE_TRANSPORTS], sourceIntrouvableAttendue: true },
+  // Deux guides annonçaient « 33 heures » là où l'article, horaires officiels à
+  // l'appui, écrit 32 h 45. Un écart d'un quart d'heure n'a blessé personne,
+  // mais il prouvait que rien ne reliait ces trois pages entre elles. La durée
+  // est désormais au registre : la sentinelle refuse la mise en ligne si l'une
+  // d'elles se met à dire autre chose.
+  { affiche: '32 h 45', designe: 'durée du train SE1, Hanoï-Saigon', source: DSVN_TARIFS, releveLe: '2026-09-04', pages: [ARTICLE_TRAIN_VIETNAM, GUIDE_TRANSPORTS, GUIDE_ERREURS], sourceIntrouvableAttendue: true },
   { affiche: '1 122 000', designe: 'train SE1 Hanoï-Saigon, siège inclinable climatisé', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
   { affiche: '1 516 000', designe: 'train SE1 Hanoï-Saigon, couchette molle 6 places, étage haut', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
   { affiche: '1 664 000', designe: 'train SE1 Hanoï-Saigon, couchette molle 6 places, étage milieu', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },

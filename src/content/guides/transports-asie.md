@@ -4,9 +4,13 @@ heading: "Se déplacer en Asie : ce qui vaut le coup, ce qui fait perdre une jou
 description: "Comment se déplacer en Asie : trains de nuit, bus, ferries, vols intérieurs et location de scooter. Temps de trajet réels, coûts et pièges par pays."
 accroche: "La règle qui vaut partout : au-delà de huit heures de route, l'avion coûte souvent moins cher qu'une journée perdue — sauf si le trajet est lui-même le voyage."
 pubDate: 2026-07-30
-updatedDate: 2026-08-28
+updatedDate: 2026-09-04
 ordre: 70
 pays: [vietnam, thailande, japon, chine, laos, cambodge, coree-du-sud, indonesie, philippines]
+nature: factuel
+sources:
+  - { label: "Đường sắt Việt Nam — grille tarifaire officielle, train SE1", url: "https://giotaugiave.dsvn.vn/giave/thongnhat.aspx" }
+  - { label: "Đường sắt Việt Nam — billetterie en ligne officielle", url: "https://dsvn.vn/" }
 faq:
   - q: "Le train de nuit est-il une bonne idée en Asie du Sud-Est ?"
     r: "Oui, à deux conditions : réserver une couchette en compartiment fermé plutôt qu'un siège inclinable, et accepter de mal dormir. Il fait économiser une nuit d'hôtel et une journée de transport, ce qui en fait le meilleur choix sur les trajets de 8 à 12 heures au Vietnam et en Thaïlande."
@@ -36,7 +40,7 @@ Deux exceptions à cette règle, et elles sont importantes.
 
 **Chine.** Le réseau à grande vitesse est spectaculaire — Pékin–Shanghai en 4 h 30 — et bon marché rapporté à la distance. Le piège est ailleurs : **les billets se vendent 10 à 15 jours à l'avance et partent vite.** Compter en trouver la veille est le meilleur moyen de bloquer un itinéraire. Passeport obligatoire à l'achat et à l'embarquement.
 
-**Vietnam.** La ligne de la Réunification longe le pays sur 1 726 km. Hanoï–Saïgon d'une traite, c'est 33 heures : personne ne devrait faire ça. En revanche, Hanoï–Hué ou Hué–Da Nang en couchette est excellent, et le tronçon Hué–Da Nang, qui longe le col des Nuages, est l'un des plus beaux trajets ferroviaires d'Asie.
+**Vietnam.** La ligne de la Réunification longe le pays sur 1 726 km. Hanoï–Saïgon d'une traite, c'est 32 h 45 sur le train de nuit SE1 : personne ne devrait faire ça. En revanche, Hanoï–Hué ou Hué–Da Nang en couchette est excellent, et le tronçon Hué–Da Nang, qui longe le col des Nuages, est l'un des plus beaux trajets ferroviaires d'Asie.
 
 **Thaïlande.** Réseau lent mais confortable en couchette. Bangkok–Chiang Mai de nuit reste un classique qui fonctionne. Réservez en première ou deuxième classe couchette, jamais en siège.
 

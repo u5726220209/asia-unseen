@@ -133,16 +133,25 @@ if (orphelines.length) {
  * On ne peut pas inventer une source : la trouver, la lire et la citer est
  * un travail de jugement. Mais on peut refuser de l'oublier.
  */
+/**
+ * Nuance apportée après coup : un guide de conseils n'a pas de source à citer.
+ * Le contrôle nommait indistinctement les huit guides sans bloc `sources`, et
+ * quatre d'entre eux — quel quartier choisir, quand partir, quel budget viser —
+ * n'auraient jamais pu en produire une honnête. Un rappel qui demande
+ * l'impossible finit ignoré, et emporte avec lui les quatre autres, qui eux le
+ * méritaient. Seules les pages déclarées `nature: factuel` sont donc comptées.
+ */
 const sansSource = [];
 for (const f of readdirSync('src/content/guides').filter((f) => f.endsWith('.md'))) {
   const entete = readFileSync(`src/content/guides/${f}`, 'utf8').split('---')[1] ?? '';
+  if (/^nature:\s*editorial/m.test(entete)) continue;
   if (!/^sources:/m.test(entete)) sansSource.push(f.replace(/\.md$/, ''));
 }
 
 lignes.push('## Guides qui ne citent aucune source', '');
 if (sansSource.length) {
   lignes.push(
-    `**${sansSource.length} guide(s) sur ${readdirSync('src/content/guides').filter((f) => f.endsWith('.md')).length}** n'ont pas de bloc \`sources:\` :`,
+    `**${sansSource.length} guide(s) factuel(s)** n'ont pas de bloc \`sources:\` :`,
     '',
   );
   for (const g of sansSource) lignes.push(`- \`/${g}\``);

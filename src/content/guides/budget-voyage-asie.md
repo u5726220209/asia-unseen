@@ -8,6 +8,7 @@ updatedDate: 2026-08-28
 ordre: 20
 outil: budget
 pays: [vietnam, thailande, japon, chine, laos, cambodge, coree-du-sud, indonesie, philippines]
+nature: editorial
 faq:
   - q: "Quel budget prévoir pour un mois en Asie du Sud-Est ?"
     r: "Comptez 750 à 900 € sur place en voyage routard (Vietnam, Laos, Cambodge), 1 600 à 2 000 € en voyage confort, hors vol international. Le vol aller-retour depuis Paris ajoute 600 à 800 € par personne s'il est réservé deux à quatre mois à l'avance."

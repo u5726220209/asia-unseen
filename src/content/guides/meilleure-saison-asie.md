@@ -8,6 +8,7 @@ updatedDate: 2026-08-28
 ordre: 30
 outil: saison
 pays: [vietnam, thailande, japon, chine, laos, cambodge, coree-du-sud, indonesie, philippines]
+nature: editorial
 faq:
   - q: "Quel est le meilleur mois pour partir en Asie du Sud-Est ?"
     r: "Février, sans hésiter. La saison sèche est installée partout — Vietnam du Sud, Thaïlande, Laos, Cambodge — les températures restent supportables, et le pic de fréquentation de Noël est passé. Novembre est le second meilleur choix, avec des paysages encore verts après la mousson."

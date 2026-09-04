@@ -37,6 +37,24 @@ const guides = defineCollection({
     faq: z.array(z.object({ q: z.string(), r: z.string() })).default([]),
     /** Sources officielles citées en bas de page (E-E-A-T). */
     sources: z.array(z.object({ label: z.string(), url: z.string().url() })).default([]),
+    /**
+     * Nature de la page, et ce qu'elle engage.
+     *
+     * Huit guides sur onze ne citaient aucune source, sur un site dont la page
+     * d'accueil promet que « les sources sont citées et cliquables ». En allant
+     * les sourcer, une distinction s'est imposée : certains guides reposent sur
+     * des faits externes vérifiables — une durée de train, un tarif d'opérateur,
+     * une commission bancaire — et leur absence de source était une lacune.
+     * D'autres sont des conseils : comment choisir un quartier, dans quel ordre
+     * enchaîner des étapes, quelle activité vaut son prix. Leur coller une
+     * source officielle n'aurait rien prouvé — elle n'aurait étayé aucune des
+     * phrases de la page. C'est la décoration de la preuve, pas la preuve.
+     *
+     * `editorial` dit donc ce qu'il en est, et le bandeau de vérification le
+     * répète au lecteur. Mieux vaut assumer un jugement que déguiser un
+     * jugement en fait sourcé.
+     */
+    nature: z.enum(['factuel', 'editorial']).default('factuel'),
     /** Pays concernés — génère les liens croisés automatiques. */
     pays: z.array(z.string()).default([]),
   }),

@@ -4,9 +4,13 @@ heading: "Payer et retirer en Asie sans laisser 5 % en frais"
 description: "Quelle carte bancaire pour l'Asie, comment retirer sans frais, où changer son argent, et les arnaques au distributeur et au bureau de change à connaître."
 accroche: "Entre la pire configuration bancaire et la meilleure, l'écart sur un mois de voyage dépasse 70 €. C'est une heure de préparation pour l'éviter."
 pubDate: 2026-07-26
-updatedDate: 2026-08-28
+updatedDate: 2026-09-04
 ordre: 90
 pays: [vietnam, thailande, japon, chine, laos, cambodge, coree-du-sud, indonesie, philippines]
+nature: factuel
+sources:
+  - { label: "La Banque Postale — la conversion dynamique de devises expliquée", url: "https://www.labanquepostale.fr/entreprises/actualite/DCC-comprendre-le-change-dynamique.html" }
+  - { label: "Tarifs bancaires — comparateur officiel du ministère de l'Économie", url: "https://www.tarifs-bancaires.gouv.fr/" }
 faq:
   - q: "Quelle carte bancaire utiliser pour voyager en Asie ?"
     r: "Une carte sans frais de change ni commission sur les paiements à l'étranger, doublée d'une carte classique gardée séparément en secours. Les néobanques comme Wise ou Revolut appliquent le taux interbancaire réel là où une banque traditionnelle prélève 2 à 3 % par opération, plus un forfait par retrait."

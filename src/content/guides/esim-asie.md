@@ -7,6 +7,11 @@ pubDate: 2026-08-04
 updatedDate: 2026-08-28
 ordre: 50
 pays: [vietnam, thailande, japon, chine, laos, cambodge, coree-du-sud, indonesie, philippines]
+nature: factuel
+sources:
+  - { label: "Airalo — forfaits eSIM Asie, tarifs relevés", url: "https://www.airalo.com/fr/asia-esim" }
+  - { label: "Holafly — forfaits eSIM Asie, tarifs relevés", url: "https://esim.holafly.com/fr/esim-asie/" }
+  - { label: "AIS Thailand — forfait SIM touriste officiel", url: "https://www.ais.th/en/consumers/package/international/tourist-plan" }
 faq:
   - q: "eSIM ou SIM locale : que choisir en Asie ?"
     r: "L'eSIM pour les séjours courts, les itinéraires multi-pays et l'arrivée sans stress : elle est active dès l'atterrissage. La SIM locale pour les séjours de plus de trois semaines dans un seul pays, où elle revient deux à trois fois moins cher et donne un vrai numéro local, souvent nécessaire pour les applications de VTC et de livraison."

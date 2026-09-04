@@ -15,11 +15,19 @@ import { site } from '@/data/site';
 interface Props {
   date: string;                                  // format AAAA-MM
   sources?: { label: string; url: string }[];
+  /**
+   * `editorial` : la page repose sur un jugement, pas sur une donnée externe.
+   * Sans cette distinction, une page de conseils affichait « ne cite pas encore
+   * de source » — ce qui la présentait comme incomplète alors qu'elle est
+   * simplement d'une autre nature. Mieux vaut assumer un jugement que le
+   * déguiser en fait sourcé, ou le faire passer pour un oubli.
+   */
+  nature?: 'factuel' | 'editorial';
   /** Chemin de la page, pour rattacher les corrections publiées et le signalement. */
   page?: string;
   class?: string;
 }
-const { date, sources = [], page, class: klass = '' } = Astro.props;
+const { date, sources = [], page, nature = 'factuel', class: klass = '' } = Astro.props;
 
 const [y, m] = date.split('-').map(Number);
 const verifieLe = new Date(y, m - 1, 1);
@@ -57,13 +65,15 @@ const mailto = `mailto:${site.author.email}?subject=${encodeURIComponent(sujet)}
         <path d="M2.5 8.5 6 12l7.5-8" />
       </svg>
     )}
-    {sources.length > 0 ? 'Vérifié en' : 'Mis à jour en'} {label}
+    {sources.length > 0 ? 'Vérifié en' : nature === 'editorial' ? 'Écrit et revu en' : 'Mis à jour en'} {label}
     <span class="font-normal normal-case tracking-normal opacity-70">— {anciennete}</span>
   </p>
 
   <p class="mt-2 text-[0.85rem] leading-relaxed text-warm">
     {perime
       ? "Cette page n'a pas été revérifiée depuis six mois. Les règles de visa en Asie changent plusieurs fois par an : considérez ces informations comme indicatives et confirmez-les à la source avant de réserver."
+      : nature === 'editorial'
+      ? "Cette page relève du jugement éditorial, pas de la donnée officielle : elle dit comment choisir, pas ce qu'une administration impose. Il n'y a donc pas de source à citer — et c'est précisément pour cela qu'elle se discute. Si vous n'êtes pas d'accord, écrivez-nous."
       : sources.length === 0
       ? "Cette page ne cite pas encore de source officielle : elle porte sa date de mise à jour, et rien de plus. Si quelque chose vous paraît faux ou périmé, dites-le — c'est ainsi que le site se corrige."
       : "Les formalités et les tarifs changent sans préavis. Confirmez systématiquement auprès des sources officielles avant de réserver — c'est la seule chose qui fasse foi."}

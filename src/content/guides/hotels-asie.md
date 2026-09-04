@@ -7,6 +7,7 @@ pubDate: 2026-08-02
 updatedDate: 2026-08-28
 ordre: 60
 pays: [vietnam, thailande, japon, chine, laos, cambodge, coree-du-sud, indonesie, philippines]
+nature: editorial
 faq:
   - q: "Faut-il réserver son hébergement à l'avance en Asie ?"
     r: "Réservez les deux ou trois premières nuits depuis chez vous, et la totalité du séjour si vous partez en haute saison ou pendant une fête locale. Le reste peut se réserver sur place ou à quelques jours, ce qui laisse la liberté de rester plus longtemps là où l'on se sent bien."

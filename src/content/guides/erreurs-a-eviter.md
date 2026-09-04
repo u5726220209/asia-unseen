@@ -7,6 +7,10 @@ pubDate: 2026-07-24
 updatedDate: 2026-08-28
 ordre: 100
 pays: [vietnam, thailande, japon, chine, laos, cambodge, coree-du-sud, indonesie, philippines]
+nature: factuel
+sources:
+  - { label: "France Diplomatie — conseils aux voyageurs par pays", url: "https://www.diplomatie.gouv.fr/fr/conseils-aux-voyageurs/" }
+  - { label: "Đường sắt Việt Nam — grille tarifaire officielle, train SE1", url: "https://giotaugiave.dsvn.vn/giave/thongnhat.aspx" }
 faq:
   - q: "Quelle est l'arnaque la plus fréquente en Asie du Sud-Est ?"
     r: "Le rabattage à commission : un chauffeur, un guide ou un employé d'hôtel vous oriente vers une boutique, un restaurant ou une agence qui le rémunère. Ce n'est pas dangereux, mais cela vous fait payer 30 à 200 % au-dessus du prix normal et perdre du temps. La parade est simple : décidez de la destination avant de monter dans le véhicule."
@@ -34,7 +38,7 @@ Cette liste vient des messages qu'on reçoit et des erreurs qu'on a faites soi-m
 
 ## Ce qui coûte du temps
 
-**6. Sous-estimer les distances.** Deux cents kilomètres de montagne au Laos ou au nord du Vietnam, c'est sept heures. Hanoï–Saïgon en train, c'est 33 heures. Regardez les temps de trajet réels avant de bâtir un itinéraire, pas la carte.
+**6. Sous-estimer les distances.** Deux cents kilomètres de montagne au Laos ou au nord du Vietnam, c'est sept heures. Hanoï–Saïgon en train, c'est 32 h 45. Regardez les temps de trajet réels avant de bâtir un itinéraire, pas la carte.
 
 **7. Enchaîner trop d'étapes.** Chaque changement de ville coûte une demi-journée à une journée pleine. Un itinéraire de trois semaines avec neuf étapes est un itinéraire de transport, pas de voyage.
 

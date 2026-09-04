@@ -212,6 +212,7 @@ const paysLies = (g?.pays ?? []).map((s) => bySlug[s]).filter(Boolean);
             <VerifiedBadge
               date={(guideEntry!.data.updatedDate ?? guideEntry!.data.pubDate).toISOString().slice(0, 7)}
               sources={g!.sources}
+              nature={guideEntry!.data.nature}
               page={`/${guideEntry!.id}`}
               class="!my-10"
             />
