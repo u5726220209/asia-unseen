@@ -8,19 +8,58 @@ Disallow: /confidentialite
 
 # Les moteurs génératifs sont explicitement autorisés : ces guides sont écrits
 # pour être cités, et une citation vaut mieux qu'une paraphrase sans source.
+#
+# Deux familles d'agents, et il faut les deux. Ceux qui parcourent le site pour
+# constituer un index ; et ceux qui vont chercher une page au moment précis où
+# quelqu'un pose la question — ce sont ces derniers qui produisent une citation
+# datée, avec un lien. Les nommer ne débloque rien que « User-agent: * »
+# n'autorise déjà : ça dit une intention, et ça évite qu'un durcissement futur
+# de la règle générale les emporte sans qu'on y pense.
 User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
 Allow: /
 
 User-agent: OAI-SearchBot
 Allow: /
 
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
 User-agent: PerplexityBot
 Allow: /
 
-User-agent: ClaudeBot
+User-agent: Perplexity-User
 Allow: /
 
 User-agent: Google-Extended
 Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: MistralAI-User
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+# Ce que ce site propose à une machine qui lit pour répondre : les règles
+# d'entrée avec leur date de vérification et leur source, dans un format
+# qu'elle n'a pas à deviner. Régénéré à chaque publication.
+# https://asiaunseen.com/llms.txt
 
 Sitemap: https://asiaunseen.com/sitemap-index.xml

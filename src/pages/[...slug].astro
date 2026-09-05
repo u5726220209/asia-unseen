@@ -95,6 +95,23 @@ const paysSchema = country
       publisher: { '@id': `${site.url}/#organization` },
       about: { '@type': 'Country', name: country.nom },
       mainEntityOfPage: { '@type': 'WebPage', '@id': `${site.url}/${country.slug}` },
+      /**
+       * Les sources officielles, déclarées dans le schéma et pas seulement
+       * dans le corps de la page.
+       *
+       * C'est la différence entre « ce site affirme » et « ce site rapporte ce
+       * que dit telle administration, et voici l'adresse ». Un moteur
+       * génératif qui doit choisir entre dix guides contradictoires n'a
+       * souvent rien d'autre pour trancher — et c'est précisément la seule
+       * chose que ce site a de plus que les dix autres.
+       */
+      citation: country.sourcesVisa.map((s) => ({
+        '@type': 'CreativeWork',
+        name: s.label,
+        url: s.url,
+      })),
+      license: 'https://creativecommons.org/licenses/by/4.0/',
+      isAccessibleForFree: true,
     }]
   : [];
 
@@ -129,6 +146,7 @@ const paysLies = (g?.pays ?? []).map((s) => bySlug[s]).filter(Boolean);
     type="article"
     image={`/og/${country!.slug}.png`}
     schema={paysSchema}
+    donnees={`/donnees/${country!.slug}.json`}
   >
     <CountryView country={country!} related={relatedLinks} lies={liesPays} />
   </BaseLayout>

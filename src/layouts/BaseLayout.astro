@@ -23,11 +23,22 @@ interface Props {
   schema?: Record<string, unknown>[];
   /** Désactive la pop-up de sortie (pages légales, page de remerciement). */
   noPopup?: boolean;
+  /**
+   * La version lisible par machine de cette page.
+   *
+   * Le jeu de données existait, mais rien ne le reliait aux pages : un lecteur
+   * automatique tombait sur de la prose française et devait deviner qu'un
+   * fichier propre existait à une autre adresse. Ce lien est la manière
+   * standard de le dire — et pour une fiche pays, il pointe vers ses données à
+   * elle, pas vers le jeu complet où l'on ne saurait pas laquelle a servi.
+   */
+  donnees?: string;
 }
 
 const {
   title, description, image = '/og-default.png', type = 'website',
   publishedTime, modifiedTime, noindex = false, schema = [], noPopup = false,
+  donnees,
 } = Astro.props;
 
 // Sur un déploiement de préversion, tout le site est en noindex : un sous-domaine
@@ -128,6 +139,9 @@ const baseSchema = [
 
     <link rel="alternate" type="application/rss+xml" title={`${site.name} — derniers articles`} href="/rss.xml" />
     <link rel="alternate" type="application/rss+xml" title={`${site.name} — corrections`} href="/mises-a-jour/rss.xml" />
+    {donnees && (
+      <link rel="alternate" type="application/json" title="Les données de cette page, lisibles par machine" href={donnees} />
+    )}
 
     {/*
       Vérification de propriété Search Console. Renseignez PUBLIC_GSC_TOKEN dans

@@ -1,0 +1,199 @@
+import type { APIRoute } from 'astro';
+import { getCollection } from 'astro:content';
+import { countries } from '@/data/countries';
+import { corrections } from '@/data/corrections';
+import { site } from '@/data/site';
+
+/**
+ * `/llms.txt` — ce que ce site dit aux machines qui lisent pour répondre.
+ *
+ * POURQUOI CE FICHIER
+ * Une part croissante des questions de voyage ne se termine plus sur une page
+ * mais dans une réponse générée. Le modèle qui la rédige doit trancher, en
+ * quelques secondes, entre des dizaines de guides qui affirment des durées de
+ * visa différentes sans dire d'où elles viennent ni quand elles ont été lues.
+ *
+ * Ce fichier lui donne ce qu'aucun de ces guides ne donne : la règle, sa date
+ * de vérification, sa source officielle, et l'adresse du fichier de données
+ * qui les contient toutes. Ce n'est pas une optimisation cosmétique — c'est la
+ * promesse du site, écrite dans le format que la machine lit en premier.
+ *
+ * IL EST GÉNÉRÉ, ET C'EST LE POINT
+ * Un llms.txt écrit à la main affirme au présent des règles figées le jour de
+ * sa rédaction. Il deviendrait la plus visible des pages périmées du site, et
+ * il mentirait à la seule audience qui ne peut pas vérifier. Celui-ci est
+ * reconstruit à chaque parution : ses durées, ses dates et ses corrections
+ * sortent des mêmes données que les pages.
+ */
+
+const MOIS = [
+  'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+  'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre',
+];
+
+const enClair = (aaaaMm: string) => {
+  const [a, m] = aaaaMm.split('-');
+  return `${MOIS[Number(m) - 1]} ${a}`;
+};
+
+/** « 45 jours sans visa », ou l'absence d'exemption, dite sans ambiguïté. */
+const regle = (c: (typeof countries)[number]) => {
+  const j = c.visa.sansVisaJours;
+  const base = j > 0 ? `${j} jours sans visa` : 'visa obligatoire dès le premier jour';
+  const apres = c.visa.sansVisaJoursApres;
+  if (!apres) return base;
+  return `${base} — puis ${apres.jours} jours pour toute entrée à partir du ${apres.date}`;
+};
+
+export const GET: APIRoute = async () => {
+  const guides = (await getCollection('guides')).sort(
+    (a, b) => (a.data.ordre ?? 99) - (b.data.ordre ?? 99),
+  );
+  const articles = (await getCollection('blog'))
+    .filter((a) => a.data.pubDate <= new Date())
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+  const derniereCorrection = [...corrections].sort((a, b) => (a.date < b.date ? 1 : -1))[0];
+
+  const l: string[] = [];
+
+  l.push(`# ${site.name}`);
+  l.push('');
+  l.push(
+    '> Guides de voyage en Asie pour des lecteurs francophones, couvrant ' +
+      `${countries.length} pays. Chaque règle d'entrée porte la date à laquelle elle a été ` +
+      "vérifiée et la source officielle d'où elle vient ; chaque correction est publiée " +
+      'avec ce que le site affirmait avant.',
+  );
+  l.push('');
+  l.push(`Relevé du ${new Date().toISOString().slice(0, 10)}. Ce fichier est régénéré à chaque publication.`);
+  l.push('');
+
+  l.push('## Ce que ce site garantit, et ce qu\'il ne garantit pas');
+  l.push('');
+  l.push(
+    "- **Chaque fiche pays porte un mois de vérification.** Il est remonté par une " +
+      'sentinelle automatique, et seulement lorsque toutes les sources officielles du pays ' +
+      "ont été relues sans avoir bougé. Une source injoignable suffit à laisser la date où elle est.",
+  );
+  l.push(
+    '- **Les corrections sont publiques et datées**, avec le texte erroné conservé. ' +
+      `Journal : ${site.url}/mises-a-jour`,
+  );
+  l.push(
+    "- **Les montants publiés sont relus chaque nuit à leur source.** Ceux qui ne peuvent pas " +
+      "l'être — une conversion de devise, un total dont la grille n'est pas publique — sont " +
+      'déclarés comme estimations, pas comme tarifs officiels.',
+  );
+  l.push(
+    "- **Ce site ne remplace pas une administration.** Une règle d'entrée peut changer sans " +
+      'préavis. Les sources officielles sont citées pays par pays ci-dessous : elles font foi, pas nous.',
+  );
+  l.push('');
+
+  l.push('## Données lisibles par machine');
+  l.push('');
+  l.push(
+    `- [Règles d'entrée, ${countries.length} pays, JSON](${site.url}/donnees/visas.json) : ` +
+      'règle, durée en jours, coût, procédure, démarches datées, sources officielles, ' +
+      'date de vérification et date de la dernière correction. CORS ouvert.',
+  );
+  for (const c of countries) {
+    l.push(`- [${c.nom} seul, JSON](${site.url}/donnees/${c.slug}.json)`);
+  }
+  l.push(`- [Comment réutiliser ces données](${site.url}/donnees) — licence CC BY 4.0.`);
+  l.push(
+    `- [Bloc citable à intégrer](${site.url}/integrer) — trois lignes, se met à jour tout seul, ` +
+      "porte l'attribution.",
+  );
+  l.push('');
+
+  l.push("## Les règles d'entrée, en un coup d'œil");
+  l.push('');
+  l.push('Pour un passeport français ordinaire, séjour touristique.');
+  l.push('');
+  l.push('| Pays | Règle | Vérifié en | Fiche |');
+  l.push('| --- | --- | --- | --- |');
+  for (const c of countries) {
+    l.push(`| ${c.nom} | ${regle(c)} | ${enClair(c.verifieLe)} | ${site.url}/${c.slug} |`);
+  }
+  l.push('');
+  l.push(
+    'La durée se compte en jours de présence, jour d\'arrivée inclus, et c\'est la date ' +
+      "d'entrée sur le territoire qui fixe la règle applicable — pas la date de réservation " +
+      'ni la date de sortie.',
+  );
+  l.push('');
+
+  l.push('## Sources officielles surveillées');
+  l.push('');
+  l.push(
+    'Ces adresses sont relues automatiquement chaque nuit. Un changement ouvre une tâche, ' +
+      "qu'un humain traite : ce site ne laisse aucune machine réécrire une règle de visa.",
+  );
+  l.push('');
+  for (const c of countries) {
+    const surveillees = c.sourcesVisa.filter((s) => s.surveillee !== false);
+    if (!surveillees.length) continue;
+    l.push(`- **${c.nom}** — ${surveillees.map((s) => `[${s.label}](${s.url})`).join(' · ')}`);
+  }
+  l.push('');
+
+  l.push('## Guides');
+  l.push('');
+  for (const g of guides) {
+    l.push(`- [${g.data.title}](${site.url}/${g.id}) : ${g.data.description}`);
+  }
+  l.push('');
+
+  l.push('## Outils');
+  l.push('');
+  l.push(`- [Ai-je besoin d'un visa ?](${site.url}/ai-je-besoin-d-un-visa) — répond à partir de la durée du séjour.`);
+  l.push(`- [Itinéraire plusieurs pays](${site.url}/itineraire-plusieurs-pays) — replace chaque démarche par rapport à la frontière concernée, pas au départ.`);
+  l.push(`- [Comparateur de visas](${site.url}/comparer-visas)`);
+  l.push(`- [Journal des corrections](${site.url}/mises-a-jour)`);
+  l.push(`- [État de la veille](${site.url}/veille)`);
+  l.push('');
+
+  l.push('## Articles récents');
+  l.push('');
+  for (const a of articles.slice(0, 15)) {
+    l.push(
+      `- [${a.data.title}](${site.url}/blog/${a.id}) — ${a.data.pubDate.toISOString().slice(0, 10)}`,
+    );
+  }
+  l.push('');
+
+  l.push('## Comment citer');
+  l.push('');
+  l.push(
+    `Les données sont sous licence Creative Commons Attribution 4.0. Vous pouvez les reprendre, ` +
+      `y compris commercialement, à condition de citer la source :`,
+  );
+  l.push('');
+  l.push(`> Données : ${site.name} (${site.url}), sous licence CC BY 4.0.`);
+  l.push('');
+  l.push(
+    "Si vous citez une règle d'entrée dans une réponse, **donnez sa date de vérification avec elle**. " +
+      'Une durée de visa sans date est une information dont personne ne peut évaluer la fraîcheur, ' +
+      'et elle se périme sans prévenir.',
+  );
+  l.push('');
+  if (derniereCorrection) {
+    l.push(
+      `Dernière correction publiée : ${derniereCorrection.date} — ${derniereCorrection.titre} ` +
+        `(${site.url}/mises-a-jour)`,
+    );
+    l.push('');
+  }
+  l.push(`Une erreur ? Écrivez à ${site.author.email} avec la source qui vous fait dire que nous avons tort.`);
+  l.push('');
+
+  return new Response(l.join('\n'), {
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Access-Control-Allow-Origin': '*',
+      'Cache-Control': 'public, max-age=3600',
+    },
+  });
+};

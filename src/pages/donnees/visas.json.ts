@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { countries } from '@/data/countries';
 import { site, legal } from '@/data/site';
 import { corrections } from '@/data/corrections';
+import { ficheDuPays } from '@/lib/donnees-pays';
 
 /**
  * Jeu de données ouvert : les règles d'entrée des neuf pays couverts.
@@ -16,13 +17,6 @@ import { corrections } from '@/data/corrections';
  * C'est aussi la forme la plus honnête de la promesse du site : plutôt que de
  * demander qu'on lui fasse confiance, il donne la donnée et sa source.
  */
-
-const derniereCorrectionPour = (slug: string) =>
-  corrections
-    .filter((c) => c.page === `/${slug}`)
-    .map((c) => c.date)
-    .sort()
-    .at(-1) ?? null;
 
 export const GET: APIRoute = () => {
   const donnees = {
@@ -52,33 +46,11 @@ export const GET: APIRoute = () => {
       "dans chaque fiche. Les règles d'entrée changent sans préavis : avant un départ, vérifiez la " +
       "source officielle. Ce jeu de données ne remplace pas une administration.",
     nombrePays: countries.length,
-    pays: countries.map((c) => ({
-      slug: c.slug,
-      nom: c.nom,
-      capitale: c.capitale,
-      monnaie: c.monnaie,
-      langue: c.langue,
-      // « au Vietnam », « en Thaïlande », « aux Philippines » : sans cet
-      // article, le bloc citable écrirait « Entrer en Vietnam » sur le site
-      // de quelqu'un d'autre, sous notre nom.
-      article: c.article,
-      decalageHoraire: c.decalage,
-      visa: {
-        resume: c.visa.resume,
-        dureeAutorisee: c.visa.duree,
-        cout: c.visa.cout,
-        procedure: c.visa.procedure,
-      },
-      demarchesPrealables: c.demarches.map((d) => ({
-        joursAvantDepart: d.jours,
-        titre: d.titre,
-        detail: d.detail,
-      })),
-      sources: c.sourcesVisa.map((s) => ({ label: s.label, url: s.url })),
-      verifieLe: c.verifieLe,
-      derniereCorrection: derniereCorrectionPour(c.slug),
-      page: `${site.url}/${c.slug}`,
-    })),
+    // La même description que `/donnees/<slug>.json`, écrite une seule fois :
+    // deux rédactions du même objet finissent toujours par diverger, et deux
+    // réponses différentes à la même question selon l'adresse ouverte seraient
+    // exactement le défaut que ce site traque partout ailleurs.
+    pays: countries.map((c) => ficheDuPays(c, corrections)),
   };
 
   return new Response(JSON.stringify(donnees, null, 2), {

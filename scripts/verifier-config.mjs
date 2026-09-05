@@ -285,6 +285,74 @@ const tarifsNonSuivis = [];
   }
 }
 
+/**
+ * Ce que le site présente aux machines doit dire la même chose que ses pages.
+ *
+ * `/llms.txt` et les fichiers de données existent pour être lus par un moteur
+ * génératif qui rédigera une réponse à partir d'eux — et qui, contrairement à
+ * un lecteur humain, ne rouvrira pas la fiche pour vérifier. Une durée périmée
+ * là est plus grave qu'ailleurs : elle est reprise telle quelle, sans que
+ * personne ne puisse la contredire.
+ *
+ * Trois exigences, et elles sont mécaniques : chaque pays a son fichier, le
+ * lien depuis sa page y mène vraiment, et la durée annoncée dans `llms.txt`
+ * est celle des données. Tout cela est généré depuis la même source — ces
+ * contrôles ne préviennent donc pas une divergence de contenu, mais un
+ * fichier absent, un lien mort ou un générateur cassé en silence.
+ */
+const defautsMachine = [];
+if (existsSync('dist')) {
+  const ts = readFileSync('src/data/countries.ts', 'utf8');
+  const slugs = [...ts.matchAll(/slug: '([a-z-]+)'/g)].map((m) => m[1]);
+
+  if (!existsSync('dist/llms.txt')) {
+    defautsMachine.push({ quoi: '/llms.txt', motif: 'absent — les moteurs génératifs n\'ont rien à lire' });
+  }
+  const llms = existsSync('dist/llms.txt') ? readFileSync('dist/llms.txt', 'utf8') : '';
+
+  for (const slug of slugs) {
+    const fichier = `dist/donnees/${slug}.json`;
+    if (!existsSync(fichier)) {
+      defautsMachine.push({ quoi: `/donnees/${slug}.json`, motif: 'absent' });
+      continue;
+    }
+
+    // Le lien depuis la page mène-t-il vraiment à ce fichier ?
+    const page = `dist/${slug}/index.html`;
+    if (existsSync(page)) {
+      const html = readFileSync(page, 'utf8');
+      if (!html.includes(`href="/donnees/${slug}.json"`)) {
+        defautsMachine.push({ quoi: `/${slug}`, motif: 'ne déclare pas ses données lisibles par machine' });
+      }
+    }
+
+    // La durée décidable est-elle celle du registre des pays ?
+    const donnees = JSON.parse(readFileSync(fichier, 'utf8'));
+    const bloc = ts.slice(ts.indexOf(`slug: '${slug}'`), ts.indexOf(`slug: '${slug}'`) + 9000);
+    const attendu = Number(bloc.match(/sansVisaJours:\s*(\d+)/)?.[1] ?? NaN);
+    const bascule = bloc.match(/sansVisaJoursApres:\s*\{\s*date:\s*'(\d{4}-\d{2}-\d{2})',\s*jours:\s*(\d+)/);
+    const applicable = bascule && new Date().toISOString().slice(0, 10) >= bascule[1] ? Number(bascule[2]) : attendu;
+    if (Number.isFinite(applicable) && donnees.visa?.joursSansVisa !== applicable) {
+      defautsMachine.push({
+        quoi: `/donnees/${slug}.json`,
+        motif: `annonce ${donnees.visa?.joursSansVisa} jours sans visa là où la fiche en compte ${applicable}`,
+      });
+    }
+    if (llms && !llms.includes(`/${slug}.json`)) {
+      defautsMachine.push({ quoi: '/llms.txt', motif: `ne mentionne pas ${slug}` });
+    }
+  }
+}
+
+if (defautsMachine.length) {
+  console.log(`⛔ ${defautsMachine.length} défaut(s) sur ce que lisent les machines :\n`);
+  for (const d of defautsMachine) console.log(`   ${d.quoi.padEnd(30)} ${d.motif}`);
+  console.log('\n   Un moteur génératif reprend ces fichiers sans rouvrir la page.');
+  console.log('   Ce qui est faux ici est repris tel quel, et personne ne le contredit.\n');
+} else if (existsSync('dist')) {
+  console.log('✓ Les fichiers lisibles par machine disent ce que disent les pages.\n');
+}
+
 if (!tarifsNonSuivis.length) console.log("✓ Chaque tarif d'entrée publié est inscrit au registre.\n");
 
 if (tarifsNonSuivis.length) {
@@ -366,5 +434,5 @@ if (correctionsNonFaites.length) {
 process.exit(
   jamaisEcrits.length || jamaisLus.length || defautsFormulaire.length ||
   ecartSources || visasIncoherents.length || correctionsNonFaites.length ||
-  tarifsNonSuivis.length ? 1 : 0,
+  tarifsNonSuivis.length || defautsMachine.length ? 1 : 0,
 );
