@@ -18,12 +18,27 @@ const { country: c } = Astro.props;
  * un pays ajouté demain s'affichera sans image plutôt que de casser la grille.
  */
 const photo = photoPour(`/${c.slug}`, 'hero');
-// Les libellés de coût se sont allongés après l'audit de fraîcheur (« Gratuit
-// sous exemption ; ≈ 25 USD… »). La carte n'affiche que la première clause :
-// le détail complet est sur la fiche, qui est à un clic.
-const visaCourt = c.visa.cout === 'Gratuit'
-  ? 'Aucun pour un séjour court'
-  : c.visa.cout.split(' ; ')[0];
+/**
+ * La carte affichait la première clause du coût, et neuf cartes disaient neuf
+ * choses de longueurs différentes : « Gratuit sous exemption », « ≈ 30 à 50 USD
+ * selon la nationalité et le point d'entrée », et pour la Corée une phrase
+ * entière sur un K-ETA facultatif. Impossible de comparer neuf pays d'un coup
+ * d'œil — ce qui est pourtant la seule raison de mettre neuf cartes côte à côte.
+ *
+ * Surtout, aucune ne répondait à la question que la personne se pose vraiment :
+ * combien de jours puis-je rester. Ce nombre existe désormais en clair dans les
+ * données, il est vérifié à chaque mise en ligne, et il bascule tout seul le
+ * jour où une règle datée entre en vigueur.
+ */
+const visaCourt =
+  c.visa.sansVisaJours > 0
+    ? `${c.visa.sansVisaJours} jours sans visa`
+    : 'Visa obligatoire';
+
+/** Une règle déjà publiée dont la date d'effet approche : la carte le dit. */
+const bascule = c.visa.sansVisaJoursApres;
+const basculeAVenir =
+  bascule && bascule.date > new Date().toISOString().slice(0, 10) ? bascule : null;
 
 const best = c.saisons
   .map((s, i) => ({ s, m: MOIS[i] }))
@@ -57,7 +72,14 @@ const best = c.saisons
   <dl class="mt-5 space-y-1.5 border-t border-line pt-4 text-[0.82rem]">
     <div class="flex gap-2">
       <dt class="w-20 shrink-0 text-warm-light">Visa</dt>
-      <dd class="text-ink-soft">{visaCourt}</dd>
+      <dd class="text-ink-soft">
+        {visaCourt}
+        {basculeAVenir && (
+          <span class="ml-1.5 whitespace-nowrap rounded-full bg-amber-100 px-2 py-0.5 font-display text-[0.7rem] font-semibold text-amber-700">
+            {basculeAVenir.jours} j dès le {new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' }).format(new Date(`${basculeAVenir.date}T00:00:00`))}
+          </span>
+        )}
+      </dd>
     </div>
     <div class="flex gap-2">
       <dt class="w-20 shrink-0 text-warm-light">Saison</dt>

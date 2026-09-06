@@ -328,7 +328,16 @@ if (existsSync('dist')) {
 
     // La durée décidable est-elle celle du registre des pays ?
     const donnees = JSON.parse(readFileSync(fichier, 'utf8'));
-    const bloc = ts.slice(ts.indexOf(`slug: '${slug}'`), ts.indexOf(`slug: '${slug}'`) + 9000);
+    /**
+     * Le bloc du pays s'arrête au pays suivant, pas au bout de 9000
+     * caractères. Cette longueur arbitraire débordait sur la fiche d'après :
+     * le Vietnam, qui n'a aucune règle datée, héritait de la bascule
+     * thaïlandaise déclarée juste en dessous, et le contrôle réclamait une
+     * annonce qui n'avait pas lieu d'être.
+     */
+    const debut = ts.indexOf(`slug: '${slug}'`);
+    const suivant = ts.slice(debut + 1).search(/slug: '[a-z-]+'/);
+    const bloc = ts.slice(debut, suivant < 0 ? undefined : debut + 1 + suivant);
     const attendu = Number(bloc.match(/sansVisaJours:\s*(\d+)/)?.[1] ?? NaN);
     const bascule = bloc.match(/sansVisaJoursApres:\s*\{\s*date:\s*'(\d{4}-\d{2}-\d{2})',\s*jours:\s*(\d+)/);
     const applicable = bascule && new Date().toISOString().slice(0, 10) >= bascule[1] ? Number(bascule[2]) : attendu;
@@ -338,6 +347,29 @@ if (existsSync('dist')) {
         motif: `annonce ${donnees.visa?.joursSansVisa} jours sans visa là où la fiche en compte ${applicable}`,
       });
     }
+    /**
+     * Le compte à rebours et la nouvelle durée ne doivent jamais s'échanger.
+     *
+     * Une fiche dont la règle change porte deux nombres voisins : les jours qui
+     * restent avant la bascule, et les jours de séjour qui s'appliqueront
+     * ensuite. La première version du bandeau annonçait « 30 j » là où il
+     * fallait lire « 9 j » et inversement — c'est-à-dire une durée de séjour
+     * fausse, en haut de la page, sur la fiche la plus consultée du moment.
+     * Rien ne l'aurait signalé : les deux nombres sont plausibles.
+     */
+    if (bascule && bascule[1] > new Date().toISOString().slice(0, 10) && existsSync(page)) {
+      const texte = readFileSync(page, 'utf8').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+      const annonce = texte.match(/L'exemption passe de (\d+) à (\d+) jours/);
+      if (!annonce) {
+        defautsMachine.push({ quoi: `/${slug}`, motif: "la bascule à venir n'est pas annoncée en tête de page" });
+      } else if (Number(annonce[1]) !== attendu || Number(annonce[2]) !== Number(bascule[2])) {
+        defautsMachine.push({
+          quoi: `/${slug}`,
+          motif: `annonce « de ${annonce[1]} à ${annonce[2]} jours » là où la règle passe de ${attendu} à ${bascule[2]}`,
+        });
+      }
+    }
+
     if (llms && !llms.includes(`/${slug}.json`)) {
       defautsMachine.push({ quoi: '/llms.txt', motif: `ne mentionne pas ${slug}` });
     }

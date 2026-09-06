@@ -11,8 +11,9 @@ import Visuel from '@/components/Visuel.astro';
 import { countries } from '@/data/countries';
 import { guidesNav } from '@/data/nav';
 import { site } from '@/data/site';
-import { plusAncienneVerification, queMois } from '@/lib/fraicheur';
+import { plusAncienneVerification, queMois, nbSourcesSurveillees } from '@/lib/fraicheur';
 import { nbCorrections } from '@/data/corrections';
+import QuoiDeNeuf from '@/components/QuoiDeNeuf.astro';
 
 const guides = (await guidesPublies()).sort(
   (a, b) => a.data.ordre - b.data.ordre,
@@ -64,25 +65,41 @@ const problemes = [
       <div class="animate-rise">
         <p class="eyebrow">{nbPays} pays · {nbPages} guides et articles · aucune fiche plus ancienne {majLabel}</p>
 
+        {/*
+          « L'Asie comme vous ne l'avez jamais vue » disait ce qu'écrit
+          n'importe quelle agence : un titre de marque, pas une promesse. Or ce
+          site a une promesse que presque personne ne peut tenir, et elle
+          répond à l'inquiétude réelle du lecteur — « est-ce que ce que je lis
+          est encore vrai ? ». C'est elle qui doit occuper le titre.
+        */}
         <h1 class="mt-5 text-hero">
-          L'Asie comme vous ne<br class="hidden sm:block" />
-          l'avez <span class="relative inline-block">
-            jamais vue
+          En Asie, la règle <span class="relative inline-block">
+            d'aujourd'hui
             <svg viewBox="0 0 200 12" preserveAspectRatio="none" class="absolute -bottom-1 left-0 h-2.5 w-full text-amber" aria-hidden="true">
               <path d="M2 8c40-5 90-7 196-4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" />
             </svg>
-          </span>
+          </span><br class="hidden sm:block" />
+          — pas celle de l'an dernier
         </h1>
 
         <p class="mt-8 max-w-xl text-[1.15rem] leading-relaxed text-warm">
-          Des guides pratiques vérifiés aux sources officielles : visas, budgets réels, transports,
-          où dormir, et surtout les erreurs qui coûtent cher. Pas de liste de « lieux
-          incontournables » recopiée d'un office de tourisme.
+          Un guide de visa sans date a été écrit avant le dernier changement de règle, et rien
+          ne vous le dit. Ici, chaque formalité porte le jour où elle a été relevée sur le portail
+          officiel. <strong class="font-semibold text-ink-soft">{nbSourcesSurveillees} sources sont
+          relues chaque nuit</strong> : quand une règle bouge, la page bouge — et la correction est
+          publiée avec ce qui était écrit avant.
         </p>
 
+        {/*
+          Deux actions, et la seconde a changé. « Explorer les 9 pays » faisait
+          défiler vers des cartes déjà visibles au premier scroll : un bouton
+          qui ne fait rien que le doigt ne ferait. « Ai-je besoin d'un visa »
+          est la question que la personne se pose vraiment en arrivant ici, et
+          l'outil y répond en deux clics.
+        */}
         <div class="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
-          <a href="/newsletter" class="btn-primary">Recevoir les fiches (gratuit)</a>
-          <a href="#destinations" class="btn-outline">Explorer les {nbPays} pays</a>
+          <a href="/newsletter" class="btn-primary">Les {nbPays} fiches de départ (PDF gratuit)</a>
+          <a href="/ai-je-besoin-d-un-visa" class="btn-outline">Ai-je besoin d'un visa&nbsp;?</a>
         </div>
 
         <p class="mt-6 text-[0.85rem] text-warm-light">
@@ -115,6 +132,8 @@ const problemes = [
       </aside>
     </div>
   </section>
+
+  <QuoiDeNeuf />
 
   <Visuel page="/" seed="accueil" prioritaire />
 

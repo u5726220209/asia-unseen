@@ -1,0 +1,137 @@
+---
+import { countries } from '@/data/countries';
+import { corrections } from '@/data/corrections';
+
+/**
+ * La preuve, à la place de la promesse.
+ *
+ * La page d'accueil affirmait quatre fois qu'ici les règles sont datées, que
+ * les corrections sont publiques, que les sources sont citées. Quatre
+ * affirmations, aucune démonstration : exactement ce que promet aussi le
+ * site qui recopie ses concurrents. Un visiteur n'a aucun moyen de faire la
+ * différence, et il n'a aucune raison de nous croire sur parole.
+ *
+ * Ce bandeau montre. Il dit ce qui a changé cette semaine, avec la date, et ce
+ * qui va changer avec le nombre de jours qui restent. C'est vérifiable en un
+ * clic, ça se périme tout seul, et ça n'existe que parce que le travail
+ * derrière existe vraiment.
+ *
+ * DEUX EFFETS QU'ON NE PEUT PAS SÉPARER
+ * Pour le lecteur qui part en Thaïlande dans quinze jours, c'est l'information
+ * la plus utile du site, et elle était enterrée dans un article. Pour un
+ * moteur génératif, c'est un fait daté, chiffré et sourcé placé en haut de la
+ * page d'accueil — la forme exacte de ce qui se cite.
+ *
+ * Il est calculé. Un encart d'actualité écrit à la main devient la partie la
+ * plus périmée du site en trois semaines, et il annoncerait « bientôt » un
+ * changement vieux de six mois.
+ */
+
+const aujourdhui = new Date();
+const jourISO = aujourdhui.toISOString().slice(0, 10);
+
+/** Les règles déjà publiées dont la date d'effet n'est pas encore arrivée. */
+const changementsAVenir = countries
+  .filter((c) => c.visa.sansVisaJoursApres && c.visa.sansVisaJoursApres.date > jourISO)
+  .map((c) => {
+    const b = c.visa.sansVisaJoursApres!;
+    const jours = Math.ceil(
+      (new Date(`${b.date}T00:00:00`).getTime() - new Date(`${jourISO}T00:00:00`).getTime()) / 86_400_000,
+    );
+    return { pays: c, jours, avant: c.visa.sansVisaJours, apres: b.jours, date: b.date };
+  })
+  .sort((a, b) => a.jours - b.jours);
+
+/**
+ * Les plus récentes, et à date égale les plus lourdes d'abord.
+ *
+ * Trier sur la seule date laissait l'ordre du tableau décider entre trois
+ * corrections du même jour, et faisait remonter un écart d'un quart d'heure
+ * sur un horaire de train devant un changement de règle de visa. Les deux
+ * méritent d'être publiés — mais celui qui se lit en premier doit être celui
+ * qui change un voyage.
+ */
+const poids = { critique: 0, correction: 1, precision: 2 } as const;
+const dernieres = [...corrections]
+  .sort((a, b) => (a.date === b.date ? poids[a.gravite] - poids[b.gravite] : a.date < b.date ? 1 : -1))
+  .slice(0, 3);
+
+const enClair = (iso: string) =>
+  new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long' }).format(new Date(`${iso}T00:00:00`));
+
+const rien = !changementsAVenir.length && !dernieres.length;
+---
+
+{!rien && (
+  <section class="border-b border-line bg-white">
+    <div class="wrap py-10 lg:py-12">
+      <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+        <p class="eyebrow">Ce qui bouge en ce moment</p>
+        <p class="text-[0.82rem] text-warm-light">
+          Relevé automatiquement sur les portails officiels, chaque nuit.
+        </p>
+      </div>
+
+      <div class="mt-7 grid gap-5 lg:grid-cols-2">
+        {/*
+          Une règle publiée dont la date d'effet approche. C'est l'information
+          la plus chère du site : elle vaut un vol modifié ou un mois de séjour.
+        */}
+        {changementsAVenir.map(({ pays, jours, avant, apres, date }) => (
+          <a
+            href={`/${pays.slug}`}
+            class="group flex flex-col justify-between rounded-brand border-l-[3px] border-amber bg-amber-50 px-6 py-5 transition hover:bg-amber-100/60"
+          >
+            <div>
+              <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-amber-700">
+                Dans {jours} jour{jours > 1 ? 's' : ''} · {pays.nom}
+              </p>
+              <p class="mt-2.5 font-display text-[1.15rem] font-bold leading-snug text-ink">
+                L'exemption passe de {avant} à {apres} jours le {enClair(date)}
+              </p>
+              <p class="mt-2 text-[0.9rem] leading-relaxed text-ink-soft">
+                C'est la date d'entrée sur le territoire qui décide, pas la date de réservation.
+                Une arrivée la veille conserve ses {avant} jours jusqu'à leur terme.
+              </p>
+            </div>
+            <span class="mt-4 inline-flex items-center gap-1.5 font-display text-[0.85rem] font-semibold text-amber-700">
+              Ce que ça change pour votre date
+              <span class="transition group-hover:translate-x-0.5">→</span>
+            </span>
+          </a>
+        ))}
+
+        {/*
+          Le journal des corrections vivait à deux clics de l'accueil, c'est-à-dire
+          nulle part. C'est pourtant la seule preuve que la promesse du site est
+          tenue : personne ne publie ses erreurs sans les avoir cherchées.
+        */}
+        <div class="rounded-brand border border-line bg-cream-warm px-6 py-5">
+          <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-warm-light">
+            Nos dernières corrections
+          </p>
+          <ul class="mt-3.5 space-y-3.5">
+            {dernieres.map((c) => (
+              <li>
+                <a href="/mises-a-jour" class="group block">
+                  <p class="text-[0.92rem] font-medium leading-snug text-ink group-hover:text-teal">
+                    {c.titre}
+                  </p>
+                  <p class="mt-1 font-mono text-[0.76rem] text-warm-light">
+                    {enClair(c.date)} · {c.pageLabel}
+                  </p>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <p class="mt-4 border-t border-line pt-3.5 text-[0.84rem] leading-relaxed text-warm">
+            Ce que le site affirmait avant est conservé à côté de la correction.
+            <a href="/mises-a-jour" class="ml-1 font-semibold text-teal underline decoration-teal/30 underline-offset-4 hover:decoration-amber">
+              Le journal complet
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+)}

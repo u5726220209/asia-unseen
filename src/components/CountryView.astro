@@ -26,6 +26,42 @@ const { country: c, related, lies } = Astro.props;
 const fmtCourt = (d: Date) =>
   new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(d);
 
+/* ── Les trois faits qui décident, remontés en tête de page ────── */
+
+const moisIdeaux = c.saisons
+  .map((s, i) => ({ s, m: MOIS[i] }))
+  .filter((x) => x.s === 3)
+  .map((x) => x.m);
+
+const jourCourt = (iso: string) =>
+  new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' }).format(new Date(`${iso}T00:00:00`));
+const jourLong = (iso: string) =>
+  new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${iso}T00:00:00`));
+const moisEnLettres = (aaaaMm: string) =>
+  new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(new Date(`${aaaaMm}-01T00:00:00`));
+
+/**
+ * Une règle déjà publiée dont la date d'effet n'est pas encore arrivée.
+ *
+ * Deux nombres cohabitent ici, et ils se ressemblent assez pour être
+ * intervertis sans que rien ne proteste : les jours qui restent avant la
+ * bascule, et la durée de séjour qui s'appliquera après. La première version
+ * de ce bandeau annonçait « 9 j dès le 15 sept. » — le compte à rebours à la
+ * place de la règle. D'où ces deux noms, qu'on ne peut plus confondre.
+ */
+const bascule = c.visa.sansVisaJoursApres;
+const jourISO = new Date().toISOString().slice(0, 10);
+const basculeAVenir =
+  bascule && bascule.date > jourISO
+    ? {
+        date: bascule.date,
+        nouvelleDuree: bascule.jours,
+        joursRestants: Math.ceil(
+          (new Date(`${bascule.date}T00:00:00`).getTime() - new Date(`${jourISO}T00:00:00`).getTime()) / 86_400_000,
+        ),
+      }
+    : null;
+
 const SAISON_STYLE = {
   3: { cell: 'bg-teal text-cream', label: 'Idéal' },
   2: { cell: 'bg-amber-100 text-amber-700', label: 'Correct' },
@@ -64,19 +100,76 @@ const faq = [
         <strong class="font-semibold text-ink-soft">Pour qui :</strong> {c.pourQui}
       </p>
 
+      {/*
+        Ce bandeau annonçait la capitale, la monnaie, le décalage horaire et la
+        durée du vol. Quatre faits exacts, et pas un que quelqu'un cherche avant
+        de réserver : personne n'arrive ici en se demandant quelle est la
+        capitale de la Thaïlande. Pendant ce temps, les trois questions qui
+        décident vraiment — puis-je entrer, quand partir, combien ça coûte —
+        étaient à trois sections plus bas.
+
+        Elles sont maintenant ici, chacune reliée à sa section. La quatrième
+        cellule porte la date de vérification : sur une page de formalités,
+        c'est le fait qui vaut le plus, et il ne servait à rien enterré.
+
+        Les faits pratiques ne sont pas perdus : ils passent juste en dessous,
+        à la place qu'ils méritent.
+      */}
       <dl class="mt-10 grid gap-px overflow-hidden rounded-brand border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
-        {[
-          ['Capitale', c.capitale],
-          ['Monnaie', c.monnaie],
-          ['Décalage horaire', c.decalage],
-          ['Depuis Paris', c.volDepuisParis],
-        ].map(([k, v]) => (
-          <div class="bg-cream-warm px-5 py-4">
-            <dt class="font-display text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-warm-light">{k}</dt>
-            <dd class="mt-1 text-[0.92rem] font-medium text-ink">{v}</dd>
-          </div>
-        ))}
+        <a href="#visa" class="group bg-cream-warm px-5 py-4 transition hover:bg-white">
+          <dt class="font-display text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-warm-light">Entrée</dt>
+          <dd class="mt-1 text-[0.92rem] font-medium text-ink group-hover:text-teal">
+            {c.visa.sansVisaJours > 0 ? `${c.visa.sansVisaJours} jours sans visa` : 'Visa obligatoire'}
+          </dd>
+          {basculeAVenir && (
+            <dd class="mt-1.5 inline-block rounded-full bg-amber-100 px-2 py-0.5 font-display text-[0.7rem] font-semibold text-amber-700">
+              {basculeAVenir.nouvelleDuree} j dès le {jourCourt(basculeAVenir.date)}
+            </dd>
+          )}
+        </a>
+        <a href="#saison" class="group bg-cream-warm px-5 py-4 transition hover:bg-white">
+          <dt class="font-display text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-warm-light">Meilleurs mois</dt>
+          <dd class="mt-1 text-[0.92rem] font-medium text-ink group-hover:text-teal">
+            {moisIdeaux.length ? moisIdeaux.join(' · ') : 'Variable selon les régions'}
+          </dd>
+        </a>
+        <a href="#budget" class="group bg-cream-warm px-5 py-4 transition hover:bg-white">
+          <dt class="font-display text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-warm-light">Budget</dt>
+          <dd class="mt-1 text-[0.92rem] font-medium text-ink group-hover:text-teal">
+            dès {c.budget.routard} € / jour
+          </dd>
+        </a>
+        <div class="bg-cream-warm px-5 py-4">
+          <dt class="font-display text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-warm-light">Formalités vérifiées</dt>
+          <dd class="mt-1 text-[0.92rem] font-medium text-ink">{moisEnLettres(c.verifieLe)}</dd>
+        </div>
       </dl>
+
+      <p class="mt-4 text-[0.85rem] text-warm-light">
+        {c.capitale} · {c.monnaie} · {c.decalage} · {c.volDepuisParis}
+      </p>
+
+      {/*
+        Une règle publiée dont la date d'effet approche. C'est l'information la
+        plus chère de la page — elle vaut un vol avancé de vingt-quatre heures
+        ou trente jours de séjour — et elle vivait dans un paragraphe, au
+        milieu de la section des formalités.
+      */}
+      {basculeAVenir && (
+        <div class="mt-8 flex flex-wrap items-baseline gap-x-3 gap-y-1.5 rounded-brand border-l-[3px] border-amber bg-amber-50 px-5 py-4">
+          <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-amber-700">
+            Dans {basculeAVenir.joursRestants} jour{basculeAVenir.joursRestants > 1 ? 's' : ''}
+          </p>
+          <p class="text-[0.95rem] leading-relaxed text-ink-soft">
+            L'exemption passe de <strong class="font-semibold text-ink">{c.visa.sansVisaJours}</strong> à
+            <strong class="font-semibold text-ink"> {basculeAVenir.nouvelleDuree}</strong> jours pour toute entrée
+            à partir du {jourLong(basculeAVenir.date)}.
+            <a href="#visa" class="ml-1 font-semibold text-amber-700 underline decoration-amber/40 underline-offset-4">
+              Ce que ça change selon votre date
+            </a>
+          </p>
+        </div>
+      )}
     </div>
   </header>
 
