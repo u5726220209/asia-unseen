@@ -123,7 +123,7 @@ export const countries: Country[] = [
       // intermédiaire, et aucune machine ne peut valider la connexion. Le
       // navigateur du lecteur, lui, l'accepte — on le cite donc sans le surveiller.
       { label: "Portail e-visa officiel du Vietnam", url: 'https://evisa.gov.vn/', surveillee: false },
-      { label: "Enregistrement préalable (aéroport de Hô Chi Minh-Ville)", url: 'https://prearrival.immigration.gov.vn/' },
+      { label: "Enregistrement préalable (aéroport de Hô Chi Minh-Ville)", url: 'https://prearrival.immigration.gov.vn/', surveillee: false },
       SOURCE_FD,
     ],
     demarches: [
@@ -178,12 +178,12 @@ export const countries: Country[] = [
     },
     sourcesVisa: [
       { label: "France Diplomatie — Thaïlande, entrée et séjour", url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/thailande/conseils-aux-voyageurs-entree-sejour' },
-      { label: 'Thailand Digital Arrival Card (TDAC) — portail officiel', url: 'https://tdac.immigration.go.th/' },
+      { label: 'Thailand Digital Arrival Card (TDAC) — portail officiel', url: 'https://tdac.immigration.go.th/', surveillee: false },
       // Cette adresse répondait 200 en servant une page « PAGE NOT FOUND » — un
       // faux 404, invisible pour la veille : la page répond, son contenu ne
       // bouge plus, aucune alerte ne se déclenche jamais. Remplacée par le
       // portail de la carte d'arrivée, qui est la démarche réellement exigée.
-      { label: "Thailand Digital Arrival Card — portail officiel", url: 'https://tdac.immigration.go.th/' },
+      { label: "Thailand Digital Arrival Card — portail officiel", url: 'https://tdac.immigration.go.th/', surveillee: false },
       SOURCE_FD,
     ],
     demarches: [
@@ -236,8 +236,8 @@ export const countries: Country[] = [
     },
     sourcesVisa: [
       { label: "France Diplomatie — Japon, entrée et séjour", url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/japon/conseils-aux-voyageurs-entree-sejour' },
-      { label: "Ambassade du Japon en France", url: 'https://www.fr.emb-japan.go.jp/' },
-      { label: 'Visit Japan Web', url: 'https://www.vjw.digital.go.jp/' },
+      { label: "Ambassade du Japon en France", url: 'https://www.fr.emb-japan.go.jp/', surveillee: false },
+      { label: 'Visit Japan Web', url: 'https://www.vjw.digital.go.jp/', surveillee: false },
       SOURCE_FD,
     ],
     demarches: [
@@ -457,7 +457,7 @@ export const countries: Country[] = [
     },
     sourcesVisa: [
       { label: "France Diplomatie — Corée du Sud, entrée et séjour", url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/coree-du-sud/conseils-aux-voyageurs-entree-sejour' },
-      { label: 'Portail officiel K-ETA', url: 'https://www.k-eta.go.kr/' },
+      { label: 'Portail officiel K-ETA', url: 'https://www.k-eta.go.kr/', surveillee: false },
       SOURCE_FD,
     ],
     demarches: [

@@ -187,7 +187,24 @@ async function recuperer(url) {
       signal: ctrl.signal,
     });
     if (!r.ok) return { erreur: `HTTP ${r.status}` };
-    return { texte: normaliser(await r.text()) };
+    const texte = normaliser(await r.text());
+    /**
+     * Une page vide n'est pas une page inchangée.
+     *
+     * Les portails e-visa sont des applications JavaScript : tout leur contenu
+     * est rendu par le navigateur. Une fois les balises `<script>` retirées, il
+     * ne reste rien — et cette absence était enregistrée comme une lecture
+     * réussie. Onze références sur trente et une étaient ainsi vides : elles se
+     * comparaient à du vide, se déclaraient « inchangées » chaque nuit, et un
+     * vrai changement de règle n'aurait jamais été vu. Pire, ce verdict
+     * alimentait la remontée automatique des dates de vérification : une fiche
+     * pouvait dater sa fraîcheur d'une source que personne n'avait lue.
+     *
+     * Le seuil est volontairement bas. Il ne s'agit pas de juger si la page est
+     * complète, seulement de refuser ce qui ne peut rien contenir.
+     */
+    if (texte.length < 200) return { erreur: `réponse vide (${texte.length} car.)` };
+    return { texte };
   } catch (e) {
     return { erreur: e.name === 'AbortError' ? 'délai dépassé' : String(e.cause?.code ?? e.message).slice(0, 40) };
   } finally {
