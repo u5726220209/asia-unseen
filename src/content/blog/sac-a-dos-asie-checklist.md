@@ -8,7 +8,7 @@ categorie: pratique
 pays: [vietnam, thailande, japon, chine, laos, cambodge, coree-du-sud, indonesie, philippines]
 sources:
   - { label: "Autorité de l'aviation civile du Vietnam (CAAV)", url: "https://caa.gov.vn/en" }
-  - { label: "France Diplomatie — conseils aux voyageurs par pays", url: "https://www.diplomatie.gouv.fr/fr/conseils-aux-voyageurs/conseils-par-pays-destination/" }
+  - { label: "France Diplomatie — conseils aux voyageurs par pays", url: "https://www.diplomatie.gouv.fr/fr/conseils-aux-voyageurs" }
 faq:
   - q: "Quel volume de sac pour trois semaines en Asie ?"
     r: "40 à 45 litres suffisent largement, y compris pour un mois. Un sac plus grand ne se remplit pas de choses utiles : il se remplit parce qu'il est grand. En dessous de 40 litres, on gagne le passage en cabine sur la plupart des compagnies, ce qui économise du temps à chaque vol intérieur."

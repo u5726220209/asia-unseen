@@ -85,6 +85,19 @@ jobs:
       # n'arrive pas par courrier : les pages sortent de l'index et le site
       # continue de répondre parfaitement. Sans ce relevé, on s'en aperçoit
       # à la baisse des revenus, des mois plus tard.
+      # Les quatre-vingt-dix-neuf adresses qui sortent du site. Une source
+      # morte laisse la phrase qu'elle appuyait en place et fait disparaître la
+      # preuve ; un lien partenaire mort ne rapporte plus rien et ne le dit pas.
+      # Il faut dist/, donc la construction précède.
+      - name: Liens sortants
+        run: |
+          npm ci --silent && npm run build > /dev/null 2>&1
+          code=0
+          node scripts/liens-externes.mjs > rapport-externes.txt 2>&1 || code=$?
+          cat rapport-externes.txt
+          if [ $code -eq 0 ]; then echo "morts=non" >> $GITHUB_OUTPUT; else echo "morts=oui" >> $GITHUB_OUTPUT; fi
+        id: externes
+
       - name: Trafic
         id: trafic
         run: |
@@ -96,7 +109,7 @@ jobs:
           GSC_CLE_JSON: ${{ secrets.GSC_CLE_JSON }}
 
       - name: Ouvrir une tâche si quelque chose a bougé
-        if: steps.sentinelle.outputs.change == 'oui' || steps.fraicheur.outputs.du == 'oui' || steps.chiffres.outputs.faux == 'oui' || steps.certificats.outputs.risque == 'oui' || steps.licences.outputs.souci == 'oui' || steps.trafic.outputs.chute == 'oui'
+        if: steps.sentinelle.outputs.change == 'oui' || steps.fraicheur.outputs.du == 'oui' || steps.chiffres.outputs.faux == 'oui' || steps.certificats.outputs.risque == 'oui' || steps.licences.outputs.souci == 'oui' || steps.trafic.outputs.chute == 'oui' || steps.externes.outputs.morts == 'oui'
         uses: actions/github-script@v7
         with:
           script: |
@@ -107,6 +120,8 @@ jobs:
             const certificats = fs.readFileSync('rapport-certificats.txt', 'utf8');
             const licences = fs.readFileSync('rapport-licences.txt', 'utf8');
             const trafic = fs.readFileSync('rapport-trafic.txt', 'utf8');
+            const externes = fs.existsSync('rapport-externes.txt')
+              ? fs.readFileSync('rapport-externes.txt', 'utf8') : '';
             const titre = 'Veille — des sources ont bougé ou des fiches sont dues';
             const corps = [
               '_Rapport automatique. La machine signale, elle ne conclut pas._',
@@ -128,6 +143,7 @@ jobs:
               '',
               '## Trafic',
               '```', trafic.trim(), '```',
+              ...(externes ? ['', '## Liens sortants', '```', externes.trim(), '```'] : []),
               '',
               '## Ce qu\'il reste à faire, à la main',
               '1. Ouvrir la source et lire la règle, ou le tarif, tel qu\'il est écrit.',
