@@ -90,6 +90,8 @@ const COMPARATIF_ESIM = '/blog/esim-asie-comparatif-prix';
 const GUIDE_TRANSPORTS = '/transports-asie';
 const GUIDE_ERREURS = '/erreurs-a-eviter';
 const ARTICLE_EVISA_VN = '/blog/visa-vietnam-e-visa-2026';
+const AOT_TAXI = 'https://suvarnabhumi.airportthai.co.th/service/transportation/detail/834';
+const ARTICLE_TAXI_AEROPORT = '/blog/taxi-aeroport-asie-tarifs';
 
 /* Portails officiels des formalités d'entrée. Ce sont les tarifs les plus
    lourds du site : ceux sur lesquels un voyageur fait son budget. */
@@ -170,6 +172,16 @@ export const chiffresCites: ChiffreCite[] = [
   { affiche: '3 077 000', designe: 'train SE1 Hanoï-Saigon, compartiment privé 2 couchettes', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
   { affiche: '4 510 000', designe: 'train SE1 Hanoï-Saigon, compartiment privé VIP 2 couchettes', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
   { affiche: '378 000', designe: "écart de prix entre étage bas et étage haut, couchette molle 6 places", source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
+
+  /* ── Taxi depuis l'aéroport de Bangkok ──────────────────────────
+     Les seuls montants de cet article qui viennent d'un exploitant
+     d'aéroport. Les bornes du barème — la prise en charge, la première
+     tranche et la dernière — suffisent : si la grille bouge, elles bougent.
+     Inscrire les six tranches ferait surveiller « 7 » et « 8 », qu'on
+     retrouverait dans n'importe quelle page. */
+  { affiche: '35', designe: 'taxi Bangkok, prise en charge du premier kilomètre (THB)', source: AOT_TAXI, releveLe: '2026-09-07', pages: [ARTICLE_TAXI_AEROPORT] },
+  { affiche: '6,50', designe: 'taxi Bangkok, tarif de 1 à 10 km (THB/km)', source: AOT_TAXI, releveLe: '2026-09-07', pages: [ARTICLE_TAXI_AEROPORT] },
+  { affiche: '10,50', designe: 'taxi Bangkok, tarif au-delà de 80 km (THB/km)', source: AOT_TAXI, releveLe: '2026-09-07', pages: [ARTICLE_TAXI_AEROPORT] },
 
   /* ── Aéroport de Hanoï (Noi Bai) ────────────────────────────── */
   { affiche: '12 000', designe: 'bus Noi Bai, lignes 07 et 109, le trajet', source: NOIBAI_TRANSPORT, releveLe: '2026-08-31', pages: [ARTICLE_AEROPORT_HANOI] },

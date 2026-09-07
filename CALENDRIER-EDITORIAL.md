@@ -25,7 +25,7 @@ Toutes les pages ne se valent pas. L'ordre suit celui de `PLAN-CROISSANCE.md` :
 ## Priorité 2 — longue traîne pays
 
 - [x] **Visa Vietnam : l'e-visa étape par étape** — publié le 07/09/2026. Requête « visa vietnam ». Exemption 45 j, tarif officiel, causes de refus.
-- [ ] **Combien coûte un taxi depuis l'aéroport, ville par ville** — 9 pays, tarifs officiels contre tarifs réclamés.
+- [x] **Le taxi depuis l'aéroport** — programmé le 08/09/2026. Bangkok et Hanoï publient leur grille, Bali et Hô Chi Minh non : c'est l'angle.
 - [ ] **Que faire à Hoi An quand il pleut** — typique longue traîne : faible volume, quasi aucune concurrence.
 - [ ] **Prendre le train au Vietnam : classes, prix, réservation**
 - [ ] **Réserver un train en Chine : le guide de la fenêtre des 15 jours** — Lie `/chine`.

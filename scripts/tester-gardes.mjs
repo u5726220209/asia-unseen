@@ -219,19 +219,40 @@ const CAS = [
 
 /* ── Le harnais ─────────────────────────────────────────────────── */
 
-const gitPropre = () => {
+/**
+ * Les seuls fichiers versionnés que la suite va toucher.
+ *
+ * La première version exigeait un arbre propre sur `src/` et `scripts/`
+ * entiers. C'était trop large : écrire un article empêchait de lancer la
+ * suite, alors qu'elle n'allait jamais s'approcher de ce fichier. Une
+ * vérification qui interdit de travailler finit contournée, donc désarmée.
+ *
+ * On ne regarde donc que ce qui est réellement muté. Ce qui est sous `dist/`
+ * n'est pas versionné et se restaure depuis la copie prise en mémoire.
+ */
+const fichiersTouches = [
+  ...new Set(CAS.flatMap((c) => Object.keys(c.muter)).filter((f) => !f.startsWith('dist/'))),
+];
+
+const salis = () => {
   try {
-    return execFileSync('git', ['status', '--porcelain', '--', 'src', 'scripts'], { encoding: 'utf8' }).trim() === '';
+    return execFileSync('git', ['status', '--porcelain', '--', ...fichiersTouches], { encoding: 'utf8' })
+      .trim()
+      .split('\n')
+      .filter(Boolean);
   } catch {
-    return true; // hors dépôt : on ne bloque pas pour autant
+    return []; // hors dépôt : on ne bloque pas pour autant
   }
 };
 
+const gitPropre = () => salis().length === 0;
+
 if (!gitPropre()) {
-  console.error("⛔ L'arbre de travail contient des modifications non validées.\n");
-  console.error('   Cette suite modifie des fichiers sources puis les restaure. Elle refuse');
-  console.error('   de tourner sur un arbre sale : en cas d\'interruption, on ne saurait plus');
-  console.error("   distinguer ce qu'elle a écrit de ce que vous étiez en train d'écrire.\n");
+  console.error('⛔ Des fichiers que cette suite doit modifier sont déjà en cours de modification :\n');
+  for (const l of salis()) console.error(`   ${l}`);
+  console.error('\n   Elle les salit puis les restaure. En cas d\'interruption, on ne saurait');
+  console.error("   plus distinguer ce qu'elle a écrit de ce que vous étiez en train d'écrire.");
+  console.error('   Validez ou remisez ces fichiers-là ; le reste de votre travail ne la gêne pas.\n');
   process.exit(2);
 }
 
@@ -305,8 +326,9 @@ for (const cas of aTester) {
 
 console.log();
 if (!gitPropre()) {
-  console.error('⛔ La suite a laissé des fichiers modifiés. Restaurez avec :');
-  console.error('   git checkout -- src scripts\n');
+  console.error('⛔ La suite a laissé des fichiers modifiés :\n');
+  for (const l of salis()) console.error(`   ${l}`);
+  console.error('\n   Restaurez-les avec « git checkout -- <fichier> ».\n');
   process.exit(2);
 }
 
