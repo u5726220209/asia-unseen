@@ -34,7 +34,8 @@
     "garde-fous": "node scripts/garde-fous.mjs",
     "trafic": "node scripts/trafic.mjs",
     "bilan": "node scripts/bilan.mjs",
-    "fiche": "node --experimental-strip-types scripts/fiche-pdf.mjs"
+    "fiche": "node --experimental-strip-types scripts/fiche-pdf.mjs",
+    "gardes": "node scripts/tester-gardes.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.11",

@@ -53,5 +53,15 @@ jobs:
       # au moment où l'on sait encore quel changement l'a causé.
       - name: Budget de performance
         run: npm run performance
+      # Et pour finir : les contrôles ci-dessus bloquent-ils encore ?
+      #
+      # Ils ont chacun été mis en échec une fois à la main le jour de leur
+      # écriture, jamais depuis. Leur panne ne produit aucune erreur — elle
+      # produit un « ✓ ». Cette suite réintroduit dans chacun le défaut qu'il
+      # vise et exige qu'il refuse. Elle passe en dernier : elle modifie des
+      # fichiers puis les restaure, et rien ne doit dépendre de son passage.
+      - name: Les garde-fous bloquent-ils encore
+        run: npm run gardes
+
       - name: Sources externes
         run: npm run sources || echo "Des sources n'ont pas répondu — souvent un blocage anti-robot, à vérifier à la main."
