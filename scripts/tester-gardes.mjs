@@ -208,6 +208,30 @@ const CAS = [
     attendu: /./,
   },
 
+  {
+    nom: 'un article programmé contient un lien mort',
+    script: 'verifier-liens.mjs',
+    muter: {
+      // Un article qui attend sa date n'a pas encore de page : ses liens
+      // échappaient au contrôle jusqu'au matin de sa parution, c'est-à-dire
+      // jusqu'au moment où plus personne ne le relit.
+      'src/content/blog/_test-lien-programme.md': () =>
+        [
+          '---',
+          'title: "Article programmé de test"',
+          'description: "Article temporaire créé par la suite de tests pour vérifier que les liens des articles à paraître sont contrôlés."',
+          'accroche: "Il ne doit jamais atteindre le site."',
+          'pubDate: ' + new Date(Date.now() + 30 * 86_400_000).toISOString().slice(0, 10),
+          'categorie: pratique',
+          '---',
+          '',
+          'Un [lien vers nulle part](/cette-page-nexiste-vraiment-pas).',
+          '',
+        ].join('\n'),
+    },
+    attendu: /cette-page-nexiste-vraiment-pas/,
+  },
+
   /* ── audit-seo.mjs ───────────────────────────────────────────── */
   {
     nom: 'une page perd son titre',

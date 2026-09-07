@@ -52,8 +52,45 @@ for (const page of pages) {
   }
 }
 
+/**
+ * Les articles qui attendent leur date de parution.
+ *
+ * Ils n'ont pas encore de page, donc leurs liens échappaient à ce contrôle
+ * jusqu'au matin de leur publication — c'est-à-dire jusqu'au moment où
+ * personne ne les relit plus. Un lien mort y patientait tranquillement.
+ *
+ * On lit donc leur markdown, et on vérifie leurs liens contre les pages
+ * servies. Deux réserves : un lien vers un autre article programmé est
+ * légitime, et les ancres pures ne concernent pas ce contrôle.
+ */
+{
+  const aParaitre = [];
+  const aujourdhui = new Date().toISOString().slice(0, 10);
+  for (const dossier of ['src/content/blog', 'src/content/guides']) {
+    if (!existsSync(dossier)) continue;
+    for (const f of readdirSync(dossier).filter((f) => f.endsWith('.md'))) {
+      const md = readFileSync(join(dossier, f), 'utf8');
+      const date = md.slice(0, 1400).match(/^pubDate:\s*['"]?(\d{4}-\d{2}-\d{2})/m)?.[1];
+      if (!date || date <= aujourdhui) continue;
+      const url = `/${dossier.includes('blog') ? 'blog/' : ''}${f.replace(/\.md$/, '')}`;
+      aParaitre.push({ fichier: `${dossier}/${f}`, url, md });
+    }
+  }
+  const urlsAParaitre = new Set(aParaitre.map((a) => a.url));
+
+  for (const a of aParaitre) {
+    for (const m of a.md.matchAll(/\]\((\/[^)\s#?]*)\)/g)) {
+      const href = m[1].replace(/\/$/, '') || '/';
+      if (servies.has(href) || urlsAParaitre.has(href)) continue;
+      if (existsSync(join(DIST, href)) && statSync(join(DIST, href)).isFile()) continue;
+      if (!casses.has(href)) casses.set(href, new Set());
+      casses.get(href).add(`${a.fichier} (paraît le ${a.md.match(/^pubDate:\s*['"]?(\d{4}-\d{2}-\d{2})/m)[1]})`);
+    }
+  }
+}
+
 if (casses.size === 0) {
-  console.log(`✓ ${pages.length} pages contrôlées — aucun lien interne cassé.`);
+  console.log(`✓ ${pages.length} pages contrôlées, articles programmés compris — aucun lien interne cassé.`);
   process.exit(0);
 }
 

@@ -28,7 +28,7 @@ Toutes les pages ne se valent pas. L'ordre suit celui de `PLAN-CROISSANCE.md` :
 - [x] **Le taxi depuis l'aéroport** — programmé le 08/09/2026. Bangkok et Hanoï publient leur grille, Bali et Hô Chi Minh non : c'est l'angle.
 - [ ] **Que faire à Hoi An quand il pleut** — typique longue traîne : faible volume, quasi aucune concurrence.
 - [ ] **Prendre le train au Vietnam : classes, prix, réservation**
-- [ ] **Réserver un train en Chine : le guide de la fenêtre des 15 jours** — Lie `/chine`.
+- [x] **Réserver un train en Chine : la fenêtre des 15 jours** — programmé le 11/09/2026. Angle : un itinéraire ferroviaire chinois ne se verrouille pas à plus de 15 jours.
 - [ ] **Négocier en Asie : où c'est attendu, où c'est déplacé**
 
 ## Priorité 3 — itinéraires
