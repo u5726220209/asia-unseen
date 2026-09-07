@@ -24,7 +24,7 @@ Toutes les pages ne se valent pas. L'ordre suit celui de `PLAN-CROISSANCE.md` :
 
 ## Priorité 2 — longue traîne pays
 
-- [ ] **Visa Vietnam : l'e-visa étape par étape** — captures du portail officiel, causes de rejet. Lie `/vietnam` et `/visas-asie`.
+- [x] **Visa Vietnam : l'e-visa étape par étape** — publié le 07/09/2026. Requête « visa vietnam ». Exemption 45 j, tarif officiel, causes de refus.
 - [ ] **Combien coûte un taxi depuis l'aéroport, ville par ville** — 9 pays, tarifs officiels contre tarifs réclamés.
 - [ ] **Que faire à Hoi An quand il pleut** — typique longue traîne : faible volume, quasi aucune concurrence.
 - [ ] **Prendre le train au Vietnam : classes, prix, réservation**

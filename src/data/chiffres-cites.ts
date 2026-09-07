@@ -89,6 +89,7 @@ const COMPARATIF_ASSURANCE = '/blog/assurance-voyage-asie-comparatif';
 const COMPARATIF_ESIM = '/blog/esim-asie-comparatif-prix';
 const GUIDE_TRANSPORTS = '/transports-asie';
 const GUIDE_ERREURS = '/erreurs-a-eviter';
+const ARTICLE_EVISA_VN = '/blog/visa-vietnam-e-visa-2026';
 
 /* Portails officiels des formalités d'entrée. Ce sont les tarifs les plus
    lourds du site : ceux sur lesquels un voyageur fait son budget. */
@@ -108,8 +109,8 @@ export const chiffresCites: ChiffreCite[] = [
      chinois ont été corrigés à la main le 2 septembre, et rien ne les
      surveillait. `verifier-config.mjs` refuse désormais un tarif de visa
      absent de cette liste. */
-  { affiche: '25', designe: 'e-visa vietnamien, entrée simple (USD)', source: EVISA_VN, releveLe: '2026-09-04', pages: ['/vietnam'], sourceIntrouvableAttendue: true },
-  { affiche: '50', designe: 'e-visa vietnamien, entrées multiples (USD)', source: EVISA_VN, releveLe: '2026-09-04', pages: ['/vietnam'], sourceIntrouvableAttendue: true },
+  { affiche: '25', designe: 'e-visa vietnamien, entrée simple (USD)', source: EVISA_VN, releveLe: '2026-09-04', pages: ['/vietnam', ARTICLE_EVISA_VN], sourceIntrouvableAttendue: true },
+  { affiche: '50', designe: 'e-visa vietnamien, entrées multiples (USD)', source: EVISA_VN, releveLe: '2026-09-04', pages: ['/vietnam', ARTICLE_EVISA_VN], sourceIntrouvableAttendue: true },
   { affiche: '1 900', designe: "prolongation de séjour en Thaïlande, sur place (THB)", source: IMMIGRATION_TH, releveLe: '2026-09-04', pages: ['/thailande'], sourceIntrouvableAttendue: true },
   { affiche: '45', designe: 'visa L chinois, entrée simple — frais consulaires, tarif réduit jusqu\'au 31/12/2026', source: AMBASSADE_CN, releveLe: '2026-09-02', pages: ['/chine'] },
   { affiche: '110', designe: 'visa chinois, total constaté frais de service inclus', source: AMBASSADE_CN, releveLe: '2026-09-02', pages: ['/chine'], estimation: "la grille tarifaire du centre de dépôt parisien n'est pas publique : ce total est un ordre de grandeur, et la page le dit" },
