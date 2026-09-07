@@ -41,7 +41,15 @@ const id = 'pje-' + Math.random().toString(36).slice(2, 7);
 <div class="au-pje my-10 overflow-hidden rounded-brand border border-line bg-white" data-pays={JSON.stringify(data)}>
   <div class="border-b border-line bg-cream-warm px-6 py-5">
     <p class="eyebrow">Outil</p>
-    <h3 class="mt-1.5 font-display text-xl font-bold text-ink">Ai-je besoin d'un visa&nbsp;?</h3>
+    {/*
+      Ce titre répétait mot pour mot le h1 de la page, et sautait du niveau 1
+      au niveau 3. Quelqu'un qui parcourt la page par ses titres — ce que fait
+      une synthèse vocale — entendait donc deux fois la même question, dont une
+      à un niveau qui laisse croire à une section manquante entre les deux.
+      Un titre doit ajouter quelque chose ou disparaître ; celui-ci dit
+      maintenant ce que l'outil attend de vous.
+    */}
+    <h2 class="mt-1.5 font-display text-xl font-bold text-ink">Votre pays et votre durée</h2>
     <p class="mt-1.5 text-[0.88rem] leading-relaxed text-warm">
       Passeport français ordinaire, séjour touristique. La réponse cite la règle telle
       qu'elle est publiée, avec la date à laquelle elle a été vérifiée.

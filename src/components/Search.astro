@@ -45,6 +45,14 @@
       <svg viewBox="0 0 20 20" class="h-5 w-5 shrink-0 text-warm-light" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
         <circle cx="9" cy="9" r="6" /><path d="m13.5 13.5 4 4" />
       </svg>
+      {/*
+        Le champ n'avait qu'un texte indicatif, et un texte indicatif n'est pas
+        un libellé : il disparaît dès la première frappe, et une synthèse vocale
+        annonce « zone de texte » sans dire de quoi il s'agit. Le nom est donc
+        porté par un vrai libellé, masqué à l'œil et lu par les lecteurs
+        d'écran — la loupe à côté suffit à ceux qui voient.
+      */}
+      <label for="au-search-input" class="sr-only">Rechercher dans le site</label>
       <input
         id="au-search-input"
         type="search"
