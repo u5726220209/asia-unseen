@@ -20,6 +20,7 @@ import ArticleCard from '@/components/ArticleCard.astro';
 import { countries, bySlug, type Country } from '@/data/countries';
 import { guidesNav } from '@/data/nav';
 import { site } from '@/data/site';
+import { chiffresCites } from '@/data/chiffres-cites';
 
 /**
  * Une seule route couvre les pages pays (/vietnam) et les guides
@@ -137,6 +138,30 @@ const guideSchema = guideEntry && g
   : [];
 
 const paysLies = (g?.pays ?? []).map((s) => bySlug[s]).filter(Boolean);
+
+/**
+ * Ce qu'on propose au lecteur de ce guide, plutôt que la même phrase partout.
+ *
+ * L'encart disait « Recevez les neuf fiches de départ — une fiche par pays :
+ * urgences, visa, budget » sur toutes les pages, y compris sur un comparatif
+ * d'assurances. On répondait à côté de la question, au seul endroit du site où
+ * l'on demande une adresse.
+ *
+ * La distinction ne se devine pas, elle se lit dans les données : une page qui
+ * cite des montants inscrits au registre voit ces montants relus chaque nuit à
+ * leur source. Lui promettre d'être prévenu quand un prix bouge n'est pas un
+ * argument, c'est la description d'un mécanisme qui tourne. Les autres pages
+ * gardent la promesse générale, qui reste vraie pour elles.
+ */
+const pageCourante = guideEntry ? `/${guideEntry.id}` : country ? `/${country.slug}` : '';
+const chiffresSurveilles = chiffresCites.some((c) => c.pages.includes(pageCourante));
+
+const titreLettre = chiffresSurveilles
+  ? 'Être prévenu quand un de ces prix change'
+  : undefined;
+const promesseLettre = chiffresSurveilles
+  ? "Les montants de cette page sont relus chaque nuit à leur source. Quand l'un d'eux bouge, la page est corrigée et vous recevez ce qui a changé — avec l'ancien chiffre à côté du nouveau."
+  : undefined;
 ---
 
 {props.kind === 'pays' && (
@@ -275,7 +300,7 @@ const paysLies = (g?.pays ?? []).map((s) => bySlug[s]).filter(Boolean);
             </section>
           )}
 
-          <Newsletter variant="inline" />
+          <Newsletter variant="inline" title={titreLettre} promesse={promesseLettre} />
         </div>
 
         <aside data-pagefind-ignore class="lg:sticky lg:top-24 lg:h-fit">

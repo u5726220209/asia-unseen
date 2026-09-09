@@ -6,6 +6,15 @@ import ChampsBrevo from '@/components/ChampsBrevo.astro';
 interface Props {
   variant?: 'block' | 'inline' | 'compact';
   title?: string;
+  /**
+   * Ce qu'on promet, quand la promesse générale ne convient pas.
+   *
+   * « Une fiche de départ par pays » parle à quelqu'un qui prépare un voyage.
+   * Elle ne dit rien à quelqu'un qui compare des assurances : on lui répond à
+   * côté de sa question, au seul endroit du site où on lui demande son
+   * adresse. Les pages qui savent mieux le disent.
+   */
+  promesse?: string;
   class?: string;
 }
 /**
@@ -22,11 +31,30 @@ const enLettres = ['zéro', 'une', 'deux', 'trois', 'quatre', 'cinq', 'six', 'se
 const nb = countries.length;
 const combien = enLettres[nb] ?? String(nb);
 
+/**
+ * La version courte, pour l'encart intercalé dans un article.
+ *
+ * Elle n'est pas une troncature de la longue : un encart au milieu d'un texte
+ * dispose de deux lignes, pas de cinq. Quand une page fournit sa promesse, on
+ * la reprend telle quelle — c'est elle qui sait ce qu'elle a à dire.
+ */
+const PROMESSE_COURTE_PAR_DEFAUT =
+  'Une fiche par pays : urgences, visa, budget. Rééditée quand une règle officielle change.';
+
+const PROMESSE_PAR_DEFAUT =
+  "Une fiche de départ par pays : règle de visa, numéros d'urgence, budget réel, " +
+  'et les dépenses qui coûtent cher. Vérifiée aux sources officielles — et ' +
+  "rééditée dès qu'une règle change.";
+
 const {
   variant = 'block',
   title = `Recevez les ${combien} fiches de départ`,
+  promesse,
   class: klass = '',
 } = Astro.props;
+
+const texteLong = promesse ?? PROMESSE_PAR_DEFAUT;
+const promesseCourte = promesse ?? PROMESSE_COURTE_PAR_DEFAUT;
 
 // Sans endpoint configuré, le formulaire reste inerte plutôt que d'échouer
 // silencieusement : on affiche l'adresse de contact directe.
@@ -44,11 +72,7 @@ const id = 'nl-' + Math.random().toString(36).slice(2, 8);
     <div class="relative max-w-2xl">
       <p class="eyebrow !text-amber">Gratuit · sans spam</p>
       <h2 class="mt-3 text-display text-cream">{title}</h2>
-      <p class="mt-4 text-[1.05rem] leading-relaxed text-warm-light">
-        Une fiche de départ par pays : règle de visa, numéros d'urgence, budget réel,
-        et les dépenses qui coûtent cher. Vérifiée aux sources officielles — et
-        rééditée dès qu'une règle change.
-      </p>
+      <p class="mt-4 text-[1.05rem] leading-relaxed text-warm-light">{texteLong}</p>
       <form
         class="au-nl mt-8 flex flex-col gap-3 sm:flex-row"
         action={action || undefined}
@@ -79,9 +103,7 @@ const id = 'nl-' + Math.random().toString(36).slice(2, 8);
   <aside data-pagefind-ignore class:list={['my-12 rounded-brand border-l-[3px] border-amber bg-amber-50 px-6 py-7', klass]}>
     <p class="eyebrow !text-amber-700">Avant d'aller plus loin</p>
     <h3 class="mt-2 font-display text-xl font-bold text-ink">{title}</h3>
-    <p class="mt-2 text-[0.95rem] leading-relaxed text-ink-soft">
-      Une fiche par pays : urgences, visa, budget. Rééditée quand une règle officielle change.
-    </p>
+    <p class="mt-2 text-[0.95rem] leading-relaxed text-ink-soft">{promesseCourte}</p>
     <form class="au-nl mt-5 flex flex-col gap-2.5 sm:flex-row" action={action || undefined} method="post" data-configured={action ? 'true' : 'false'}>
       <label for={id} class="sr-only">Votre adresse email</label>
       <input
