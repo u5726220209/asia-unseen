@@ -1,0 +1,81 @@
+---
+import { newsletter } from '@/data/site';
+import ChampsBrevo from '@/components/ChampsBrevo.astro';
+
+/**
+ * La capture au moment où l'outil vient de répondre.
+ *
+ * Les trois outils du site — budget, « puis-je entrer », itinéraire — mènent
+ * quelqu'un jusqu'à un chiffre qui le concerne : 5 160 €, 45 jours autorisés,
+ * un e-visa à déposer avant le 3 mars. C'est le moment de plus forte intention
+ * de tout le site, et il ne s'y passait rien : la personne lisait sa réponse,
+ * puis s'en allait.
+ *
+ * Le formulaire du pied de page ne remplace pas ça. Il propose la même chose à
+ * tout le monde, partout, avec les mêmes mots. Ici la proposition découle de ce
+ * que la personne vient de faire, et c'est ce qui la rend acceptable : on ne
+ * l'interrompt pas, on prolonge son geste.
+ *
+ * CE QU'ON NE FAIT PAS
+ * Le résultat reste affiché en entier, sans email. Cacher un chiffre déjà
+ * calculé derrière une adresse serait une rançon — et sur un site dont la
+ * valeur tient à ce qu'il donne ses données, ce serait se contredire.
+ *
+ * POURQUOI L'OUTIL D'ORIGINE N'EST PAS TRANSMIS
+ * Savoir lequel des trois outils produit des inscriptions serait utile, et un
+ * champ caché suffirait. Mais Brevo rejette sans un mot ce qu'il n'attend pas,
+ * et ce site a déjà perdu des inscriptions ainsi : une adresse qui n'arrive
+ * jamais, une page de remerciement qui s'affiche quand même. Le risque n'est
+ * pas de perdre une statistique, c'est de perdre l'inscription elle-même.
+ *
+ * `contexte` ne sert donc pour l'instant qu'à distinguer les identifiants de
+ * champ sur une page qui porte plusieurs formulaires. Le jour où l'attribut
+ * existera côté Brevo, il suffira de le poster.
+ */
+interface Props {
+  /** Ce qu'on propose, formulé à partir de ce que la personne vient d'obtenir. */
+  promesse: string;
+  /** Le libellé du bouton. Il dit ce qu'on reçoit, jamais « s'inscrire ». */
+  bouton: string;
+  /** L'outil d'origine. Sert à distinguer les identifiants de champ. */
+  contexte: string;
+  class?: string;
+}
+const { promesse, bouton, contexte, class: klass = '' } = Astro.props;
+
+const action = newsletter.endpoint;
+const id = `cap-${contexte.toLowerCase().replace(/[^a-z]+/g, '-')}`;
+---
+
+<div
+  data-pagefind-ignore
+  class:list={['not-prose rounded-brand border-l-[3px] border-amber bg-amber-50 px-5 py-4 sm:px-6', klass]}
+>
+  <p class="text-[0.92rem] leading-relaxed text-ink-soft">{promesse}</p>
+
+  <form
+    class="au-nl mt-3.5 flex flex-col gap-2.5 sm:flex-row"
+    action={action || undefined}
+    method="post"
+    data-configured={action ? 'true' : 'false'}
+  >
+    <label for={id} class="sr-only">Votre adresse email</label>
+    <input
+      id={id}
+      type="email"
+      name={newsletter.champEmail}
+      required
+      autocomplete="email"
+      placeholder="vous@exemple.com"
+      class="min-w-0 flex-1 rounded-brand border border-line bg-white px-4 py-2.5 text-ink placeholder:text-warm-light focus:border-amber focus:outline-none"
+    />
+    <ChampsBrevo />
+    <button type="submit" class="btn-primary whitespace-nowrap !py-2.5">{bouton}</button>
+  </form>
+
+  <p class="au-nl-msg mt-3 hidden text-sm text-ink-soft" role="status"></p>
+
+  <p class="mt-3 text-[0.78rem] leading-relaxed text-warm">
+    Une confirmation vous sera demandée par email. Désabonnement en un clic.
+  </p>
+</div>

@@ -1,4 +1,5 @@
 ---
+import CaptureOutil from '@/components/CaptureOutil.astro';
 import { countries } from '@/data/countries';
 
 /**
@@ -82,6 +83,18 @@ const id = 'pje-' + Math.random().toString(36).slice(2, 7);
   </div>
 
   <div class="au-pje-out border-t border-line px-6 py-6" role="status" aria-live="polite"></div>
+
+  {/*
+    La proposition qui découle de la réponse : cet outil dit la règle du jour,
+    et la seule chose qu'il ne peut pas faire est de prévenir quand elle change.
+    C'est précisément ce que ce site sait faire, et personne d'autre.
+  */}
+  <CaptureOutil
+    class="mx-6 mb-6"
+    contexte="Ai-je besoin d'un visa"
+    promesse="Cette réponse est celle d'aujourd'hui. Les règles d'entrée changent plusieurs fois par an : dites-nous où vous partez et vous recevrez la fiche corrigée si elle bouge avant votre départ."
+    bouton="Me prévenir"
+  />
 </div>
 
 <script>

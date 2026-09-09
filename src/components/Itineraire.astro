@@ -1,4 +1,5 @@
 ---
+import CaptureOutil from '@/components/CaptureOutil.astro';
 import { countries } from '@/data/countries';
 
 /**
@@ -68,6 +69,18 @@ const defaut = new Date(auj.getFullYear(), auj.getMonth(), auj.getDate() + 60)
   </div>
 
   <div class="au-itin-out border-t border-line bg-cream-warm px-6 py-6" role="status" aria-live="polite"></div>
+
+  {/*
+    Un itinéraire calculé est daté par nature : chaque démarche est placée par
+    rapport à une frontière et à un jour. C'est exactement ce qui se périme si
+    une règle bouge entre le calcul et le départ.
+  */}
+  <CaptureOutil
+    class="mx-6 mb-6"
+    contexte="Itinéraire multi-pays"
+    promesse="Ces échéances sont calculées sur les règles d'aujourd'hui. Un itinéraire se prépare des mois à l'avance : recevez les fiches de départ, et un email si l'une de ces règles change d'ici là."
+    bouton="Recevoir les fiches"
+  />
 </div>
 
 <script>
