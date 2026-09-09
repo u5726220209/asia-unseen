@@ -15,7 +15,7 @@
  * un réglage écrit mais jamais lu est un secret que quelqu'un croit utile.
  */
 
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 
 const lire = (motif) =>
@@ -385,6 +385,76 @@ if (defautsMachine.length) {
   console.log('✓ Les fichiers lisibles par machine disent ce que disent les pages.\n');
 }
 
+/**
+ * Un nom de pays ne s'écrit jamais tout nu dans une phrase française.
+ *
+ * Les pages de budget affichaient « Où se situe Japon », et leur titre H1
+ * annonçait « Quel budget pour la Indonésie ». Deux fautes que personne ne
+ * commet en écrivant à la main, produites par un gabarit qui déduisait
+ * l'article du locatif ou l'omettait. Elles étaient en ligne sur neuf pages,
+ * dans le titre que Google affiche — sur un site dont toute la promesse est
+ * la précision.
+ *
+ * On relit donc ce que les gabarits produisent, à la recherche des formes
+ * fautives connues. La liste est courte parce qu'elle vise des fautes réelles,
+ * pas une grammaire complète : un contrôle qui tenterait de juger tout le
+ * français crierait sans cesse et finirait ignoré.
+ */
+const fautesArticle = [];
+if (existsSync('dist')) {
+  const ts = readFileSync('src/data/countries.ts', 'utf8');
+  const noms = [...ts.matchAll(/nom: '([^']+)'/g)].map((m) => m[1]);
+  const voyelle = /^[AEIOUÉÈÀÎÔaeiouéèàîô]/;
+
+  const pages = [];
+  const parcourir = (d) => {
+    for (const e of readdirSync(d, { withFileTypes: true })) {
+      const p = `${d}/${e.name}`;
+      if (e.isDirectory()) parcourir(p);
+      else if (e.name === 'index.html') pages.push(p);
+    }
+  };
+  parcourir('dist');
+
+  for (const f of pages) {
+    const url = f.replace(/^dist/, '').replace(/\/index\.html$/, '') || '/';
+    const texte = readFileSync(f, 'utf8')
+      .replace(/<script[\s\S]*?<\/script>/g, ' ')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/&#39;|&rsquo;/g, "'")
+      .replace(/&nbsp;|&#160;/g, ' ')
+      .replace(/\s+/g, ' ');
+
+    for (const nom of noms) {
+      // « la Indonésie », « le Indonésie » : élision manquée devant une voyelle.
+      //
+      // Le garde devant « la » n'est pas une précaution théorique : sans lui,
+      // le contrôle lisait « laoevisa.gov.la Indonésie » dans un tableau — la
+      // fin d'un nom de domaine suivie de la cellule voisine — et signalait
+      // une faute qui n'existait pas. Un point est une frontière de mot.
+      if (voyelle.test(nom) && new RegExp(`(?<![\\w.])[Ll]a ${nom}\\b`).test(texte)) {
+        fautesArticle.push({ page: url, faute: `« la ${nom} » — élision manquée` });
+      }
+      // « Où se situe Japon » : le nom sans article après un verbe.
+      const nu = new RegExp(`\\b(situe|situent|arrive|arrivent|coûte|coûtent) ${nom}\\b`);
+      if (nu.test(texte)) {
+        fautesArticle.push({ page: url, faute: `« ${texte.match(nu)[0]} » — article manquant` });
+      }
+    }
+  }
+}
+
+if (fautesArticle.length) {
+  const vues = new Set();
+  const uniques = fautesArticle.filter((f) => !vues.has(f.faute + f.page) && vues.add(f.faute + f.page));
+  console.log(`⛔ ${uniques.length} faute(s) d'article sur des pages produites :\n`);
+  for (const f of uniques.slice(0, 12)) console.log(`   ${f.page.padEnd(28)} ${f.faute}`);
+  console.log('\n   Un gabarit qui écrit un nom de pays sans article se voit immédiatement,');
+  console.log('   et il se voit dans le titre que Google affiche.\n');
+} else if (existsSync('dist')) {
+  console.log("✓ Aucun nom de pays écrit sans son article.\n");
+}
+
 if (!tarifsNonSuivis.length) console.log("✓ Chaque tarif d'entrée publié est inscrit au registre.\n");
 
 if (tarifsNonSuivis.length) {
@@ -466,5 +536,5 @@ if (correctionsNonFaites.length) {
 process.exit(
   jamaisEcrits.length || jamaisLus.length || defautsFormulaire.length ||
   ecartSources || visasIncoherents.length || correctionsNonFaites.length ||
-  tarifsNonSuivis.length || defautsMachine.length ? 1 : 0,
+  tarifsNonSuivis.length || defautsMachine.length || fautesArticle.length ? 1 : 0,
 );

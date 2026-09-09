@@ -137,6 +137,18 @@ const CAS = [
     attendu: /correction\(s\) publiée\(s\) mais pas appliquée/,
   },
 
+  {
+    nom: "un nom de pays écrit sans son article",
+    script: 'verifier-config.mjs',
+    muter: {
+      'dist/budget/japon/index.html': remplacer(
+        /Le Japon parmi les neuf pays/,
+        'Où se situe Japon parmi les neuf pays',
+      ),
+    },
+    attendu: /faute\(s\) d'article/,
+  },
+
   /* ── verifier-chiffres.mjs ───────────────────────────────────── */
   {
     nom: 'une entrée du registre devient illisible',

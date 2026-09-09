@@ -1,4 +1,16 @@
 ---
+/**
+ * « le Japon » en début de phrase devient « Le Japon ».
+ *
+ * Les tournures de cette page ont par ailleurs été choisies pour qu'aucune
+ * n'exige d'accord en genre ou en nombre. « Le Japon est-il cher » devenait
+ * « L'Indonésie est-il cher », et « Où se situe » donnait « Où se situe les
+ * Philippines ». Encoder le genre et le nombre de neuf pays pour deux phrases
+ * revenait à ajouter une règle là où il suffisait d'écrire autrement. Le
+ * possessif tombe pour la même raison : « les Philippines face à ses voisins »
+ * demandait « leurs ».
+ */
+const majuscule = (t) => t.charAt(0).toUpperCase() + t.slice(1);
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import Visuel from '@/components/Visuel.astro';
@@ -35,8 +47,8 @@ const faq = [
     r: `Comptez ${c.budget.routard} € par jour et par personne en voyageant simplement, ${c.budget.confort} € en confort, ${c.budget.premium} € en haut de gamme — hors vol international. Sur trois semaines, cela représente ${troisSemaines.routard} €, ${troisSemaines.confort} € ou ${troisSemaines.premium} € sur place. Le vol depuis Paris s'ajoute à ces montants.`,
   },
   {
-    q: `Le ${c.nom} est-il cher par rapport aux pays voisins ?`,
-    r: `Sur les neuf destinations couvertes par ce site, ${c.nom} se situe au ${rang}ᵉ rang du moins cher au plus cher en budget quotidien routard. À titre de comparaison, ${moinsCher.nom} démarre à ${moinsCher.budget.routard} € par jour et ${plusCher.nom} à ${plusCher.budget.routard} €.`,
+    q: `Voyager ${c.article} ${c.nom} coûte-t-il plus cher que dans les pays voisins ?`,
+    r: `Sur les neuf destinations couvertes par ce site, ${c.articleSujet}${c.nom} se situe au ${rang}ᵉ rang du moins cher au plus cher en budget quotidien routard. À titre de comparaison, ${moinsCher.nom} démarre à ${moinsCher.budget.routard} € par jour et ${plusCher.nom} à ${plusCher.budget.routard} €.`,
   },
   {
     q: 'Ces montants incluent-ils le vol ?',
@@ -63,7 +75,7 @@ const faq = [
   <header class="border-b border-line bg-cream-warm">
     <div class="wrap py-10 lg:py-14">
       <Breadcrumbs items={[{ label: c.nom, href: `/${c.slug}` }, { label: 'Budget' }]} />
-      <h1 class="mt-6 max-w-3xl text-hero">Quel budget pour {c.article === 'aux' ? 'les' : c.article === 'en' ? 'la' : 'le'} {c.nom} ?</h1>
+      <h1 class="mt-6 max-w-3xl text-hero">Quel budget pour {c.articleSujet}{c.nom}&nbsp;?</h1>
       <p class="mt-6 max-w-2xl text-[1.15rem] leading-relaxed text-warm">
         De <strong>{c.budget.routard} €</strong> à <strong>{c.budget.premium} €</strong> par jour
         et par personne, hors vol. Voici ce que couvre chaque fourchette, et le calcul pour
@@ -92,9 +104,9 @@ const faq = [
         s'ajoute à ces totaux.
       </p>
 
-      <h2>Où se situe {c.nom} par rapport aux voisins</h2>
+      <h2>{majuscule(c.articleSujet)}{c.nom} parmi les neuf pays</h2>
       <p>
-        Sur les neuf destinations couvertes par ce site, {c.nom} arrive au
+        Sur les neuf destinations couvertes par ce site, {c.articleSujet}{c.nom} arrive au
         <strong> {rang}ᵉ rang</strong> du moins cher au plus cher, en budget quotidien routard.
         {moinsCher.nom} démarre à {moinsCher.budget.routard} € par jour, {plusCher.nom} à
         {plusCher.budget.routard} €. Le <a href="/budget-voyage-asie">guide du budget en Asie</a>

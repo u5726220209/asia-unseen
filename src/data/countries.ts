@@ -17,6 +17,19 @@ export type Country = {
   slug: string;
   nom: string;
   article: string;          // « au », « en », « aux » — pour les tournures de phrase
+  /**
+   * L'article quand le pays est sujet : « le Japon arrive au 9e rang ».
+   *
+   * `article` est locatif — « au Japon », « en Thaïlande » — et ne convient pas
+   * quand le pays commence la phrase. Les gabarits le déduisaient jusqu'ici du
+   * locatif, ce qui donnait « la Indonésie » dans un titre H1, ou écrivaient le
+   * nom tout nu : « Où se situe Japon ». Deux fautes que personne ne fait en
+   * écrivant à la main, et que neuf pages affichaient.
+   *
+   * L'élision est incluse dans la valeur : « l'Indonésie » se colle, les autres
+   * prennent une espace. C'est au gabarit de le savoir, pas à chaque appel.
+   */
+  articleSujet: string;
   capitale: string;
   monnaie: string;
   langue: string;
@@ -105,6 +118,7 @@ export const countries: Country[] = [
   {
     slug: 'vietnam',
     nom: 'Vietnam', article: 'au', capitale: 'Hanoï', monnaie: 'Dong (VND)',
+    articleSujet: "le ",
     langue: 'Vietnamien', decalage: '+5 h en été, +6 h en hiver',
     budget: { routard: 25, confort: 55, premium: 120 },
     saisons: [2, 2, 3, 3, 2, 1, 1, 1, 2, 3, 3, 3],
@@ -163,6 +177,7 @@ export const countries: Country[] = [
   {
     slug: 'thailande',
     nom: 'Thaïlande', article: 'en', capitale: 'Bangkok', monnaie: 'Baht (THB)',
+    articleSujet: "la ",
     langue: 'Thaï', decalage: '+5 h en été, +6 h en hiver',
     budget: { routard: 30, confort: 65, premium: 150 },
     saisons: [3, 3, 2, 2, 1, 1, 1, 1, 1, 2, 3, 3],
@@ -222,6 +237,7 @@ export const countries: Country[] = [
   {
     slug: 'japon',
     nom: 'Japon', article: 'au', capitale: 'Tokyo', monnaie: 'Yen (JPY)',
+    articleSujet: "le ",
     langue: 'Japonais', decalage: '+7 h en été, +8 h en hiver',
     budget: { routard: 65, confort: 120, premium: 250 },
     saisons: [2, 2, 3, 3, 3, 1, 1, 1, 2, 3, 3, 2],
@@ -275,6 +291,7 @@ export const countries: Country[] = [
   {
     slug: 'chine',
     nom: 'Chine', article: 'en', capitale: 'Pékin', monnaie: 'Yuan (CNY)',
+    articleSujet: "la ",
     langue: 'Mandarin', decalage: '+6 h en été, +7 h en hiver',
     budget: { routard: 40, confort: 80, premium: 170 },
     saisons: [1, 1, 2, 3, 3, 2, 1, 1, 3, 3, 2, 1],
@@ -337,6 +354,7 @@ export const countries: Country[] = [
   {
     slug: 'laos',
     nom: 'Laos', article: 'au', capitale: 'Vientiane', monnaie: 'Kip (LAK)',
+    articleSujet: "le ",
     langue: 'Lao', decalage: '+5 h en été, +6 h en hiver',
     budget: { routard: 25, confort: 50, premium: 100 },
     saisons: [3, 3, 2, 2, 1, 1, 1, 1, 2, 3, 3, 3],
@@ -389,6 +407,7 @@ export const countries: Country[] = [
   {
     slug: 'cambodge',
     nom: 'Cambodge', article: 'au', capitale: 'Phnom Penh', monnaie: 'Riel (KHR) et dollar US',
+    articleSujet: "le ",
     langue: 'Khmer', decalage: '+5 h en été, +6 h en hiver',
     budget: { routard: 28, confort: 55, premium: 115 },
     saisons: [3, 3, 3, 2, 1, 1, 1, 1, 2, 2, 3, 3],
@@ -443,6 +462,7 @@ export const countries: Country[] = [
   {
     slug: 'coree-du-sud',
     nom: 'Corée du Sud', article: 'en', capitale: 'Séoul', monnaie: 'Won (KRW)',
+    articleSujet: "la ",
     langue: 'Coréen', decalage: '+7 h en été, +8 h en hiver',
     budget: { routard: 55, confort: 100, premium: 200 },
     saisons: [1, 1, 2, 3, 3, 3, 1, 1, 3, 3, 2, 1],
@@ -495,6 +515,7 @@ export const countries: Country[] = [
   {
     slug: 'indonesie',
     nom: 'Indonésie', article: 'en', capitale: 'Jakarta', monnaie: 'Roupie (IDR)',
+    articleSujet: "l'",
     langue: 'Indonésien', decalage: '+6 h à +8 h selon les îles',
     budget: { routard: 30, confort: 60, premium: 140 },
     saisons: [1, 1, 2, 3, 3, 3, 3, 3, 3, 3, 2, 1],
@@ -550,6 +571,7 @@ export const countries: Country[] = [
   {
     slug: 'philippines',
     nom: 'Philippines', article: 'aux', capitale: 'Manille', monnaie: 'Peso (PHP)',
+    articleSujet: "les ",
     langue: 'Filipino et anglais', decalage: '+6 h en été, +7 h en hiver',
     budget: { routard: 30, confort: 60, premium: 130 },
     saisons: [3, 3, 3, 3, 2, 1, 1, 1, 1, 1, 2, 3],
