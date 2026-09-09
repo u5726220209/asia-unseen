@@ -101,14 +101,28 @@ jobs:
         env:
           GSC_CLE_JSON: ${{ secrets.GSC_CLE_JSON }}
 
+      # Une fois par semaine, pas chaque nuit.
+      #
+      # Cette étape est la seule de la veille qui reconstruit le site entier :
+      # elle a besoin de dist/ pour recenser les liens, et c'est de loin la plus
+      # coûteuse en minutes. Or un lien externe ne meurt pas du jour au
+      # lendemain. Le lundi suffit — et la condition est écrite en shell plutôt
+      # qu'en expression de workflow, parce qu'une condition qu'on ne sait pas
+      # relire est une condition qu'on n'ose plus modifier.
       - name: Liens sortants
+        id: externes
         run: |
+          if [ "$(date -u +%u)" != "1" ] && [ "${{ github.event_name }}" != "workflow_dispatch" ]; then
+            echo "Contrôle hebdomadaire — il tourne le lundi." > rapport-externes.txt
+            cat rapport-externes.txt
+            echo "morts=non" >> $GITHUB_OUTPUT
+            exit 0
+          fi
           npm ci --silent && npm run build > /dev/null 2>&1
           code=0
           node scripts/liens-externes.mjs > rapport-externes.txt 2>&1 || code=$?
           cat rapport-externes.txt
           if [ $code -eq 0 ]; then echo "morts=non" >> $GITHUB_OUTPUT; else echo "morts=oui" >> $GITHUB_OUTPUT; fi
-        id: externes
 
       - name: Trafic
         id: trafic

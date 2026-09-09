@@ -11,7 +11,7 @@ name: Gardien du site en ligne
 # Ce gardien est donc la seule chose du dépôt qui parle à la production.
 on:
   schedule:
-    - cron: '17 */6 * * *'
+    - cron: '17 */12 * * *'
   workflow_dispatch:
 
 permissions:
