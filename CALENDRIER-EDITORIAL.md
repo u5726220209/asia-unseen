@@ -72,3 +72,7 @@ volontairement de les rédiger : c'est ce qui rend le site impossible à copier.
 - [x] Les applications vraiment utiles — 04/07/2026
 - [x] Que mettre dans son sac — 30/06/2026
 - [x] Voyager en Asie avec des enfants — 26/06/2026
+
+## Publiés hors file — trouvés en veille
+
+- [x] **Train en Corée : ce qui a changé le 1er septembre 2026** — programmé le 14/09/2026. letskorail.com redirige vers korail.com et le lien de réservation des guides est mort ; fusion KTX/SRT annoncée par la presse, non confirmée officiellement.
