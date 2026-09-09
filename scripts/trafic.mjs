@@ -29,6 +29,7 @@
  */
 
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { jeton, proprieteDe, interroger, jour } from './lib/search-console.mjs';
 
 const DOMAINE = (process.env.SITE_URL || 'https://asiaunseen.com')
   .replace(/^https?:\/\//, '')
@@ -49,90 +50,20 @@ if (!cle) {
   process.exit(0);
 }
 
-/* ── Jeton d'accès, signé localement ─────────────────────────────── */
-
-async function jeton(compte) {
-  const { createSign } = await import('node:crypto');
-  const maintenant = Math.floor(Date.now() / 1000);
-  const enTete = { alg: 'RS256', typ: 'JWT' };
-  const charge = {
-    iss: compte.client_email,
-    scope: 'https://www.googleapis.com/auth/webmasters.readonly',
-    aud: 'https://oauth2.googleapis.com/token',
-    exp: maintenant + 3600,
-    iat: maintenant,
-  };
-  const b64 = (o) => Buffer.from(JSON.stringify(o)).toString('base64url');
-  const aSigner = `${b64(enTete)}.${b64(charge)}`;
-  const signature = createSign('RSA-SHA256').update(aSigner).sign(compte.private_key, 'base64url');
-
-  const r = await fetch('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-      assertion: `${aSigner}.${signature}`,
-    }),
-  });
-  const d = await r.json();
-  if (!d.access_token) throw new Error(`jeton refusé : ${JSON.stringify(d).slice(0, 200)}`);
-  return d.access_token;
-}
-
 /* ── Relevé ──────────────────────────────────────────────────────── */
 
-const jour = (n) => new Date(Date.now() - n * 86_400_000).toISOString().slice(0, 10);
 
-/**
- * Quelle propriété interroger.
- *
- * Search Console distingue deux formes, et l'API refuse celle qu'on ne possède
- * pas : « sc-domain:asiaunseen.com » pour une propriété de domaine,
- * « https://asiaunseen.com/ » pour une propriété de préfixe d'URL. Ce script
- * fabriquait la seconde alors que le compte détient la première. Résultat :
- * six appels, six 403, et personne pour s'en apercevoir.
- *
- * On ne devine donc plus : on demande à Google la liste des propriétés
- * accessibles, et on prend celle qui correspond au domaine. Une propriété
- * ajoutée ou remplacée plus tard sera trouvée sans qu'on touche à ce fichier.
- */
-async function proprieteDe(acces) {
-  const r = await fetch('https://searchconsole.googleapis.com/webmasters/v3/sites', {
-    headers: { Authorization: `Bearer ${acces}` },
-  });
-  if (!r.ok) throw new Error(`liste des propriétés refusée (HTTP ${r.status}) : ${(await r.text()).slice(0, 200)}`);
-  const sites = (await r.json()).siteEntry ?? [];
-
-  const candidats = [`sc-domain:${DOMAINE}`, `https://${DOMAINE}/`, `http://${DOMAINE}/`];
-  const trouve = candidats.find((c) => sites.some((s) => s.siteUrl === c));
-  if (trouve) return trouve;
-
-  throw new Error(
-    `aucune propriété ne correspond à ${DOMAINE}. Le compte de service voit : ` +
-    (sites.map((s) => s.siteUrl).join(', ') || '(aucune — il n\'a été ajouté à aucune propriété)'),
-  );
-}
 
 /**
  * Un échec HTTP doit être bruyant.
  *
- * La version précédente lisait `d.rows?.[0]` sans regarder le code de retour.
- * Un 403 rendait donc zéro impression, en silence — et une sentinelle de
- * trafic qui lit zéro sans savoir pourquoi est pire qu'absente : elle rassure.
- * Zéro impression sur un site neuf est normal ; zéro impression parce que
- * l'appel a échoué ne l'est pas. Les deux ne doivent jamais se ressembler.
+ * La version précédente lisait la première ligne sans regarder le code de
+ * retour. Un 403 rendait donc zéro impression, en silence — et une sentinelle
+ * de trafic qui lit zéro sans savoir pourquoi est pire qu'absente : elle
+ * rassure. `interroger` lève désormais sur tout échec.
  */
 async function releve(acces, propriete, debut, fin) {
-  const r = await fetch(
-    `https://searchconsole.googleapis.com/webmasters/v3/sites/${encodeURIComponent(propriete)}/searchAnalytics/query`,
-    {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${acces}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ startDate: debut, endDate: fin, dimensions: [], rowLimit: 1 }),
-    },
-  );
-  if (!r.ok) throw new Error(`relevé ${debut} → ${fin} refusé (HTTP ${r.status}) : ${(await r.text()).slice(0, 200)}`);
-  const ligne = (await r.json()).rows?.[0];
+  const ligne = (await interroger(acces, propriete, { debut, fin }))[0];
   return { impressions: ligne?.impressions ?? 0, clics: ligne?.clicks ?? 0 };
 }
 
@@ -143,27 +74,18 @@ async function releve(acces, propriete, debut, fin) {
  * la question qu'on se pose sur un site jeune n'est pas « combien », c'est
  * « lesquelles » : un site dont une seule page est vue et un site dont
  * quarante pages le sont ont le même total et deux avenirs différents.
- *
- * C'est aussi la seule façon honnête de répondre à « Google voit-il le
- * site ». Une recherche `site:` se heurte à un CAPTCHA, et un CAPTCHA ne se
- * contourne pas. Search Console, elle, répond.
  */
 async function detail(acces, propriete, debut, fin, dimension, combien = 12) {
-  const r = await fetch(
-    `https://searchconsole.googleapis.com/webmasters/v3/sites/${encodeURIComponent(propriete)}/searchAnalytics/query`,
-    {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${acces}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ startDate: debut, endDate: fin, dimensions: [dimension], rowLimit: combien }),
-    },
-  );
-  if (!r.ok) return null; // le détail est un bonus : son échec ne doit rien casser
-  return (await r.json()).rows ?? [];
+  try {
+    return await interroger(acces, propriete, { debut, fin, dimensions: [dimension], lignes: combien });
+  } catch {
+    return null; // le détail est un bonus : son échec ne doit rien casser
+  }
 }
 
 const compte = JSON.parse(cle);
 const acces = await jeton(compte);
-const propriete = await proprieteDe(acces);
+const propriete = await proprieteDe(acces, DOMAINE);
 
 // Search Console publie ses données avec deux à trois jours de retard : on
 // compare donc des fenêtres décalées, sinon la semaine en cours paraît

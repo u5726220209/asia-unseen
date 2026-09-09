@@ -89,6 +89,18 @@ jobs:
       # morte laisse la phrase qu'elle appuyait en place et fait disparaître la
       # preuve ; un lien partenaire mort ne rapporte plus rien et ne le dit pas.
       # Il faut dist/, donc la construction précède.
+      # Deux de nos pages qui visent la même recherche partagent le signal au
+      # lieu de l'additionner, et aucune ne se classe. C'est le seul problème
+      # de référencement qu'écrire n'améliore pas : un troisième article sur le
+      # même sujet l'aggrave. Constat seulement — un chevauchement peut être
+      # délibéré.
+      - name: Pages qui se disputent une recherche
+        run: |
+          node scripts/cannibalisation.mjs > rapport-cannibalisation.txt 2>&1 || true
+          cat rapport-cannibalisation.txt
+        env:
+          GSC_CLE_JSON: ${{ secrets.GSC_CLE_JSON }}
+
       - name: Liens sortants
         run: |
           npm ci --silent && npm run build > /dev/null 2>&1
