@@ -136,6 +136,31 @@ async function releve(acces, propriete, debut, fin) {
   return { impressions: ligne?.impressions ?? 0, clics: ligne?.clicks ?? 0 };
 }
 
+/**
+ * Quelles pages Google sert réellement, et sur quelles requêtes.
+ *
+ * Le relevé global dit « 431 impressions » sans dire d'où elles viennent. Or
+ * la question qu'on se pose sur un site jeune n'est pas « combien », c'est
+ * « lesquelles » : un site dont une seule page est vue et un site dont
+ * quarante pages le sont ont le même total et deux avenirs différents.
+ *
+ * C'est aussi la seule façon honnête de répondre à « Google voit-il le
+ * site ». Une recherche `site:` se heurte à un CAPTCHA, et un CAPTCHA ne se
+ * contourne pas. Search Console, elle, répond.
+ */
+async function detail(acces, propriete, debut, fin, dimension, combien = 12) {
+  const r = await fetch(
+    `https://searchconsole.googleapis.com/webmasters/v3/sites/${encodeURIComponent(propriete)}/searchAnalytics/query`,
+    {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${acces}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ startDate: debut, endDate: fin, dimensions: [dimension], rowLimit: combien }),
+    },
+  );
+  if (!r.ok) return null; // le détail est un bonus : son échec ne doit rien casser
+  return (await r.json()).rows ?? [];
+}
+
 const compte = JSON.parse(cle);
 const acces = await jeton(compte);
 const propriete = await proprieteDe(acces);
@@ -178,6 +203,44 @@ console.log('Sentinelle de trafic\n');
 console.log(`   impressions, 7 derniers jours      ${recente.impressions}`);
 console.log(`   moyenne des 4 semaines d'avant     ${Math.round(moyennePrecedente)}`);
 console.log(`   clics, 7 derniers jours            ${recente.clics}\n`);
+
+/**
+ * Le détail, avant tout verdict.
+ *
+ * Il répond à la question qu'on se pose vraiment sur un site jeune — Google
+ * voit-il ce site, et quoi exactement — là où le total ne répond qu'à
+ * « combien ». Il s'affiche même quand il n'y a rien à signaler, parce que
+ * c'est là qu'il sert.
+ */
+{
+  const pages = await detail(acces, propriete, jour(10), jour(3), 'page');
+  const requetes = await detail(acces, propriete, jour(10), jour(3), 'query', 10);
+
+  if (pages?.length) {
+    console.log(`   ${pages.length} page(s) servies par Google sur la période :\n`);
+    for (const p of pages) {
+      const url = p.keys[0].replace(/^https?:\/\/[^/]+/, '') || '/';
+      console.log(
+        `     ${String(p.impressions).padStart(5)} impr.  ${String(p.clicks).padStart(3)} clic(s)  ` +
+        `pos. ${p.position.toFixed(1).padStart(5)}   ${url}`,
+      );
+    }
+    console.log();
+  } else if (pages) {
+    console.log('   Aucune page servie sur la période : Google connaît le site mais ne');
+    console.log('   le propose encore sur aucune recherche.\n');
+  }
+
+  if (requetes?.length) {
+    console.log('   Les recherches qui vous font apparaître :\n');
+    for (const q of requetes) {
+      console.log(
+        `     ${String(q.impressions).padStart(5)} impr.  pos. ${q.position.toFixed(1).padStart(5)}   ${q.keys[0]}`,
+      );
+    }
+    console.log();
+  }
+}
 
 // Un site neuf n'a presque pas d'impressions : parler de chute n'aurait alors
 // aucun sens, et une fausse alerte apprend à ignorer les vraies.
