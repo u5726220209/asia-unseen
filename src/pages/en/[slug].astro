@@ -2,7 +2,7 @@
 import type { GetStaticPaths } from 'astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import RegleParPasseport from '@/components/RegleParPasseport.astro';
-import { countries, MOIS, regleDuPasseport, type Country } from '@/data/countries';
+import { countries, MOIS, PASSEPORTS, regleDuPasseport, type Country } from '@/data/countries';
 import { contenuEn } from '@/data/countries.en';
 import { getCollection } from 'astro:content';
 import { site } from '@/data/site';
@@ -72,6 +72,35 @@ const MOIS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 
 const moisIdeaux = c.saisons.map((s, i) => ({ s, m: MOIS_EN[i] })).filter((x) => x.s === 3).map((x) => x.m);
 
 const regleFr = regleDuPasseport(c, 'fr')!;
+
+/**
+ * La cellule « Entry » du haut de page, pour chaque passeport.
+ *
+ * Elle affichait la règle française, avec la mention « (FR passport) ». Le
+ * sélecteur, lui, s'ouvre sur le passeport britannique : la page annonçait
+ * donc deux règles différentes à deux écrans d'intervalle, et celle du haut
+ * est celle qu'on croit — elle est plus grosse et elle vient en premier. Un
+ * lecteur britannique lisait « 45 days visa-free » pour le Vietnam, ce qui se
+ * trouve être juste, et « Visa required » au Cambodge sous une étiquette
+ * française, ce qui ne l'est pas pour lui.
+ *
+ * Le même mécanisme que côté français : la cellule suit le sélecteur, et ne
+ * choisit qu'entre des phrases déjà écrites.
+ */
+const entreeParPasseport = Object.fromEntries(
+  PASSEPORTS.map((p) => {
+    const r = regleDuPasseport(c, p.code);
+    return [
+      p.code,
+      r === null
+        ? 'Not taken for this passport'
+        : r.sansVisaJours > 0
+          ? `${r.sansVisaJours} days visa-free`
+          : 'Visa required',
+    ];
+  }),
+);
+const parDefautEn = 'gb';
 const moisEn = new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric' })
   .format(new Date(`${c.verifieLe}-01T00:00:00`));
 
@@ -123,9 +152,9 @@ const schema = [
 
       <dl class="mt-10 grid gap-px overflow-hidden rounded-brand border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
         <a href="#entry" class="group bg-cream-warm px-5 py-4 transition hover:bg-white">
-          <dt class="font-display text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-warm-light">Entry (FR passport)</dt>
-          <dd class="mt-1 text-[0.92rem] font-medium text-ink group-hover:text-teal">
-            {regleFr.sansVisaJours > 0 ? `${regleFr.sansVisaJours} days visa-free` : 'Visa required'}
+          <dt class="font-display text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-warm-light">Entry</dt>
+          <dd class="au-pp-entree mt-1 text-[0.92rem] font-medium text-ink group-hover:text-teal" data-regles={JSON.stringify(entreeParPasseport)}>
+            {entreeParPasseport[parDefautEn]}
           </dd>
         </a>
         <a href="#season" class="group bg-cream-warm px-5 py-4 transition hover:bg-white">

@@ -661,6 +661,48 @@ if (defautsLangue.length) {
 }
 
 /**
+ * La cellule « Entrée » du haut de page doit suivre le sélecteur.
+ *
+ * Ce sont deux affichages de la même règle, à deux écrans d'intervalle, et
+ * celui du haut est celui qu'on croit : il est plus gros et il vient en
+ * premier. La fiche française avait déjà payé ce prix — un lecteur canadien y
+ * lisait « Visa obligatoire » dans le sélecteur et « 45 jours sans visa » en
+ * haut. La fiche anglaise l'a répété autrement : la cellule était figée sur la
+ * règle française, étiquetée « (FR passport) », pendant que le sélecteur
+ * s'ouvrait sur le passeport britannique.
+ *
+ * Le lien entre les deux tient à une classe et à un attribut. Rien ne casse
+ * s'ils disparaissent : la cellule affiche simplement une règle qui ne bouge
+ * plus, et personne ne le remarque tant qu'il ne compare pas.
+ */
+const cellulesFigees = [];
+if (existsSync('dist')) {
+  for (const slug of readdirSync('dist').filter((d) => existsSync(`dist/${d}/index.html`))) {
+    for (const prefixe of ['', 'en/']) {
+      const f = `dist/${prefixe}${slug}/index.html`;
+      if (!existsSync(f)) continue;
+      const html = readFileSync(f, 'utf8');
+      if (!html.includes('select class="au-pp') && !html.includes('au-pp ')) continue;
+      /* La classe doit être exactement `au-pp-entree`, pas un préfixe : c'est
+         par cette chaîne que le script la retrouve, et `au-pp-entree-v2` ne
+         serait jamais trouvée tout en ressemblant à un lien intact. */
+      if (!/class="au-pp-entree[ "][^>]*data-regles="/.test(html)) {
+        cellulesFigees.push(`/${prefixe}${slug}`);
+      }
+    }
+  }
+}
+
+if (cellulesFigees.length) {
+  console.log(`⛔ ${cellulesFigees.length} page(s) où la cellule d'entrée ne suit pas le sélecteur :\n`);
+  for (const p of cellulesFigees.slice(0, 12)) console.log(`   ${p}`);
+  console.log('\n   La page annonce alors deux règles à deux écrans d\'intervalle,');
+  console.log('   et celle du haut est celle qu\'on croit.\n');
+} else if (existsSync('dist')) {
+  console.log("✓ La cellule d'entrée suit le passeport choisi, dans les deux langues.\n");
+}
+
+/**
  * Aucun formulaire d'inscription sur une page anglaise.
  *
  * La lettre est écrite en français, et la liste qui la reçoit l'est aussi —
@@ -1149,5 +1191,5 @@ process.exit(
   reglesIncoherentes.length || defautsLangue.length || francaisEnAnglais.length ||
   nonClasses.length || muettes.length || originesFantomes.length ||
   llmsMuet.length || journalEnRetard.length || liensNonMarques.length ||
-  formulairesEnAnglais.length ? 1 : 0,
+  formulairesEnAnglais.length || cellulesFigees.length ? 1 : 0,
 );

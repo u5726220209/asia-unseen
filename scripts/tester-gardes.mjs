@@ -322,6 +322,20 @@ const CAS = [
   },
 
   {
+    nom: "la cellule d'entrée cesse de suivre le sélecteur",
+    script: 'verifier-config.mjs',
+    /* Deux affichages de la même règle, à deux écrans d'intervalle. Celui du
+       haut est celui qu'on croit : plus gros, et premier. Le lien entre les
+       deux tient à une classe et un attribut ; s'ils disparaissent, rien ne
+       casse — la cellule affiche une règle qui ne bouge plus, et personne ne
+       le voit tant qu'il ne compare pas. */
+    muter: {
+      'dist/en/vietnam/index.html': remplacer(/au-pp-entree/, 'au-pp-entree-x'),
+    },
+    attendu: /ne suit pas le sélecteur/,
+  },
+
+  {
     nom: 'une page anglaise propose la lettre française',
     script: 'verifier-config.mjs',
     /* La lettre est en français et la liste aussi, jusqu'au `locale=fr` qui
