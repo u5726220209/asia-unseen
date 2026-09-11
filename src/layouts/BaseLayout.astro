@@ -251,8 +251,16 @@ const baseSchema = [
   </head>
 
   <body class="flex min-h-screen flex-col">
+    {/*
+      Le lien d'évitement, dans la langue de la page.
+      Il est invisible jusqu'au premier appui sur Tab, et c'est exactement ce
+      qui l'a fait rester en français sur les neuf fiches anglaises : personne
+      ne le voit. Personne, sauf ceux qui n'ont que lui — un lecteur d'écran
+      annonçait « Aller au contenu » sur une page déclarée anglaise, donc dans
+      une voix anglaise, donc inintelligible.
+    */}
     <a href="#contenu" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-brand focus:bg-ink focus:px-5 focus:py-3 focus:font-display focus:text-sm focus:font-semibold focus:text-cream">
-      Aller au contenu
+      {langue === 'en' ? 'Skip to content' : 'Aller au contenu'}
     </a>
 
     {/*

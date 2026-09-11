@@ -983,6 +983,11 @@ if (existsSync('dist/en')) {
     // qu'un Français — un Britannique est à une heure de Paris, un Californien
     // à neuf. Traduire la phrase l'aurait rendue fausse plutôt que française.
     /\+\d h (?:en été|à \+\d h selon)/,
+    // Le lien d'évitement. Invisible jusqu'au premier appui sur Tab, il est
+    // resté en français sur les neuf fiches anglaises parce que personne ne le
+    // voit — personne, sauf ceux qui n'ont que lui. Un lecteur d'écran
+    // annonçait « Aller au contenu » dans une voix anglaise.
+    /Aller au contenu/,
   ];
   const pages = [];
   const parcourir = (d) => {
