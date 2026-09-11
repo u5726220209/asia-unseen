@@ -20,8 +20,23 @@ import { contenuEn } from '@/data/countries.en';
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const pays = countries.filter((c) => contenuEn[c.slug]);
 
-/** Le chemin français correspondant, pour le bouton de langue. */
-const versFrancais = path.replace(/^\/en(?=\/|$)/, '') || '/';
+/**
+ * Le chemin français correspondant, pour le bouton de langue.
+ *
+ * Retirer le préfixe `/en` suffit tant que les deux versions partagent leur
+ * chemin — c'est le cas des fiches pays. Ce n'est pas celui des articles :
+ * `/en/blog/where-to-stay-hanoi` deviendrait `/blog/where-to-stay-hanoi`, qui
+ * n'existe pas. Le bouton « Français » aurait renvoyé sur un 404 depuis chaque
+ * article traduit, sans que rien ne le signale — la page d'où l'on part est
+ * correcte, et celle où l'on arrive n'est pas une page.
+ *
+ * La page passe donc sa jumelle quand elle en a une qui ne se déduit pas.
+ */
+interface Props {
+  jumelle?: string;
+}
+const { jumelle } = Astro.props;
+const versFrancais = jumelle ?? (path.replace(/^\/en(?=\/|$)/, '') || '/');
 ---
 
 <header class="sticky top-0 z-50 border-b border-line/80 bg-cream/85 backdrop-blur-md">

@@ -643,6 +643,35 @@ if (existsSync('dist')) {
   }
 }
 
+/**
+ * Un `traduitDe` qui ne désigne aucun article français.
+ *
+ * Le contrôle qui suit travaille sur `dist`, donc uniquement sur ce qui est
+ * paru. Un article anglais programmé pour dans deux mois peut donc porter un
+ * slug d'origine erroné pendant deux mois sans que rien ne le dise — et le
+ * jour de sa parution, il déclare une jumelle inexistante, son bouton de
+ * langue renvoie sur un 404, et le défaut arrive en ligne au lieu d'arriver
+ * ici. Celui-ci lit les fichiers, pas les pages : il voit la faute le jour où
+ * elle est écrite.
+ */
+const originesFantomes = [];
+for (const f of existsSync('src/content/blog-en') ? readdirSync('src/content/blog-en') : []) {
+  if (!f.endsWith('.md')) continue;
+  const origine = readFileSync(`src/content/blog-en/${f}`, 'utf8').match(/^traduitDe:\s*(\S+)\s*$/m)?.[1];
+  if (origine && !existsSync(`src/content/blog/${origine}.md`)) {
+    originesFantomes.push({ page: `/en/blog/${f.replace(/\.md$/, '')}`, origine });
+  }
+}
+
+if (originesFantomes.length) {
+  console.log(`⛔ ${originesFantomes.length} article(s) anglais citent un original qui n'existe pas :\n`);
+  for (const o of originesFantomes) console.log(`   ${o.page.padEnd(40)} traduitDe: ${o.origine}`);
+  console.log('\n   Le jour de la parution, la page déclarera une jumelle absente et son');
+  console.log('   bouton de langue renverra sur un 404.\n');
+} else if (existsSync('src/content/blog-en')) {
+  console.log("✓ Chaque article anglais désigne un original qui existe.\n");
+}
+
 const muettes = [];
 for (const { en, fr } of paires) {
   for (const [page, attendu] of [[en, fr], [fr, en]]) {
@@ -857,5 +886,5 @@ process.exit(
   ecartSources || visasIncoherents.length || correctionsNonFaites.length ||
   tarifsNonSuivis.length || defautsMachine.length || fautesArticle.length ||
   reglesIncoherentes.length || defautsLangue.length || francaisEnAnglais.length ||
-  nonClasses.length || muettes.length ? 1 : 0,
+  nonClasses.length || muettes.length || originesFantomes.length ? 1 : 0,
 );

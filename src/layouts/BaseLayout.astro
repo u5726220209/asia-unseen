@@ -237,7 +237,7 @@ const baseSchema = [
       qu'en français. Une navigation qui promet et ne tient pas est pire
       qu'une navigation courte.
     */}
-    <div data-pagefind-ignore>{langue === 'en' ? <HeaderEn /> : <Header />}</div>
+    <div data-pagefind-ignore>{langue === 'en' ? <HeaderEn jumelle={jumelle} /> : <Header />}</div>
     <main id="contenu" class="flex-1" data-pagefind-body><slot /></main>
     <div data-pagefind-ignore>{langue === 'en' ? <FooterEn /> : <Footer />}</div>
     {!noPopup && <ExitIntent />}

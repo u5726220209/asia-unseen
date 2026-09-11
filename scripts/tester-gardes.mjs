@@ -181,6 +181,19 @@ const CAS = [
   },
 
   {
+    nom: "un article anglais cite un original qui n'existe pas",
+    script: 'verifier-config.mjs',
+    /* Celui-ci lit les fichiers et non `dist` : il voit la faute le jour où
+       elle est écrite, pas le jour de la parution — c'est-à-dire avant que le
+       bouton de langue ne renvoie un lecteur sur un 404. */
+    muter: {
+      'src/content/blog-en/where-to-stay-hanoi.md':
+        remplacer(/^traduitDe: ou-dormir-a-hanoi$/m, 'traduitDe: ou-dormir-a-hanoi-v2'),
+    },
+    attendu: /citent un original qui n'existe pas/,
+  },
+
+  {
     nom: 'une paire traduite ne se déclare pas',
     script: 'verifier-config.mjs',
     /* On avance la date d'un article anglais encore programmé : sa page n'est
