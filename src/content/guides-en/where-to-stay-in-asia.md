@@ -1,5 +1,5 @@
 ---
-title: "Where to stay in Asia: booking the right place at the right price"
+title: "Where to stay in Asia: choosing the right district"
 heading: "Accommodation in Asia: the method that avoids the bad surprises"
 description: "How to choose and book accommodation in Asia: when to book, which platform, how to read reviews, and the district traps that spoil a trip."
 accroche: "A bad hotel does not cost money, it costs time — an hour of travel a day is a whole day lost over a fortnight."

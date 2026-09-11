@@ -1,5 +1,5 @@
 ---
-title: "Transport in Asia: trains, buses, ferries and internal flights"
+title: "Transport in Asia: trains, buses, ferries and flights"
 heading: "Getting around Asia: what is worth it, and what costs you a day"
 description: "How to move around Asia: night trains, buses, ferries, internal flights and scooter hire. Real journey times, costs and the traps, country by country."
 accroche: "The rule that holds everywhere: beyond eight hours on the road, flying often costs less than the day you lose — unless the journey is itself the trip."

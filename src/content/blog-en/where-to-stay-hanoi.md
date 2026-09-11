@@ -1,5 +1,5 @@
 ---
-title: "Where to stay in Hanoi: the district matters more than the hotel"
+title: "Where to stay in Hanoi: the district, not the hotel"
 heading: "Where to stay in Hanoi: pick the district before the hotel"
 description: "Old Quarter, French Quarter, Ba Dinh, Tay Ho: atmosphere, price, noise and real travel times in Hanoi, and the one area to avoid entirely."
 accroche: "In Hanoi, two hotels at the same price two kilometres apart give you two different trips. The district decision comes before the hotel one."
