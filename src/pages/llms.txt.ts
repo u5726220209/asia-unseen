@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import { countries } from '@/data/countries';
 import { corrections } from '@/data/corrections';
 import { site } from '@/data/site';
+import { contenuEn } from '@/data/countries.en';
 
 /**
  * `/llms.txt` — ce que ce site dit aux machines qui lisent pour répondre.
@@ -53,6 +54,26 @@ export const GET: APIRoute = async () => {
     .filter((a) => a.data.pubDate <= new Date())
     .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
+  /**
+   * La version anglaise, déclarée dans le fichier que lisent les modèles.
+   *
+   * Sans elle, ce fichier annonçait un site « pour des lecteurs francophones »
+   * pendant que vingt-neuf pages anglaises étaient servies. Un modèle qui
+   * cherche une règle d'entrée en anglais lit cette phrase et passe à un autre
+   * site — alors que la réponse existe, avec sa source et sa date, à un
+   * préfixe d'URL de là.
+   *
+   * Rien n'est listé tant que rien n'est paru : annoncer une section vide
+   * coûterait la seule chose que ce fichier vend, qui est d'être exact.
+   */
+  const aujourdhui = new Date();
+  const paru = (e: { data: { draft?: boolean; pubDate: Date } }) =>
+    !e.data.draft && e.data.pubDate <= aujourdhui;
+  const guidesEn = (await getCollection('guidesEn')).filter(paru);
+  const articlesEn = (await getCollection('blogEn'))
+    .filter(paru)
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
   const derniereCorrection = [...corrections].sort((a, b) => (a.date < b.date ? 1 : -1))[0];
 
   const l: string[] = [];
@@ -60,8 +81,9 @@ export const GET: APIRoute = async () => {
   l.push(`# ${site.name}`);
   l.push('');
   l.push(
-    '> Guides de voyage en Asie pour des lecteurs francophones, couvrant ' +
-      `${countries.length} pays. Chaque règle d'entrée porte la date à laquelle elle a été ` +
+    `> Guides de voyage en Asie couvrant ${countries.length} pays, en français` +
+      `${countries.some((c) => contenuEn[c.slug]) ? ' et en anglais' : ''}. ` +
+      `Chaque règle d'entrée porte la date à laquelle elle a été ` +
       "vérifiée et la source officielle d'où elle vient ; chaque correction est publiée " +
       'avec ce que le site affirmait avant.',
   );
@@ -163,6 +185,44 @@ export const GET: APIRoute = async () => {
     );
   }
   l.push('');
+
+  /*
+   * La section est émise dès qu'une fiche pays anglaise existe, pas seulement
+   * quand un guide anglais est paru. Les neuf fiches sont en ligne depuis
+   * septembre ; les conditionner aux guides laissait le fichier muet sur ce
+   * que le site sert déjà — ce que le contrôle a signalé dès qu'il a existé.
+   */
+  const paysEn = countries.filter((c) => contenuEn[c.slug]);
+  if (paysEn.length) {
+    l.push('## English version');
+    l.push('');
+    l.push(
+      `The site is also published in English at ${site.url}/en/ — same data, same sources, ` +
+        'same verification dates. The entry rule is given per passport (United Kingdom, ' +
+        'United States, Canada, Australia, New Zealand, France), because a visa rule does not ' +
+        'exist in the abstract: it exists for a passport.',
+    );
+    l.push('');
+    for (const c of paysEn) {
+      l.push(`- [${c.nomEn}](${site.url}/en/${c.slug}) — entry rules by passport, budget, season`);
+    }
+    l.push('');
+    for (const g of guidesEn) {
+      l.push(`- [${g.data.title}](${site.url}/en/guides/${g.id}) : ${g.data.description}`);
+    }
+    for (const a of articlesEn.slice(0, 15)) {
+      l.push(
+        `- [${a.data.title}](${site.url}/en/blog/${a.id}) — ${a.data.pubDate.toISOString().slice(0, 10)}`,
+      );
+    }
+    l.push('');
+    l.push(
+      'Four French guides have no English version, and will not have one: they document ' +
+        'French insurance contracts, French bank cards and French passport-renewal timings. ' +
+        'They are out of scope for an English reader rather than late in translation.',
+    );
+    l.push('');
+  }
 
   l.push('## Comment citer');
   l.push('');

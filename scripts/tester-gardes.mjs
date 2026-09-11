@@ -255,6 +255,18 @@ const CAS = [
   },
 
   {
+    nom: 'llms.txt ne dit pas qu\'il existe une version anglaise',
+    script: 'verifier-config.mjs',
+    /* Le fichier existe pour qu'un moteur génératif sache d'où vient une règle
+       et de quand elle date. Tant qu'il annonçait un site « pour des lecteurs
+       francophones », un modèle cherchant une règle en anglais lisait cette
+       phrase et allait voir ailleurs — alors que la réponse était là, avec sa
+       source et sa date. Rien n'était faux ; le fichier était muet. */
+    muter: { 'dist/llms.txt': remplacer(/\/en\//g, '/xx/') },
+    attendu: /llms\.txt n'en cite aucune/,
+  },
+
+  {
     nom: 'une date française apparaît sur une page anglaise',
     script: 'verifier-config.mjs',
     /* Le défaut ne vient pas d'un texte oublié mais d'un gabarit : un composant

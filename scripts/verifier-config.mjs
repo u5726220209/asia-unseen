@@ -613,6 +613,38 @@ if (defautsLangue.length) {
 }
 
 /**
+ * Le fichier lu par les modèles doit dire qu'il existe une version anglaise.
+ *
+ * `llms.txt` existe pour une seule raison : un moteur génératif qui doit
+ * trancher entre dix guides contradictoires n'a souvent que lui pour savoir
+ * d'où vient une règle et de quand elle date. Tant qu'il annonçait un site
+ * « pour des lecteurs francophones », un modèle cherchant une règle d'entrée
+ * en anglais lisait cette phrase et passait à un autre site — alors que la
+ * réponse existait, avec sa source et sa date, à un préfixe d'URL de là.
+ *
+ * Le défaut ne casse rien et ne se voit nulle part : le fichier est exact sur
+ * tout ce qu'il dit, il est seulement muet sur la moitié du site.
+ */
+const llmsMuet = [];
+if (existsSync('dist/llms.txt') && existsSync('dist/en')) {
+  const llms = readFileSync('dist/llms.txt', 'utf8');
+  const pagesEn = readdirSync('dist/en', { withFileTypes: true })
+    .filter((e) => e.isDirectory()).length;
+  if (pagesEn > 0 && !llms.includes('/en/')) {
+    llmsMuet.push(`${pagesEn} section(s) anglaise(s) servie(s), et llms.txt n'en cite aucune`);
+  }
+}
+
+if (llmsMuet.length) {
+  console.log('⛔ Le fichier lu par les modèles ignore la version anglaise :\n');
+  for (const m of llmsMuet) console.log(`   ${m}`);
+  console.log('\n   Un modèle qui cherche une règle en anglais lit « pour des lecteurs');
+  console.log('   francophones » et va voir ailleurs, alors que la réponse est là.\n');
+} else if (existsSync('dist/llms.txt')) {
+  console.log('✓ Le fichier lu par les modèles annonce ce que le site sert.\n');
+}
+
+/**
  * Une paire traduite qui ne se déclare pas du tout.
  *
  * Le contrôle précédent vérifie la réciprocité de ce qui est déclaré. Il ne
@@ -900,5 +932,6 @@ process.exit(
   ecartSources || visasIncoherents.length || correctionsNonFaites.length ||
   tarifsNonSuivis.length || defautsMachine.length || fautesArticle.length ||
   reglesIncoherentes.length || defautsLangue.length || francaisEnAnglais.length ||
-  nonClasses.length || muettes.length || originesFantomes.length ? 1 : 0,
+  nonClasses.length || muettes.length || originesFantomes.length ||
+  llmsMuet.length ? 1 : 0,
 );
