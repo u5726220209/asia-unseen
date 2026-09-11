@@ -125,13 +125,27 @@ const contient = (texte, affiche) => formes(affiche).some((f) => texte.includes(
 const programmees = new Set();
 {
   const aujourdhui = new Date().toISOString().slice(0, 10);
-  for (const dossier of ['src/content/blog', 'src/content/guides']) {
+  /**
+   * Le préfixe d'URL de chaque collection.
+   *
+   * Il était déduit du nom du dossier — « contient blog, donc /blog/ ». La
+   * collection anglaise s'appelle blog-en et sert sous /en/blog/ : la déduction
+   * la rangeait sous /blog/, aucune page programmée n'était reconnue, et le
+   * contrôle réclamait des pages qui n'existent pas encore. Une règle écrite
+   * vaut mieux qu'une devinette sur un nom de dossier.
+   */
+  const PREFIXE = {
+    'src/content/blog': '/blog/',
+    'src/content/blog-en': '/en/blog/',
+    'src/content/guides': '/',
+  };
+  for (const [dossier, prefixe] of Object.entries(PREFIXE)) {
     if (!existsSync(dossier)) continue;
     for (const f of readdirSync(dossier).filter((f) => f.endsWith('.md'))) {
       const entete = readFileSync(`${dossier}/${f}`, 'utf8').slice(0, 1400);
       const date = entete.match(/^pubDate:\s*['"]?(\d{4}-\d{2}-\d{2})/m)?.[1];
       if (date && date > aujourdhui) {
-        programmees.add(`/${dossier.includes('blog') ? 'blog/' : ''}${f.replace(/\.md$/, '')}`);
+        programmees.add(`${prefixe}${f.replace(/\.md$/, '')}`);
       }
     }
   }

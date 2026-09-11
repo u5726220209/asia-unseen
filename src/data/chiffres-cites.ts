@@ -92,6 +92,13 @@ const GUIDE_ERREURS = '/erreurs-a-eviter';
 const ARTICLE_EVISA_VN = '/blog/visa-vietnam-e-visa-2026';
 const AOT_TAXI = 'https://suvarnabhumi.airportthai.co.th/service/transportation/detail/834';
 const ARTICLE_TAXI_AEROPORT = '/blog/taxi-aeroport-asie-tarifs';
+
+/* Les pages anglaises qui citent les mêmes montants officiels. Un chiffre
+   publié sans être inscrit est un chiffre que personne ne relira — et la
+   version anglaise n'y échappe pas. */
+const EN_TRAIN_VIETNAM = '/en/blog/hanoi-saigon-train';
+const EN_TAXI_AEROPORT = '/en/blog/taxi-from-the-airport';
+const EN_AEROPORT_HANOI = '/en/blog/hanoi-airport-to-city';
 const CHAM_MUSEUM = 'https://chammuseum.vn/view.aspx?ID=654';
 const ARTICLE_HOI_AN_PLUIE = '/blog/hoi-an-pluie-que-faire';
 
@@ -158,22 +165,22 @@ export const chiffresCites: ChiffreCite[] = [
   { affiche: '3 030', designe: 'prolongation de séjour aux Philippines, en pesos', source: FD_PHILIPPINES, releveLe: '2026-08-31', pages: [ARTICLE_PHILIPPINES] },
 
   /* ── Train Hanoï-Saigon ─────────────────────────────────────── */
-  { affiche: '1 726', designe: 'distance ferroviaire Hanoï-Saigon, en km', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM, GUIDE_TRANSPORTS], sourceIntrouvableAttendue: true },
+  { affiche: '1 726', designe: 'distance ferroviaire Hanoï-Saigon, en km', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM, GUIDE_TRANSPORTS, EN_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
   // Deux guides annonçaient « 33 heures » là où l'article, horaires officiels à
   // l'appui, écrit 32 h 45. Un écart d'un quart d'heure n'a blessé personne,
   // mais il prouvait que rien ne reliait ces trois pages entre elles. La durée
   // est désormais au registre : la sentinelle refuse la mise en ligne si l'une
   // d'elles se met à dire autre chose.
-  { affiche: '32 h 45', designe: 'durée du train SE1, Hanoï-Saigon', source: DSVN_TARIFS, releveLe: '2026-09-04', pages: [ARTICLE_TRAIN_VIETNAM, GUIDE_TRANSPORTS, GUIDE_ERREURS], sourceIntrouvableAttendue: true, contredit: ['33 heures', '33 h de train'] },
-  { affiche: '1 122 000', designe: 'train SE1 Hanoï-Saigon, siège inclinable climatisé', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
-  { affiche: '1 516 000', designe: 'train SE1 Hanoï-Saigon, couchette molle 6 places, étage haut', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
-  { affiche: '1 664 000', designe: 'train SE1 Hanoï-Saigon, couchette molle 6 places, étage milieu', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
-  { affiche: '1 894 000', designe: 'train SE1 Hanoï-Saigon, couchette molle 6 places, étage bas', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
-  { affiche: '1 884 000', designe: 'train SE1 Hanoï-Saigon, couchette molle climatisée 4 places, étage haut', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
-  { affiche: '2 051 000', designe: 'train SE1 Hanoï-Saigon, couchette molle climatisée 4 places, étage bas', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
-  { affiche: '3 077 000', designe: 'train SE1 Hanoï-Saigon, compartiment privé 2 couchettes', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
-  { affiche: '4 510 000', designe: 'train SE1 Hanoï-Saigon, compartiment privé VIP 2 couchettes', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
-  { affiche: '378 000', designe: "écart de prix entre étage bas et étage haut, couchette molle 6 places", source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
+  { affiche: '32 h 45', designe: 'durée du train SE1, Hanoï-Saigon', source: DSVN_TARIFS, releveLe: '2026-09-04', pages: [ARTICLE_TRAIN_VIETNAM, GUIDE_TRANSPORTS, GUIDE_ERREURS, EN_TRAIN_VIETNAM], sourceIntrouvableAttendue: true, contredit: ['33 heures', '33 h de train'] },
+  { affiche: '1 122 000', designe: 'train SE1 Hanoï-Saigon, siège inclinable climatisé', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM, EN_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
+  { affiche: '1 516 000', designe: 'train SE1 Hanoï-Saigon, couchette molle 6 places, étage haut', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM, EN_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
+  { affiche: '1 664 000', designe: 'train SE1 Hanoï-Saigon, couchette molle 6 places, étage milieu', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM, EN_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
+  { affiche: '1 894 000', designe: 'train SE1 Hanoï-Saigon, couchette molle 6 places, étage bas', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM, EN_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
+  { affiche: '1 884 000', designe: 'train SE1 Hanoï-Saigon, couchette molle climatisée 4 places, étage haut', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM, EN_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
+  { affiche: '2 051 000', designe: 'train SE1 Hanoï-Saigon, couchette molle climatisée 4 places, étage bas', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM, EN_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
+  { affiche: '3 077 000', designe: 'train SE1 Hanoï-Saigon, compartiment privé 2 couchettes', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM, EN_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
+  { affiche: '4 510 000', designe: 'train SE1 Hanoï-Saigon, compartiment privé VIP 2 couchettes', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM, EN_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
+  { affiche: '378 000', designe: "écart de prix entre étage bas et étage haut, couchette molle 6 places", source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM, EN_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
 
   /* ── Taxi depuis l'aéroport de Bangkok ──────────────────────────
      Les seuls montants de cet article qui viennent d'un exploitant
@@ -181,17 +188,17 @@ export const chiffresCites: ChiffreCite[] = [
      tranche et la dernière — suffisent : si la grille bouge, elles bougent.
      Inscrire les six tranches ferait surveiller « 7 » et « 8 », qu'on
      retrouverait dans n'importe quelle page. */
-  { affiche: '35', designe: 'taxi Bangkok, prise en charge du premier kilomètre (THB)', source: AOT_TAXI, releveLe: '2026-09-07', pages: [ARTICLE_TAXI_AEROPORT] },
-  { affiche: '6,50', designe: 'taxi Bangkok, tarif de 1 à 10 km (THB/km)', source: AOT_TAXI, releveLe: '2026-09-07', pages: [ARTICLE_TAXI_AEROPORT] },
-  { affiche: '10,50', designe: 'taxi Bangkok, tarif au-delà de 80 km (THB/km)', source: AOT_TAXI, releveLe: '2026-09-07', pages: [ARTICLE_TAXI_AEROPORT] },
+  { affiche: '35', designe: 'taxi Bangkok, prise en charge du premier kilomètre (THB)', source: AOT_TAXI, releveLe: '2026-09-07', pages: [ARTICLE_TAXI_AEROPORT, EN_TAXI_AEROPORT] },
+  { affiche: '6,50', designe: 'taxi Bangkok, tarif de 1 à 10 km (THB/km)', source: AOT_TAXI, releveLe: '2026-09-07', pages: [ARTICLE_TAXI_AEROPORT, EN_TAXI_AEROPORT] },
+  { affiche: '10,50', designe: 'taxi Bangkok, tarif au-delà de 80 km (THB/km)', source: AOT_TAXI, releveLe: '2026-09-07', pages: [ARTICLE_TAXI_AEROPORT, EN_TAXI_AEROPORT] },
 
   /* ── Aéroport de Hanoï (Noi Bai) ────────────────────────────── */
-  { affiche: '12 000', designe: 'bus Noi Bai, lignes 07 et 109, le trajet', source: NOIBAI_TRANSPORT, releveLe: '2026-08-31', pages: [ARTICLE_AEROPORT_HANOI] },
-  { affiche: '15 000', designe: 'bus Noi Bai, lignes 17 et 90, le trajet', source: NOIBAI_TRANSPORT, releveLe: '2026-08-31', pages: [ARTICLE_AEROPORT_HANOI] },
-  { affiche: '20 000', designe: 'bus Noi Bai, ligne E10, le trajet', source: NOIBAI_TRANSPORT, releveLe: '2026-08-31', pages: [ARTICLE_AEROPORT_HANOI] },
-  { affiche: '50 000', designe: 'bus Noi Bai, ligne 86 vers la gare de Hanoï, le trajet', source: NOIBAI_TRANSPORT, releveLe: '2026-08-31', pages: [ARTICLE_AEROPORT_HANOI] },
-  { affiche: '55 000', designe: 'bus Noi Bai, ligne 68 vers Hà Đông, le trajet', source: NOIBAI_TRANSPORT, releveLe: '2026-08-31', pages: [ARTICLE_AEROPORT_HANOI] },
-  { affiche: '90 000', designe: 'navette Hải Vân, lignes NB01/NB02, le trajet', source: NOIBAI_TRANSPORT, releveLe: '2026-08-31', pages: [ARTICLE_AEROPORT_HANOI] },
+  { affiche: '12 000', designe: 'bus Noi Bai, lignes 07 et 109, le trajet', source: NOIBAI_TRANSPORT, releveLe: '2026-08-31', pages: [ARTICLE_AEROPORT_HANOI, EN_AEROPORT_HANOI] },
+  { affiche: '15 000', designe: 'bus Noi Bai, lignes 17 et 90, le trajet', source: NOIBAI_TRANSPORT, releveLe: '2026-08-31', pages: [ARTICLE_AEROPORT_HANOI, EN_AEROPORT_HANOI] },
+  { affiche: '20 000', designe: 'bus Noi Bai, ligne E10, le trajet', source: NOIBAI_TRANSPORT, releveLe: '2026-08-31', pages: [ARTICLE_AEROPORT_HANOI, EN_AEROPORT_HANOI] },
+  { affiche: '50 000', designe: 'bus Noi Bai, ligne 86 vers la gare de Hanoï, le trajet', source: NOIBAI_TRANSPORT, releveLe: '2026-08-31', pages: [ARTICLE_AEROPORT_HANOI, EN_AEROPORT_HANOI] },
+  { affiche: '55 000', designe: 'bus Noi Bai, ligne 68 vers Hà Đông, le trajet', source: NOIBAI_TRANSPORT, releveLe: '2026-08-31', pages: [ARTICLE_AEROPORT_HANOI, EN_AEROPORT_HANOI] },
+  { affiche: '90 000', designe: 'navette Hải Vân, lignes NB01/NB02, le trajet', source: NOIBAI_TRANSPORT, releveLe: '2026-08-31', pages: [ARTICLE_AEROPORT_HANOI, EN_AEROPORT_HANOI] },
 
   /* ── Musée Cham de Da Nang ────────────────────────────────────
      Tarif annoncé par le musée en 2023, retrouvé via une recherche sur son
