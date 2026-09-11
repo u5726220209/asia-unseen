@@ -105,4 +105,36 @@ const blogEn = defineCollection({
   }),
 });
 
-export const collections = { guides, blog, blogEn };
+/**
+ * Les guides anglais.
+ *
+ * Même raisonnement que pour les articles : une collection à part, parce que
+ * tout ce qui existe — le hub `/ressources`, la navigation, les liens croisés
+ * des fiches pays — itère sur `guides` en supposant du français.
+ *
+ * Deux champs de la version française ne sont pas repris, et leur absence est
+ * une décision. `outil` d'abord : les calculateurs sont des composants dont
+ * toute l'interface est française, et un budget qui s'affiche en « Voyage
+ * confort » sous un texte anglais vaut moins que pas de calculateur du tout.
+ * `ordre` ensuite : le hub anglais range par titre, faute d'avoir onze guides
+ * à hiérarchiser.
+ *
+ * `traduitDe` porte le lien vers l'original, comme pour les articles : c'est
+ * lui qui alimente les balises `hreflang` et le bouton de langue, et c'est la
+ * traduction qui sait de quoi elle est la traduction.
+ */
+const guidesEn = defineCollection({
+  loader: glob({ base: './src/content/guides-en', pattern: '**/*.md' }),
+  schema: z.object({
+    ...seo,
+    accroche: z.string(),
+    faq: z.array(z.object({ q: z.string(), r: z.string() })).default([]),
+    sources: z.array(z.object({ label: z.string(), url: z.string().url() })).default([]),
+    nature: z.enum(['factuel', 'editorial']).default('factuel'),
+    pays: z.array(z.string()).default([]),
+    /** Le slug du guide français dont celui-ci est la version anglaise. */
+    traduitDe: z.string(),
+  }),
+});
+
+export const collections = { guides, blog, blogEn, guidesEn };

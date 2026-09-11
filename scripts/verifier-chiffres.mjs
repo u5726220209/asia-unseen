@@ -17,6 +17,7 @@
  */
 
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { PREFIXES } from './lib/collections.mjs';
 
 const UA =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36';
@@ -122,7 +123,7 @@ const contient = (texte, affiche) => formes(affiche).some((f) => texte.includes(
  * transformerait la programmation en défaut, alors qu'elle marche exactement
  * comme prévu.
  */
-const programmees = new Set();
+const programmees = new Map();
 {
   const aujourdhui = new Date().toISOString().slice(0, 10);
   /**
@@ -134,18 +135,13 @@ const programmees = new Set();
    * contrôle réclamait des pages qui n'existent pas encore. Une règle écrite
    * vaut mieux qu'une devinette sur un nom de dossier.
    */
-  const PREFIXE = {
-    'src/content/blog': '/blog/',
-    'src/content/blog-en': '/en/blog/',
-    'src/content/guides': '/',
-  };
-  for (const [dossier, prefixe] of Object.entries(PREFIXE)) {
+  for (const [dossier, prefixe] of Object.entries(PREFIXES)) {
     if (!existsSync(dossier)) continue;
     for (const f of readdirSync(dossier).filter((f) => f.endsWith('.md'))) {
       const entete = readFileSync(`${dossier}/${f}`, 'utf8').slice(0, 1400);
       const date = entete.match(/^pubDate:\s*['"]?(\d{4}-\d{2}-\d{2})/m)?.[1];
       if (date && date > aujourdhui) {
-        programmees.add(`${prefixe}${f.replace(/\.md$/, '')}`);
+        programmees.set(`${prefixe}${f.replace(/\.md$/, '')}`, `${dossier}/${f}`);
       }
     }
   }
@@ -156,7 +152,23 @@ const enAttenteDeParution = [];
 if (existsSync('dist')) {
   for (const c of chiffres) {
     for (const page of c.pages) {
-      if (programmees.has(page)) { enAttenteDeParution.push({ ...c, page }); continue; }
+      /*
+       * Une page programmée n'a pas de HTML, mais elle a son markdown — et
+       * c'est là que le montant est écrit. Se contenter de la mettre en
+       * attente laissait une fenêtre : un chiffre inscrit au registre pour un
+       * guide qui paraît dans onze semaines n'était vérifié qu'onze semaines
+       * plus tard, le matin de la parution, quand personne ne relit plus. On
+       * lit donc la source en attendant la page.
+       */
+      if (programmees.has(page)) {
+        const md = readFileSync(programmees.get(page), 'utf8');
+        if (!contient(md, c.affiche)) {
+          manquantsSurLeSite.push({ ...c, page, motif: 'absent du texte programmé' });
+        } else {
+          enAttenteDeParution.push({ ...c, page });
+        }
+        continue;
+      }
       const f = `dist${page}/index.html`;
       if (!existsSync(f)) { manquantsSurLeSite.push({ ...c, page, motif: 'page absente' }); continue; }
       const html = readFileSync(f, 'utf8').replace(/<[^>]+>/g, ' ');

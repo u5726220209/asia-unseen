@@ -17,6 +17,7 @@
 
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
+import { PREFIXES, TRADUITES } from './lib/collections.mjs';
 
 const lire = (motif) =>
   execFileSync('bash', ['-c', motif], { encoding: 'utf8' }).split('\n').filter(Boolean);
@@ -633,13 +634,16 @@ if (defautsLangue.length) {
 const paires = [];
 if (existsSync('dist')) {
   const aujourdhui = new Date().toISOString().slice(0, 10);
-  for (const f of readdirSync('src/content/blog-en')) {
-    if (!f.endsWith('.md')) continue;
-    const contenu = readFileSync(`src/content/blog-en/${f}`, 'utf8');
-    const origine = contenu.match(/^traduitDe:\s*(\S+)\s*$/m)?.[1];
-    const date = contenu.match(/^pubDate:\s*(\S+)\s*$/m)?.[1];
-    if (!origine || !date || date > aujourdhui) continue;
-    paires.push({ en: `/en/blog/${f.replace(/\.md$/, '')}`, fr: `/blog/${origine}` });
+  for (const { dossier, prefixe, traduitDe } of TRADUITES) {
+    if (!existsSync(dossier)) continue;
+    for (const f of readdirSync(dossier)) {
+      if (!f.endsWith('.md')) continue;
+      const contenu = readFileSync(`${dossier}/${f}`, 'utf8');
+      const origine = contenu.match(/^traduitDe:\s*(\S+)\s*$/m)?.[1];
+      const date = contenu.match(/^pubDate:\s*(\S+)\s*$/m)?.[1];
+      if (!origine || !date || date > aujourdhui) continue;
+      paires.push({ en: `${prefixe}${f.replace(/\.md$/, '')}`, fr: `${PREFIXES[traduitDe]}${origine}` });
+    }
   }
 }
 
@@ -655,11 +659,13 @@ if (existsSync('dist')) {
  * elle est écrite.
  */
 const originesFantomes = [];
-for (const f of existsSync('src/content/blog-en') ? readdirSync('src/content/blog-en') : []) {
-  if (!f.endsWith('.md')) continue;
-  const origine = readFileSync(`src/content/blog-en/${f}`, 'utf8').match(/^traduitDe:\s*(\S+)\s*$/m)?.[1];
-  if (origine && !existsSync(`src/content/blog/${origine}.md`)) {
-    originesFantomes.push({ page: `/en/blog/${f.replace(/\.md$/, '')}`, origine });
+for (const { dossier, prefixe, traduitDe } of TRADUITES) {
+  for (const f of existsSync(dossier) ? readdirSync(dossier) : []) {
+    if (!f.endsWith('.md')) continue;
+    const origine = readFileSync(`${dossier}/${f}`, 'utf8').match(/^traduitDe:\s*(\S+)\s*$/m)?.[1];
+    if (origine && !existsSync(`${traduitDe}/${origine}.md`)) {
+      originesFantomes.push({ page: `${prefixe}${f.replace(/\.md$/, '')}`, origine });
+    }
   }
 }
 

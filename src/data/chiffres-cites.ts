@@ -89,6 +89,8 @@ const COMPARATIF_ASSURANCE = '/blog/assurance-voyage-asie-comparatif';
 const COMPARATIF_ESIM = '/blog/esim-asie-comparatif-prix';
 const EN_COMPARATIF_ESIM = '/en/blog/esim-asia-price-comparison';
 const GUIDE_TRANSPORTS = '/transports-asie';
+const EN_GUIDE_TRANSPORTS = '/en/guides/getting-around-asia';
+const EN_GUIDE_ERREURS = '/en/guides/mistakes-to-avoid-in-asia';
 const GUIDE_ERREURS = '/erreurs-a-eviter';
 const ARTICLE_EVISA_VN = '/blog/visa-vietnam-e-visa-2026';
 const EN_VIETNAM_10J = '/en/blog/vietnam-in-10-days';
@@ -168,13 +170,13 @@ export const chiffresCites: ChiffreCite[] = [
   { affiche: '3 030', designe: 'prolongation de séjour aux Philippines, en pesos', source: FD_PHILIPPINES, releveLe: '2026-08-31', pages: [ARTICLE_PHILIPPINES] },
 
   /* ── Train Hanoï-Saigon ─────────────────────────────────────── */
-  { affiche: '1 726', designe: 'distance ferroviaire Hanoï-Saigon, en km', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM, GUIDE_TRANSPORTS, EN_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
+  { affiche: '1 726', designe: 'distance ferroviaire Hanoï-Saigon, en km', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM, GUIDE_TRANSPORTS, EN_TRAIN_VIETNAM, EN_GUIDE_TRANSPORTS], sourceIntrouvableAttendue: true },
   // Deux guides annonçaient « 33 heures » là où l'article, horaires officiels à
   // l'appui, écrit 32 h 45. Un écart d'un quart d'heure n'a blessé personne,
   // mais il prouvait que rien ne reliait ces trois pages entre elles. La durée
   // est désormais au registre : la sentinelle refuse la mise en ligne si l'une
   // d'elles se met à dire autre chose.
-  { affiche: '32 h 45', designe: 'durée du train SE1, Hanoï-Saigon', source: DSVN_TARIFS, releveLe: '2026-09-04', pages: [ARTICLE_TRAIN_VIETNAM, GUIDE_TRANSPORTS, GUIDE_ERREURS, EN_TRAIN_VIETNAM], sourceIntrouvableAttendue: true, contredit: ['33 heures', '33 h de train'] },
+  { affiche: '32 h 45', designe: 'durée du train SE1, Hanoï-Saigon', source: DSVN_TARIFS, releveLe: '2026-09-04', pages: [ARTICLE_TRAIN_VIETNAM, GUIDE_TRANSPORTS, GUIDE_ERREURS, EN_TRAIN_VIETNAM, EN_GUIDE_TRANSPORTS, EN_GUIDE_ERREURS], sourceIntrouvableAttendue: true, contredit: ['33 heures', '33 h de train'] },
   { affiche: '1 122 000', designe: 'train SE1 Hanoï-Saigon, siège inclinable climatisé', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM, EN_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
   { affiche: '1 516 000', designe: 'train SE1 Hanoï-Saigon, couchette molle 6 places, étage haut', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM, EN_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },
   { affiche: '1 664 000', designe: 'train SE1 Hanoï-Saigon, couchette molle 6 places, étage milieu', source: DSVN_TARIFS, releveLe: '2026-08-31', pages: [ARTICLE_TRAIN_VIETNAM, EN_TRAIN_VIETNAM], sourceIntrouvableAttendue: true },

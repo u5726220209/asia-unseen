@@ -51,6 +51,21 @@ interface Props {
    */
   jumelle?: string;
   /**
+   * Où mène le bouton « Français », quand cette page n'a pas de jumelle.
+   *
+   * `jumelle` répond à deux questions à la fois, et elles ne coïncident pas
+   * toujours. Le hub des guides anglais en est l'exemple : le bouton de langue
+   * doit mener quelque part — `/ressources` — mais déclarer les deux hubs
+   * jumeaux dirait à Google une chose fausse. Le hub français range onze
+   * guides, dont quatre qui n'auront jamais de version anglaise parce qu'ils
+   * documentent des assurances et des banques françaises. Ce n'est pas la même
+   * page dans une autre langue.
+   *
+   * Sans ce champ, le bouton retirait `/en` du chemin et menait à `/guides`,
+   * qui n'existe pas.
+   */
+  retourFr?: string;
+  /**
    * La version lisible par machine de cette page.
    *
    * Le jeu de données existait, mais rien ne le reliait aux pages : un lecteur
@@ -65,7 +80,7 @@ interface Props {
 const {
   title, description, image = '/og-default.png', type = 'website',
   publishedTime, modifiedTime, noindex = false, schema = [], noPopup = false,
-  donnees, traduite = false, jumelle,
+  donnees, traduite = false, jumelle, retourFr,
 } = Astro.props;
 
 // Sur un déploiement de préversion, tout le site est en noindex : un sous-domaine
@@ -237,7 +252,7 @@ const baseSchema = [
       qu'en français. Une navigation qui promet et ne tient pas est pire
       qu'une navigation courte.
     */}
-    <div data-pagefind-ignore>{langue === 'en' ? <HeaderEn jumelle={jumelle} /> : <Header />}</div>
+    <div data-pagefind-ignore>{langue === 'en' ? <HeaderEn jumelle={jumelle ?? retourFr} /> : <Header />}</div>
     <main id="contenu" class="flex-1" data-pagefind-body><slot /></main>
     <div data-pagefind-ignore>{langue === 'en' ? <FooterEn /> : <Footer />}</div>
     {!noPopup && <ExitIntent />}

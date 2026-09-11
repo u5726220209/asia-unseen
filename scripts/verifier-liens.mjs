@@ -9,6 +9,7 @@
  */
 import { readdirSync, readFileSync, existsSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
+import { PREFIXES } from './lib/collections.mjs';
 
 const DIST = 'dist';
 
@@ -66,14 +67,13 @@ for (const page of pages) {
 {
   const aParaitre = [];
   const aujourdhui = new Date().toISOString().slice(0, 10);
-  for (const dossier of ['src/content/blog', 'src/content/guides']) {
+  for (const [dossier, prefixe] of Object.entries(PREFIXES)) {
     if (!existsSync(dossier)) continue;
     for (const f of readdirSync(dossier).filter((f) => f.endsWith('.md'))) {
       const md = readFileSync(join(dossier, f), 'utf8');
       const date = md.slice(0, 1400).match(/^pubDate:\s*['"]?(\d{4}-\d{2}-\d{2})/m)?.[1];
       if (!date || date <= aujourdhui) continue;
-      const url = `/${dossier.includes('blog') ? 'blog/' : ''}${f.replace(/\.md$/, '')}`;
-      aParaitre.push({ fichier: `${dossier}/${f}`, url, md });
+      aParaitre.push({ fichier: `${dossier}/${f}`, url: `${prefixe}${f.replace(/\.md$/, '')}`, md });
     }
   }
   const urlsAParaitre = new Set(aParaitre.map((a) => a.url));

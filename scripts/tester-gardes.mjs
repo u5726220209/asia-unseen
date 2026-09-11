@@ -181,6 +181,33 @@ const CAS = [
   },
 
   {
+    nom: 'un guide anglais programmé contient un lien mort',
+    script: 'verifier-liens.mjs',
+    /* Le contrôle déduisait l'adresse du nom du dossier et ignorait donc
+       `blog-en` et `guides-en` en silence. Vingt-deux articles anglais et sept
+       guides n'avaient jamais vu leurs liens vérifiés. */
+    muter: {
+      'src/content/guides-en/esim-for-asia.md':
+        remplacer(/\/en\/blog\/esim-asia-price-comparison/, '/en/blog/esim-prices'),
+    },
+    attendu: /\/en\/blog\/esim-prices/,
+  },
+
+  {
+    nom: "un montant disparaît d'un texte encore programmé",
+    script: 'verifier-chiffres.mjs',
+    args: ['--hors-ligne'],
+    /* Une page programmée n'a pas de HTML, mais elle a son markdown. Sans cette
+       lecture, un chiffre inscrit au registre pour un guide qui paraît dans
+       onze semaines n'était contrôlé qu'onze semaines plus tard — le matin de
+       la parution, quand plus personne ne relit. */
+    muter: {
+      'src/content/guides-en/getting-around-asia.md': remplacer(/1,726 km/, '1,700 km'),
+    },
+    attendu: /absent du texte programmé/,
+  },
+
+  {
     nom: "un article anglais cite un original qui n'existe pas",
     script: 'verifier-config.mjs',
     /* Celui-ci lit les fichiers et non `dist` : il voit la faute le jour où

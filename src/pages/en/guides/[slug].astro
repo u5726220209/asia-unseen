@@ -1,0 +1,172 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import FAQ from '@/components/FAQ.astro';
+import { bySlug } from '@/data/countries';
+import { contenuEn } from '@/data/countries.en';
+import { site } from '@/data/site';
+
+/**
+ * Les guides anglais.
+ *
+ * Ils vivent sous `/en/guides/`, là où les français sont à la racine. Les deux
+ * chemins ne se déduisent donc pas l'un de l'autre, et c'est sans conséquence
+ * depuis que `jumelle` existe : deux pages n'ont pas besoin de partager leur
+ * adresse pour se déclarer, seulement de se nommer.
+ *
+ * Ce qui n'est pas repris de la version française : les calculateurs. Leur
+ * interface entière est en français, et un budget dont les catégories
+ * s'affichent en « Voyage confort » sous un texte anglais coûterait plus de
+ * crédibilité qu'il n'apporte de service.
+ */
+
+export const getStaticPaths = (async () => {
+  const guides = await getCollection('guidesEn');
+  const aujourdhui = new Date();
+  return guides
+    .filter((g) => !g.data.draft && g.data.pubDate <= aujourdhui)
+    .map((g) => ({ params: { slug: g.id }, props: { entry: g } }));
+}) satisfies GetStaticPaths;
+
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content, headings } = await render(entry);
+const toc = headings.filter((h) => h.depth === 2);
+
+const dateEn = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+  .format(d.updatedDate ?? d.pubDate);
+
+/** Les fiches pays anglaises concernées — celles qui existent, pas celles qui sont citées. */
+const paysLies = d.pays.map((s) => bySlug[s]).filter((c) => c && contenuEn[c.slug]);
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: d.heading ?? d.title,
+    description: d.description,
+    inLanguage: 'en',
+    datePublished: d.pubDate.toISOString(),
+    dateModified: (d.updatedDate ?? d.pubDate).toISOString(),
+    author: { '@type': 'Person', name: site.author.name },
+    publisher: { '@id': `${site.url}/#organization` },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': `${site.url}/en/guides/${entry.id}` },
+    citation: d.sources.map((s) => ({ '@type': 'CreativeWork', name: s.label, url: s.url })),
+    license: 'https://creativecommons.org/licenses/by/4.0/',
+    isAccessibleForFree: true,
+  },
+  ...(d.faq.length
+    ? [{
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        inLanguage: 'en',
+        mainEntity: d.faq.map((f) => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.r },
+        })),
+      }]
+    : []),
+];
+---
+
+<BaseLayout
+  title={d.title}
+  description={d.description}
+  type="article"
+  publishedTime={d.pubDate}
+  modifiedTime={d.updatedDate ?? d.pubDate}
+  schema={schema}
+  jumelle={`/${d.traduitDe}`}
+>
+  <article>
+    <header class="border-b border-line bg-cream-warm">
+      <div class="wrap-narrow py-10 lg:py-14">
+        <p class="eyebrow">
+          <a href="/en" class="hover:text-teal">Asia Unseen</a> ·
+          <a href="/en/guides" class="hover:text-teal">Guides</a>
+        </p>
+        <h1 class="mt-5 text-hero">{d.heading ?? d.title}</h1>
+        <p class="mt-6 text-[1.15rem] leading-relaxed text-warm">{d.accroche}</p>
+        <p class="mt-6 text-[0.82rem] text-warm-light">
+          Updated {dateEn}
+          {d.nature === 'editorial' && ' · judgement, not a sourced fact'}
+        </p>
+      </div>
+    </header>
+
+    <div class="wrap-narrow py-12">
+      {toc.length > 2 && (
+        <nav class="mb-10 rounded-brand border border-line bg-white px-6 py-5" aria-label="On this page">
+          <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-warm-light">
+            On this page
+          </p>
+          <ul class="mt-3 space-y-1.5">
+            {toc.map((h) => (
+              <li>
+                <a href={`#${h.slug}`} class="text-[0.9rem] text-warm transition-colors hover:text-teal">
+                  {h.text}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
+
+      <div class="prose-au">
+        <Content />
+      </div>
+
+      {d.faq.length > 0 && (
+        <div class="mt-14">
+          <FAQ items={d.faq.map((f) => ({ q: f.q, r: f.r }))} title="Common questions" />
+        </div>
+      )}
+
+      {d.sources.length > 0 && (
+        <section class="mt-14 rounded-brand border border-line bg-white px-6 py-5">
+          <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-warm-light">
+            Sources
+          </p>
+          <p class="mt-2 text-[0.88rem] leading-relaxed text-warm">
+            Rules and prices change without notice. Confirm at the official source before you book —
+            that is the only thing that counts.
+          </p>
+          <ul class="mt-3 flex flex-wrap gap-x-5 gap-y-1.5">
+            {d.sources.map((s) => (
+              <li>
+                <a href={s.url} target="_blank" rel="noopener nofollow" class="text-[0.85rem] font-medium text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">
+                  {s.label} ↗
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {paysLies.length > 0 && (
+        <section class="mt-12 border-t border-line pt-8">
+          <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-warm-light">
+            The entry rule for your passport
+          </p>
+          <ul class="mt-3 flex flex-wrap gap-x-5 gap-y-1.5">
+            {paysLies.map((c) => (
+              <li>
+                <a href={`/en/${c.slug}`} class="text-[0.9rem] font-medium text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">
+                  {c.nomEn}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <p class="mt-12 border-t border-line pt-6 text-[0.9rem] text-warm">
+        <a href={`/${d.traduitDe}`} class="font-semibold text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber" hreflang="fr" lang="fr">
+          Lire ce guide en français →
+        </a>
+      </p>
+    </div>
+  </article>
+</BaseLayout>
