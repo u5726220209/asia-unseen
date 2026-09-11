@@ -255,6 +255,20 @@ const CAS = [
   },
 
   {
+    nom: 'le journal anglais oublie une correction',
+    script: 'verifier-config.mjs',
+    /* La page anglaise annonce un nombre de corrections et les liste toutes.
+       Une entrée manquante en ferait un journal partiel présenté comme entier,
+       sur la page dont le métier est précisément de prouver que le site dit ce
+       qu'il a eu faux. */
+    muter: {
+      'src/data/corrections.en.ts':
+        remplacer(/^ {2}'c-2026-08-30-laos': \{$/m, "  'c-2026-08-30-laos-x': {"),
+    },
+    attendu: /c-2026-08-30-laos n'a pas de version anglaise/,
+  },
+
+  {
     nom: 'un fichier de données oublie un passeport',
     script: 'verifier-config.mjs',
     /* Le fichier ne portait qu'une règle, sans dire de quel passeport. Une

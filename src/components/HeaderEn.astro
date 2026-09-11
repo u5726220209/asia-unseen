@@ -130,6 +130,7 @@ const versFrancais = jumelle ?? (path.replace(/^\/en(?=\/|$)/, '') || '/');
         <option value="/en">Entry rules — all countries</option>
         {pays.map((c) => <option value={`/en/${c.slug}`} selected={path === `/en/${c.slug}`}>{c.nomEn}</option>)}
         {guides && <option value="/en/guides" selected={path.startsWith('/en/guides')}>All guides</option>}
+        <option value="/en/updates" selected={path === '/en/updates'}>Corrections log</option>
         {articles && <option value="/en/blog" selected={path.startsWith('/en/blog')}>All articles</option>}
       </select>
     </div>

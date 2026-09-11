@@ -661,6 +661,61 @@ if (defautsLangue.length) {
 }
 
 /**
+ * Le journal anglais ne doit pas prendre de retard sur le français.
+ *
+ * La page anglaise affiche « {n} corrections published » et les liste toutes.
+ * Si une correction française n'a pas sa traduction, la page plante à la
+ * compilation — ce qui est déjà un filet. Mais l'inverse est silencieux : une
+ * traduction laissée pour une correction supprimée, ou une clé qui ne
+ * correspond plus à aucune ancre, laisse un texte orphelin que personne ne
+ * voit et que personne ne relit.
+ *
+ * Surtout, ce contrôle dit la faute au bon moment. Sans lui, elle apparaît à
+ * la compilation sous la forme d'une erreur de propriété indéfinie, à charge
+ * pour celui qui la lit de comprendre qu'il manque une traduction.
+ */
+const journalEnRetard = [];
+{
+  const fr = readFileSync('src/data/corrections.ts', 'utf8');
+  const entrees = [...fr.matchAll(/date: '([\d-]+)',\s*\n\s*page: '([^']+)'/g)].map(
+    (m) => ({ date: m[1], page: m[2] }),
+  );
+  const vus = new Map();
+  const ancres = entrees.map((e) => {
+    const base = `c-${e.date}-${e.page.replace(/^\//, '').replace(/\//g, '-') || 'accueil'}`;
+    const rang = (vus.get(base) ?? 0) + 1;
+    vus.set(base, rang);
+    return rang === 1 ? base : `${base}-${rang}`;
+  });
+
+  if (existsSync('src/data/corrections.en.ts')) {
+    const en = readFileSync('src/data/corrections.en.ts', 'utf8');
+    const clesEn = [...en.matchAll(/^  '([^']+)': \{$/gm)].map((m) => m[1]);
+    for (const a of ancres) {
+      if (!clesEn.includes(a)) journalEnRetard.push(`${a} n'a pas de version anglaise`);
+    }
+    for (const c of clesEn) {
+      if (!ancres.includes(c)) journalEnRetard.push(`${c} est traduite mais ne correspond à aucune correction`);
+    }
+  }
+
+  /* Deux corrections ne doivent jamais partager une ancre : l'identifiant HTML
+     serait en double, et le lien mènerait toujours à la première. C'est arrivé
+     deux fois — la fiche Thaïlande corrigée deux fois dans la même journée. */
+  const doublons = ancres.filter((a, i) => ancres.indexOf(a) !== i);
+  for (const d of new Set(doublons)) journalEnRetard.push(`l'ancre ${d} est en double`);
+}
+
+if (journalEnRetard.length) {
+  console.log(`⛔ ${journalEnRetard.length} défaut(s) dans le journal des corrections :\n`);
+  for (const d of journalEnRetard) console.log(`   ${d}`);
+  console.log('\n   La page anglaise annonce un journal complet et les liste toutes.');
+  console.log("   Une entrée manquante en fait un journal partiel présenté comme entier.\n");
+} else if (existsSync('src/data/corrections.en.ts')) {
+  console.log('✓ Le journal des corrections dit la même chose dans les deux langues.\n');
+}
+
+/**
  * Le fichier lu par les modèles doit dire qu'il existe une version anglaise.
  *
  * `llms.txt` existe pour une seule raison : un moteur génératif qui doit
@@ -981,5 +1036,5 @@ process.exit(
   tarifsNonSuivis.length || defautsMachine.length || fautesArticle.length ||
   reglesIncoherentes.length || defautsLangue.length || francaisEnAnglais.length ||
   nonClasses.length || muettes.length || originesFantomes.length ||
-  llmsMuet.length ? 1 : 0,
+  llmsMuet.length || journalEnRetard.length ? 1 : 0,
 );

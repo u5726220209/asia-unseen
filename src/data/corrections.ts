@@ -312,7 +312,25 @@ export const dernierAudit = corrections
  * reformule, et un lien envoyé la semaine dernière doit continuer de marcher.
  */
 export function ancre(c: Correction): string {
-  return `c-${c.date}-${c.page.replace(/^\//, '').replace(/\//g, '-') || 'accueil'}`;
+  const base = `c-${c.date}-${c.page.replace(/^\//, '').replace(/\//g, '-') || 'accueil'}`;
+  /**
+   * Deux corrections peuvent tomber le même jour sur la même page.
+   *
+   * C'est arrivé deux fois : le 3 septembre et le 30 août, la fiche Thaïlande a
+   * été corrigée deux fois dans la journée. Les deux entrées portaient alors la
+   * même ancre — un identifiant HTML en double, et surtout un lien qui menait
+   * toujours à la première. La seconde correction était publiée, visible, et
+   * impossible à citer : le lecteur à qui on envoyait le lien arrivait sur une
+   * autre correction et concluait qu'on lui avait envoyé n'importe quoi.
+   *
+   * Le rang n'est ajouté qu'à partir de la deuxième : les ancres déjà envoyées
+   * continuent de mener là où elles menaient.
+   */
+  const memes = corrections.filter(
+    (x) => x.date === c.date && x.page === c.page,
+  );
+  const rang = memes.indexOf(c);
+  return rang <= 0 ? base : `${base}-${rang + 1}`;
 }
 
 /** L'adresse complète et citable d'une correction. */

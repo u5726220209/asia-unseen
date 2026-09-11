@@ -1,0 +1,134 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { corrections, ancre, nbCorrections, dernierAudit } from '@/data/corrections';
+import { correctionsEn } from '@/data/corrections.en';
+import { site } from '@/data/site';
+
+/**
+ * Le journal des corrections, en anglais.
+ *
+ * La page d'accueil anglaise promet deux fois que « la correction est publiée
+ * à côté de ce que nous disions avant ». Elle le promettait sans qu'aucune
+ * page anglaise ne le montre. Sur un site dont la crédibilité est le seul
+ * actif, une promesse invérifiable vaut moins que pas de promesse.
+ *
+ * Elle déclare `/mises-a-jour` comme jumelle : contrairement aux deux hubs, ce
+ * sont bien les mêmes faits dans deux langues — mêmes dates, mêmes sources,
+ * mêmes avants et mêmes après. C'est une traduction, pas un équivalent.
+ */
+const triees = [...corrections].sort((a, b) => (a.date < b.date ? 1 : -1));
+
+const LABEL = {
+  critique: 'Critical',
+  correction: 'Correction',
+  precision: 'Clarification',
+} as const;
+
+const TON = {
+  critique: 'border-amber bg-amber-50 text-amber-700',
+  correction: 'border-teal bg-teal-50 text-teal-700',
+  precision: 'border-line bg-cream-warm text-warm',
+} as const;
+
+const dateEn = (d: string) =>
+  new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+    .format(new Date(`${d}T00:00:00`));
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Corrections log',
+    inLanguage: 'en',
+    description:
+      'Every correction made to this site, with what we used to say, what the official source ' +
+      'says, and the date.',
+    dateModified: dernierAudit,
+    publisher: { '@id': `${site.url}/#organization` },
+  },
+];
+---
+
+<BaseLayout
+  title="Corrections log — what we got wrong, and when"
+  description="Every correction made to this site since launch, with the wording that was wrong, what the official source says, and the date it was changed."
+  schema={schema}
+  jumelle="/mises-a-jour"
+>
+  <header class="border-b border-line bg-cream-warm">
+    <div class="wrap-narrow py-10 lg:py-14">
+      <p class="eyebrow"><a href="/en" class="hover:text-teal">Asia Unseen</a></p>
+      <h1 class="mt-5 text-hero">What we got wrong</h1>
+      <p class="mt-6 text-[1.15rem] leading-relaxed text-warm">
+        Every correction since launch, with the wording that was wrong kept in place. A site that
+        only shows its successes is a site whose failures you never find out about.
+      </p>
+      <p class="mt-6 text-[0.82rem] text-warm-light">
+        {nbCorrections} corrections published · last audit {dateEn(dernierAudit)}
+      </p>
+    </div>
+  </header>
+
+  <div class="wrap-narrow py-12">
+    <ol class="space-y-8">
+      {triees.map((c) => {
+        const en = correctionsEn[ancre(c)];
+        return (
+          <li id={ancre(c)} class="scroll-mt-24 rounded-brand border border-line bg-white px-6 py-6">
+            <div class="flex flex-wrap items-center gap-3">
+              <span class={`rounded-brand border px-2.5 py-1 font-display text-[0.7rem] font-semibold uppercase tracking-[0.12em] ${TON[c.gravite]}`}>
+                {LABEL[c.gravite]}
+              </span>
+              <span class="text-[0.82rem] text-warm-light">{dateEn(c.date)}</span>
+              <span class="text-[0.82rem] text-warm-light">· {en.pageLabel}</span>
+            </div>
+
+            <h2 class="mt-4 font-display text-[1.15rem] font-bold leading-snug text-ink">
+              {en.titre}
+            </h2>
+
+            <div class="mt-5 space-y-4">
+              <div class="border-l-[3px] border-line pl-4">
+                <p class="font-display text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-warm-light">
+                  What we used to say
+                </p>
+                <p class="mt-1.5 text-[0.92rem] leading-relaxed text-warm line-through decoration-warm-light/50">
+                  {en.avant}
+                </p>
+              </div>
+              <div class="border-l-[3px] border-teal pl-4">
+                <p class="font-display text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-warm-light">
+                  What the source says
+                </p>
+                <p class="mt-1.5 text-[0.92rem] leading-relaxed text-ink-soft">{en.apres}</p>
+              </div>
+            </div>
+
+            <p class="mt-5 text-[0.82rem] text-warm">
+              <a href={c.source.url} target="_blank" rel="noopener nofollow" class="text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">
+                {c.source.label} ↗
+              </a>
+            </p>
+          </li>
+        );
+      })}
+    </ol>
+
+    <section class="mt-14 rounded-brand border border-line bg-cream-warm px-6 py-5">
+      <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-warm-light">
+        Found something wrong?
+      </p>
+      <p class="mt-2 text-[0.92rem] leading-relaxed text-warm">
+        Write to <a href={`mailto:${site.author.email}`} class="text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">{site.author.email}</a>
+        with the source that makes you think we are wrong. Corrections are published here with the
+        old wording kept, and the person who reported them is credited unless they ask otherwise.
+      </p>
+    </section>
+
+    <p class="mt-12 border-t border-line pt-6 text-[0.9rem] text-warm">
+      <a href="/mises-a-jour" class="font-semibold text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber" hreflang="fr" lang="fr">
+        Lire ce journal en français →
+      </a>
+    </p>
+  </div>
+</BaseLayout>
