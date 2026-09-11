@@ -29,8 +29,8 @@ const plusLongue = [...countries].sort((a, b) => b.visa.sansVisaJours - a.visa.s
 
 const faq = [
   {
-    q: 'Faut-il un visa pour voyager en Asie avec un passeport français ?',
-    r: `Cela dépend du pays et de la durée. Sur les ${countries.length} pays couverts ici, ${sansVisa.length} accordent une exemption de visa pour un séjour touristique court — de ${Math.min(...sansVisa.map((c) => c.visa.sansVisaJours))} à ${plusLongue.visa.sansVisaJours} jours selon la destination. Les ${avecVisa.length} autres exigent un visa dès le premier jour, même s'il s'obtient en ligne ou à l'arrivée.`,
+    q: 'Faut-il un visa pour voyager en Asie ?',
+    r: `Cela dépend du passeport, du pays et de la durée — et les trois réponses sont indépendantes. Pour un passeport français, sur les ${countries.length} pays couverts ici, ${sansVisa.length} accordent une exemption de visa pour un séjour touristique court — de ${Math.min(...sansVisa.map((c) => c.visa.sansVisaJours))} à ${plusLongue.visa.sansVisaJours} jours selon la destination. Les ${avecVisa.length} autres exigent un visa dès le premier jour, même s'il s'obtient en ligne ou à l'arrivée.`,
   },
   {
     q: 'Que se passe-t-il si je dépasse la durée autorisée ?',
@@ -38,7 +38,7 @@ const faq = [
   },
   {
     q: "Cet outil vaut-il pour tous les passeports ?",
-    r: "Non. Toutes les règles publiées ici concernent le passeport français ordinaire, pour un séjour touristique. Les passeports d'urgence, les passeports de service et les autres nationalités relèvent de règles différentes, parfois très différentes — le Laos, par exemple, module le coût du visa selon la nationalité.",
+    r: "Il couvre six passeports ordinaires — français, britannique, canadien, américain, australien et néo-zélandais — et il dit lequel il ne connaît pas plutôt que de deviner. Trois portails gouvernementaux refusent la lecture automatisée ou ne publient pas de règles d'entrée : pour ceux-là, l'outil renvoie au portail au lieu de transposer la règle d'un passeport voisin. Les passeports d'urgence et de service relèvent de règles différentes, quelle que soit la nationalité.",
   },
   {
     q: 'À quelle fréquence ces règles sont-elles vérifiées ?',
@@ -71,13 +71,14 @@ const schema = [
 
 <BaseLayout
   title="Ai-je besoin d'un visa pour l'Asie ? La réponse, datée"
-  description="Votre destination et la durée de votre séjour : la règle d'entrée pour un passeport français, avec sa date de vérification et sa source officielle."
+  description="Votre passeport, votre destination et la durée du séjour : la règle d'entrée telle qu'elle est publiée, avec sa date de vérification et sa source officielle."
   schema={schema}
+  jumelle="/en/do-i-need-a-visa"
 >
   <header class="border-b border-line bg-cream-warm">
     <div class="wrap py-10 lg:py-14">
       <Breadcrumbs items={[{ label: 'Ai-je besoin d\'un visa ?' }]} />
-      <p class="eyebrow mt-6">Passeport français · séjour touristique</p>
+      <p class="eyebrow mt-6">Six passeports · séjour touristique</p>
       <h1 class="mt-4 max-w-3xl text-hero">Ai-je besoin<br class="hidden sm:block" /> d'un visa&nbsp;?</h1>
       <p class="mt-6 max-w-2xl text-[1.15rem] leading-relaxed text-warm">
         Votre destination, la durée de votre séjour, et la réponse — avec la règle
@@ -196,7 +197,7 @@ const schema = [
             Ce que la réponse suppose
           </p>
           <ul class="mt-4 space-y-3 text-[0.88rem] leading-relaxed text-ink-soft">
-            <li>Un passeport <strong>français ordinaire</strong>, valide au-delà du séjour.</li>
+            <li>Un passeport <strong>ordinaire</strong>, celui que vous avez choisi ci-dessus, valide au-delà du séjour.</li>
             <li>Un séjour <strong>touristique</strong>, pas professionnel ni d'études.</li>
             <li>Une <strong>entrée unique</strong>, sans sortie ni retour dans la période.</li>
           </ul>

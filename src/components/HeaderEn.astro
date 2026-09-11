@@ -87,6 +87,13 @@ const versFrancais = jumelle ?? (path.replace(/^\/en(?=\/|$)/, '') || '/');
         Entry rules
       </a>
 
+      <a
+        href="/en/do-i-need-a-visa"
+        class:list={['rounded-brand px-3 py-2 font-display text-[0.9rem] font-medium transition-colors hover:text-teal', path === '/en/do-i-need-a-visa' ? 'text-teal' : 'text-ink']}
+      >
+        Do I need a visa?
+      </a>
+
       {guides && (
         <a
           href="/en/guides"
@@ -130,6 +137,7 @@ const versFrancais = jumelle ?? (path.replace(/^\/en(?=\/|$)/, '') || '/');
         <option value="/en">Entry rules — all countries</option>
         {pays.map((c) => <option value={`/en/${c.slug}`} selected={path === `/en/${c.slug}`}>{c.nomEn}</option>)}
         {guides && <option value="/en/guides" selected={path.startsWith('/en/guides')}>All guides</option>}
+        <option value="/en/do-i-need-a-visa" selected={path === '/en/do-i-need-a-visa'}>Do I need a visa?</option>
         <option value="/en/updates" selected={path === '/en/updates'}>Corrections log</option>
         {articles && <option value="/en/blog" selected={path.startsWith('/en/blog')}>All articles</option>}
       </select>

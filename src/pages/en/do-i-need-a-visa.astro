@@ -1,0 +1,187 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PuisJeEntrer from '@/components/PuisJeEntrer.astro';
+import FAQ from '@/components/FAQ.astro';
+import { countries, PASSEPORTS, regleDuPasseport } from '@/data/countries';
+import { contenuEn } from '@/data/countries.en';
+import { site } from '@/data/site';
+
+/**
+ * « Do I need a visa? », en anglais et par passeport.
+ *
+ * C'est la question la plus tapée du domaine, et c'est aussi celle où la
+ * version anglaise a quelque chose que la française n'a pas : elle ne suppose
+ * aucun passeport. La page française a été écrite pour un lecteur français et
+ * l'annonce honnêtement ; ici, le passeport est une entrée comme les autres.
+ *
+ * Elle déclare `/ai-je-besoin-d-un-visa` comme jumelle : c'est bien la même
+ * page, le même outil et les mêmes données, dans deux langues.
+ */
+
+const paysEn = countries.filter((c) => contenuEn[c.slug]);
+const autres = PASSEPORTS.filter((p) => p.code !== 'fr');
+
+/** Combien de passeports, sur ceux que nous couvrons, ont une règle relevée par pays. */
+const releves = (slug: string) =>
+  PASSEPORTS.filter((p) => regleDuPasseport(countries.find((c) => c.slug === slug)!, p.code)).length;
+
+const faq = [
+  {
+    q: 'Do I need a visa to travel in Asia?',
+    r: 'It depends on your passport and on how long you are staying, and the two answers are not related. The same country can be visa-free for 45 days on one passport and require a visa from day one on another — Vietnam is exactly that case. Choose your passport above before reading any number.',
+  },
+  {
+    q: 'Does this tool work for every passport?',
+    r: `It covers ${PASSEPORTS.length} passports, and it says plainly when a rule has not been read at an official source rather than guessing. Three government portals refuse automated reading or publish no entry rules; for those, the tool sends you to the portal instead of transposing a neighbouring passport's rule.`,
+  },
+  {
+    q: 'Why does it not show the cost for my passport?',
+    r: 'Because we have not read it. The fees and the procedure on this site are documented for the French passport — French consular fees, the French portal, French processing times. Showing them under a British or Canadian passport would produce a page that looks impeccable and is wrong, which is worse than an empty field.',
+  },
+  {
+    q: 'How current is the answer?',
+    r: 'Every rule carries the month it was read and a link to the source it came from. The sources are re-read every night, and the verification date only moves forward when all of a country\'s sources have been read without changing. When something does change, the correction is published with the old wording next to it.',
+  },
+];
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'Do I need a visa for Asia?',
+    applicationCategory: 'TravelApplication',
+    operatingSystem: 'Any',
+    inLanguage: 'en',
+    url: `${site.url}/en/do-i-need-a-visa`,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+    publisher: { '@id': `${site.url}/#organization` },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    inLanguage: 'en',
+    mainEntity: faq.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.r },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title="Do I need a visa for Asia? By passport and length of stay"
+  description="Your passport, your destination and how long you are staying: the entry rule as published, with the month it was checked and a link to the official source."
+  schema={schema}
+  jumelle="/ai-je-besoin-d-un-visa"
+>
+  <header class="border-b border-line bg-cream-warm">
+    <div class="wrap py-10 lg:py-14">
+      <p class="eyebrow"><a href="/en" class="hover:text-teal">Asia Unseen</a></p>
+      <h1 class="mt-5 max-w-3xl text-hero">Do I need<br class="hidden sm:block" /> a visa?</h1>
+      <p class="mt-6 max-w-2xl text-[1.15rem] leading-relaxed text-warm">
+        Your passport, your destination, how long you are staying — and the answer, with the
+        rule exactly as it is published, the month it was checked, and a link to the official
+        source it came from.
+      </p>
+    </div>
+  </header>
+
+  <div class="wrap py-12 lg:py-14">
+    <PuisJeEntrer langue="en" />
+
+    <div class="mt-14 max-w-3xl">
+      <section>
+        <h2 class="text-display">Why the passport comes first</h2>
+        <div class="prose-au mt-6">
+          <p>
+            Most visa pages answer "does country X require a visa" as though the question had one
+            answer. It does not. Vietnam is visa-free for 45 days on a British passport and
+            requires a visa from the first day on a Canadian one. South Korea gives 90 days to one
+            and 180 to another. A rule that does not name a passport is not a rule — it is a
+            number someone remembered.
+          </p>
+          <p>
+            That is the whole reason this tool asks three questions rather than two, and it is why
+            the answer always arrives with the source it was read from and the month it was read.
+          </p>
+        </div>
+      </section>
+
+      <section class="mt-14">
+        <h2 class="text-display">What it will not do</h2>
+        <div class="prose-au mt-6">
+          <p>
+            It compares a length of stay against a number of exempt days. That is the only thing
+            it calculates. Everything else — the wording of the rule, the cost, the procedure — is
+            shown <strong>exactly as published</strong>, never rephrased.
+          </p>
+          <p>
+            This is not excessive caution. A tool that paraphrased an entry rule would eventually
+            invent one, and an invented entry rule gets paid for at a border, not in front of a
+            screen. It is also why it never says "you can enter": only the country's authority
+            decides, and it decides at the desk.
+          </p>
+          <p>
+            And it will not fill a field it has not read. Where a government portal refuses
+            automated reading, the tool says so and links the portal — rather than borrowing the
+            rule of a passport that happens to be nearby.
+          </p>
+        </div>
+      </section>
+
+      <section class="mt-14">
+        <h2 class="text-display">What we hold, passport by passport</h2>
+        <div class="mt-6 overflow-x-auto">
+          <table class="w-full min-w-[34rem] border-collapse text-[0.9rem]">
+            <thead>
+              <tr class="border-b border-line text-left">
+                <th class="py-2.5 pr-4 font-display text-[0.72rem] font-semibold uppercase tracking-wider text-warm-light">Country</th>
+                {autres.map((p) => (
+                  <th class="py-2.5 pr-4 font-display text-[0.72rem] font-semibold uppercase tracking-wider text-warm-light">{p.nomEn}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {paysEn.map((c) => (
+                <tr class="border-b border-line/60">
+                  <td class="py-2.5 pr-4">
+                    <a href={`/en/${c.slug}`} class="font-medium text-teal-700 underline decoration-teal/25 underline-offset-4 hover:decoration-amber">{c.nomEn}</a>
+                  </td>
+                  {autres.map((p) => {
+                    const r = regleDuPasseport(c, p.code);
+                    return (
+                      <td class="py-2.5 pr-4 tabular-nums">
+                        {!r
+                          ? <span class="text-warm-light">not taken</span>
+                          : r.sansVisaJours > 0
+                            ? <span class="text-teal-700">{r.sansVisaJours} days</span>
+                            : <span class="text-amber-700">visa</span>}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p class="mt-4 text-[0.86rem] leading-relaxed text-warm">
+          "Not taken" means we have not read that rule at an official source, not that no rule
+          exists. The same data is available as
+          <a href={`${site.url}/donnees/visas.json`} class="text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">JSON under CC BY 4.0</a>,
+          with each rule's source and verification date.
+        </p>
+      </section>
+
+      <div class="mt-14">
+        <FAQ items={faq} title="Common questions" />
+      </div>
+
+      <p class="mt-12 border-t border-line pt-6 text-[0.9rem] text-warm">
+        <a href="/ai-je-besoin-d-un-visa" class="font-semibold text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber" hreflang="fr" lang="fr">
+          Lire cette page en français →
+        </a>
+      </p>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,6 +1,7 @@
 ---
 import CaptureOutil from '@/components/CaptureOutil.astro';
-import { countries } from '@/data/countries';
+import { countries, PASSEPORTS, PORTAILS_NON_RELEVES, regleDuPasseport } from '@/data/countries';
+import type { Langue } from '@/lib/langue';
 
 /**
  * « Puis-je entrer ? » — une réponse, pas un tableau.
@@ -10,74 +11,165 @@ import { countries } from '@/data/countries';
  * qui hésite entre deux destinations ; celui-ci sert quelqu'un qui a déjà
  * choisi et veut une certitude.
  *
+ * TROIS ENTRÉES, PAS DEUX
+ * Il demandait la destination et la durée, et supposait le passeport français.
+ * C'était vrai tant que le site ne s'adressait qu'à des Français. Ça ne l'est
+ * plus, et surtout ça ne l'a jamais été pour la question posée : une règle
+ * d'entrée n'existe pas dans l'absolu, elle existe pour un passeport. Le
+ * passeport est donc une entrée comme les deux autres.
+ *
  * CE QU'IL CALCULE, ET CE QU'IL NE CALCULERA JAMAIS
- * Il compare une durée de séjour à `visa.sansVisaJours`, et c'est tout. Il ne
- * reformule aucune règle : le résumé, le coût, la procédure et les pièges sont
- * affichés tels qu'ils sont écrits sur la fiche, avec leur date de vérification
- * et leurs sources. Un outil qui paraphraserait une règle d'entrée finirait par
- * en inventer une, et une règle d'entrée inventée se paie à une frontière.
+ * Il compare une durée de séjour au nombre de jours d'exemption du passeport
+ * choisi, et c'est tout. Il ne reformule aucune règle : le résumé, le coût, la
+ * procédure et les pièges sont affichés tels qu'ils sont écrits, avec leur date
+ * de vérification et leurs sources. Un outil qui paraphraserait une règle
+ * d'entrée finirait par en inventer une, et une règle inventée se paie à une
+ * frontière.
+ *
+ * LE PIÈGE QU'IL REFUSE
+ * `cout` et `procedure` sont documentés pour le passeport français : ce sont
+ * les frais consulaires français, le portail français, les délais français.
+ * Les afficher sous un passeport britannique produirait une page irréprochable
+ * dans sa forme et fausse dans ses faits — la pire combinaison. Sous un autre
+ * passeport, l'outil donne donc la règle et la source, et dit explicitement
+ * que le reste n'est pas relevé pour ce passeport-là.
  *
  * D'où aussi le vocabulaire : il ne dit jamais « vous pouvez entrer ». Il dit
  * ce que la règle publiée prévoit pour cette durée, et rappelle que seule
  * l'autorité du pays décide.
  */
 
+interface Props {
+  langue?: Langue;
+  class?: string;
+}
+const { langue = 'fr', class: klass = '' } = Astro.props;
+
 const data = countries.map((c) => ({
   slug: c.slug,
-  nom: c.nom,
-  article: c.article,
-  sansVisaJours: c.visa.sansVisaJours,
-  resume: c.visa.resume,
-  duree: c.visa.duree,
-  cout: c.visa.cout,
-  procedure: c.visa.procedure,
-  verifieLe: c.verifieLe,
-  sources: c.sourcesVisa,
+  nom: langue === 'en' ? c.nomEn : c.nom,
+  regles: Object.fromEntries(
+    PASSEPORTS.map((p) => {
+      const r = regleDuPasseport(c, p.code);
+      return [
+        p.code,
+        r
+          ? {
+              jours: r.sansVisaJours,
+              resume: r.resume[langue],
+              source: r.source,
+              verifieLe: r.verifieLe,
+              apres: r.sansVisaJoursApres ?? null,
+            }
+          : null,
+      ];
+    }),
+  ),
+  /**
+   * Le coût et la procédure, documentés pour le passeport français seulement —
+   * et seulement envoyés à la page française.
+   *
+   * Ces trois champs sont de la prose française. Les envoyer à la page
+   * anglaise les y faisait apparaître dès qu'on choisissait le passeport
+   * français : « 45 jours sans visa. E-visa jusqu'à 90 jours… » sous un titre
+   * anglais. Le contrôle du français sur les pages anglaises ne pouvait pas le
+   * voir — le texte est injecté par le navigateur, et il lit du HTML statique.
+   *
+   * Ne pas les envoyer du tout est donc plus sûr que se rappeler de ne pas les
+   * afficher : ce qui n'est pas dans la page ne peut pas s'y afficher.
+   */
+  fr: langue === 'fr' ? { duree: c.visa.duree, cout: c.visa.cout, procedure: c.visa.procedure } : null,
   premiereDemarche: c.demarches.length ? Math.max(...c.demarches.map((d) => d.jours)) : null,
 }));
+
+const portails = Object.fromEntries(
+  PASSEPORTS.map((p) => [
+    p.code,
+    PORTAILS_NON_RELEVES[p.code]
+      ? { nom: PORTAILS_NON_RELEVES[p.code]!.nom, url: PORTAILS_NON_RELEVES[p.code]!.url, pourquoi: PORTAILS_NON_RELEVES[p.code]!.pourquoi[langue] }
+      : null,
+  ]),
+);
+
+const T = {
+  fr: {
+    outil: 'Outil',
+    titre: 'Votre passeport, votre pays et votre durée',
+    intro:
+      "Séjour touristique. La réponse cite la règle telle qu'elle est publiée pour le passeport choisi, avec la date à laquelle elle a été vérifiée.",
+    passeport: 'Passeport',
+    destination: 'Destination',
+    duree: 'Durée du séjour',
+    jours: 'jours',
+    contexte: "Ai-je besoin d'un visa",
+    promesse:
+      "Cette réponse est celle d'aujourd'hui. Les règles d'entrée changent plusieurs fois par an : dites-nous où vous partez et vous recevrez la fiche corrigée si elle bouge avant votre départ.",
+    bouton: 'Me prévenir',
+  },
+  en: {
+    outil: 'Tool',
+    titre: 'Your passport, your country and your length of stay',
+    intro:
+      'Tourist stay. The answer quotes the rule as published for the passport you choose, with the date it was checked.',
+    passeport: 'Passport',
+    destination: 'Destination',
+    duree: 'Length of stay',
+    jours: 'days',
+    contexte: 'Do I need a visa',
+    promesse:
+      'This is today’s answer. Entry rules change several times a year: tell us where you are going and you will get the corrected page if it moves before you leave.',
+    bouton: 'Tell me if it changes',
+  },
+} as const;
+const t = T[langue];
+
+/** Le passeport proposé par défaut, selon la langue de la page qui affiche l'outil. */
+const parDefaut = langue === 'en' ? 'gb' : 'fr';
 
 const id = 'pje-' + Math.random().toString(36).slice(2, 7);
 ---
 
-<div class="au-pje my-10 overflow-hidden rounded-brand border border-line bg-white" data-pays={JSON.stringify(data)}>
+<div
+  class:list={['au-pje my-10 overflow-hidden rounded-brand border border-line bg-white', klass]}
+  data-pays={JSON.stringify(data)}
+  data-portails={JSON.stringify(portails)}
+  data-langue={langue}
+>
   <div class="border-b border-line bg-cream-warm px-6 py-5">
-    <p class="eyebrow">Outil</p>
-    {/*
-      Ce titre répétait mot pour mot le h1 de la page, et sautait du niveau 1
-      au niveau 3. Quelqu'un qui parcourt la page par ses titres — ce que fait
-      une synthèse vocale — entendait donc deux fois la même question, dont une
-      à un niveau qui laisse croire à une section manquante entre les deux.
-      Un titre doit ajouter quelque chose ou disparaître ; celui-ci dit
-      maintenant ce que l'outil attend de vous.
-    */}
-    <h2 class="mt-1.5 font-display text-xl font-bold text-ink">Votre pays et votre durée</h2>
-    <p class="mt-1.5 text-[0.88rem] leading-relaxed text-warm">
-      Passeport français ordinaire, séjour touristique. La réponse cite la règle telle
-      qu'elle est publiée, avec la date à laquelle elle a été vérifiée.
-    </p>
+    <p class="eyebrow">{t.outil}</p>
+    <h2 class="mt-1.5 font-display text-xl font-bold text-ink">{t.titre}</h2>
+    <p class="mt-1.5 text-[0.88rem] leading-relaxed text-warm">{t.intro}</p>
   </div>
 
-  <div class="grid gap-4 px-6 py-6 sm:grid-cols-[1fr_auto] sm:items-end">
-    <div class="grid gap-4 sm:grid-cols-2">
-      <div>
-        <label for={`${id}-pays`} class="mb-2 block font-display text-[0.78rem] font-semibold uppercase tracking-wider text-ink">
-          Destination
-        </label>
-        <select id={`${id}-pays`} class="au-pje-pays w-full rounded-brand border border-line bg-cream px-4 py-3 text-ink focus:border-teal focus:outline-none">
-          {countries.map((c) => <option value={c.slug}>{c.nom}</option>)}
-        </select>
-      </div>
-      <div>
-        <label for={`${id}-jours`} class="mb-2 block font-display text-[0.78rem] font-semibold uppercase tracking-wider text-ink">
-          Durée du séjour
-        </label>
-        <div class="flex items-center gap-3">
-          <input
-            id={`${id}-jours`} type="number" min="1" max="365" value="15" inputmode="numeric"
-            class="au-pje-jours w-24 rounded-brand border border-line bg-cream px-4 py-3 text-ink tabular-nums focus:border-teal focus:outline-none"
-          />
-          <span class="text-[0.9rem] text-warm">jours</span>
-        </div>
+  <div class="grid gap-4 px-6 py-6 sm:grid-cols-3">
+    <div>
+      <label for={`${id}-pp`} class="mb-2 block font-display text-[0.78rem] font-semibold uppercase tracking-wider text-ink">
+        {t.passeport}
+      </label>
+      <select id={`${id}-pp`} class="au-pje-pp w-full rounded-brand border border-line bg-cream px-4 py-3 text-ink focus:border-teal focus:outline-none">
+        {PASSEPORTS.map((p) => (
+          <option value={p.code} selected={p.code === parDefaut}>{langue === 'en' ? p.nomEn : p.nom}</option>
+        ))}
+      </select>
+    </div>
+    <div>
+      <label for={`${id}-pays`} class="mb-2 block font-display text-[0.78rem] font-semibold uppercase tracking-wider text-ink">
+        {t.destination}
+      </label>
+      <select id={`${id}-pays`} class="au-pje-pays w-full rounded-brand border border-line bg-cream px-4 py-3 text-ink focus:border-teal focus:outline-none">
+        {countries.map((c) => <option value={c.slug}>{langue === 'en' ? c.nomEn : c.nom}</option>)}
+      </select>
+    </div>
+    <div>
+      <label for={`${id}-jours`} class="mb-2 block font-display text-[0.78rem] font-semibold uppercase tracking-wider text-ink">
+        {t.duree}
+      </label>
+      <div class="flex items-center gap-3">
+        <input
+          id={`${id}-jours`} type="number" min="1" max="365" value="15" inputmode="numeric"
+          class="au-pje-jours w-24 rounded-brand border border-line bg-cream px-4 py-3 text-ink tabular-nums focus:border-teal focus:outline-none"
+        />
+        <span class="text-[0.9rem] text-warm">{t.jours}</span>
       </div>
     </div>
   </div>
@@ -89,112 +181,197 @@ const id = 'pje-' + Math.random().toString(36).slice(2, 7);
     et la seule chose qu'il ne peut pas faire est de prévenir quand elle change.
     C'est précisément ce que ce site sait faire, et personne d'autre.
   */}
-  <CaptureOutil
-    class="mx-6 mb-6"
-    contexte="Ai-je besoin d'un visa"
-    promesse="Cette réponse est celle d'aujourd'hui. Les règles d'entrée changent plusieurs fois par an : dites-nous où vous partez et vous recevrez la fiche corrigée si elle bouge avant votre départ."
-    bouton="Me prévenir"
-  />
+  <CaptureOutil class="mx-6 mb-6" contexte={t.contexte} promesse={t.promesse} bouton={t.bouton} />
 </div>
 
 <script>
+  type Regle = {
+    jours: number; resume: string; source: { label: string; url: string };
+    verifieLe: string; apres: { date: string; jours: number } | null;
+  };
   type Pays = {
-    slug: string; nom: string; article: string; sansVisaJours: number;
-    resume: string; duree: string; cout: string; procedure: string;
-    verifieLe: string; sources: { label: string; url: string }[];
+    slug: string; nom: string;
+    regles: Record<string, Regle | null>;
+    fr: { duree: string; cout: string; procedure: string } | null;
     premiereDemarche: number | null;
   };
+  type Portail = { nom: string; url: string; pourquoi: string } | null;
 
   const echappe = (s: string) =>
     s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-  const mois = (aaaaMm: string) => {
-    const [y, m] = aaaaMm.split('-').map(Number);
-    return new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' })
-      .format(new Date(y, m - 1, 1));
-  };
+  const MOTS = {
+    fr: {
+      pas: (j: number) => `${j} jours`,
+      ok: 'Aucune démarche de visa prévue pour cette durée',
+      okDetail: (e: number, j: number) => `La règle publiée autorise ${e} jours sans visa. Votre séjour de ${j} jours tient dedans.`,
+      visa: 'Une démarche est nécessaire, quelle que soit la durée',
+      visaDetail: "Aucune exemption ne s'applique : un visa est exigé dès le premier jour.",
+      trop: 'Une démarche est nécessaire pour cette durée',
+      tropDetail: (e: number, j: number) => `L'exemption couvre ${e} jours. Votre séjour de ${j} jours la dépasse de ${j - e} jour${j - e > 1 ? 's' : ''}.`,
+      inconnu: "Nous n'avons pas relevé cette règle",
+      inconnuDetail: (pourquoi: string) => `${pourquoi} — nous préférons vous envoyer à la source plutôt que de transposer la règle d'un autre passeport, ce qui se paierait à une frontière.`,
+      regle: "La règle, telle qu'elle est publiée",
+      cout: 'Coût officiel',
+      procedure: 'Procédure et pièges',
+      horsFr: 'Coût et procédure',
+      horsFrTexte: "Nous documentons les frais et la procédure pour le passeport français uniquement — frais consulaires français, portail français, délais français. Les transposer à un autre passeport donnerait une page impeccable et fausse. La source officielle ci-dessous fait foi.",
+      horsFrTexteFr: '',
+      bascule: (d: string, j: number) => `Cette règle change le ${d} : elle passera à ${j} jours. C'est la date d'entrée sur le territoire qui décide.`,
+      demarche: (nom: string, j: number) => `La première démarche à faire pour ${nom} se situe environ <strong class="text-ink">${j} jours avant le départ</strong>.`,
+      verifie: 'Vérifié en',
+      avertissement: "Cet outil compare une durée à une règle. Il ne remplace pas la décision de l'autorité du pays, seule à décider d'une entrée — et une règle peut changer entre cette vérification et votre départ.",
+      fiche: (nom: string) => `Voir la fiche ${nom}`,
+      locale: 'fr-FR',
+    },
+    en: {
+      pas: (j: number) => `${j} days`,
+      ok: 'No visa formality for a stay of this length',
+      okDetail: (e: number, j: number) => `The published rule allows ${e} days without a visa. Your ${j}-day stay fits inside it.`,
+      visa: 'A formality is required, whatever the length',
+      visaDetail: 'No exemption applies: a visa is required from the first day.',
+      trop: 'A formality is required for a stay of this length',
+      tropDetail: (e: number, j: number) => `The exemption covers ${e} days. Your ${j}-day stay exceeds it by ${j - e} day${j - e > 1 ? 's' : ''}.`,
+      inconnu: 'We have not taken this rule from an official source',
+      inconnuDetail: (pourquoi: string) => `${pourquoi} — we would rather send you to the source than transpose another passport's rule, which gets paid for at a border.`,
+      regle: 'The rule, as published',
+      cout: 'Official cost',
+      procedure: 'Procedure and pitfalls',
+      horsFr: 'Cost and procedure',
+      horsFrTexte: 'We document fees and procedure for the French passport only — French consular fees, the French portal, French processing times. Transposing them to another passport would produce a page that looks impeccable and is wrong. The official source below is what counts.',
+      horsFrTexteFr: 'The fees and procedure we hold for the French passport are documented in French, on the French version of this page. Translating a consular procedure is how a wrong one gets published, so we link it rather than paraphrase it.',
+      bascule: (d: string, j: number) => `This rule changes on ${d}: it becomes ${j} days. The date you enter the country is what decides.`,
+      demarche: (nom: string, j: number) => `The first step to take for ${nom} falls about <strong class="text-ink">${j} days before departure</strong>.`,
+      verifie: 'Checked in',
+      avertissement: 'This tool compares a length of stay against a rule. It does not replace the decision of the country’s authority, which alone decides on entry — and a rule can change between this check and your departure.',
+      fiche: (nom: string) => `See the ${nom} page`,
+      locale: 'en-GB',
+    },
+  } as const;
 
   document.querySelectorAll<HTMLElement>('.au-pje').forEach((bloc) => {
     const pays: Pays[] = JSON.parse(bloc.dataset.pays || '[]');
+    const portails: Record<string, Portail> = JSON.parse(bloc.dataset.portails || '{}');
+    const langue = (bloc.dataset.langue === 'en' ? 'en' : 'fr') as 'fr' | 'en';
+    const m = MOTS[langue];
+    const prefixe = langue === 'en' ? '/en' : '';
+
+    const selPp = bloc.querySelector<HTMLSelectElement>('.au-pje-pp')!;
     const selPays = bloc.querySelector<HTMLSelectElement>('.au-pje-pays')!;
     const inJours = bloc.querySelector<HTMLInputElement>('.au-pje-jours')!;
     const sortie = bloc.querySelector<HTMLElement>('.au-pje-out')!;
+
+    const mois = (aaaaMm: string) => {
+      const [y, mo] = aaaaMm.split('-').map(Number);
+      return new Intl.DateTimeFormat(m.locale, { month: 'long', year: 'numeric' })
+        .format(new Date(y, mo - 1, 1));
+    };
+    const jour = (iso: string) =>
+      new Intl.DateTimeFormat(m.locale, { day: 'numeric', month: 'long', year: 'numeric' })
+        .format(new Date(`${iso}T00:00:00`));
 
     function rendre() {
       const p = pays.find((x) => x.slug === selPays.value);
       if (!p) return;
 
+      const code = selPp.value;
+      const r = p.regles[code] ?? null;
       const jours = Math.max(1, Math.min(365, Number(inJours.value) || 1));
 
+      /* Règle non relevée : on ne calcule rien et on ne suppose rien. */
+      if (!r) {
+        const portail = portails[code];
+        sortie.innerHTML = `
+          <div class="rounded-brand border-l-[3px] border-line bg-cream-warm px-5 py-4">
+            <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-warm">${echappe(p.nom)} · ${echappe(m.pas(jours))}</p>
+            <p class="mt-2 font-display text-[1.1rem] font-bold leading-snug text-ink">${echappe(m.inconnu)}</p>
+            <p class="mt-1.5 text-[0.92rem] leading-relaxed text-ink-soft">${echappe(m.inconnuDetail(portail?.pourquoi ?? ''))}</p>
+            ${portail ? `<p class="mt-3 text-[0.88rem]"><a href="${echappe(portail.url)}" target="_blank" rel="noopener nofollow" class="font-semibold text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">${echappe(portail.nom)} ↗</a></p>` : ''}
+          </div>`;
+        return;
+      }
+
       // La seule décision prise ici. Tout le reste est cité.
-      const dansExemption = p.sansVisaJours > 0 && jours <= p.sansVisaJours;
+      const dansExemption = r.jours > 0 && jours <= r.jours;
 
       const verdict = dansExemption
-        ? {
-            ton: 'teal',
-            titre: 'Aucune démarche de visa prévue pour cette durée',
-            detail: `La règle publiée autorise ${p.sansVisaJours} jours sans visa. Votre séjour de ${jours} jours tient dedans.`,
-          }
-        : p.sansVisaJours === 0
-          ? {
-              ton: 'amber',
-              titre: 'Une démarche est nécessaire, quelle que soit la durée',
-              detail: `Aucune exemption ne s'applique : un visa est exigé dès le premier jour.`,
-            }
-          : {
-              ton: 'amber',
-              titre: 'Une démarche est nécessaire pour cette durée',
-              detail: `L'exemption couvre ${p.sansVisaJours} jours. Votre séjour de ${jours} jours la dépasse de ${jours - p.sansVisaJours} jour${jours - p.sansVisaJours > 1 ? 's' : ''}.`,
-            };
+        ? { ton: 'teal', titre: m.ok, detail: m.okDetail(r.jours, jours) }
+        : r.jours === 0
+          ? { ton: 'amber', titre: m.visa, detail: m.visaDetail }
+          : { ton: 'amber', titre: m.trop, detail: m.tropDetail(r.jours, jours) };
 
       const couleurs = verdict.ton === 'teal'
         ? { bord: 'border-teal', fond: 'bg-teal-50', texte: 'text-teal-700' }
         : { bord: 'border-amber-700', fond: 'bg-amber-50', texte: 'text-amber-700' };
 
-      const sources = p.sources
-        .map((s) => `<a href="${echappe(s.url)}" target="_blank" rel="noopener nofollow" class="text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">${echappe(s.label)} ↗</a>`)
-        .join(' · ');
+      const source = `<a href="${echappe(r.source.url)}" target="_blank" rel="noopener nofollow" class="text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">${echappe(r.source.label)} ↗</a>`;
 
-      const alerte = p.premiereDemarche
-        ? `<p class="mt-4 text-[0.86rem] leading-relaxed text-warm">La première démarche à faire pour ${echappe(p.nom)} se situe environ <strong class="text-ink">${p.premiereDemarche} jours avant le départ</strong>. <a href="/checklist-depart" class="text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">Voir le calendrier daté</a>.</p>`
+      const bascule = r.apres && r.apres.date > new Date().toISOString().slice(0, 10)
+        ? `<p class="mt-4 rounded-brand border-l-[3px] border-amber bg-amber-50 px-4 py-3 text-[0.88rem] leading-relaxed text-ink-soft">${echappe(m.bascule(jour(r.apres.date), r.apres.jours))}</p>`
+        : '';
+
+      /*
+       * Le coût et la procédure ne sont donnés que pour le passeport auquel ils
+       * appartiennent. Sous un autre, on dit qu'on ne les a pas — c'est moins
+       * confortable et c'est la seule chose vraie.
+       */
+      /* La prose française n'est envoyée qu'à la page française : sur la page
+         anglaise, `p.fr` est nul et le passeport français passe par la même
+         branche que les autres. Un champ absent ne peut pas s'afficher. */
+      const detail = code === 'fr' && p.fr
+        ? `
+          <div class="bg-white p-4">
+            <dt class="font-display text-[0.68rem] font-semibold uppercase tracking-wider text-warm-light">${echappe(m.regle)}</dt>
+            <dd class="mt-1.5 text-[0.88rem] leading-relaxed text-ink-soft">${echappe(p.fr.duree)}</dd>
+          </div>
+          <div class="bg-white p-4">
+            <dt class="font-display text-[0.68rem] font-semibold uppercase tracking-wider text-warm-light">${echappe(m.cout)}</dt>
+            <dd class="mt-1.5 text-[0.88rem] leading-relaxed text-ink-soft">${echappe(p.fr.cout)}</dd>
+          </div>
+          <div class="bg-white p-4 sm:col-span-2">
+            <dt class="font-display text-[0.68rem] font-semibold uppercase tracking-wider text-warm-light">${echappe(m.procedure)}</dt>
+            <dd class="mt-1.5 text-[0.88rem] leading-relaxed text-ink-soft">${echappe(p.fr.procedure)}</dd>
+          </div>`
+        : `
+          <div class="bg-white p-4">
+            <dt class="font-display text-[0.68rem] font-semibold uppercase tracking-wider text-warm-light">${echappe(m.regle)}</dt>
+            <dd class="mt-1.5 text-[0.88rem] leading-relaxed text-ink-soft">${echappe(r.resume)}</dd>
+          </div>
+          <div class="bg-white p-4">
+            <dt class="font-display text-[0.68rem] font-semibold uppercase tracking-wider text-warm-light">${echappe(m.horsFr)}</dt>
+            <dd class="mt-1.5 text-[0.88rem] leading-relaxed text-ink-soft">${echappe(code === 'fr' && m.horsFrTexteFr ? m.horsFrTexteFr : m.horsFrTexte)}${code === 'fr' && m.horsFrTexteFr ? ` <a href="/ai-je-besoin-d-un-visa" hreflang="fr" lang="fr" class="text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">Version française ↗</a>` : ''}</dd>
+          </div>`;
+
+      const alerte = p.premiereDemarche && code === 'fr' && p.fr
+        ? `<p class="mt-4 text-[0.86rem] leading-relaxed text-warm">${m.demarche(echappe(p.nom), p.premiereDemarche)} <a href="/checklist-depart" class="text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">Voir le calendrier daté</a>.</p>`
         : '';
 
       sortie.innerHTML = `
         <div class="rounded-brand border-l-[3px] ${couleurs.bord} ${couleurs.fond} px-5 py-4">
-          <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] ${couleurs.texte}">${echappe(p.nom)} · ${jours} jours</p>
+          <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] ${couleurs.texte}">${echappe(p.nom)} · ${echappe(m.pas(jours))}</p>
           <p class="mt-2 font-display text-[1.1rem] font-bold leading-snug text-ink">${echappe(verdict.titre)}</p>
           <p class="mt-1.5 text-[0.92rem] leading-relaxed text-ink-soft">${echappe(verdict.detail)}</p>
         </div>
 
+        ${bascule}
+
         <dl class="mt-5 grid gap-px overflow-hidden rounded-brand border border-line bg-line sm:grid-cols-2">
-          <div class="bg-white p-4">
-            <dt class="font-display text-[0.68rem] font-semibold uppercase tracking-wider text-warm-light">La règle, telle qu'elle est publiée</dt>
-            <dd class="mt-1.5 text-[0.88rem] leading-relaxed text-ink-soft">${echappe(p.duree)}</dd>
-          </div>
-          <div class="bg-white p-4">
-            <dt class="font-display text-[0.68rem] font-semibold uppercase tracking-wider text-warm-light">Coût officiel</dt>
-            <dd class="mt-1.5 text-[0.88rem] leading-relaxed text-ink-soft">${echappe(p.cout)}</dd>
-          </div>
-          <div class="bg-white p-4 sm:col-span-2">
-            <dt class="font-display text-[0.68rem] font-semibold uppercase tracking-wider text-warm-light">Procédure et pièges</dt>
-            <dd class="mt-1.5 text-[0.88rem] leading-relaxed text-ink-soft">${echappe(p.procedure)}</dd>
-          </div>
+          ${detail}
         </dl>
 
         ${alerte}
 
         <p class="mt-5 border-t border-line pt-4 text-[0.8rem] leading-relaxed text-warm">
-          Vérifié en ${mois(p.verifieLe)} · ${sources}
+          ${echappe(m.verifie)} ${mois(r.verifieLe)} · ${source}
         </p>
         <p class="mt-2 text-[0.8rem] leading-relaxed text-warm-light">
-          Cet outil compare une durée à une règle. Il ne remplace pas la décision de
-          l'autorité du pays, seule à décider d'une entrée — et une règle peut changer
-          entre cette vérification et votre départ.
-          <a href="/${p.slug}" class="text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">Voir la fiche ${echappe(p.nom)}</a>.
+          ${echappe(m.avertissement)}
+          <a href="${prefixe}/${p.slug}" class="text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">${echappe(m.fiche(p.nom))}</a>.
         </p>
       `;
     }
 
+    selPp.addEventListener('change', rendre);
     selPays.addEventListener('change', rendre);
     inJours.addEventListener('input', rendre);
     rendre();
