@@ -1,4 +1,5 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { countries, PASSEPORTS, regleDuPasseport, passeportsCouverts } from '@/data/countries';
 import { site } from '@/data/site';
@@ -52,6 +53,20 @@ const schema = [
       'traveller’s own government and dated.',
   },
 ];
+
+/**
+ * Les deux entrées n'apparaissent que si elles mènent quelque part.
+ *
+ * Même règle que dans l'en-tête et le pied de page. Les vingt-neuf textes
+ * anglais sont écrits mais programmés : proposer « Guides » aujourd'hui
+ * conduirait à une liste vide, sur la page qui sert de première impression à
+ * tout un marché.
+ */
+const aujourdhui = new Date();
+const paru = (c: { data: { draft: boolean; pubDate: Date } }[]) =>
+  c.some((e) => !e.data.draft && e.data.pubDate <= aujourdhui);
+const guides = paru(await getCollection('guidesEn'));
+const articles = paru(await getCollection('blogEn'));
 ---
 
 <BaseLayout
@@ -157,29 +172,73 @@ const schema = [
     </section>
 
     <section class="mt-16">
+      <h2 class="text-display">Where to start</h2>
+      <div class="mt-8 grid gap-4 sm:grid-cols-2">
+        <a href="/en/do-i-need-a-visa" class="card p-6 transition-colors hover:border-teal">
+          <p class="eyebrow">Tool</p>
+          <p class="mt-2 font-display text-[1.08rem] font-bold text-ink">Do I need a visa?</p>
+          <p class="mt-1.5 text-[0.9rem] leading-relaxed text-warm">
+            Your passport, your destination and how long you are staying — the rule as published,
+            with its source and date.
+          </p>
+        </a>
+        {guides && (
+          <a href="/en/guides" class="card p-6 transition-colors hover:border-teal">
+            <p class="eyebrow">Guides</p>
+            <p class="mt-2 font-display text-[1.08rem] font-bold text-ink">What a trip costs, and when to go</p>
+            <p class="mt-1.5 text-[0.9rem] leading-relaxed text-warm">
+              Budget, season, transport, accommodation and the mistakes that cost the most.
+            </p>
+          </a>
+        )}
+        {articles && (
+          <a href="/en/blog" class="card p-6 transition-colors hover:border-teal">
+            <p class="eyebrow">Articles</p>
+            <p class="mt-2 font-display text-[1.08rem] font-bold text-ink">Itineraries, districts, fares</p>
+            <p class="mt-1.5 text-[0.9rem] leading-relaxed text-warm">
+              Operator fare tables, real journey times, and which district to sleep in.
+            </p>
+          </a>
+        )}
+        <a href="/en/updates" class="card p-6 transition-colors hover:border-teal">
+          <p class="eyebrow">Corrections</p>
+          <p class="mt-2 font-display text-[1.08rem] font-bold text-ink">What we got wrong</p>
+          <p class="mt-1.5 text-[0.9rem] leading-relaxed text-warm">
+            Every correction since launch, with the wording that was wrong kept in place.
+          </p>
+        </a>
+      </div>
+    </section>
+
+    <section class="mt-16">
       <h2 class="text-display">What this site is, in one paragraph</h2>
       <div class="prose-au mt-6">
         <p>
-          A French-language travel guide to nine Asian countries, written from official sources.
-          Every entry rule carries the month it was checked and a link to the government page it
-          came from. When one changes, the correction is published with the old wording next to
-          the new one — <a href={`${site.url}/mises-a-jour`}>the log is public</a>.
+          A travel guide to nine Asian countries, written from official sources, published in
+          French and in English. Every entry rule carries the month it was checked and a link to
+          the government page it came from. When one changes, the correction is published with
+          the old wording next to the new one — <a href="/en/updates">the log is public</a>.
         </p>
         <p>
-          The English version is being built. This page exists because the part that travels
-          best across languages — the rules themselves — is ready now, while the nine country
-          guides are still being written rather than machine-translated.
+          The English version is not a machine translation of the French one, and it is
+          deliberately shorter. Four French guides have no English version and will not have one:
+          they document French insurance contracts, French bank cards and French passport-renewal
+          timings. They are out of scope for an English reader rather than late in translation.
+          What is here travels across languages without deforming — rules, fares, distances,
+          seasons.
         </p>
         <p>
           The data behind this table is open:
-          <a href={`${site.url}/donnees/visas.json`}>visas.json</a>, CC BY 4.0. There is also a
-          <a href={`${site.url}/llms.txt`}>llms.txt</a> for machines that read to answer.
+          <a href={`${site.url}/donnees/visas.json`}>visas.json</a>, CC BY 4.0, with each rule's
+          source and verification date, passport by passport. There is also a
+          <a href={`${site.url}/llms.txt`}>llms.txt</a> for machines that read to answer, and an
+          <a href="/en/rss.xml">English feed</a>.
         </p>
       </div>
     </section>
 
     <p class="mt-16 border-t border-line pt-6 text-[0.9rem] text-warm">
-      <a href="/" class="font-semibold text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">
+      <a href="/" class="font-semibold text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber" hreflang="fr" lang="fr">
         Lire ce site en français →
       </a>
     </p>

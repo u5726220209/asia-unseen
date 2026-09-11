@@ -299,6 +299,19 @@ const CAS = [
   },
 
   {
+    nom: 'un lien anglais vers le français ne dit pas sa langue',
+    script: 'verifier-config.mjs',
+    /* Le site propose délibérément des liens vers sa version française. Ce qui
+       ne va pas, c'est qu'ils ressemblent aux autres : un lecteur anglophone
+       clique, arrive sur une page qu'il ne lit pas, et conclut que la version
+       anglaise est un décor posé sur un site français. */
+    muter: {
+      'dist/en/vietnam/index.html': remplacer(/ hreflang="fr" lang="fr"/, ''),
+    },
+    attendu: /sans le dire/,
+  },
+
+  {
     nom: 'une date française apparaît sur une page anglaise',
     script: 'verifier-config.mjs',
     /* Le défaut ne vient pas d'un texte oublié mais d'un gabarit : un composant

@@ -661,6 +661,61 @@ if (defautsLangue.length) {
 }
 
 /**
+ * Un lien vers une page française, depuis une page anglaise, doit le dire.
+ *
+ * Le site en propose délibérément — « lire cette fiche en français », le
+ * journal des corrections avant qu'il existe en anglais. Ils sont utiles. Ce
+ * qui ne l'est pas, c'est qu'ils ressemblent aux autres : un lecteur
+ * anglophone clique, arrive sur une page qu'il ne lit pas, et conclut que la
+ * version anglaise est un décor posé sur un site français.
+ *
+ * `lang="fr"` le dit au lecteur — le navigateur et les lecteurs d'écran
+ * changent de voix — et à ce contrôle. La convention existait déjà dans le
+ * pied de page ; elle n'était nulle part vérifiée, et dix liens l'ignoraient.
+ *
+ * Les cibles sans langue sont exclues : les données ouvertes, `llms.txt`, les
+ * images, les fichiers statiques. Un JSON ne se lit pas dans une langue.
+ */
+const liensNonMarques = [];
+if (existsSync('dist/en')) {
+  const NEUTRES = /^\/(donnees|og|brand|favicon|telechargements|_astro|pagefind|llms)/;
+  const pagesEn = [];
+  const parcourirEn = (d) => {
+    for (const e of readdirSync(d, { withFileTypes: true })) {
+      const p = `${d}/${e.name}`;
+      if (e.isDirectory()) parcourirEn(p);
+      else if (e.name === 'index.html') pagesEn.push(p);
+    }
+  };
+  parcourirEn('dist/en');
+
+  for (const f of pagesEn) {
+    const url = f.replace(/^dist/, '').replace(/\/index\.html$/, '');
+    const html = readFileSync(f, 'utf8');
+    for (const m of html.matchAll(/<a\b([^>]*)>/g)) {
+      const attrs = m[1];
+      const href = attrs.match(/href="([^"]*)"/)?.[1];
+      if (!href || !href.startsWith('/')) continue;
+      if (href === '/en' || href.startsWith('/en/')) continue;
+      if (NEUTRES.test(href)) continue;
+      if (/lang="fr"/.test(attrs)) continue;
+      liensNonMarques.push({ page: url, cible: href });
+    }
+  }
+}
+
+if (liensNonMarques.length) {
+  const vus = new Set();
+  const uniques = liensNonMarques.filter((l) => !vus.has(l.page + l.cible) && vus.add(l.page + l.cible));
+  console.log(`⛔ ${uniques.length} lien(s) vers une page française sans le dire :\n`);
+  for (const l of uniques.slice(0, 12)) console.log(`   ${l.page.padEnd(32)} → ${l.cible}`);
+  console.log('\n   Ajoutez hreflang="fr" lang="fr" : le lecteur sait où il va, et le');
+  console.log('   lecteur d\'écran change de voix au lieu de lire du français à l\'anglaise.\n');
+} else if (existsSync('dist/en')) {
+  console.log('✓ Chaque lien anglais vers une page française annonce sa langue.\n');
+}
+
+/**
  * Le journal anglais ne doit pas prendre de retard sur le français.
  *
  * La page anglaise affiche « {n} corrections published » et les liste toutes.
@@ -1036,5 +1091,5 @@ process.exit(
   tarifsNonSuivis.length || defautsMachine.length || fautesArticle.length ||
   reglesIncoherentes.length || defautsLangue.length || francaisEnAnglais.length ||
   nonClasses.length || muettes.length || originesFantomes.length ||
-  llmsMuet.length || journalEnRetard.length ? 1 : 0,
+  llmsMuet.length || journalEnRetard.length || liensNonMarques.length ? 1 : 0,
 );
