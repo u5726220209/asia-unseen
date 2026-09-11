@@ -53,6 +53,7 @@ export const classement: Classement[] = [
   { slug: 'taxi-aeroport-asie-tarifs', collection: 'blog', verdict: 'traduire', raison: 'Une grille tarifaire d’exploitant d’aéroport, publique et universelle.' },
   { slug: 'train-chine-reservation-15-jours', collection: 'blog', verdict: 'traduire', raison: 'La fenêtre de quinze jours s’applique à tous les passeports étrangers.' },
   { slug: 'train-coree-changements-septembre-2026', collection: 'blog', verdict: 'traduire', raison: 'Un site de réservation qui déménage concerne tout le monde.' },
+  { slug: 'train-laos-vientiane-luang-prabang', collection: 'blog', verdict: 'traduire', raison: "La ligne, l'application et la fenêtre de sept jours sont les mêmes pour tous les passeports." },
   { slug: 'train-hanoi-saigon', collection: 'blog', verdict: 'traduire', raison: 'Les horaires et les classes sont ceux de l’opérateur.' },
   { slug: 'trois-semaines-asie-sud-est', collection: 'blog', verdict: 'traduire', raison: 'Un itinéraire ; les formalités citées deviennent « selon votre passeport ».' },
   { slug: 'voyager-en-asie-avec-enfants', collection: 'blog', verdict: 'traduire', raison: 'Les contraintes d’âge et de rythme sont universelles.' },
