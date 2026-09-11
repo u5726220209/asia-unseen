@@ -1,0 +1,84 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ArticleCard from '@/components/ArticleCard.astro';
+
+/**
+ * La liste des articles anglais.
+ *
+ * Elle manquait, et son absence était invisible : les vingt-deux articles
+ * existaient, chacun correct, chacun construit, et aucun chemin du site n'y
+ * menait. Un lecteur anglophone arrivé sur une fiche pays n'avait aucun moyen
+ * de découvrir qu'il y avait autre chose à lire — seuls un moteur de recherche
+ * ou le plan du site pouvaient l'y conduire, c'est-à-dire personne.
+ *
+ * Elle ne déclare pas de jumelle française. `/blog` n'est pas sa traduction :
+ * la liste française contient les quarante et un articles, dont dix-neuf que
+ * l'anglais n'aura jamais parce qu'ils ne traversent pas la langue — un
+ * comparatif d'assurances vendues en France reste faux en anglais quelle que
+ * soit la qualité de la traduction. Déclarer ces deux pages jumelles dirait à
+ * Google une chose fausse.
+ */
+const aujourdhui = new Date();
+const articles = (await getCollection('blogEn'))
+  .filter((a) => !a.data.draft && a.data.pubDate <= aujourdhui)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const LABELS: Record<string, string> = {
+  recit: 'Story', pratique: 'Practical', itineraire: 'Itinerary', argent: 'Money',
+};
+
+const [featured, ...rest] = articles;
+---
+
+<BaseLayout
+  title="Practical articles — travelling in Asia"
+  description="Entry rules, budgets, transport and accommodation across Asia: every fact checked against its official source, with the month it was read."
+>
+  <header class="border-b border-line bg-cream-warm">
+    <div class="wrap py-10 lg:py-14">
+      <p class="eyebrow"><a href="/en" class="hover:text-teal">Asia Unseen</a></p>
+      <h1 class="mt-5 max-w-3xl text-hero">The articles</h1>
+      <p class="mt-6 max-w-2xl text-[1.15rem] leading-relaxed text-warm">
+        Entry rules, budgets, transport, accommodation: what you have to decide before
+        you go, with the official source behind each claim and the date it was read.
+      </p>
+    </div>
+  </header>
+
+  <div class="wrap py-14">
+    {articles.length === 0 && (
+      <p class="py-20 text-center text-warm">
+        The first English articles are on their way. In the meantime, the
+        <a href="/en" class="link">country pages</a> give the entry rule for your passport.
+      </p>
+    )}
+
+    {featured && (
+      <div class="mb-14">
+        <ArticleCard
+          featured
+          langue="en"
+          href={`/en/blog/${featured.id}`}
+          title={featured.data.heading ?? featured.data.title}
+          accroche={featured.data.accroche}
+          date={featured.data.pubDate}
+          meta={`Latest · ${LABELS[featured.data.categorie]}`}
+        />
+      </div>
+    )}
+
+    <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {rest.map((a) => (
+        <ArticleCard
+          langue="en"
+          href={`/en/blog/${a.id}`}
+          title={a.data.heading ?? a.data.title}
+          accroche={a.data.accroche}
+          date={a.data.pubDate}
+          meta={LABELS[a.data.categorie]}
+        />
+      ))}
+    </div>
+  </div>
+</BaseLayout>

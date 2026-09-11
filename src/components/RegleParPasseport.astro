@@ -134,11 +134,20 @@ const dit = (r: NonNullable<ReturnType<typeof regleDuPasseport>>) =>
     <div class="au-pp-bloc px-5 py-5 sm:px-6" data-pp={l.code} hidden={l.code !== parDefaut}>
       <p class="font-display text-[1.15rem] font-bold text-ink">{dit(l.regle!)}</p>
       <p class="mt-2 text-[0.95rem] leading-relaxed text-ink-soft">{l.regle!.resume[langue]}</p>
+      {/*
+        La bannière de bascule. `T.changeLe` existait dans les deux langues et
+        n'était appelé nulle part : le gabarit réécrivait la phrase en français,
+        en dur, avec un format de date `fr-FR`. Sur la page anglaise, elle
+        annonçait « Cette règle change le 15 septembre 2026 » sous un sélecteur
+        anglais — une traduction écrite, disponible, et jamais affichée.
+      */}
       {l.regle!.sansVisaJoursApres && l.regle!.sansVisaJoursApres.date > jourISO && (
         <p class="mt-3 rounded-brand border-l-[3px] border-amber bg-amber-50 px-4 py-3 text-[0.9rem] leading-relaxed text-ink-soft">
-          Cette règle change le {new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${l.regle!.sansVisaJoursApres.date}T00:00:00`))} :
-          elle passera à <strong class="font-semibold text-ink">{l.regle!.sansVisaJoursApres.jours} jours</strong>.
-          C'est la date d'entrée sur le territoire qui décide.
+          {t.changeLe(
+            new Intl.DateTimeFormat(fmtDate, { day: 'numeric', month: 'long', year: 'numeric' })
+              .format(new Date(`${l.regle!.sansVisaJoursApres.date}T00:00:00`)),
+            l.regle!.sansVisaJoursApres.jours,
+          )}
         </p>
       )}
       <p class="mt-3 text-[0.82rem] text-warm">

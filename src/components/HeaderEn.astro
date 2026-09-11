@@ -2,6 +2,7 @@
 import Logo from './Logo.astro';
 import { countries } from '@/data/countries';
 import { contenuEn } from '@/data/countries.en';
+import { getCollection } from 'astro:content';
 
 /**
  * L'en-tête des pages anglaises.
@@ -19,6 +20,19 @@ import { contenuEn } from '@/data/countries.en';
  */
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const pays = countries.filter((c) => contenuEn[c.slug]);
+
+/**
+ * Y a-t-il au moins un article anglais paru ?
+ *
+ * L'entrée « Articles » n'apparaît que s'il y a des articles. Les vingt-deux
+ * textes sont écrits mais programmés : afficher le lien aujourd'hui mènerait
+ * à une liste vide, ce qui est exactement la promesse non tenue que cet
+ * en-tête a été écrit pour éviter. Il s'allongera tout seul le jour de la
+ * première parution.
+ */
+const aujourdhui = new Date();
+const articles = (await getCollection('blogEn'))
+  .some((a) => !a.data.draft && a.data.pubDate <= aujourdhui);
 
 /**
  * Le chemin français correspondant, pour le bouton de langue.
@@ -69,6 +83,15 @@ const versFrancais = jumelle ?? (path.replace(/^\/en(?=\/|$)/, '') || '/');
       >
         Entry rules
       </a>
+
+      {articles && (
+        <a
+          href="/en/blog"
+          class:list={['rounded-brand px-3 py-2 font-display text-[0.9rem] font-medium transition-colors hover:text-teal', path.startsWith('/en/blog') ? 'text-teal' : 'text-ink']}
+        >
+          Articles
+        </a>
+      )}
     </nav>
 
     <a
@@ -94,6 +117,7 @@ const versFrancais = jumelle ?? (path.replace(/^\/en(?=\/|$)/, '') || '/');
       >
         <option value="/en">Entry rules — all countries</option>
         {pays.map((c) => <option value={`/en/${c.slug}`} selected={path === `/en/${c.slug}`}>{c.nomEn}</option>)}
+        {articles && <option value="/en/blog" selected={path.startsWith('/en/blog')}>All articles</option>}
       </select>
     </div>
   </div>

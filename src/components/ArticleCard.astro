@@ -6,10 +6,19 @@ interface Props {
   date?: Date;
   meta?: string;
   featured?: boolean;
+  /**
+   * La langue de la date affichée.
+   *
+   * La carte formatait en `fr-FR` en dur, ce qui était juste tant qu'elle ne
+   * servait qu'au site français. Réutilisée telle quelle sur la liste
+   * anglaise, elle y aurait écrit « 12 octobre 2026 » sous un titre anglais —
+   * le genre de détail qui ne casse rien et qui fait douter du reste.
+   */
+  langue?: 'fr' | 'en';
 }
-const { href, title, accroche, date, meta, featured = false } = Astro.props;
+const { href, title, accroche, date, meta, featured = false, langue = 'fr' } = Astro.props;
 const dateStr = date
-  ? new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(date)
+  ? new Intl.DateTimeFormat(langue === 'en' ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(date)
   : null;
 ---
 

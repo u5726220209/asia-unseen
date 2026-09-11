@@ -727,6 +727,14 @@ if (existsSync('dist/en')) {
     // sélecteur anglais. Un contrôle qui ne cherche que ce qu'on a déjà trouvé
     // ne trouve jamais rien de nouveau, mais il empêche au moins le retour.
     /Royaume-Uni/, /États-Unis/, /Nouvelle-Zélande/, /Australie\b/,
+    // Une date en français. Le défaut ne vient pas d'un texte oublié mais d'un
+    // composant : la carte d'article formatait en `fr-FR` en dur, ce qui était
+    // juste tant qu'elle ne servait qu'au site français. Réutilisée sur la
+    // liste anglaise, elle a écrit « 1 septembre 2026 » sous des titres
+    // anglais — et les motifs ci-dessus, qui cherchent des phrases du site,
+    // l'ont laissée passer. Un gabarit non traduit ne ressemble pas à une
+    // phrase non traduite.
+    /\b\d{1,2} (?:janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre) \d{4}\b/,
   ];
   const pages = [];
   const parcourir = (d) => {

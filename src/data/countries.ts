@@ -103,6 +103,17 @@ export type Country = {
   saisonNote: string;
   visa: {
     resume: string;
+    /**
+     * Le même résumé, en anglais.
+     *
+     * La règle française est la seule qui ne vivait qu'en français : les huit
+     * autres passeports ont un `resume` bilingue depuis qu'un titre anglais a
+     * été surpris au-dessus d'une phrase française. Celle-ci était passée à
+     * travers, parce que `regleDuPasseport` recopiait le texte français dans
+     * le champ anglais — un défaut qui ne produit ni erreur ni page cassée,
+     * seulement une phrase française sous un sélecteur anglais.
+     */
+    resumeEn: string;
     duree: string;
     cout: string;
     procedure: string;
@@ -202,6 +213,7 @@ export const countries: Country[] = [
       "Le Vietnam fait 1 650 km du nord au sud : il n'y a pas une saison, il y en a trois. Nord (Hanoï, Sapa, Ha Long) : octobre à avril. Centre (Hoi An, Hué, Da Nang) : février à août, avec un pic de pluie en octobre-novembre. Sud (Saïgon, Mékong, Phu Quoc) : décembre à avril. Un itinéraire nord-sud en mars ou en avril reste le meilleur compromis.",
     visa: {
       resume: "Exemption de visa jusqu'à 45 jours pour les passeports français ; e-visa au-delà.",
+      resumeEn: "Visa-free for up to 45 days on a French passport; e-visa beyond that.",
       duree: "45 jours sans visa. E-visa jusqu'à 90 jours, entrées simples ou multiples. Ni l'exemption ni l'e-visa ne sont prolongeables sur place.",
       cout: "Gratuit sous exemption ; ≈ 25 USD (entrée simple) / 50 USD (entrées multiples) pour l'e-visa",
       procedure: "E-visa sur le portail officiel de l'immigration, réponse en 3 à 5 jours ouvrés. N'utilisez jamais les sites intermédiaires qui facturent 3 à 5 fois le tarif. Passeport valide 6 mois à la date d'entrée. Un enregistrement en ligne dans les 72 h précédant l'arrivée est demandé à l'aéroport de Hô Chi Minh-Ville.",
@@ -276,6 +288,7 @@ export const countries: Country[] = [
       "Novembre à mars : sec, respirable, c'est la haute saison et les prix suivent. Avril : 40 °C à Bangkok, mais c'est le mois de Songkran. Mai à octobre : mousson côté Andaman (Phuket, Krabi) — en revanche le golfe (Koh Samui, Koh Phangan) reste correct jusqu'en septembre et ne prend l'eau qu'en octobre-novembre. Les deux côtes n'ont pas la même saison : c'est la clé pour voyager hors des périodes chères.",
     visa: {
       resume: "Exemption de visa pour les séjours touristiques : 60 jours pour une entrée jusqu'au 14 septembre 2026, 30 jours pour une entrée à partir du 15 septembre 2026.",
+      resumeEn: "Visa-free for tourism: 60 days entering up to 14 September 2026, 30 days entering from 15 September 2026.",
       duree: "60 jours sans visa pour une entrée jusqu'au 14 septembre 2026 ; 30 jours pour une entrée à partir du 15 septembre 2026. C'est la date d'entrée sur le territoire qui fixe la durée, pas la date de sortie : une arrivée le 14 septembre garde ses 60 jours jusqu'à leur terme. Une extension unique pouvant aller jusqu'à 30 jours se demande sur place, auprès d'un bureau de l'immigration.",
       cout: "Gratuit à l'entrée ; ≈ 1 900 THB pour une prolongation sur place",
       procedure: "La Thailand Digital Arrival Card (TDAC) est obligatoire depuis le 1er mai 2025 pour toute entrée par air, terre ou mer : à remplir en ligne dans les 3 jours précédant l'arrivée sur tdac.immigration.go.th — gratuitement, les sites qui la facturent sont des intermédiaires. Passeport valide 6 mois à compter de la date d'entrée. Un billet de sortie du territoire peut être réclamé à l'embarquement.",
@@ -346,6 +359,7 @@ export const countries: Country[] = [
       "Avril (sakura) et novembre (érables) sont sublimes — et pleins. Mai et début juin : le meilleur compromis météo/affluence/prix. Mi-juin à mi-juillet : tsuyu, la saison des pluies. Juillet-août : 35 °C et 80 % d'humidité à Tokyo, mais c'est la saison des festivals et le seul moment pour les Alpes japonaises. Janvier-février : Hokkaido pour la neige, le reste du pays est froid mais très praticable et bon marché.",
     visa: {
       resume: "Pas de visa pour un séjour touristique de courte durée avec un passeport français.",
+      resumeEn: "No visa for a short tourist stay on a French passport.",
       duree: "Jusqu'à 90 jours sans visa, sans démarche préalable.",
       cout: "Gratuit",
       procedure: "Une déclaration douanière et d'immigration en ligne (Visit Japan Web) accélère considérablement le passage à l'aéroport. Faites-la la veille du départ.",
@@ -415,6 +429,7 @@ export const countries: Country[] = [
       "Avril-mai et septembre-octobre, sans hésiter. Évitez la « semaine d'or » du 1er au 7 octobre : le pays entier est en déplacement. L'été est étouffant à Pékin et Shanghai, l'hiver mordant au nord. Le Yunnan et le Guangxi, au sud, restent agréables une bonne partie de l'année.",
     visa: {
       resume: "Exemption de visa de 30 jours pour les passeports français ordinaires, en vigueur jusqu'au 31 décembre 2026. Le dispositif est reconduit d'année en année : à revérifier avant chaque départ.",
+      resumeEn: "30-day visa waiver for ordinary French passports, in force until 31 December 2026. The scheme is renewed year by year: check again before each departure.",
       duree: "30 jours sans visa, pour le tourisme, les affaires, les visites familiales, les échanges culturels et le transit. Non prolongeable sur place. Visa L classique au-delà de 30 jours.",
       cout: "Gratuit sous exemption ; 45 € de frais consulaires pour un visa L à entrée simple — tarif réduit prolongé jusqu'au 31 décembre 2026 —, plus les frais de service du centre de dépôt, soit environ 110 € au total",
       procedure: "Passeport valide 6 mois après la date de sortie du territoire. Les passeports d'urgence sont exclus du dispositif. Enregistrement obligatoire auprès de la police locale dans les 24 h suivant l'arrivée — l'hôtel s'en charge, mais pas une location entre particuliers. Pour un visa L : dépôt en centre avec biométrie, 4 à 10 jours ouvrés.",
@@ -493,6 +508,7 @@ export const countries: Country[] = [
       "Novembre à février : sec et frais, c'est la fenêtre. Mars-avril : la saison des brûlis noie le nord du pays dans une brume épaisse — Luang Prabang perd une bonne partie de son intérêt. Mai à octobre : pluies, mais aussi rizières vert fluo et cascades pleines.",
     visa: {
       resume: "Visa touristique obtenu à l'arrivée ou en ligne, formalité simple.",
+      resumeEn: "Tourist visa obtained on arrival or online — a simple formality.",
       duree: "30 jours, prolongeable sur place.",
       cout: "≈ 30 à 50 USD selon la nationalité et le point d'entrée ; prolongation à 2 USD par jour à Vientiane",
       procedure: "E-visa en ligne pour éviter la file, ou visa à l'arrivée aux principaux postes frontières. Attention : les points de passage terrestres délivrant un visa à l'arrivée ou acceptant l'e-visa sont limités — vérifiez le vôtre avant de vous y présenter. Exigez le tampon d'entrée sur votre passeport : son absence est sanctionnée d'au moins 200 USD. Prévoyez une photo d'identité et des dollars en espèces en bon état.",
@@ -561,6 +577,7 @@ export const countries: Country[] = [
       "Novembre à mars : sec, chaud, agréable. Avril-mai : la chaleur devient difficile, surtout sur les temples sans ombre. Juin à octobre : la mousson, mais aussi le meilleur moment pour Angkor — douves pleines, lumière verte, groupes divisés par trois.",
     visa: {
       resume: "E-visa touristique en ligne ou visa à l'arrivée.",
+      resumeEn: "Tourist e-visa online, or a visa on arrival.",
       duree: '30 jours.',
       cout: '≈ 36 USD (e-visa, frais de service inclus) ; ≈ 40 USD en espèces aux postes-frontières terrestres',
       procedure: "Demandez uniquement sur le portail gouvernemental officiel — les sites clones facturant 80 à 100 USD sont nombreux et bien référencés. L'application « Cambodia e-arrival » est obligatoire depuis le 1er septembre 2024 pour toute arrivée par avion. Une assurance couvrant hospitalisation et rapatriement est exigée. Visa touristique prolongeable une fois d'un mois.",
@@ -631,6 +648,7 @@ export const countries: Country[] = [
       "Avril à juin et septembre à octobre : les deux fenêtres évidentes. Juillet-août : chaleur lourde et jangma, la saison des pluies. Décembre à février : très froid mais lumineux, et la saison de ski est correcte. L'automne coréen, en octobre, est l'un des plus beaux d'Asie.",
     visa: {
       resume: "Pas de visa pour un séjour touristique court. L'autorisation électronique K-ETA est actuellement suspendue pour les ressortissants français.",
+      resumeEn: "No visa for a short tourist stay. The K-ETA electronic authorisation is currently suspended for French nationals.",
       duree: "Jusqu'à 90 jours sans visa. Exemption de K-ETA prolongée jusqu'au 31 décembre 2026 par un avis du 20 mars 2026.",
       cout: "Gratuit — le K-ETA n'étant pas exigé. Le demander volontairement coûte 10 000 wons, non remboursables.",
       procedure: "Le K-ETA n'est pas exigé sur cette période, mais reste facultatif : le demander dispense de remplir la carte d'arrivée à l'atterrissage. Sans K-ETA, la carte d'arrivée électronique est à compléter avant l'entrée. L'exemption prend fin le 31 décembre 2026 : revérifiez pour tout voyage en 2027.",
@@ -699,6 +717,7 @@ export const countries: Country[] = [
       "Avril à octobre pour Bali, Java, Lombok et Komodo : c'est la saison sèche. Novembre à mars : pluies quotidiennes, souvent brèves, et prix en baisse. Attention, Sumatra et les Moluques ont un calendrier différent — l'archipel fait 5 000 km de large.",
     visa: {
       resume: "Visa à l'arrivée électronique (e-VOA) ou à un guichet dédié.",
+      resumeEn: "Electronic visa on arrival (e-VOA), or at a dedicated counter.",
       duree: "30 jours, prolongeable une fois de 30 jours.",
       cout: '≈ 500 000 IDR (≈ 30 €), plus 150 000 IDR (≈ 7,50 €) de taxe touristique à Bali',
       procedure: "L'e-VOA se demande en ligne quelques jours avant le départ et évite une file d'attente réelle à Denpasar. Le formulaire douanier « All Indonesia » se remplit dans les 72 h précédant l'arrivée. Un billet de sortie du territoire est exigé, et le passeport doit être en excellent état — un document abîmé entraîne un refus d'entrée.",
@@ -770,6 +789,7 @@ export const countries: Country[] = [
       "Décembre à avril : sec, c'est la saison. Juin à novembre : mousson et surtout saison des typhons, qui touchent principalement le nord et l'est de l'archipel. Le sud (Palawan, Siargao) reste plus praticable, mais les annulations de vols intérieurs sont fréquentes de juillet à octobre.",
     visa: {
       resume: "Pas de visa pour un séjour touristique court avec un passeport français.",
+      resumeEn: "No visa for a short tourist stay on a French passport.",
       duree: "30 jours à l'entrée, prolongeables de 29 jours supplémentaires auprès du Bureau of Immigration, soit 59 jours au total.",
       cout: "Gratuit à l'entrée ; ≈ 3 030 PHP pour la prolongation sur place",
       procedure: "Un billet de sortie ou de continuation est exigé à l'embarquement. La carte eTravel est obligatoire : remplissez-la 72 h avant le départ, le QR code généré est réclamé par la compagnie et à l'arrivée. Une taxe d'aéroport peut s'ajouter si elle n'est pas incluse dans le billet.",
@@ -867,7 +887,7 @@ export function regleDuPasseport(c: Country, p: Passeport): RegleEntree | null {
     return {
       sansVisaJours: c.visa.sansVisaJours,
       sansVisaJoursApres: c.visa.sansVisaJoursApres,
-      resume: { fr: c.visa.resume, en: c.visa.resume },
+      resume: { fr: c.visa.resume, en: c.visa.resumeEn },
       source: c.sourcesVisa[0] ?? { label: 'France Diplomatie', url: '' },
       verifieLe: c.verifieLe,
     };

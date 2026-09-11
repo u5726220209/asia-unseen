@@ -213,6 +213,20 @@ const CAS = [
   },
 
   {
+    nom: 'une date française apparaît sur une page anglaise',
+    script: 'verifier-config.mjs',
+    /* Le défaut ne vient pas d'un texte oublié mais d'un gabarit : un composant
+       qui formate en `fr-FR` en dur et qu'on réutilise côté anglais. Les motifs
+       du contrôle précédent cherchent des phrases du site et laissaient donc
+       passer « 1 septembre 2026 ». En le cherchant, on a trouvé deux fiches
+       pays qui affichaient des phrases entières en français. */
+    muter: {
+      'dist/en/vietnam/index.html': remplacer(/Checked in /, 'Relevé le 3 septembre 2026 — '),
+    },
+    attendu: /3 septembre 2026/,
+  },
+
+  {
     nom: 'du français reste sur une page anglaise',
     script: 'verifier-config.mjs',
     // Une page à moitié traduite fait douter de ses chiffres, qui sont justes.
