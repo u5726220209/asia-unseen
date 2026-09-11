@@ -30,21 +30,40 @@ const programme = execFileSync('node', ['scripts/programme.mjs'], { encoding: 'u
 
 /* ── 2. Où le site est mince ─────────────────────────────────────── */
 
-const articles = [];
-for (const dossier of ['src/content/blog', 'src/content/guides']) {
-  for (const f of readdirSync(dossier).filter((f) => f.endsWith('.md'))) {
-    const md = readFileSync(`${dossier}/${f}`, 'utf8');
-    const entete = md.slice(0, md.indexOf('\n---', 4));
-    if (/^draft:\s*true/m.test(entete)) continue;
-    articles.push({
-      fichier: `${dossier}/${f}`,
-      titre: entete.match(/^title:\s*['"]?(.+?)['"]?\s*$/m)?.[1] ?? f,
-      pays: (entete.match(/^pays:\s*\[(.*)\]/m)?.[1] ?? '')
-        .split(',').map((p) => p.trim().replace(/['"]/g, '')).filter(Boolean),
-      mots: md.split(/\s+/).length,
-    });
+/**
+ * Deux langues, deux comptes séparés.
+ *
+ * Ce relevé ne lisait que le français. Mélanger les deux aurait été pire que
+ * l'ignorer : un pays couvert par trois articles anglais et un français
+ * serait apparu comme profond, et la recommandation du lundi aurait été
+ * fausse dans les deux sens — rien à écrire côté français, où il manque tout,
+ * et rien à écrire côté anglais, où il manque tout aussi.
+ *
+ * Ce sont deux surfaces de recherche distinctes. Un article anglais ne
+ * classe pas une page française, et l'inverse est tout aussi vrai.
+ */
+const lire = (dossiers) => {
+  const out = [];
+  for (const dossier of dossiers) {
+    if (!existsSync(dossier)) continue;
+    for (const f of readdirSync(dossier).filter((f) => f.endsWith('.md'))) {
+      const md = readFileSync(`${dossier}/${f}`, 'utf8');
+      const entete = md.slice(0, md.indexOf('\n---', 4));
+      if (/^draft:\s*true/m.test(entete)) continue;
+      out.push({
+        fichier: `${dossier}/${f}`,
+        titre: entete.match(/^title:\s*['"]?(.+?)['"]?\s*$/m)?.[1] ?? f,
+        pays: (entete.match(/^pays:\s*\[(.*)\]/m)?.[1] ?? '')
+          .split(',').map((p) => p.trim().replace(/['"]/g, '')).filter(Boolean),
+        mots: md.split(/\s+/).length,
+      });
+    }
   }
-}
+  return out;
+};
+
+const articles = lire(['src/content/blog', 'src/content/guides']);
+const articlesEn = lire(['src/content/blog-en', 'src/content/guides-en']);
 
 /**
  * Compter tous les articles qui mentionnent un pays donne une image fausse :
@@ -53,13 +72,17 @@ for (const dossier of ['src/content/blog', 'src/content/guides']) {
  * la Corée est le sujet. On sépare donc les deux — un article portant sur au
  * plus deux pays traite d'eux ; au-delà, c'est un guide transversal.
  */
-const couverture = pays
-  .map((p) => ({
-    pays: p,
-    dedies: articles.filter((a) => a.pays.includes(p) && a.pays.length <= 2).length,
-    transversaux: articles.filter((a) => a.pays.includes(p) && a.pays.length > 2).length,
-  }))
-  .sort((a, b) => a.dedies - b.dedies);
+const couvertureDe = (corpus) =>
+  pays
+    .map((p) => ({
+      pays: p,
+      dedies: corpus.filter((a) => a.pays.includes(p) && a.pays.length <= 2).length,
+      transversaux: corpus.filter((a) => a.pays.includes(p) && a.pays.length > 2).length,
+    }))
+    .sort((a, b) => a.dedies - b.dedies);
+
+const couverture = couvertureDe(articles);
+const couvertureEn = couvertureDe(articlesEn);
 
 /* ── 3. Les pages que personne n'atteint ─────────────────────────── */
 
@@ -96,8 +119,17 @@ const lignes = [];
 lignes.push('## Ce qui part tout seul cette semaine', '', '```', programme.trim(), '```', '');
 
 lignes.push('## Où le site est mince', '');
-lignes.push('| Pays | Articles dédiés | Cités dans un guide |', '| --- | --- | --- |');
-for (const c of couverture) lignes.push(`| ${c.pays} | ${c.dedies} | ${c.transversaux} |`);
+lignes.push(
+  'Les deux colonnes de droite comptent à part : un article anglais ne classe',
+  'pas une page française, et inversement. Ce sont deux surfaces de recherche,',
+  'pas une seule vue deux fois.',
+  '',
+);
+lignes.push('| Pays | Dédiés (fr) | Dédiés (en) | Cités dans un guide (fr) |', '| --- | --- | --- | --- |');
+for (const c of couverture) {
+  const en = couvertureEn.find((x) => x.pays === c.pays)?.dedies ?? 0;
+  lignes.push(`| ${c.pays} | ${c.dedies} | ${en} | ${c.transversaux} |`);
+}
 const maigres = couverture.filter((c) => c.dedies <= 1);
 lignes.push('');
 if (maigres.length) {
@@ -111,6 +143,20 @@ if (maigres.length) {
   );
 } else {
   lignes.push('Chaque pays a au moins deux articles qui lui sont consacrés.', '');
+}
+
+const maigresEn = couvertureEn.filter((c) => c.dedies <= 1);
+if (maigresEn.length) {
+  lignes.push(
+    `**Côté anglais, ${maigresEn.length} pays n'ont qu'un texte dédié ou aucun** : ${maigresEn.map((m) => m.pays).join(', ')}.`,
+    '',
+    "La version anglaise ne peut plus s'épaissir par traduction : tout ce qui",
+    'traverse la langue est traduit. Ce qui manque désormais demande des textes',
+    'écrits en anglais pour un lecteur anglophone — pas des traductions en attente.',
+    '',
+  );
+} else {
+  lignes.push('Chaque pays a au moins deux textes anglais qui lui sont consacrés.', '');
 }
 
 lignes.push('## Pages sans lien entrant', '');
