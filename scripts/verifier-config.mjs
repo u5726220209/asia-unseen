@@ -673,6 +673,44 @@ if (francaisEnAnglais.length) {
   console.log('✓ Aucune page anglaise ne laisse traîner du français.\n');
 }
 
+/**
+ * Chaque texte doit avoir un verdict de traduction.
+ *
+ * Tous ne se traduisent pas : un comparatif d'assurances françaises rendu en
+ * anglais est irréprochable et parfaitement inutile, puisque ces contrats ne
+ * sont pas vendus au lecteur. La distinction est écrite dans
+ * `src/data/traduction.ts`, avec sa raison.
+ *
+ * Sans ce contrôle, un article écrit dans six mois n'y figurerait pas, et
+ * personne ne saurait s'il attend d'être traduit ou s'il ne doit pas l'être.
+ * Le classement deviendrait un document d'archive plutôt qu'une décision.
+ */
+const nonClasses = [];
+{
+  const ts = readFileSync('src/data/traduction.ts', 'utf8');
+  const classes = new Set(
+    [...ts.matchAll(/\{ slug: '([^']+)', collection: '([^']+)'/g)].map((m) => `${m[2]}/${m[1]}`),
+  );
+  for (const dossier of ['blog', 'guides']) {
+    const chemin = `src/content/${dossier}`;
+    if (!existsSync(chemin)) continue;
+    for (const f of readdirSync(chemin).filter((f) => f.endsWith('.md') && !f.startsWith('_'))) {
+      const slug = f.replace(/\.md$/, '');
+      if (!classes.has(`${dossier}/${slug}`)) nonClasses.push(`${dossier}/${slug}`);
+    }
+  }
+}
+
+if (nonClasses.length) {
+  console.log(`⛔ ${nonClasses.length} texte(s) sans verdict de traduction :\n`);
+  for (const t of nonClasses) console.log(`   ${t}`);
+  console.log('\n   Inscrivez-le dans src/data/traduction.ts : « traduire » s\'il reste vrai');
+  console.log('   en anglais, « reecrire » s\'il demanderait d\'autres sources, « sans-objet »');
+  console.log('   si la règle par passeport le remplace. Avec la raison, en une phrase.\n');
+} else {
+  console.log('✓ Chaque texte porte un verdict de traduction.\n');
+}
+
 if (!tarifsNonSuivis.length) console.log("✓ Chaque tarif d'entrée publié est inscrit au registre.\n");
 
 if (tarifsNonSuivis.length) {
@@ -755,5 +793,6 @@ process.exit(
   jamaisEcrits.length || jamaisLus.length || defautsFormulaire.length ||
   ecartSources || visasIncoherents.length || correctionsNonFaites.length ||
   tarifsNonSuivis.length || defautsMachine.length || fautesArticle.length ||
-  reglesIncoherentes.length || defautsLangue.length || francaisEnAnglais.length ? 1 : 0,
+  reglesIncoherentes.length || defautsLangue.length || francaisEnAnglais.length ||
+  nonClasses.length ? 1 : 0,
 );

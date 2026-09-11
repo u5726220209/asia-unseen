@@ -1,0 +1,121 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import FAQ from '@/components/FAQ.astro';
+import { site } from '@/data/site';
+
+/**
+ * Les articles anglais.
+ *
+ * Ils vivent dans leur propre collection, pas dans un champ `langue` de la
+ * collection française : toutes les pages et tous les flux existants itèrent
+ * sur `blog` en supposant du français, et le premier endroit oublié aurait
+ * publié un article anglais au milieu du site français.
+ *
+ * `traduitDe` relie l'article à son original. C'est ce qui permet aux deux de
+ * se déclarer l'un l'autre — et, le jour où l'original sera corrigé, de savoir
+ * quelle version anglaise revoir. Sans ce lien, le retard de traduction se
+ * compterait à la main, c'est-à-dire jamais.
+ */
+
+export const getStaticPaths = (async () => {
+  const articles = await getCollection('blogEn');
+  const aujourdhui = new Date();
+  return articles
+    .filter((a) => !a.data.draft && a.data.pubDate <= aujourdhui)
+    .map((a) => ({ params: { slug: a.id }, props: { entry: a } }));
+}) satisfies GetStaticPaths;
+
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+
+const dateEn = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+  .format(d.pubDate);
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: d.heading ?? d.title,
+    description: d.description,
+    inLanguage: 'en',
+    datePublished: d.pubDate.toISOString(),
+    dateModified: (d.updatedDate ?? d.pubDate).toISOString(),
+    author: { '@type': 'Person', name: site.author.name },
+    publisher: { '@id': `${site.url}/#organization` },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': `${site.url}/en/blog/${entry.id}` },
+    citation: d.sources.map((s) => ({ '@type': 'CreativeWork', name: s.label, url: s.url })),
+    license: 'https://creativecommons.org/licenses/by/4.0/',
+    isAccessibleForFree: true,
+  },
+  ...(d.faq.length
+    ? [{
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        inLanguage: 'en',
+        mainEntity: d.faq.map((f) => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.r },
+        })),
+      }]
+    : []),
+];
+---
+
+<BaseLayout title={d.title} description={d.description} type="article" publishedTime={d.pubDate} schema={schema}>
+  <article>
+    <header class="border-b border-line bg-cream-warm">
+      <div class="wrap-narrow py-10 lg:py-14">
+        <p class="eyebrow">
+          <a href="/en" class="hover:text-teal">Asia Unseen</a> · {dateEn}
+        </p>
+        <h1 class="mt-5 text-hero">{d.heading ?? d.title}</h1>
+        <p class="mt-6 text-[1.15rem] leading-relaxed text-warm">{d.accroche}</p>
+      </div>
+    </header>
+
+    <div class="wrap-narrow py-12">
+      <div class="prose-au">
+        <Content />
+      </div>
+
+      {d.faq.length > 0 && (
+        <div class="mt-14">
+          <FAQ items={d.faq.map((f) => ({ q: f.q, r: f.r }))} title="Common questions" />
+        </div>
+      )}
+
+      {d.sources.length > 0 && (
+        <section class="mt-14 rounded-brand border border-line bg-white px-6 py-5">
+          <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-warm-light">
+            Sources
+          </p>
+          <p class="mt-2 text-[0.88rem] leading-relaxed text-warm">
+            Rules and prices change without notice. Confirm at the official source before you book —
+            that is the only thing that counts.
+          </p>
+          <ul class="mt-3 flex flex-wrap gap-x-5 gap-y-1.5">
+            {d.sources.map((s) => (
+              <li>
+                <a href={s.url} target="_blank" rel="noopener nofollow" class="text-[0.85rem] font-medium text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">
+                  {s.label} ↗
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {d.traduitDe && (
+        <p class="mt-12 border-t border-line pt-6 text-[0.9rem] text-warm">
+          <a href={`/blog/${d.traduitDe}`} class="font-semibold text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber" hreflang="fr" lang="fr">
+            Lire cet article en français →
+          </a>
+        </p>
+      )}
+    </div>
+  </article>
+</BaseLayout>

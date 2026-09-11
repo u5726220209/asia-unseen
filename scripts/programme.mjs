@@ -9,7 +9,10 @@
 
 import { readdirSync, readFileSync } from 'node:fs';
 
-const DOSSIERS = ['src/content/blog', 'src/content/guides'];
+// Les articles anglais comptent comme les autres : un calendrier de parution
+// qui en ignorerait la moitié ferait croire la file vide un jour où elle ne
+// l'est pas.
+const DOSSIERS = ['src/content/blog', 'src/content/blog-en', 'src/content/guides'];
 // Un jour de calendrier, pas un instant : voir la note dans src/lib/articles.ts.
 const maintenant = new Date();
 const aujourdhui = `${maintenant.getFullYear()}-${String(maintenant.getMonth() + 1).padStart(2, '0')}-${String(maintenant.getDate()).padStart(2, '0')}`;

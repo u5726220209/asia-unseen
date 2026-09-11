@@ -78,4 +78,31 @@ const blog = defineCollection({
   }),
 });
 
-export const collections = { guides, blog };
+/**
+ * Les articles anglais.
+ *
+ * Une collection à part plutôt qu'un champ `langue` dans la collection
+ * française. La raison est pratique : toutes les pages, tous les flux et tous
+ * les contrôles existants itèrent sur `blog` en supposant du français. Ajouter
+ * une langue à l'intérieur aurait demandé de filtrer partout, et le premier
+ * endroit oublié aurait publié un article anglais au milieu du site français.
+ *
+ * Le schéma est le même, à un champ près : `traduitDe` dit de quel article
+ * français celui-ci vient. Il sert aux balises hreflang, et il rend visible ce
+ * qui n'est pas encore traduit — sans lui, le retard se compte à la main.
+ */
+const blogEn = defineCollection({
+  loader: glob({ base: './src/content/blog-en', pattern: '**/*.md' }),
+  schema: z.object({
+    ...seo,
+    accroche: z.string(),
+    categorie: z.enum(['recit', 'pratique', 'itineraire', 'argent']).default('pratique'),
+    pays: z.array(z.string()).default([]),
+    faq: z.array(z.object({ q: z.string(), r: z.string() })).default([]),
+    sources: z.array(z.object({ label: z.string(), url: z.string().url() })).default([]),
+    /** Le slug de l'article français dont celui-ci est la version anglaise. */
+    traduitDe: z.string().optional(),
+  }),
+});
+
+export const collections = { guides, blog, blogEn };
