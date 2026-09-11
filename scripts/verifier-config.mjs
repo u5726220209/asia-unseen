@@ -301,6 +301,15 @@ const tarifsNonSuivis = [];
  * contrôles ne préviennent donc pas une divergence de contenu, mais un
  * fichier absent, un lien mort ou un générateur cassé en silence.
  */
+/**
+ * Les passeports que le site déclare couvrir, lus dans les données plutôt
+ * qu'écrits ici : le jour où un dixième passeport est ajouté, ce contrôle
+ * l'exige des fichiers sans qu'on ait à s'en souvenir.
+ */
+const PASSEPORTS_ATTENDUS = [
+  ...readFileSync('src/data/countries.ts', 'utf8').matchAll(/\{ code: '([a-z]{2})', nom:/g),
+].map((m) => m[1]);
+
 const defautsMachine = [];
 if (existsSync('dist')) {
   const ts = readFileSync('src/data/countries.ts', 'utf8');
@@ -368,6 +377,45 @@ if (existsSync('dist')) {
           quoi: `/${slug}`,
           motif: `annonce « de ${annonce[1]} à ${annonce[2]} jours » là où la règle passe de ${attendu} à ${bascule[2]}`,
         });
+      }
+    }
+
+    /**
+     * Le fichier doit porter la règle de chaque passeport, relevée ou non.
+     *
+     * Il n'en connaissait qu'une : `joursSansVisa` figurait au premier niveau,
+     * sans dire à quel passeport il appartenait. Une machine qui lisait ce
+     * fichier pour répondre à « combien de jours au Vietnam » citait une durée
+     * française comme si elle valait pour tout le monde — l'erreur même que ce
+     * site existe pour empêcher, produite par le fichier qu'il publie pour
+     * être cité.
+     *
+     * Un passeport dont la règle n'est pas relevée doit l'être quand même, en
+     * le disant. Se taire sur lui le ferait passer pour un passeport sans
+     * règle, ce qui est une réponse fausse et non un silence.
+     */
+    const par = donnees.visa?.parPasseport;
+    if (!par) {
+      defautsMachine.push({
+        quoi: `/donnees/${slug}.json`,
+        motif: "ne donne la règle que d'un passeport, sans dire lequel",
+      });
+    } else {
+      for (const code of PASSEPORTS_ATTENDUS) {
+        const r = par[code];
+        if (!r) {
+          defautsMachine.push({ quoi: `/donnees/${slug}.json`, motif: `ne dit rien du passeport ${code}` });
+        } else if (r.releve && (typeof r.joursSansVisa !== 'number' || !r.source?.url || !r.verifieLe)) {
+          defautsMachine.push({
+            quoi: `/donnees/${slug}.json`,
+            motif: `la règle ${code} est déclarée relevée mais sans durée, source ou date`,
+          });
+        } else if (!r.releve && !r.pourquoi) {
+          defautsMachine.push({
+            quoi: `/donnees/${slug}.json`,
+            motif: `la règle ${code} manque, sans dire pourquoi`,
+          });
+        }
       }
     }
 

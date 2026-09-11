@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
-import { countries } from '@/data/countries';
+import { countries, PASSEPORTS, regleDuPasseport } from '@/data/countries';
 import { corrections } from '@/data/corrections';
 import { site } from '@/data/site';
 import { contenuEn } from '@/data/countries.en';
@@ -206,6 +206,44 @@ export const GET: APIRoute = async () => {
     for (const c of paysEn) {
       l.push(`- [${c.nomEn}](${site.url}/en/${c.slug}) — entry rules by passport, budget, season`);
     }
+    l.push('');
+
+    /*
+     * La table par passeport, en anglais.
+     *
+     * La table française du haut est correctement qualifiée « pour un
+     * passeport français ordinaire ». Elle ne répond donc pas à un modèle
+     * interrogé sur un passeport britannique ou canadien — et elle est
+     * pourtant la seule qu'il trouvait. Le site tient ces règles, avec leur
+     * source et leur date ; les taire ici revenait à le laisser répondre
+     * depuis la règle française, ce que la table dit justement de ne pas faire.
+     *
+     * Les passeports dont la règle n'est pas relevée sont listés comme tels,
+     * avec la raison. Une case vide se lit comme « pas de règle ».
+     */
+    const autres = PASSEPORTS.filter((p) => p.code !== 'fr');
+    l.push(`| Country | ${autres.map((p) => p.nomEn).join(' | ')} |`);
+    l.push(`| --- | ${autres.map(() => '---').join(' | ')} |`);
+    for (const c of paysEn) {
+      const cases = autres.map((p) => {
+        const r = regleDuPasseport(c, p.code);
+        if (!r) return 'not taken';
+        const base = r.sansVisaJours > 0 ? `${r.sansVisaJours} days visa-free` : 'visa required';
+        return r.sansVisaJoursApres
+          ? `${base}, then ${r.sansVisaJoursApres.jours} from ${r.sansVisaJoursApres.date}`
+          : base;
+      });
+      l.push(`| ${c.nomEn} | ${cases.join(' | ')} |`);
+    }
+    l.push('');
+    l.push(
+      '"not taken" means we have not read that rule at an official source, not that no rule ' +
+        'exists: three government portals refuse automated reading or publish no entry rules at ' +
+        'all. Rather than transpose a neighbouring passport\'s rule — which gets paid for at a ' +
+        'border — the country page sends the reader to the portal. Every rule above carries its ' +
+        `source and the month it was read in ${site.url}/donnees/<country>.json, under ` +
+        'visa.parPasseport.',
+    );
     l.push('');
     for (const g of guidesEn) {
       l.push(`- [${g.data.title}](${site.url}/en/guides/${g.id}) : ${g.data.description}`);

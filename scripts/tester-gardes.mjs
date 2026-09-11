@@ -255,6 +255,24 @@ const CAS = [
   },
 
   {
+    nom: 'un fichier de données oublie un passeport',
+    script: 'verifier-config.mjs',
+    /* Le fichier ne portait qu'une règle, sans dire de quel passeport. Une
+       machine qui l'ouvrait pour répondre à « combien de jours au Vietnam »
+       citait une durée française comme si elle valait pour tout le monde —
+       l'erreur même que ce site existe pour empêcher, produite par le fichier
+       qu'il publie pour être cité. */
+    muter: {
+      'dist/donnees/laos.json': (contenu) => {
+        const d = JSON.parse(contenu);
+        delete d.visa.parPasseport.gb;
+        return JSON.stringify(d, null, 2);
+      },
+    },
+    attendu: /ne dit rien du passeport gb/,
+  },
+
+  {
     nom: 'llms.txt ne dit pas qu\'il existe une version anglaise',
     script: 'verifier-config.mjs',
     /* Le fichier existe pour qu'un moteur génératif sache d'où vient une règle

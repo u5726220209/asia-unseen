@@ -1,4 +1,5 @@
-import type { Country } from '@/data/countries';
+import { PASSEPORTS, PORTAILS_NON_RELEVES, regleDuPasseport, type Country } from '@/data/countries';
+import { contenuEn } from '@/data/countries.en';
 import type { Correction } from '@/data/corrections';
 import { site } from '@/data/site';
 
@@ -19,9 +20,48 @@ export function ficheDuPays(c: Country, corrections: Correction[]) {
       .sort()
       .at(-1) ?? null;
 
+  /**
+   * La règle de chaque passeport, et non plus celle d'un seul.
+   *
+   * Le fichier ne connaissait que le passeport français. `joursSansVisa: 45`
+   * y figurait sans qualificatif, au premier niveau : une machine qui lisait
+   * ce fichier pour répondre à « combien de jours au Vietnam » citait une
+   * durée française comme si elle valait pour tout le monde. C'est exactement
+   * l'erreur que ce site existe pour empêcher, produite par le fichier qu'il
+   * publie pour être cité.
+   *
+   * Les passeports dont la règle n'est pas relevée sont déclarés eux aussi,
+   * avec la raison et le portail. Se taire sur eux les ferait passer pour des
+   * passeports sans règle — pire qu'un silence, une réponse fausse.
+   */
+  const parPasseport = Object.fromEntries(
+    PASSEPORTS.map((p) => {
+      const r = regleDuPasseport(c, p.code);
+      if (!r) {
+        const portail = PORTAILS_NON_RELEVES[p.code];
+        return [p.code, {
+          releve: false,
+          pourquoi: portail?.pourquoi.fr ?? 'règle non relevée',
+          source: portail ? { label: portail.nom, url: portail.url } : null,
+        }];
+      }
+      return [p.code, {
+        releve: true,
+        joursSansVisa: r.sansVisaJours,
+        resume: r.resume,
+        changeLe: r.sansVisaJoursApres
+          ? { date: r.sansVisaJoursApres.date, joursSansVisa: r.sansVisaJoursApres.jours }
+          : null,
+        source: { label: r.source.label, url: r.source.url },
+        verifieLe: r.verifieLe,
+      }];
+    }),
+  );
+
   return {
     slug: c.slug,
     nom: c.nom,
+    nomEn: c.nomEn,
     capitale: c.capitale,
     monnaie: c.monnaie,
     langue: c.langue,
@@ -45,6 +85,15 @@ export function ficheDuPays(c: Country, corrections: Correction[]) {
        */
       joursSansVisa: c.visa.sansVisaJours,
       /**
+       * Le passeport auquel s'appliquent les champs ci-dessus.
+       *
+       * Il était sous-entendu, ce qui revenait à ne pas le dire. Un champ
+       * `joursSansVisa` sans passeport se cite comme une règle universelle,
+       * et une règle d'entrée n'en est jamais une : elle existe pour un
+       * passeport, jamais dans l'absolu.
+       */
+      passeport: 'fr',
+      /**
        * Une règle déjà publiée dont la date d'effet est encore à venir.
        *
        * Absente la plupart du temps. Quand elle est là, `joursSansVisa` reste
@@ -57,6 +106,7 @@ export function ficheDuPays(c: Country, corrections: Correction[]) {
         : null,
       cout: c.visa.cout,
       procedure: c.visa.procedure,
+      parPasseport,
     },
     demarchesPrealables: c.demarches.map((d) => ({
       joursAvantDepart: d.jours,
@@ -74,6 +124,7 @@ export function ficheDuPays(c: Country, corrections: Correction[]) {
     verifieLe: c.verifieLe,
     derniereCorrection,
     page: `${site.url}/${c.slug}`,
+    pageEn: contenuEn[c.slug] ? `${site.url}/en/${c.slug}` : null,
     donnees: `${site.url}/donnees/${c.slug}.json`,
   };
 }

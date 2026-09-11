@@ -882,6 +882,39 @@ for (const c of countries) {
  * Rend `null` quand la règle n'a pas été vérifiée pour ce passeport. Un `null`
  * se rattrape à l'affichage ; une règle inventée se paie à une frontière.
  */
+/**
+ * Pourquoi la règle de certains passeports n'est pas relevée.
+ *
+ * Trois portails gouvernementaux sont illisibles : deux refusent la lecture
+ * automatisée, le troisième ne publie tout simplement pas de règles d'entrée.
+ * Plutôt que de transposer la règle d'un passeport voisin — ce qui se paierait
+ * à une frontière — on dit que nous ne l'avons pas, et on envoie à la source.
+ *
+ * Cette table vivait dans le composant qui l'affiche. Elle n'y avait pas sa
+ * place : c'est une donnée, et le fichier lisible par machine en a besoin
+ * autant que la page. La recopier aurait garanti qu'un jour l'une des deux
+ * annonce une lecture impossible que l'autre déclare possible.
+ */
+export const PORTAILS_NON_RELEVES: Partial<
+  Record<Passeport, { nom: string; url: string; pourquoi: { fr: string; en: string } }>
+> = {
+  us: {
+    nom: 'travel.state.gov',
+    url: 'https://travel.state.gov/content/travel/en/international-travel.html',
+    pourquoi: { fr: 'le portail américain refuse la lecture automatisée', en: 'the US portal refuses automated reading' },
+  },
+  au: {
+    nom: 'smartraveller.gov.au',
+    url: 'https://www.smartraveller.gov.au/',
+    pourquoi: { fr: 'le portail australien refuse la connexion', en: 'the Australian portal refuses the connection' },
+  },
+  nz: {
+    nom: 'safetravel.govt.nz',
+    url: 'https://www.safetravel.govt.nz/',
+    pourquoi: { fr: "le portail néo-zélandais ne publie pas de règles d'entrée", en: 'the New Zealand portal does not publish entry rules' },
+  },
+};
+
 export function regleDuPasseport(c: Country, p: Passeport): RegleEntree | null {
   if (p === 'fr') {
     return {

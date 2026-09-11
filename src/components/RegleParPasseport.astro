@@ -1,6 +1,6 @@
 ---
 import type { Country } from '@/data/countries';
-import { PASSEPORTS, regleDuPasseport, type Passeport } from '@/data/countries';
+import { PASSEPORTS, regleDuPasseport, type Passeport, PORTAILS_NON_RELEVES } from '@/data/countries';
 import type { Langue } from '@/lib/langue';
 
 /**
@@ -73,23 +73,7 @@ const t = T[langue];
 const fmtDate = langue === 'en' ? 'en-GB' : 'fr-FR';
 
 /** Le portail de chaque pays, pour ceux dont la règle n'est pas relevée. */
-const PORTAILS: Record<string, { nom: string; url: string; pourquoi: Record<Langue, string> }> = {
-  us: {
-    nom: 'travel.state.gov',
-    url: 'https://travel.state.gov/content/travel/en/international-travel.html',
-    pourquoi: { fr: 'le portail américain refuse la lecture automatisée', en: 'the US portal refuses automated reading' },
-  },
-  au: {
-    nom: 'smartraveller.gov.au',
-    url: 'https://www.smartraveller.gov.au/',
-    pourquoi: { fr: 'le portail australien refuse la connexion', en: 'the Australian portal refuses the connection' },
-  },
-  nz: {
-    nom: 'safetravel.govt.nz',
-    url: 'https://www.safetravel.govt.nz/',
-    pourquoi: { fr: "le portail néo-zélandais ne publie pas de règles d'entrée", en: 'the New Zealand portal does not publish entry rules' },
-  },
-};
+const PORTAILS = PORTAILS_NON_RELEVES;
 
 /**
  * Le passeport affiché par défaut dépend de la langue.
