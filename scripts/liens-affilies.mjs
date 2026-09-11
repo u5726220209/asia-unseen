@@ -17,8 +17,9 @@
  * Le second est le plus important, et c'est le seul que personne ne remarque.
  */
 
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
+import { PREFIXES } from './lib/collections.mjs';
 
 const UA =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36';
@@ -79,6 +80,39 @@ for (const m of html.matchAll(/href="(https?:\/\/[^"]+)"/g)) {
   const partenaire = TRACKING.find((t) => url.includes(t.hote));
   if (!partenaire) continue;
   liens.set(url, (liens.get(url) ?? 0) + 1);
+}
+
+/**
+ * Les textes qui attendent leur date de parution.
+ *
+ * Ils n'ont pas de page, donc leurs liens partenaires échappaient à ce
+ * contrôle jusqu'au matin de leur publication — c'est-à-dire jusqu'au moment
+ * où personne ne les relit. Vingt-neuf textes anglais sont programmés sur onze
+ * semaines : autant de liens dont la commission pouvait partir sans que rien
+ * ne le dise, un par un, pendant onze semaines.
+ *
+ * On lit donc leur markdown. L'identifiant n'y est pas encore — il est ajouté
+ * à la compilation — mais l'hôte, lui, y est : c'est assez pour dire qu'un
+ * programme fermé recevra un lien, et pour le compter.
+ */
+const programmes = new Map();
+{
+  const aujourdhui = new Date().toISOString().slice(0, 10);
+  for (const [dossier, prefixe] of Object.entries(PREFIXES)) {
+    if (!existsSync(dossier)) continue;
+    for (const f of readdirSync(dossier).filter((f) => f.endsWith('.md'))) {
+      const md = readFileSync(`${dossier}/${f}`, 'utf8');
+      const date = md.slice(0, 1400).match(/^pubDate:\s*['"]?(\d{4}-\d{2}-\d{2})/m)?.[1];
+      if (!date || date <= aujourdhui) continue;
+      for (const m of md.matchAll(/\]\((https?:\/\/[^)\s]+)\)/g)) {
+        const url = m[1];
+        if (!TRACKING.some((t) => url.includes(t.hote))) continue;
+        const ou = `${prefixe}${f.replace(/\.md$/, '')}`;
+        if (!programmes.has(url)) programmes.set(url, new Set());
+        programmes.get(url).add(ou);
+      }
+    }
+  }
 }
 
 if (!liens.size) {
@@ -145,6 +179,26 @@ if (enAttente.size) {
   console.log('   vers le partenaire, sans tracking :');
   for (const [v, n] of [...enAttente].sort()) console.log(`     ${v.padEnd(28)} ${n} lien(s)`);
   console.log();
+}
+
+/* ── 3. Ce qui attend sa date de parution ────────────────────────── */
+
+if (programmes.size) {
+  const parProgramme = new Map();
+  const fermes = [];
+  for (const [url, pages] of programmes) {
+    const t = TRACKING.find((x) => url.includes(x.hote));
+    const cle = t?.variable ?? t?.hote ?? url;
+    parProgramme.set(cle, (parProgramme.get(cle) ?? 0) + pages.size);
+    if (t?.parametre && !programmeOuvert(t.variable)) fermes.push([cle, [...pages]]);
+  }
+  const total = [...parProgramme.values()].reduce((a, b) => a + b, 0);
+  console.log(`   ${total} lien(s) partenaire(s) dans des textes encore programmés :`);
+  for (const [v, n] of [...parProgramme].sort()) console.log(`     ${String(v).padEnd(28)} ${n} lien(s)`);
+  console.log();
+  console.log('   Ils prendront leur identifiant à la compilation, le jour venu.');
+  console.log("   Les compter maintenant évite qu'ils paraissent un par un sur onze");
+  console.log('   semaines, chacun le matin où plus personne ne relit.\n');
 }
 
 if (morts.length) {

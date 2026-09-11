@@ -12,9 +12,19 @@ interface Props {
   path?: string;      // chemin de destination chez le partenaire, tracking conservé
   href?: string;      // pour surcharger l'URL générée (page produit précise) — sans tracking
   variant?: 'button' | 'text';
+  /**
+   * La langue de la mention lue par les lecteurs d'écran.
+   *
+   * « (lien partenaire, s'ouvre dans un nouvel onglet) » est en `sr-only` :
+   * invisible, donc jamais relu, et pourtant c'est la divulgation elle-même.
+   * Sur une page anglaise, elle était annoncée en français dans une voix
+   * anglaise — c'est-à-dire que la seule personne à qui la divulgation était
+   * réservée était aussi la seule à ne pas la comprendre.
+   */
+  langue?: 'fr' | 'en';
   class?: string;
 }
-const { partner, params = {}, path, href, variant = 'button', class: klass = '' } = Astro.props;
+const { partner, params = {}, path, href, variant = 'button', langue = 'fr', class: klass = '' } = Astro.props;
 const url = href ?? buildUrl(partner, params, path);
 const label = partners[partner].label;
 ---
@@ -32,5 +42,9 @@ const label = partners[partner].label;
       <path d="M6 3h7v7M13 3 3.5 12.5" />
     </svg>
   )}
-  <span class="sr-only">(lien partenaire, s'ouvre dans un nouvel onglet)</span>
+  <span class="sr-only">
+    {langue === 'en'
+      ? '(affiliate link, opens in a new tab)'
+      : "(lien partenaire, s'ouvre dans un nouvel onglet)"}
+  </span>
 </a>

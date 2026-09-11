@@ -336,6 +336,20 @@ const CAS = [
   },
 
   {
+    nom: 'un partenaire franco-français apparaît sur une page anglaise',
+    script: 'verifier-config.mjs',
+    /* Un assureur qui vend à des résidents français, proposé à un lecteur
+       britannique, lui vend un contrat qu'il ne peut pas souscrire — sur la
+       page d'un site dont tout l'argument est de dire quelle règle s'applique
+       à qui. Une commission ne vaut pas ça. */
+    muter: {
+      'dist/en/vietnam/index.html':
+        remplacer(/data-aff="booking"/, 'data-aff="chapka"'),
+    },
+    attendu: /partenaire franco-français/,
+  },
+
+  {
     nom: 'une page anglaise partage la carte française',
     script: 'verifier-config.mjs',
     /* L'image par défaut porte une accroche française. Elle part dans la

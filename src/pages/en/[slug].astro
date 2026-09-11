@@ -5,6 +5,7 @@ import RegleParPasseport from '@/components/RegleParPasseport.astro';
 import { countries, MOIS, PASSEPORTS, regleDuPasseport, type Country } from '@/data/countries';
 import { contenuEn } from '@/data/countries.en';
 import { getCollection } from 'astro:content';
+import AffiliateLink from '@/components/AffiliateLink.astro';
 import { site } from '@/data/site';
 
 /**
@@ -219,6 +220,53 @@ const schema = [
           </li>
         ))}
       </ul>
+    </section>
+
+    {/*
+      Réserver — trois partenaires sur les quatre de la fiche française.
+      Chapka en est absent, et ce n'est pas un oubli : c'est un assureur
+      français qui vend à des résidents français. Le proposer à un lecteur
+      britannique serait lui vendre un contrat qu'il ne peut pas souscrire,
+      sur la page d'un site dont tout l'argument est de dire quelle règle
+      s'applique à qui. Une commission ne vaut pas ça.
+
+      L'argument de GetYourGuide est réécrit, lui aussi : « des guides
+      francophones sur les grandes villes » n'est pas un argument ici.
+    */}
+    <section class="mt-16">
+      <h2 class="text-display">Booking your trip</h2>
+      <p class="mt-4 max-w-2xl text-[1.02rem] leading-relaxed text-warm">
+        The links below are affiliate links: they change nothing about what you pay, and they
+        fund the writing of these pages. We only put here what we actually use.
+      </p>
+
+      <div class="mt-8 grid gap-5 sm:grid-cols-3">
+        {[
+          { p: 'booking' as const, titre: 'Accommodation', texte: 'The best coverage of small family-run hotels, and free cancellation almost everywhere.', cta: 'Find a hotel' },
+          { p: 'twelvego' as const, titre: 'Trains, buses and ferries', texte: 'The only reliable aggregator for overland transport in Southeast Asia, with real timetables and named operators.', cta: 'See the routes' },
+          { p: 'getyourguide' as const, titre: 'Activities and guides', texte: 'Free cancellation up to 24 hours before, verified reviews, and someone to talk to when a boat does not sail.', cta: 'See what is on' },
+        ].map((b) => (
+          <div class="flex flex-col rounded-brand border border-line bg-white p-6">
+            <p class="font-display text-[1.05rem] font-bold text-ink">{b.titre}</p>
+            <p class="mt-2 flex-1 text-[0.9rem] leading-relaxed text-warm">{b.texte}</p>
+            <AffiliateLink
+              partner={b.p}
+              langue="en"
+              params={b.p === 'booking' ? { ss: c.nomEn } : b.p === 'getyourguide' ? { q: c.nomEn } : {}}
+              path={b.p === 'getyourguide' ? '/s/' : undefined}
+              class="mt-5 !w-full !py-3 !text-[0.88rem]"
+            >
+              {b.cta}
+            </AffiliateLink>
+          </div>
+        ))}
+      </div>
+
+      <p class="mt-5 max-w-2xl text-[0.86rem] leading-relaxed text-warm-light">
+        The French version of this page also lists a travel insurer. It is not here on purpose:
+        that insurer sells to French residents, and a policy you cannot buy is not a
+        recommendation.
+      </p>
     </section>
 
     {lies.length > 0 && (

@@ -722,6 +722,9 @@ if (cellulesFigees.length) {
  */
 const formulairesEnAnglais = [];
 const partageFrancais = [];
+const partenairesFrancais = [];
+/** Les partenaires dont l'offre n'est vendue qu'à des résidents français. */
+const PARTENAIRES_FRANCE = ['chapka', 'avi'];
 if (existsSync('dist/en')) {
   const pagesEn = [];
   const parcourirForm = (d) => {
@@ -747,6 +750,17 @@ if (existsSync('dist/en')) {
     if (/og:image" content="[^"]*og-default\.png"/.test(html)) {
       partageFrancais.push(f.replace(/^dist/, '').replace(/\/index\.html$/, ''));
     }
+    /* Les partenaires qui ne vendent qu'en France. Un assureur français
+       proposé à un lecteur britannique lui vend un contrat qu'il ne peut pas
+       souscrire — sur la page d'un site dont tout l'argument est de dire
+       quelle règle s'applique à qui. Une commission ne vaut pas ça. */
+    for (const partenaire of PARTENAIRES_FRANCE) {
+      if (new RegExp(`data-aff="${partenaire}"`).test(html)) {
+        partenairesFrancais.push(
+          `${f.replace(/^dist/, '').replace(/\/index\.html$/, '')} → ${partenaire}`,
+        );
+      }
+    }
   }
 }
 
@@ -757,6 +771,15 @@ if (formulairesEnAnglais.length) {
   console.log("   là-dessus, c'est promettre ce qu'on ne peut pas tenir.\n");
 } else if (existsSync('dist/en')) {
   console.log("✓ Aucune page anglaise ne propose une lettre qu'elle ne peut pas envoyer.\n");
+}
+
+if (partenairesFrancais.length) {
+  console.log(`⛔ ${partenairesFrancais.length} lien(s) vers un partenaire franco-français sur une page anglaise :\n`);
+  for (const p of partenairesFrancais.slice(0, 12)) console.log(`   ${p}`);
+  console.log('\n   Un contrat qui ne se souscrit pas depuis le pays du lecteur');
+  console.log("   n'est pas une recommandation, c'est une commission.\n");
+} else if (existsSync('dist/en')) {
+  console.log('✓ Aucun partenaire franco-français sur les pages anglaises.\n');
 }
 
 if (partageFrancais.length) {
@@ -1210,5 +1233,6 @@ process.exit(
   reglesIncoherentes.length || defautsLangue.length || francaisEnAnglais.length ||
   nonClasses.length || muettes.length || originesFantomes.length ||
   llmsMuet.length || journalEnRetard.length || liensNonMarques.length ||
-  formulairesEnAnglais.length || cellulesFigees.length || partageFrancais.length ? 1 : 0,
+  formulairesEnAnglais.length || cellulesFigees.length || partageFrancais.length ||
+  partenairesFrancais.length ? 1 : 0,
 );
