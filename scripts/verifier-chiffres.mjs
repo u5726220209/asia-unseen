@@ -62,6 +62,21 @@ const chiffres = [...ts.matchAll(
   // fragments de phrase, pas des constantes d'URL.
   contredit: (m[0].match(/contredit:\s*\[([^\]]*)\]/)?.[1] ?? '')
     .split(',').map((v) => v.trim().replace(/^'|'$/g, '')).filter(Boolean),
+  /**
+   * Pourquoi ce montant est une estimation, quand il en est une.
+   *
+   * Le champ existait dans le registre et n'était lu qu'à travers
+   * `nonRelisable` — c'est-à-dire réduit à un booléen. Le contrôle écrit
+   * ensuite pour vérifier que ces estimations se présentent au lecteur comme
+   * telles filtrait donc sur `c.estimation`, toujours indéfini : il examinait
+   * zéro entrée et annonçait « ✓ » avec aplomb.
+   *
+   * C'est la panne que toute cette mécanique existe pour empêcher, et elle
+   * s'est produite dans le contrôle lui-même. Elle n'a été vue qu'en cassant
+   * délibérément la page, ce qui est précisément la raison d'être des
+   * garde-fous : un contrôle qu'on n'a pas vu échouer n'est pas un contrôle.
+   */
+  estimation: m[0].match(/estimation:\s*(?:"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)')/)?.slice(1).find(Boolean) ?? null,
 }));
 
 /**
@@ -235,6 +250,52 @@ const contradictions = [];
   }
 }
 
+/* ── 1 bis-2. Une estimation doit se présenter comme telle ───────── */
+
+/**
+ * Ce que le registre promet au nom de la page.
+ *
+ * Le champ `estimation` dit pourquoi un montant n'est pas un tarif relevé —
+ * une conversion de devise, un total dont la grille n'est pas publique — et
+ * il désactive la relecture à la source, puisqu'aucune source ne publie ce
+ * nombre. Le commentaire d'une de ces entrées va plus loin : « et la page le
+ * dit ».
+ *
+ * C'est une promesse faite au nom d'une page que le registre ne lit pas. Elle
+ * se vérifie aujourd'hui — « environ 110 € », « ≈ 7,50 € » — et rien ne la
+ * tient. Retirer le mot « environ » ne casserait rien : le montant resterait
+ * juste, la page se mettrait à l'affirmer, et le registre continuerait de
+ * promettre le contraire.
+ *
+ * Ce dépôt a déjà connu exactement cela, à l'envers : une correction publiée
+ * annonçait au lecteur qu'un garde-fou existait, et il n'existait pas.
+ */
+const estimationsSeches = [];
+{
+  const HEDGE = /environ|≈|~|ordre de grandeur|about|approximately|roughly|autour de/i;
+  for (const c of chiffres.filter((x) => x.estimation)) {
+    for (const page of c.pages) {
+      if (programmees.has(page)) continue;
+      const f = `dist${page}/index.html`;
+      if (!existsSync(f)) continue;
+      const texte = readFileSync(f, 'utf8').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+      /* Toutes les occurrences, pas la première : un montant court comme
+         « 110 » apparaît volontiers ailleurs dans une page — dans un autre
+         nombre, dans une classe, dans un identifiant. Ne regarder que la
+         première revient à juger un voisinage qui n'est pas le bon, et le
+         verdict est alors juste par accident. */
+      const trouve = [];
+      for (const forme of formes(c.affiche)) {
+        let i = texte.indexOf(forme);
+        while (i >= 0) { trouve.push(i); i = texte.indexOf(forme, i + 1); }
+      }
+      if (!trouve.length) continue; // déjà signalé par le contrôle de présence
+      const voisinage = trouve.some((i) => HEDGE.test(texte.slice(Math.max(0, i - 90), i + 40)));
+      if (!voisinage) estimationsSeches.push({ ...c, page });
+    }
+  }
+}
+
 /* ── 1 ter. Un montant en devise publié hors registre ────────────── */
 
 /**
@@ -404,6 +465,18 @@ if (JSON_OUT) {
 //   2 — un montant a disparu de sa source : il faut aller lire le nouveau
 //       tarif, ce qui demande un jugement humain. On alerte sans bloquer ;
 //   0 — rien à signaler.
+if (estimationsSeches.length) {
+  console.log(`⛔ ${estimationsSeches.length} estimation(s) affichées comme des tarifs :\n`);
+  for (const e of estimationsSeches.slice(0, 10)) {
+    console.log(`   ${e.affiche.padEnd(10)} ${e.page}`);
+    console.log(`      ${e.estimation}`);
+  }
+  console.log('\n   Le registre promet que la page dit que ce montant est approché.');
+  console.log('   Elle ne le dit pas : « environ », « ≈ » ou « autour de » manquent.\n');
+} else {
+  console.log('✓ Chaque estimation se présente au lecteur comme une estimation.\n');
+}
+
 if (horsRegistre.length) {
   const vus = new Set();
   const uniques = horsRegistre.filter((h) => !vus.has(h.montant + h.fichier) && vus.add(h.montant + h.fichier));
@@ -415,4 +488,4 @@ if (horsRegistre.length) {
   console.log('✓ Chaque montant en devise publié est inscrit au registre.\n');
 }
 
-process.exit(manquantsSurLeSite.length || contradictions.length || horsRegistre.length ? 1 : disparusDeLaSource.length ? 2 : 0);
+process.exit(manquantsSurLeSite.length || contradictions.length || horsRegistre.length || estimationsSeches.length ? 1 : disparusDeLaSource.length ? 2 : 0);

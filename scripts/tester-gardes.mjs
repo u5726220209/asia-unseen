@@ -209,6 +209,24 @@ const CAS = [
   },
 
   {
+    nom: "une estimation s'affiche comme un tarif ferme",
+    script: 'verifier-chiffres.mjs',
+    args: ['--hors-ligne'],
+    /* Le registre promet, au nom d'une page qu'il ne lit pas, que le lecteur
+       est prévenu qu'un montant est approché. Retirer « environ » ne casse
+       rien : le montant reste juste, la page se met à l'affirmer, et le
+       registre continue de promettre le contraire.
+
+       Ce cas a servi deux fois. La première version du contrôle filtrait sur
+       un champ que le lecteur de registre n'exposait pas : elle examinait zéro
+       entrée et affichait « ✓ ». Seule la cassure délibérée l'a montré. */
+    muter: {
+      'dist/chine/index.html': remplacer(/soit environ 110/g, 'soit 110'),
+    },
+    attendu: /estimation\(s\) affichées comme des tarifs/,
+  },
+
+  {
     nom: 'un tarif en devise est publié sans être inscrit au registre',
     script: 'verifier-chiffres.mjs',
     args: ['--hors-ligne'],
