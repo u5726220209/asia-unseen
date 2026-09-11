@@ -171,6 +171,15 @@ const CAS = [
     attendu: /la règle française vit dans `visa`/,
   },
 
+  {
+    nom: "une page déclare une traduction qui n'existe pas",
+    script: 'verifier-config.mjs',
+    // Une balise hreflang vers une page absente est pire que pas de balise :
+    // Google la suit, trouve un 404, et cesse de croire les autres.
+    muter: { 'dist/en/index.html': () => null },
+    attendu: /déclare une version à \/en, qui n'existe pas/,
+  },
+
   /* ── verifier-chiffres.mjs ───────────────────────────────────── */
   {
     nom: 'une entrée du registre devient illisible',

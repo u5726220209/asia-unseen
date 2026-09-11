@@ -9,6 +9,7 @@ import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import ExitIntent from '@/components/ExitIntent.astro';
 import GoogleConsent from '@/components/GoogleConsent.astro';
+import { LANGUES, langueDe, cheminEn } from '@/lib/langue';
 import { site, legal } from '@/data/site';
 
 interface Props {
@@ -24,6 +25,14 @@ interface Props {
   /** Désactive la pop-up de sortie (pages légales, page de remerciement). */
   noPopup?: boolean;
   /**
+   * Cette page existe-t-elle dans l'autre langue ?
+   *
+   * Faux par défaut, et c'est volontaire : tant que la traduction n'existe pas,
+   * déclarer une jumelle serait envoyer Google sur un 404. On l'active page par
+   * page, à mesure qu'elles sont réellement écrites.
+   */
+  traduite?: boolean;
+  /**
    * La version lisible par machine de cette page.
    *
    * Le jeu de données existait, mais rien ne le reliait aux pages : un lecteur
@@ -38,7 +47,7 @@ interface Props {
 const {
   title, description, image = '/og-default.png', type = 'website',
   publishedTime, modifiedTime, noindex = false, schema = [], noPopup = false,
-  donnees,
+  donnees, traduite = false,
 } = Astro.props;
 
 // Sur un déploiement de préversion, tout le site est en noindex : un sous-domaine
@@ -47,6 +56,24 @@ const isPreview = import.meta.env.PUBLIC_NOINDEX === '1';
 const blockIndexing = noindex || isPreview;
 
 const canonical = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', site.url).href;
+
+/**
+ * Les deux versions de cette page, déclarées l'une à l'autre.
+ *
+ * `hreflang` dit à Google « cette page existe aussi là ». Une balise qui
+ * pointerait vers une page absente serait pire que pas de balise : Google irait
+ * la chercher, trouverait un 404, et douterait des autres. C'est pourquoi une
+ * page ne déclare sa jumelle que si elle affirme l'avoir — `traduite` — et que
+ * `verifier-config.mjs` refuse la mise en ligne si l'une des deux manque.
+ */
+const langue = langueDe(Astro.url.pathname);
+const alternatives = traduite
+  ? LANGUES.map((l) => ({
+      code: l.code,
+      etiquette: l.etiquette,
+      href: new URL(cheminEn(Astro.url.pathname, l.code), site.url).href,
+    }))
+  : [];
 const ogImage = new URL(image, site.url).href;
 /**
  * Le nom du site n'est ajouté au titre que s'il tient dans la limite affichée
@@ -105,13 +132,19 @@ const baseSchema = [
 ---
 
 <!doctype html>
-<html lang="fr" class="scroll-smooth">
+<html lang={langue} class="scroll-smooth">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {alternatives.map((a) => (
+      <link rel="alternate" hreflang={a.etiquette} href={a.href} />
+    ))}
+    {alternatives.length > 0 && (
+      <link rel="alternate" hreflang="x-default" href={alternatives.find((a) => a.code === 'fr')!.href} />
+    )}
     {blockIndexing && <meta name="robots" content="noindex, nofollow" />}
 
     <link rel="icon" href="/favicon.ico" sizes="32x32" />

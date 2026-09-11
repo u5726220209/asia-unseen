@@ -49,7 +49,21 @@ pb('h1 != 1', rows.filter(r=>r.h1!==1).length);
 pb('sans og:image', rows.filter(r=>!r.og).length);
 pb('sans JSON-LD', rows.filter(r=>r.jsonld===0).length);
 pb('images sans alt', rows.reduce((a,r)=>a+r.imgsNoAlt,0));
-pb('lang != fr', rows.filter(r=>r.lang!=='fr').length);
+/**
+ * La langue déclarée doit correspondre au chemin.
+ *
+ * Ce contrôle exigeait `lang="fr"` partout, ce qui était juste tant que le site
+ * n'avait qu'une langue. Il aurait signalé la première page anglaise comme un
+ * défaut — et le desserrer en acceptant n'importe quelle langue aurait laissé
+ * passer l'inverse : une page sous /en/ qui se déclare française, invisible à
+ * l'œil et désastreuse pour le référencement, puisque Google la servirait à des
+ * francophones.
+ *
+ * On vérifie donc l'accord, pas une valeur fixe : /en/... en anglais, le reste
+ * en français.
+ */
+pb('lang ne correspond pas au chemin',
+   rows.filter(r => r.lang !== (/^\/en(\/|$)/.test(r.url) ? 'en' : 'fr')).length);
 pb('noindex', rows.filter(r=>r.noindex).length);
 pb('page la plus lourde (Ko)', Math.round(Math.max(...rows.map(r=>r.size))/1024));
 pb('poids HTML moyen (Ko)', Math.round(rows.reduce((a,r)=>a+r.size,0)/rows.length/1024));
@@ -70,7 +84,12 @@ rows.filter(r=>r.desc&&(r.desc.length<80||r.desc.length>170)).forEach(r=>console
 const defauts =
   rows.filter((r) => !r.title || r.title.length > 60).length +
   rows.filter((r) => !r.desc || r.desc.length < 80 || r.desc.length > 170).length +
-  rows.filter((r) => !r.canonical || r.h1 !== 1 || !r.og || r.jsonld === 0 || r.lang !== 'fr').length +
+  // La langue attendue dépend du chemin, pas d'une valeur fixe : ce comptage
+  // gardait `lang !== 'fr'` et signalait la première page anglaise comme un
+  // défaut, alors que le tableau au-dessus disait déjà le contraire. Un
+  // récapitulatif qui contredit son propre détail est pire qu'absent.
+  rows.filter((r) => !r.canonical || r.h1 !== 1 || !r.og || r.jsonld === 0 ||
+    r.lang !== (/^\/en(\/|$)/.test(r.url) ? 'en' : 'fr')).length +
   rows.reduce((a, r) => a + r.imgsNoAlt, 0) + dt.length + dd.length;
 
 console.log('\n' + (defauts ? `\u26a0  ${defauts} défaut(s) mécanique(s)` : '\u2713 Aucun défaut mécanique.'));

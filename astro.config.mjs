@@ -23,7 +23,7 @@ export default defineConfig({
   trailingSlash: 'never',
   integrations: [
     sitemap({
-      i18n: { defaultLocale: 'fr', locales: { fr: 'fr-FR' } },
+      i18n: { defaultLocale: 'fr', locales: { fr: 'fr-FR', en: 'en' } },
       // Les pages légales restent dans le plan du site : ce sont des signaux de
       // confiance que Google cherche activement, et une page d'identité qu'on
       // cache indexe mal l'idée qu'on n'a rien à cacher. Seule la page de

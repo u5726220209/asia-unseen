@@ -530,6 +530,74 @@ if (reglesIncoherentes.length) {
   console.log("✓ Chaque règle par passeport porte sa source, sa date et son chiffre.\n");
 }
 
+/**
+ * Les deux versions d'une page doivent exister, et se déclarer l'une l'autre.
+ *
+ * `hreflang` dit à Google « cette page existe aussi là ». Une balise vers une
+ * page absente est pire que pas de balise : Google va la chercher, trouve un
+ * 404, et cesse de croire les autres. Une déclaration à sens unique est presque
+ * aussi mauvaise — Google exige la réciprocité et ignore les paires boiteuses.
+ *
+ * Ce contrôle est le prix du bilingue. Sans lui, la première page traduite à
+ * moitié ferait promettre au site une version anglaise qui n'existe pas, et
+ * personne ne s'en apercevrait avant des mois.
+ */
+const defautsLangue = [];
+if (existsSync('dist')) {
+  const pages = [];
+  const parcourir = (d) => {
+    for (const e of readdirSync(d, { withFileTypes: true })) {
+      const p = `${d}/${e.name}`;
+      if (e.isDirectory()) parcourir(p);
+      else if (e.name === 'index.html') pages.push(p);
+    }
+  };
+  parcourir('dist');
+
+  const existe = new Set(pages.map((f) => f.replace(/^dist/, '').replace(/\/index\.html$/, '') || '/'));
+  const declare = new Map();
+
+  for (const f of pages) {
+    const url = f.replace(/^dist/, '').replace(/\/index\.html$/, '') || '/';
+    const html = readFileSync(f, 'utf8');
+    const alts = [...html.matchAll(/<link rel="alternate" hreflang="([^"]+)" href="([^"]+)"/g)]
+      .filter((m) => m[1] !== 'x-default')
+      .map((m) => new URL(m[2]).pathname.replace(/\/$/, '') || '/');
+    if (!alts.length) continue;
+    declare.set(url, alts);
+
+    for (const cible of alts) {
+      if (!existe.has(cible)) {
+        defautsLangue.push({ page: url, motif: `déclare une version à ${cible}, qui n'existe pas` });
+      }
+    }
+  }
+
+  // La réciprocité : si A dit que B est sa traduction, B doit le dire aussi.
+  for (const [url, alts] of declare) {
+    for (const cible of alts) {
+      if (cible === url) continue;
+      const retour = declare.get(cible);
+      if (retour && !retour.includes(url)) {
+        defautsLangue.push({ page: url, motif: `déclare ${cible}, qui ne le déclare pas en retour` });
+      } else if (!retour && existe.has(cible)) {
+        defautsLangue.push({ page: cible, motif: `est déclarée comme traduction de ${url} mais ne déclare rien` });
+      }
+    }
+  }
+}
+
+if (defautsLangue.length) {
+  const vus = new Set();
+  const uniques = defautsLangue.filter((d) => !vus.has(d.page + d.motif) && vus.add(d.page + d.motif));
+  console.log(`⛔ ${uniques.length} défaut(s) dans les liens entre les deux langues :\n`);
+  for (const d of uniques.slice(0, 12)) console.log(`   ${d.page.padEnd(28)} ${d.motif}`);
+  console.log('\n   Une balise hreflang vers une page absente est pire que pas de balise :');
+  console.log('   Google la suit, trouve un 404, et doute des autres.\n');
+} else if (existsSync('dist')) {
+  console.log('✓ Les deux versions se déclarent correctement l\'une l\'autre.\n');
+}
+
 if (!tarifsNonSuivis.length) console.log("✓ Chaque tarif d'entrée publié est inscrit au registre.\n");
 
 if (tarifsNonSuivis.length) {
@@ -612,5 +680,5 @@ process.exit(
   jamaisEcrits.length || jamaisLus.length || defautsFormulaire.length ||
   ecartSources || visasIncoherents.length || correctionsNonFaites.length ||
   tarifsNonSuivis.length || defautsMachine.length || fautesArticle.length ||
-  reglesIncoherentes.length ? 1 : 0,
+  reglesIncoherentes.length || defautsLangue.length ? 1 : 0,
 );

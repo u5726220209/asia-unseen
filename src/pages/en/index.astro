@@ -1,0 +1,187 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { countries, PASSEPORTS, regleDuPasseport, passeportsCouverts } from '@/data/countries';
+import { site } from '@/data/site';
+import { nbSourcesSurveillees } from '@/lib/fraicheur';
+
+/**
+ * La première page anglaise du site.
+ *
+ * Elle n'est pas une traduction de la page d'accueil française, et c'est
+ * délibéré. Traduire une page qui affirme « exemption de 45 jours » la rendrait
+ * fausse pour la moitié de ses nouveaux lecteurs : cette règle vaut pour un
+ * passeport français. Cette page dit donc ce que le site peut réellement
+ * affirmer en anglais aujourd'hui — les règles relevées à leur source, pour
+ * les passeports où elles l'ont été — et dit aussi ce qu'il ne peut pas encore.
+ *
+ * Elle est presque entièrement faite de données. C'est ce qui la rend
+ * publiable tout de suite : les neuf descriptions de pays, les guides et les
+ * articles sont de la prose française, et les traduire est un travail d'écriture
+ * qui vient après. Une page honnête et courte vaut mieux qu'une page complète
+ * et machinalement traduite.
+ */
+
+const couverture = countries.map((c) => ({
+  c,
+  regles: PASSEPORTS.map((p) => ({ p, r: regleDuPasseport(c, p.code) })),
+  nbCouverts: passeportsCouverts(c).length,
+}));
+
+const passeportsAvecRegles = PASSEPORTS.filter((p) =>
+  countries.some((c) => regleDuPasseport(c, p.code) !== null),
+);
+const passeportsSansRegles = PASSEPORTS.filter((p) =>
+  countries.every((c) => regleDuPasseport(c, p.code) === null),
+);
+
+const total = countries.length * PASSEPORTS.length;
+const releves = couverture.reduce((t, x) => t + x.nbCouverts, 0);
+
+const dit = (r: ReturnType<typeof regleDuPasseport>) =>
+  r === null ? '—' : r.sansVisaJours > 0 ? `${r.sansVisaJours} days` : 'Visa required';
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'Asia entry rules, by passport',
+    inLanguage: 'en',
+    isPartOf: { '@id': `${site.url}/#organization` },
+    description:
+      'Visa-free stay length for nine Asian countries, by passport, each taken from the ' +
+      'traveller’s own government and dated.',
+  },
+];
+---
+
+<BaseLayout
+  title="Asia entry rules, by passport"
+  description="How long you can stay in nine Asian countries without a visa — by passport, taken from your own government's source, and dated. We say what we could not verify."
+  schema={schema}
+  traduite
+>
+  <header class="border-b border-line bg-cream-warm">
+    <div class="wrap py-12 lg:py-16">
+      <p class="eyebrow">{countries.length} countries · {releves} rules taken from official sources</p>
+
+      <h1 class="mt-5 max-w-3xl text-hero">
+        A visa rule is not true<br class="hidden sm:block" />
+        <span class="relative inline-block">
+          in the abstract
+          <svg viewBox="0 0 200 12" preserveAspectRatio="none" class="absolute -bottom-1 left-0 h-2.5 w-full text-amber" aria-hidden="true">
+            <path d="M2 8c40-5 90-7 196-4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" />
+          </svg>
+        </span>
+      </h1>
+
+      <p class="mt-8 max-w-2xl text-[1.15rem] leading-relaxed text-warm">
+        “45 days visa-free in Vietnam” is true on a French passport and false on a Canadian one,
+        which needs a visa from day one. Most travel guides never say which passport they mean.
+        This table does — and each row comes from the traveller’s own government, with the month
+        it was read.
+      </p>
+
+      <p class="mt-5 max-w-2xl text-[0.95rem] leading-relaxed text-warm-light">
+        {nbSourcesSurveillees} official pages are re-read every night. When one changes, the page changes
+        and the correction is published next to what we used to say.
+      </p>
+    </div>
+  </header>
+
+  <div class="wrap py-12 lg:py-16">
+    <section>
+      <h2 class="text-display">Visa-free stay, by passport</h2>
+      <p class="mt-4 max-w-2xl text-[1.02rem] leading-relaxed text-warm">
+        Ordinary passports, tourism. A dash means we have not taken that rule from an official
+        source — see below for why.
+      </p>
+
+      <div class="mt-8 overflow-x-auto">
+        <table class="w-full min-w-[42rem] border-collapse text-[0.92rem]">
+          <thead>
+            <tr class="border-b border-line">
+              <th class="px-3 py-3 text-left font-display text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-warm-light">Country</th>
+              {PASSEPORTS.map((p) => (
+                <th class="px-3 py-3 text-left font-display text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-warm-light">
+                  {p.code.toUpperCase()}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {couverture.map(({ c, regles }) => (
+              <tr class="border-b border-line/60">
+                <td class="px-3 py-3 font-medium text-ink">{c.nomEn}</td>
+                {regles.map(({ r }) => (
+                  <td class:list={['px-3 py-3 tabular-nums', r === null ? 'text-warm-light' : 'text-ink-soft']}>
+                    {dit(r)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <p class="mt-4 text-[0.85rem] leading-relaxed text-warm">
+        FR France · GB United Kingdom · CA Canada · US United States · AU Australia · NZ New Zealand.
+        Rules change without notice: check the official source before you book.
+      </p>
+    </section>
+
+    <section class="mt-16">
+      <h2 class="text-display">What we could not verify</h2>
+      <div class="prose-au mt-6">
+        <p>
+          Three governments publish entry rules in a way no machine can read, and we will not
+          guess on their behalf.
+        </p>
+        <ul>
+          <li><strong>United States</strong> — travel.state.gov returns 403 to automated readers.</li>
+          <li><strong>Australia</strong> — smartraveller.gov.au refuses the connection.</li>
+          <li><strong>New Zealand</strong> — safetravel.govt.nz publishes safety advice, not entry rules.</li>
+        </ul>
+        <p>
+          We could have copied the British rule across and called it close enough. It is not: the
+          Canadian rule for Vietnam differs from the French one, and the Canadian rule for South
+          Korea gives <strong>180 days</strong> where others get 90. A rule transposed from another
+          passport gets paid for at a border.
+        </p>
+        <p>
+          One case is stranger still. For <strong>Thailand</strong>, the Canadian portal still says
+          60 days and does not mention the change of 15 September 2026 that the British portal
+          confirms. Two official sources contradict each other on a rule that decides a fine on
+          the way out, so that cell is empty rather than wrong.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-16">
+      <h2 class="text-display">What this site is, in one paragraph</h2>
+      <div class="prose-au mt-6">
+        <p>
+          A French-language travel guide to nine Asian countries, written from official sources.
+          Every entry rule carries the month it was checked and a link to the government page it
+          came from. When one changes, the correction is published with the old wording next to
+          the new one — <a href={`${site.url}/mises-a-jour`}>the log is public</a>.
+        </p>
+        <p>
+          The English version is being built. This page exists because the part that travels
+          best across languages — the rules themselves — is ready now, while the nine country
+          guides are still being written rather than machine-translated.
+        </p>
+        <p>
+          The data behind this table is open:
+          <a href={`${site.url}/donnees/visas.json`}>visas.json</a>, CC BY 4.0. There is also a
+          <a href={`${site.url}/llms.txt`}>llms.txt</a> for machines that read to answer.
+        </p>
+      </div>
+    </section>
+
+    <p class="mt-16 border-t border-line pt-6 text-[0.9rem] text-warm">
+      <a href="/" class="font-semibold text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">
+        Lire ce site en français →
+      </a>
+    </p>
+  </div>
+</BaseLayout>
