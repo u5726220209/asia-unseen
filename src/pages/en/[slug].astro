@@ -1,0 +1,187 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import RegleParPasseport from '@/components/RegleParPasseport.astro';
+import { countries, MOIS, regleDuPasseport, type Country } from '@/data/countries';
+import { contenuEn } from '@/data/countries.en';
+import { site } from '@/data/site';
+
+/**
+ * Les neuf fiches pays en anglais.
+ *
+ * Ce n'est pas la fiche française traduite, et la différence est de fond. La
+ * fiche française raconte un pays à quelqu'un qui part de France : elle parle
+ * de vols depuis Paris, de l'ambassade de France, d'une règle de visa qui vaut
+ * pour un passeport français. Traduire tout cela produirait une page exacte
+ * dans sa grammaire et fausse dans ses faits.
+ *
+ * Celle-ci est construite sur ce qui traverse les langues sans se déformer :
+ * la règle d'entrée par passeport, avec sa source et sa date ; le budget, qui
+ * est un nombre ; la saison, qui est un fait météorologique ; et les erreurs à
+ * éviter, réécrites en anglais.
+ *
+ * Elle est plus courte que la française, et c'est assumé. Une page honnête et
+ * complète sur le peu qu'elle traite vaut mieux qu'une page longue dont la
+ * moitié sonne comme une sortie de traducteur automatique — le lecteur
+ * anglophone le sent en deux phrases, et il cesse de croire les chiffres en
+ * même temps que la prose.
+ */
+
+export const getStaticPaths = (() =>
+  countries
+    .filter((c) => contenuEn[c.slug])
+    .map((c) => ({ params: { slug: c.slug }, props: { country: c } }))) satisfies GetStaticPaths;
+
+const { country: c } = Astro.props as { country: Country };
+const en = contenuEn[c.slug];
+
+const MOIS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const moisIdeaux = c.saisons.map((s, i) => ({ s, m: MOIS_EN[i] })).filter((x) => x.s === 3).map((x) => x.m);
+
+const regleFr = regleDuPasseport(c, 'fr')!;
+const moisEn = new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric' })
+  .format(new Date(`${c.verifieLe}-01T00:00:00`));
+
+const SAISON = {
+  3: { cell: 'bg-teal text-cream', label: 'Ideal' },
+  2: { cell: 'bg-amber-100 text-amber-700', label: 'Fine' },
+  1: { cell: 'bg-cream-warm text-warm-light', label: 'Avoid' },
+} as const;
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: `${c.nomEn} entry rules, budget and season`,
+    description: en.resume,
+    inLanguage: 'en',
+    dateModified: `${c.verifieLe}-01`,
+    author: { '@type': 'Person', name: site.author.name },
+    publisher: { '@id': `${site.url}/#organization` },
+    about: { '@type': 'Country', name: c.nomEn },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': `${site.url}/en/${c.slug}` },
+    citation: c.sourcesVisa.map((s) => ({ '@type': 'CreativeWork', name: s.label, url: s.url })),
+    license: 'https://creativecommons.org/licenses/by/4.0/',
+    isAccessibleForFree: true,
+  },
+];
+---
+
+<BaseLayout
+  title={`${c.nomEn}: entry rules by passport, budget, best months`}
+  description={`How long you can stay in ${c.nomEn} without a visa, by passport, taken from official sources and dated. Daily budget from €${c.budget.routard} and the months worth travelling in.`}
+  type="article"
+  schema={schema}
+  donnees={`/donnees/${c.slug}.json`}
+  traduite
+>
+  <header class="border-b border-line bg-cream-warm">
+    <div class="wrap py-10 lg:py-14">
+      <p class="eyebrow">
+        <a href="/en" class="hover:text-teal">Asia Unseen</a> · {c.nomEn}
+      </p>
+
+      <h1 class="mt-5 max-w-3xl text-hero">{c.nomEn}</h1>
+      <p class="mt-6 max-w-2xl text-[1.15rem] leading-relaxed text-warm">{en.resume}</p>
+      <p class="mt-5 max-w-2xl text-[0.95rem] text-warm-light">
+        <strong class="font-semibold text-ink-soft">Who it suits:</strong> {en.pourQui}
+      </p>
+
+      <dl class="mt-10 grid gap-px overflow-hidden rounded-brand border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
+        <a href="#entry" class="group bg-cream-warm px-5 py-4 transition hover:bg-white">
+          <dt class="font-display text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-warm-light">Entry (FR passport)</dt>
+          <dd class="mt-1 text-[0.92rem] font-medium text-ink group-hover:text-teal">
+            {regleFr.sansVisaJours > 0 ? `${regleFr.sansVisaJours} days visa-free` : 'Visa required'}
+          </dd>
+        </a>
+        <a href="#season" class="group bg-cream-warm px-5 py-4 transition hover:bg-white">
+          <dt class="font-display text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-warm-light">Best months</dt>
+          <dd class="mt-1 text-[0.92rem] font-medium text-ink group-hover:text-teal">
+            {moisIdeaux.length ? moisIdeaux.join(' · ') : 'Varies by region'}
+          </dd>
+        </a>
+        <div class="bg-cream-warm px-5 py-4">
+          <dt class="font-display text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-warm-light">Budget</dt>
+          <dd class="mt-1 text-[0.92rem] font-medium text-ink">from €{c.budget.routard} / day</dd>
+        </div>
+        <div class="bg-cream-warm px-5 py-4">
+          <dt class="font-display text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-warm-light">Rules checked</dt>
+          <dd class="mt-1 text-[0.92rem] font-medium text-ink">{moisEn}</dd>
+        </div>
+      </dl>
+
+      <p class="mt-4 text-[0.85rem] text-warm-light">
+        {c.capitale} · {c.monnaie} · {c.decalage}
+      </p>
+    </div>
+  </header>
+
+  <div class="wrap py-12 lg:py-14">
+    <section id="entry" class="scroll-mt-24">
+      <h2 class="text-display">Can you enter, and for how long</h2>
+      <p class="mt-4 max-w-2xl text-[1.02rem] leading-relaxed text-warm">
+        Ordinary passports, tourism. Each rule below comes from the traveller's own government,
+        with the month it was read — not from another guide.
+      </p>
+
+      <RegleParPasseport country={c} langue="en" class="!mt-8" />
+    </section>
+
+    <section id="season" class="mt-16 scroll-mt-24">
+      <h2 class="text-display">When to go</h2>
+
+      <div class="mt-8 overflow-x-auto">
+        <table class="w-full min-w-[36rem] border-collapse text-center text-[0.82rem]">
+          <tbody>
+            <tr>
+              {c.saisons.map((s, i) => (
+                <td class:list={['px-1 py-3 font-display font-semibold uppercase tracking-wider', SAISON[s].cell]}>
+                  {MOIS_EN[i]}
+                </td>
+              ))}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="mt-6 max-w-3xl text-[1.02rem] leading-relaxed text-ink-soft">{en.saisonNote}</p>
+    </section>
+
+    <section class="mt-16">
+      <h2 class="text-display">What not to do</h2>
+      <ul class="mt-8 space-y-4">
+        {en.erreurs.map((e) => (
+          <li class="flex gap-4 rounded-brand border-l-[3px] border-amber bg-amber-50 px-5 py-4">
+            <span class="text-[0.98rem] leading-relaxed text-ink-soft">{e}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="mt-16">
+      <h2 class="text-display">Sources and data</h2>
+      <div class="prose-au mt-6">
+        <p>
+          Entry rules for {c.nomEn} are read on these official pages, and re-read every night.
+          When one changes, the page changes and the correction is published next to what we used
+          to say.
+        </p>
+        <ul>
+          {c.sourcesVisa.map((s) => (
+            <li><a href={s.url} target="_blank" rel="noopener nofollow">{s.label}</a></li>
+          ))}
+        </ul>
+        <p>
+          The data behind this page is open:
+          <a href={`${site.url}/donnees/${c.slug}.json`}>{c.slug}.json</a>, CC BY 4.0.
+        </p>
+      </div>
+    </section>
+
+    <p class="mt-16 border-t border-line pt-6 text-[0.9rem] text-warm">
+      <a href={`/${c.slug}`} class="font-semibold text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">
+        Lire cette fiche en français →
+      </a>
+    </p>
+  </div>
+</BaseLayout>

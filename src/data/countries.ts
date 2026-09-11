@@ -23,13 +23,13 @@ export type Saison = 1 | 2 | 3; // 1 = à éviter · 2 = acceptable · 3 = idéa
  */
 export type Passeport = 'fr' | 'gb' | 'us' | 'ca' | 'au' | 'nz';
 
-export const PASSEPORTS: { code: Passeport; nom: string; demonyme: string }[] = [
-  { code: 'fr', nom: 'France', demonyme: 'français' },
-  { code: 'gb', nom: 'Royaume-Uni', demonyme: 'britannique' },
-  { code: 'ca', nom: 'Canada', demonyme: 'canadien' },
-  { code: 'us', nom: 'États-Unis', demonyme: 'américain' },
-  { code: 'au', nom: 'Australie', demonyme: 'australien' },
-  { code: 'nz', nom: 'Nouvelle-Zélande', demonyme: 'néo-zélandais' },
+export const PASSEPORTS: { code: Passeport; nom: string; nomEn: string; demonyme: string }[] = [
+  { code: 'fr', nom: 'France', nomEn: 'France', demonyme: 'français' },
+  { code: 'gb', nom: 'Royaume-Uni', nomEn: 'United Kingdom', demonyme: 'britannique' },
+  { code: 'ca', nom: 'Canada', nomEn: 'Canada', demonyme: 'canadien' },
+  { code: 'us', nom: 'États-Unis', nomEn: 'United States', demonyme: 'américain' },
+  { code: 'au', nom: 'Australie', nomEn: 'Australia', demonyme: 'australien' },
+  { code: 'nz', nom: 'Nouvelle-Zélande', nomEn: 'New Zealand', demonyme: 'néo-zélandais' },
 ];
 
 /**
@@ -50,8 +50,16 @@ export type RegleEntree = {
   sansVisaJours: number;
   /** Une règle publiée dont la date d'effet est encore à venir. */
   sansVisaJoursApres?: { date: string; jours: number };
-  /** La règle en une phrase, telle que la source la publie. */
-  resume: string;
+  /**
+   * La règle en une phrase, dans les deux langues.
+   *
+   * Une règle a une langue dès qu'elle devient une phrase. La première version
+   * n'en portait qu'une : les pages anglaises affichaient « Visa required » en
+   * titre et « Visa obligatoire. E-visa touristique… » juste en dessous. Une
+   * page à moitié traduite se repère en deux secondes et fait douter du reste,
+   * y compris des chiffres — qui étaient justes.
+   */
+  resume: { fr: string; en: string };
   /** La source officielle de CE pays pour ses propres ressortissants. */
   source: { label: string; url: string; lisibleParMachine?: boolean };
   /** Mois de vérification de cette règle-là, au format AAAA-MM. */
@@ -201,13 +209,13 @@ export const countries: Country[] = [
       regles: {
         gb: {
           sansVisaJours: 45,
-          resume: "45 jours sans visa pour le tourisme ou les affaires.",
+          resume: { fr: "45 jours sans visa pour le tourisme ou les affaires.", en: "45 days visa-free for tourism or business." },
           source: { label: "GOV.UK — conseils aux voyageurs, conditions d'entrée", url: 'https://www.gov.uk/foreign-travel-advice/vietnam/entry-requirements' },
           verifieLe: '2026-09',
         },
         ca: {
           sansVisaJours: 0,
-          resume: "Visa obligatoire. E-visa touristique jusqu'à 90 jours, entrée simple ou multiple.",
+          resume: { fr: "Visa obligatoire. E-visa touristique jusqu'à 90 jours, entrée simple ou multiple.", en: "Visa required. Tourist e-visa for up to 90 days, single or multiple entry." },
           source: { label: "Gouvernement du Canada — conseils aux voyageurs", url: 'https://travel.gc.ca/destinations/vietnam' },
           verifieLe: '2026-09',
         },
@@ -277,7 +285,7 @@ export const countries: Country[] = [
         gb: {
           sansVisaJours: 60,
           sansVisaJoursApres: { date: '2026-09-15', jours: 30 },
-          resume: "60 jours sans visa pour une entrée jusqu'au 14 septembre 2026 ; 30 jours à partir du 15, sous le régime d'exemption.",
+          resume: { fr: "60 jours sans visa pour une entrée jusqu'au 14 septembre 2026 ; 30 jours à partir du 15, sous le régime d'exemption.", en: "60 days visa-free entering up to 14 September 2026; 30 days from the 15th, under the exemption scheme." },
           source: { label: "GOV.UK — conseils aux voyageurs, conditions d'entrée", url: 'https://www.gov.uk/foreign-travel-advice/thailand/entry-requirements' },
           verifieLe: '2026-09',
         },
@@ -345,13 +353,13 @@ export const countries: Country[] = [
       regles: {
         gb: {
           sansVisaJours: 90,
-          resume: "90 jours sans visa préalable, délivrés à l'arrivée pour le tourisme ou les affaires.",
+          resume: { fr: "90 jours sans visa préalable, délivrés à l'arrivée pour le tourisme ou les affaires.", en: "90 days without a prior visa, granted on arrival for tourism or business." },
           source: { label: "GOV.UK — conseils aux voyageurs, conditions d'entrée", url: 'https://www.gov.uk/foreign-travel-advice/japan/entry-requirements' },
           verifieLe: '2026-09',
         },
         ca: {
           sansVisaJours: 90,
-          resume: "90 jours sans visa maximum.",
+          resume: { fr: "90 jours sans visa maximum.", en: "90 days visa-free maximum." },
           source: { label: "Gouvernement du Canada — conseils aux voyageurs", url: 'https://travel.gc.ca/destinations/japan' },
           verifieLe: '2026-09',
         },
@@ -414,13 +422,13 @@ export const countries: Country[] = [
       regles: {
         gb: {
           sansVisaJours: 30,
-          resume: "30 jours sans visa jusqu'au 31 décembre 2026, pour affaires, tourisme, visite familiale ou transit.",
+          resume: { fr: "30 jours sans visa jusqu'au 31 décembre 2026, pour affaires, tourisme, visite familiale ou transit.", en: "30 days visa-free until 31 December 2026, for business, tourism, family visits or transit." },
           source: { label: "GOV.UK — conseils aux voyageurs, conditions d'entrée", url: 'https://www.gov.uk/foreign-travel-advice/china/entry-requirements' },
           verifieLe: '2026-09',
         },
         ca: {
           sansVisaJours: 30,
-          resume: "30 jours sans visa, dans le cadre du dispositif d'exemption chinois courant jusqu'au 31 décembre 2026.",
+          resume: { fr: "30 jours sans visa, dans le cadre du dispositif d'exemption chinois courant jusqu'au 31 décembre 2026.", en: "30 days visa-free, under the Chinese waiver scheme running to 31 December 2026." },
           source: { label: "Gouvernement du Canada — conseils aux voyageurs", url: 'https://travel.gc.ca/destinations/china' },
           verifieLe: '2026-09',
         },
@@ -492,13 +500,13 @@ export const countries: Country[] = [
       regles: {
         gb: {
           sansVisaJours: 0,
-          resume: "Visa obligatoire. Visa touristique de 30 jours ; e-visa à entrée simple, à demander au moins 5 jours avant.",
+          resume: { fr: "Visa obligatoire. Visa touristique de 30 jours ; e-visa à entrée simple, à demander au moins 5 jours avant.", en: "Visa required. 30-day tourist visa; single-entry e-visa, to be applied for at least 5 days ahead." },
           source: { label: "GOV.UK — conseils aux voyageurs, conditions d'entrée", url: 'https://www.gov.uk/foreign-travel-advice/laos/entry-requirements' },
           verifieLe: '2026-09',
         },
         ca: {
           sansVisaJours: 0,
-          resume: "Visa obligatoire. Demande possible dans les 60 jours précédant la date d'entrée.",
+          resume: { fr: "Visa obligatoire. Demande possible dans les 60 jours précédant la date d'entrée.", en: "Visa required. Application possible within 60 days of your entry date." },
           source: { label: "Gouvernement du Canada — conseils aux voyageurs", url: 'https://travel.gc.ca/destinations/laos' },
           verifieLe: '2026-09',
         },
@@ -560,13 +568,13 @@ export const countries: Country[] = [
       regles: {
         gb: {
           sansVisaJours: 0,
-          resume: "Visa obligatoire. Visa touristique valable 30 jours à compter de l'entrée ; e-visa à demander au moins 4 jours avant.",
+          resume: { fr: "Visa obligatoire. Visa touristique valable 30 jours à compter de l'entrée ; e-visa à demander au moins 4 jours avant.", en: "Visa required. Tourist visa valid 30 days from entry; e-visa to be applied for at least 4 days ahead." },
           source: { label: "GOV.UK — conseils aux voyageurs, conditions d'entrée", url: 'https://www.gov.uk/foreign-travel-advice/cambodia/entry-requirements' },
           verifieLe: '2026-09',
         },
         ca: {
           sansVisaJours: 0,
-          resume: "Visa obligatoire pour le tourisme comme pour les affaires.",
+          resume: { fr: "Visa obligatoire pour le tourisme comme pour les affaires.", en: "Visa required, for tourism as for business." },
           source: { label: "Gouvernement du Canada — conseils aux voyageurs", url: 'https://travel.gc.ca/destinations/cambodia' },
           verifieLe: '2026-09',
         },
@@ -630,13 +638,13 @@ export const countries: Country[] = [
       regles: {
         gb: {
           sansVisaJours: 90,
-          resume: "90 jours sans visa pour un séjour touristique ou d'affaires. K-ETA non exigé jusqu'au 31 décembre 2026.",
+          resume: { fr: "90 jours sans visa pour un séjour touristique ou d'affaires. K-ETA non exigé jusqu'au 31 décembre 2026.", en: "90 days visa-free for tourism or short-term business. K-ETA not required until 31 December 2026." },
           source: { label: "GOV.UK — conseils aux voyageurs, conditions d'entrée", url: 'https://www.gov.uk/foreign-travel-advice/south-korea/entry-requirements' },
           verifieLe: '2026-09',
         },
         ca: {
           sansVisaJours: 180,
-          resume: "180 jours sans visa — durée propre aux ressortissants canadiens. K-ETA non exigé jusqu'au 31 décembre 2026.",
+          resume: { fr: "180 jours sans visa — durée propre aux ressortissants canadiens. K-ETA non exigé jusqu'au 31 décembre 2026.", en: "180 days visa-free — a length specific to Canadian nationals. K-ETA not required until 31 December 2026." },
           source: { label: "Gouvernement du Canada — conseils aux voyageurs", url: 'https://travel.gc.ca/destinations/south-korea' },
           verifieLe: '2026-09',
         },
@@ -698,13 +706,13 @@ export const countries: Country[] = [
       regles: {
         gb: {
           sansVisaJours: 0,
-          resume: "Visa obligatoire. Visa à l'arrivée de 30 jours pour le tourisme, la visite familiale et certaines activités d'affaires.",
+          resume: { fr: "Visa obligatoire. Visa à l'arrivée de 30 jours pour le tourisme, la visite familiale et certaines activités d'affaires.", en: "Visa required. 30-day visa on arrival for tourism, family visits and some business activity." },
           source: { label: "GOV.UK — conseils aux voyageurs, conditions d'entrée", url: 'https://www.gov.uk/foreign-travel-advice/indonesia/entry-requirements' },
           verifieLe: '2026-09',
         },
         ca: {
           sansVisaJours: 0,
-          resume: "Visa obligatoire.",
+          resume: { fr: "Visa obligatoire.", en: "Visa required." },
           source: { label: "Gouvernement du Canada — conseils aux voyageurs", url: 'https://travel.gc.ca/destinations/indonesia' },
           verifieLe: '2026-09',
         },
@@ -769,13 +777,13 @@ export const countries: Country[] = [
       regles: {
         gb: {
           sansVisaJours: 30,
-          resume: "30 jours sans visa pour le tourisme ou les affaires, prolongeables sur place.",
+          resume: { fr: "30 jours sans visa pour le tourisme ou les affaires, prolongeables sur place.", en: "30 days visa-free for tourism or business, extendable locally." },
           source: { label: "GOV.UK — conseils aux voyageurs, conditions d'entrée", url: 'https://www.gov.uk/foreign-travel-advice/philippines/entry-requirements' },
           verifieLe: '2026-09',
         },
         ca: {
           sansVisaJours: 30,
-          resume: "30 jours sans visa.",
+          resume: { fr: "30 jours sans visa.", en: "30 days visa-free." },
           source: { label: "Gouvernement du Canada — conseils aux voyageurs", url: 'https://travel.gc.ca/destinations/philippines' },
           verifieLe: '2026-09',
         },
@@ -859,7 +867,7 @@ export function regleDuPasseport(c: Country, p: Passeport): RegleEntree | null {
     return {
       sansVisaJours: c.visa.sansVisaJours,
       sansVisaJoursApres: c.visa.sansVisaJoursApres,
-      resume: c.visa.resume,
+      resume: { fr: c.visa.resume, en: c.visa.resume },
       source: c.sourcesVisa[0] ?? { label: 'France Diplomatie', url: '' },
       verifieLe: c.verifieLe,
     };

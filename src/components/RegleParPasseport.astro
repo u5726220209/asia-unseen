@@ -1,6 +1,7 @@
 ---
 import type { Country } from '@/data/countries';
-import { PASSEPORTS, regleDuPasseport } from '@/data/countries';
+import { PASSEPORTS, regleDuPasseport, type Passeport } from '@/data/countries';
+import type { Langue } from '@/lib/langue';
 
 /**
  * La règle d'entrée, selon le passeport.
@@ -24,58 +25,115 @@ import { PASSEPORTS, regleDuPasseport } from '@/data/countries';
  */
 interface Props {
   country: Country;
+  /** La langue des libellés. Les règles, elles, n'ont pas de langue. */
+  langue?: Langue;
   class?: string;
 }
-const { country: c, class: klass = '' } = Astro.props;
+const { country: c, langue = 'fr', class: klass = '' } = Astro.props;
+
+/**
+ * Les libellés, dans les deux langues.
+ *
+ * Écrire un second composant pour l'anglais aurait doublé la logique — et les
+ * deux auraient divergé au premier correctif, comme tout ce qui se recopie ici.
+ * Seuls les mots changent ; la règle affichée, sa source et sa date viennent
+ * des mêmes données.
+ */
+const T = {
+  fr: {
+    titre: 'Selon votre passeport',
+    invite: (nom: string, art: string) =>
+      `La règle d'entrée ${art} ${nom} dépend du passeport avec lequel vous voyagez. Choisissez le vôtre :`,
+    nonReleve: 'non relevé',
+    sansVisa: (j: number) => `${j} jours sans visa`,
+    visaObligatoire: 'Visa obligatoire',
+    releveEn: 'Relevé en',
+    changeLe: (d: string, j: number) =>
+      `Cette règle change le ${d} : elle passera à ${j} jours. C'est la date d'entrée sur le territoire qui décide.`,
+    pasReleveTitre: "Nous n'avons pas relevé cette règle",
+    pasReleveTexte:
+      "— nous ne pouvons donc pas la vérifier comme nous vérifions les autres. Plutôt que de transposer la règle d'un autre passeport, ce qui se paierait à une frontière, nous préférons vous envoyer à la source.",
+  },
+  en: {
+    titre: 'By passport',
+    invite: (nom: string) =>
+      `The entry rule for ${nom} depends on the passport you travel on. Choose yours:`,
+    nonReleve: 'not taken',
+    sansVisa: (j: number) => `${j} days visa-free`,
+    visaObligatoire: 'Visa required',
+    releveEn: 'Taken in',
+    changeLe: (d: string, j: number) =>
+      `This rule changes on ${d}: it becomes ${j} days. The date you enter the country is what decides.`,
+    pasReleveTitre: 'We have not taken this rule from an official source',
+    pasReleveTexte:
+      '— so we cannot check it the way we check the others. Rather than transpose the rule from another passport, which gets paid for at a border, we would rather send you to the source.',
+  },
+} as const;
+const t = T[langue];
+const fmtDate = langue === 'en' ? 'en-GB' : 'fr-FR';
 
 /** Le portail de chaque pays, pour ceux dont la règle n'est pas relevée. */
-const PORTAILS: Record<string, { nom: string; url: string; pourquoi: string }> = {
+const PORTAILS: Record<string, { nom: string; url: string; pourquoi: Record<Langue, string> }> = {
   us: {
     nom: 'travel.state.gov',
     url: 'https://travel.state.gov/content/travel/en/international-travel.html',
-    pourquoi: 'le portail américain refuse la lecture automatisée',
+    pourquoi: { fr: 'le portail américain refuse la lecture automatisée', en: 'the US portal refuses automated reading' },
   },
   au: {
     nom: 'smartraveller.gov.au',
     url: 'https://www.smartraveller.gov.au/',
-    pourquoi: 'le portail australien refuse la connexion',
+    pourquoi: { fr: 'le portail australien refuse la connexion', en: 'the Australian portal refuses the connection' },
   },
   nz: {
     nom: 'safetravel.govt.nz',
     url: 'https://www.safetravel.govt.nz/',
-    pourquoi: "le portail néo-zélandais ne publie pas de règles d'entrée",
+    pourquoi: { fr: "le portail néo-zélandais ne publie pas de règles d'entrée", en: 'the New Zealand portal does not publish entry rules' },
   },
 };
 
-const lignes = PASSEPORTS.map((p) => ({ ...p, regle: regleDuPasseport(c, p.code) }));
+/**
+ * Le passeport affiché par défaut dépend de la langue.
+ *
+ * Présélectionner la France sur une page anglaise n'a pas de sens : le lecteur
+ * anglophone devrait changer le sélecteur pour obtenir sa propre règle, et
+ * beaucoup liraient la française sans s'en apercevoir. On ouvre donc sur le
+ * Royaume-Uni côté anglais — le seul passeport anglophone dont la règle soit
+ * relevée pour les neuf pays.
+ */
+const parDefaut: Passeport = langue === 'en' ? 'gb' : 'fr';
+
+const lignes = PASSEPORTS.map((p) => ({
+  ...p,
+  libelle: langue === 'en' ? p.nomEn : p.nom,
+  regle: regleDuPasseport(c, p.code),
+}));
 const couverts = lignes.filter((l) => l.regle !== null);
 const absents = lignes.filter((l) => l.regle === null);
 
 const jourISO = new Date().toISOString().slice(0, 10);
 const dit = (r: NonNullable<ReturnType<typeof regleDuPasseport>>) =>
-  r.sansVisaJours > 0 ? `${r.sansVisaJours} jours sans visa` : 'Visa obligatoire';
+  r.sansVisaJours > 0 ? t.sansVisa(r.sansVisaJours) : t.visaObligatoire;
 ---
 
 <section data-pagefind-ignore class:list={['not-prose my-8 overflow-hidden rounded-brand border border-line', klass]}>
   <div class="border-b border-line bg-cream-warm px-5 py-4 sm:px-6">
-    <p class="eyebrow">Selon votre passeport</p>
+    <p class="eyebrow">{t.titre}</p>
     <label for={`pp-${c.slug}`} class="mt-2 block text-[0.9rem] leading-relaxed text-warm">
-      La règle d'entrée {c.article} {c.nom} dépend du passeport avec lequel vous voyagez.
-      Choisissez le vôtre&nbsp;:
+      {langue === 'en' ? t.invite(c.nomEn) : t.invite(c.nom, c.article)}
     </label>
     <select
       id={`pp-${c.slug}`}
       class="au-pp mt-3 w-full max-w-xs rounded-brand border border-line bg-white px-4 py-2.5 text-ink focus:border-teal focus:outline-none sm:w-auto"
     >
-      {couverts.map((l) => <option value={l.code}>{l.nom}</option>)}
-      {absents.map((l) => <option value={l.code}>{l.nom} — non relevé</option>)}
+      {couverts.map((l) => <option value={l.code} selected={l.code === parDefaut}>{l.libelle}</option>)}
+      {absents.map((l) => <option value={l.code}>{l.libelle} — {t.nonReleve}</option>)}
     </select>
   </div>
 
   {couverts.map((l) => (
-    <div class="au-pp-bloc px-5 py-5 sm:px-6" data-pp={l.code} hidden={l.code !== 'fr'}>
+    <div class="au-pp-bloc px-5 py-5 sm:px-6" data-pp={l.code} hidden={l.code !== parDefaut}>
       <p class="font-display text-[1.15rem] font-bold text-ink">{dit(l.regle!)}</p>
-      <p class="mt-2 text-[0.95rem] leading-relaxed text-ink-soft">{l.regle!.resume}</p>
+      <p class="mt-2 text-[0.95rem] leading-relaxed text-ink-soft">{l.regle!.resume[langue]}</p>
       {l.regle!.sansVisaJoursApres && l.regle!.sansVisaJoursApres.date > jourISO && (
         <p class="mt-3 rounded-brand border-l-[3px] border-amber bg-amber-50 px-4 py-3 text-[0.9rem] leading-relaxed text-ink-soft">
           Cette règle change le {new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${l.regle!.sansVisaJoursApres.date}T00:00:00`))} :
@@ -84,7 +142,7 @@ const dit = (r: NonNullable<ReturnType<typeof regleDuPasseport>>) =>
         </p>
       )}
       <p class="mt-3 text-[0.82rem] text-warm">
-        Relevé en {new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(new Date(`${l.regle!.verifieLe}-01T00:00:00`))} ·{' '}
+        {t.releveEn} {new Intl.DateTimeFormat(fmtDate, { month: 'long', year: 'numeric' }).format(new Date(`${l.regle!.verifieLe}-01T00:00:00`))} ·{' '}
         <a href={l.regle!.source.url} target="_blank" rel="noopener nofollow" class="text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">
           {l.regle!.source.label} ↗
         </a>
@@ -94,11 +152,9 @@ const dit = (r: NonNullable<ReturnType<typeof regleDuPasseport>>) =>
 
   {absents.map((l) => (
     <div class="au-pp-bloc px-5 py-5 sm:px-6" data-pp={l.code} hidden>
-      <p class="font-display text-[1.05rem] font-bold text-ink">Nous n'avons pas relevé cette règle</p>
+      <p class="font-display text-[1.05rem] font-bold text-ink">{t.pasReleveTitre}</p>
       <p class="mt-2 text-[0.95rem] leading-relaxed text-ink-soft">
-        {PORTAILS[l.code]?.pourquoi ?? "cette règle n'a pas encore été relevée"} — nous ne pouvons donc
-        pas la vérifier comme nous vérifions les autres. Plutôt que de transposer la règle d'un autre
-        passeport, ce qui se paierait à une frontière, nous préférons vous envoyer à la source.
+        {PORTAILS[l.code]?.pourquoi[langue] ?? ''} {t.pasReleveTexte}
       </p>
       {PORTAILS[l.code] && (
         <p class="mt-3 text-[0.9rem]">

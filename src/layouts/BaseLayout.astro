@@ -7,6 +7,8 @@ import '@/styles/global.css';
 
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
+import HeaderEn from '@/components/HeaderEn.astro';
+import FooterEn from '@/components/FooterEn.astro';
 import ExitIntent from '@/components/ExitIntent.astro';
 import GoogleConsent from '@/components/GoogleConsent.astro';
 import { LANGUES, langueDe, cheminEn } from '@/lib/langue';
@@ -202,9 +204,15 @@ const baseSchema = [
       Aller au contenu
     </a>
 
-    <div data-pagefind-ignore><Header /></div>
+    {/*
+      Une page anglaise reçoit une navigation anglaise, pas la française
+      traduite : celle-ci propose des guides et des articles qui n'existent
+      qu'en français. Une navigation qui promet et ne tient pas est pire
+      qu'une navigation courte.
+    */}
+    <div data-pagefind-ignore>{langue === 'en' ? <HeaderEn /> : <Header />}</div>
     <main id="contenu" class="flex-1" data-pagefind-body><slot /></main>
-    <div data-pagefind-ignore><Footer /></div>
+    <div data-pagefind-ignore>{langue === 'en' ? <FooterEn /> : <Footer />}</div>
     {!noPopup && <ExitIntent />}
 
     <script>

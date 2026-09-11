@@ -1,0 +1,61 @@
+---
+import { site, legal } from '@/data/site';
+import { nbSourcesSurveillees } from '@/lib/fraicheur';
+
+/**
+ * Le pied de page anglais.
+ *
+ * Comme l'en-tête, il ne renvoie qu'à des pages qui existent en anglais — plus
+ * les documents qui n'ont pas de langue : le fichier de données ouvert, le
+ * llms.txt, les mentions légales françaises que la loi impose de toute façon
+ * en français.
+ *
+ * Il n'y a pas de formulaire d'inscription ici, et c'est délibéré : la lettre
+ * est écrite en français et n'existe pas encore en anglais. Recueillir une
+ * adresse pour envoyer un contenu que la personne ne lira pas serait la
+ * première promesse non tenue de cette version du site.
+ */
+---
+
+<footer class="mt-auto border-t border-line bg-ink text-cream">
+  <div class="wrap py-12">
+    <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr]">
+      <div>
+        <p class="font-display text-[1.05rem] font-bold">{site.name}</p>
+        <p class="mt-3 max-w-sm text-[0.9rem] leading-relaxed text-warm-light">
+          Entry rules for nine Asian countries, taken from official sources and dated.
+          {nbSourcesSurveillees} official pages are re-read every night; when one changes, the
+          correction is published next to what we used to say.
+        </p>
+      </div>
+
+      <div>
+        <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-warm">In English</p>
+        <ul class="mt-4 space-y-2 text-[0.9rem]">
+          <li><a href="/en" class="text-warm-light transition-colors hover:text-cream">Entry rules by passport</a></li>
+          <li><a href={`${site.url}/donnees/visas.json`} class="text-warm-light transition-colors hover:text-cream">Open data (JSON, CC BY 4.0)</a></li>
+          <li><a href={`${site.url}/llms.txt`} class="text-warm-light transition-colors hover:text-cream">llms.txt</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-warm">In French</p>
+        <ul class="mt-4 space-y-2 text-[0.9rem]">
+          <li><a href="/" class="text-warm-light transition-colors hover:text-cream" hreflang="fr" lang="fr">Le site complet</a></li>
+          <li><a href="/mises-a-jour" class="text-warm-light transition-colors hover:text-cream" hreflang="fr" lang="fr">Journal des corrections</a></li>
+          <li><a href="/mentions-legales" class="text-warm-light transition-colors hover:text-cream" hreflang="fr" lang="fr">Mentions légales</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-10 border-t border-white/10 pt-6 text-[0.82rem] leading-relaxed text-warm">
+      <p>
+        Published by {legal.editeur} ({legal.enseigne}). Rules change without notice — check the
+        official source before you book. This site does not replace an immigration authority.
+      </p>
+      <p class="mt-2">
+        Contact: <a href={`mailto:${site.author.email}`} class="underline decoration-warm/40 underline-offset-2 hover:text-warm-light">{site.author.email}</a>
+      </p>
+    </div>
+  </div>
+</footer>

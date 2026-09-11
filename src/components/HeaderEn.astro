@@ -1,0 +1,91 @@
+---
+import Logo from './Logo.astro';
+import { countries } from '@/data/countries';
+import { contenuEn } from '@/data/countries.en';
+
+/**
+ * L'en-tête des pages anglaises.
+ *
+ * Ce n'est pas l'en-tête français traduit, et c'est une décision, pas un
+ * raccourci. L'en-tête français propose les guides, les articles, le journal
+ * des corrections — dont aucun n'existe encore en anglais. Traduire ses
+ * libellés aurait donné une navigation anglaise qui renvoie un lecteur
+ * anglophone sur des pages françaises : pire qu'une navigation courte, parce
+ * qu'elle promet quelque chose et ne le tient pas.
+ *
+ * Il ne propose donc que ce qui existe : l'accueil anglais, les neuf fiches
+ * pays, et le retour vers le français pour qui le lit. Il s'allongera quand il
+ * y aura de quoi l'allonger.
+ */
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const pays = countries.filter((c) => contenuEn[c.slug]);
+
+/** Le chemin français correspondant, pour le bouton de langue. */
+const versFrancais = path.replace(/^\/en(?=\/|$)/, '') || '/';
+---
+
+<header class="sticky top-0 z-50 border-b border-line/80 bg-cream/85 backdrop-blur-md">
+  <div class="wrap flex h-[4.25rem] items-center justify-between gap-6">
+    <a href="/en" class="shrink-0" aria-label="Asia Unseen, home"><Logo /></a>
+
+    <nav class="hidden items-center gap-1 lg:flex" aria-label="Main navigation">
+      <details class="au-menu group relative">
+        <summary class="flex cursor-pointer list-none items-center gap-1.5 rounded-brand px-3 py-2 font-display text-[0.9rem] font-medium text-ink transition-colors hover:text-teal">
+          Countries
+          <svg viewBox="0 0 12 12" class="h-3 w-3 transition-transform group-open:rotate-180" aria-hidden="true">
+            <path d="M2 4.5 6 8.5 10 4.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </summary>
+        <div class="absolute left-0 top-full w-[28rem] pt-2">
+          <div class="grid grid-cols-2 gap-1 rounded-brand border border-line bg-white p-3 shadow-lift-hover">
+            {pays.map((c) => (
+              <a href={`/en/${c.slug}`} class="rounded-brand px-3 py-2.5 transition-colors hover:bg-teal-50">
+                <span class="block font-display text-[0.9rem] font-semibold text-ink">{c.nomEn}</span>
+                <span class="block text-[0.78rem] leading-snug text-warm">from €{c.budget.routard} / day</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </details>
+
+      <a
+        href="/en"
+        class:list={['rounded-brand px-3 py-2 font-display text-[0.9rem] font-medium transition-colors hover:text-teal', path === '/en' ? 'text-teal' : 'text-ink']}
+      >
+        Entry rules
+      </a>
+    </nav>
+
+    <a
+      href={versFrancais}
+      class="shrink-0 rounded-brand border border-line px-3 py-1.5 font-display text-[0.82rem] font-medium text-ink transition-colors hover:border-teal hover:text-teal"
+      hreflang="fr"
+      lang="fr"
+    >
+      Français
+    </a>
+  </div>
+
+  {/*
+    La navigation courte du mobile. Les neuf pays tiennent dans une liste
+    déroulante native : un menu à tiroirs pour deux entrées serait du décor.
+  */}
+  <div class="border-t border-line/60 lg:hidden">
+    <div class="wrap flex items-center gap-3 py-2.5">
+      <label for="en-nav" class="sr-only">Go to a country</label>
+      <select
+        id="en-nav"
+        class="au-nav-en w-full rounded-brand border border-line bg-white px-3 py-2 text-[0.88rem] text-ink focus:border-teal focus:outline-none"
+      >
+        <option value="/en">Entry rules — all countries</option>
+        {pays.map((c) => <option value={`/en/${c.slug}`} selected={path === `/en/${c.slug}`}>{c.nomEn}</option>)}
+      </select>
+    </div>
+  </div>
+</header>
+
+<script>
+  document.querySelectorAll<HTMLSelectElement>('select.au-nav-en').forEach((sel) => {
+    sel.addEventListener('change', () => { window.location.href = sel.value; });
+  });
+</script>

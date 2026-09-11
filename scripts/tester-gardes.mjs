@@ -180,6 +180,14 @@ const CAS = [
     attendu: /déclare une version à \/en, qui n'existe pas/,
   },
 
+  {
+    nom: 'du français reste sur une page anglaise',
+    script: 'verifier-config.mjs',
+    // Une page à moitié traduite fait douter de ses chiffres, qui sont justes.
+    muter: { 'dist/en/vietnam/index.html': remplacer(/United Kingdom/, 'Royaume-Uni') },
+    attendu: /français sur des pages anglaises/,
+  },
+
   /* ── verifier-chiffres.mjs ───────────────────────────────────── */
   {
     nom: 'une entrée du registre devient illisible',

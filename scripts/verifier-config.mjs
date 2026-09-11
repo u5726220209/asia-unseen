@@ -496,7 +496,13 @@ const reglesIncoherentes = [];
     for (const r of seg.matchAll(/^\s{8}([a-z]{2}): \{([\s\S]*?)\n\s{8}\},/gm)) {
       const [, code, corps] = r;
       const jours = Number(corps.match(/sansVisaJours:\s*(\d+)/)?.[1] ?? NaN);
-      const resume = corps.match(/resume:\s*"([^"]*)"/)?.[1] ?? '';
+      // Le résumé porte les deux langues depuis que les pages anglaises
+      // existent. Les deux doivent annoncer le même nombre : une page qui dit
+      // « Visa required » au-dessus de « 45 jours sans visa » se contredit
+      // elle-même, et c'est l'anglaise qu'un anglophone croira.
+      const resumeFr = corps.match(/resume:\s*\{\s*fr:\s*"((?:[^"\\]|\\.)*)"/)?.[1] ?? '';
+      const resumeEn = corps.match(/en:\s*"((?:[^"\\]|\\.)*)"\s*\}/)?.[1] ?? '';
+      const resume = resumeFr;
       const url = corps.match(/url:\s*'([^']+)'/)?.[1] ?? '';
       const date = corps.match(/verifieLe:\s*'(\d{4}-\d{2})'/)?.[1] ?? '';
 
@@ -508,6 +514,13 @@ const reglesIncoherentes = [];
       }
       if (Number.isFinite(jours) && jours === 0 && !/visa obligatoire/i.test(resume)) {
         reglesIncoherentes.push({ pays: m[1], passeport: code, motif: "annoncé à 0 sans que la phrase dise « visa obligatoire »", resume });
+      }
+      if (!resumeEn) {
+        reglesIncoherentes.push({ pays: m[1], passeport: code, motif: 'aucun résumé en anglais' });
+      } else if (Number.isFinite(jours) && jours > 0 && !new RegExp(`\\b${jours}\\b`).test(resumeEn)) {
+        reglesIncoherentes.push({ pays: m[1], passeport: code, motif: `${jours} ne figure pas dans la phrase anglaise`, resume: resumeEn });
+      } else if (Number.isFinite(jours) && jours === 0 && !/visa required/i.test(resumeEn)) {
+        reglesIncoherentes.push({ pays: m[1], passeport: code, motif: "annoncé à 0 sans que la phrase anglaise dise « visa required »", resume: resumeEn });
       }
 
       const ap = corps.match(/sansVisaJoursApres:\s*\{\s*date:\s*'(\d{4}-\d{2}-\d{2})',\s*jours:\s*(\d+)/);
@@ -598,6 +611,68 @@ if (defautsLangue.length) {
   console.log('✓ Les deux versions se déclarent correctement l\'une l\'autre.\n');
 }
 
+/**
+ * Du français resté sur une page anglaise.
+ *
+ * Une page à moitié traduite se repère en deux secondes, et elle fait douter
+ * du reste — y compris des chiffres, qui sont justes. C'est arrivé dès la
+ * première fournée : le titre affichait « Visa required » et la phrase juste
+ * en dessous « Visa obligatoire. E-visa touristique… », parce que la règle
+ * n'existait qu'en français dans les données.
+ *
+ * On ne juge pas le français : on cherche les tournures que ce site produit,
+ * celles qui trahissent une donnée ou un gabarit non traduit. Une liste courte
+ * de motifs réels vaut mieux qu'un détecteur de langue qui crierait sur le
+ * bouton « Français » — lequel est là exprès.
+ */
+const francaisEnAnglais = [];
+if (existsSync('dist/en')) {
+  const MOTIFS = [
+    /Selon votre passeport/, /Relevé en /, /Visa obligatoire/, /jours sans visa/,
+    /Nous n'avons pas relevé/, /Dès \d+ €\/jour/, /Meilleurs mois/, /Formalités vérifiées/,
+    // Les noms de passeports : le premier contrôle les a laissés passer, et
+    // c'est l'œil qui les a vus — « Royaume-Uni », « États-Unis » dans un
+    // sélecteur anglais. Un contrôle qui ne cherche que ce qu'on a déjà trouvé
+    // ne trouve jamais rien de nouveau, mais il empêche au moins le retour.
+    /Royaume-Uni/, /États-Unis/, /Nouvelle-Zélande/, /Australie\b/,
+  ];
+  const pages = [];
+  const parcourir = (d) => {
+    for (const e of readdirSync(d, { withFileTypes: true })) {
+      const p = `${d}/${e.name}`;
+      if (e.isDirectory()) parcourir(p);
+      else if (e.name === 'index.html') pages.push(p);
+    }
+  };
+  parcourir('dist/en');
+
+  for (const f of pages) {
+    const url = f.replace(/^dist/, '').replace(/\/index\.html$/, '');
+    // Les liens vers la version française portent lang="fr" : ils sont voulus.
+    const texte = readFileSync(f, 'utf8')
+      .replace(/<script[\s\S]*?<\/script>/g, ' ')
+      .replace(/<a[^>]+lang="fr"[^>]*>[\s\S]*?<\/a>/g, ' ')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/&#39;|&rsquo;/g, "'")
+      .replace(/\s+/g, ' ');
+    for (const m of MOTIFS) {
+      const trouve = texte.match(m);
+      if (trouve) francaisEnAnglais.push({ page: url, extrait: trouve[0] });
+    }
+  }
+}
+
+if (francaisEnAnglais.length) {
+  const vus = new Set();
+  const uniques = francaisEnAnglais.filter((f) => !vus.has(f.page + f.extrait) && vus.add(f.page + f.extrait));
+  console.log(`⛔ ${uniques.length} morceau(x) de français sur des pages anglaises :\n`);
+  for (const f of uniques.slice(0, 12)) console.log(`   ${f.page.padEnd(24)} « ${f.extrait} »`);
+  console.log('\n   Une page à moitié traduite fait douter de ses chiffres, qui sont justes.');
+  console.log('   Cherchez la donnée ou le gabarit qui n\'existe que dans une langue.\n');
+} else if (existsSync('dist/en')) {
+  console.log('✓ Aucune page anglaise ne laisse traîner du français.\n');
+}
+
 if (!tarifsNonSuivis.length) console.log("✓ Chaque tarif d'entrée publié est inscrit au registre.\n");
 
 if (tarifsNonSuivis.length) {
@@ -680,5 +755,5 @@ process.exit(
   jamaisEcrits.length || jamaisLus.length || defautsFormulaire.length ||
   ecartSources || visasIncoherents.length || correctionsNonFaites.length ||
   tarifsNonSuivis.length || defautsMachine.length || fautesArticle.length ||
-  reglesIncoherentes.length || defautsLangue.length ? 1 : 0,
+  reglesIncoherentes.length || defautsLangue.length || francaisEnAnglais.length ? 1 : 0,
 );
