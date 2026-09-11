@@ -181,6 +181,25 @@ const CAS = [
   },
 
   {
+    nom: 'une paire traduite ne se déclare pas',
+    script: 'verifier-config.mjs',
+    /* On avance la date d'un article anglais encore programmé : sa page n'est
+       donc pas dans `dist`, alors que son original français y est. C'est le cas
+       réel d'une reconstruction nocturne qui n'a pas eu lieu — la date est
+       venue, la page anglaise n'existe pas, et rien à l'écran ne le dit.
+
+       Le jour où cet article sera réellement paru, la mutation ne produira plus
+       de défaut et ce test échouera bruyamment. C'est voulu : il faudra alors
+       le refaire porter sur une paire publiée, en retirant la balise `alternate`
+       de l'une des deux pages. */
+    muter: {
+      'src/content/blog-en/esim-asia-price-comparison.md':
+        remplacer(/^pubDate: 2026-11-17$/m, 'pubDate: 2026-01-01'),
+    },
+    attendu: /ne le disent pas/,
+  },
+
+  {
     nom: 'du français reste sur une page anglaise',
     script: 'verifier-config.mjs',
     // Une page à moitié traduite fait douter de ses chiffres, qui sont justes.

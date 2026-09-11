@@ -65,7 +65,7 @@ const schema = [
 ];
 ---
 
-<BaseLayout title={d.title} description={d.description} type="article" publishedTime={d.pubDate} schema={schema}>
+<BaseLayout title={d.title} description={d.description} type="article" publishedTime={d.pubDate} schema={schema} jumelle={d.traduitDe ? `/blog/${d.traduitDe}` : undefined}>
   <article>
     <header class="border-b border-line bg-cream-warm">
       <div class="wrap-narrow py-10 lg:py-14">

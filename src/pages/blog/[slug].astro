@@ -1,6 +1,6 @@
 ---
 import type { GetStaticPaths } from 'astro';
-import { render } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import { articlesPublies, suggestionsCroisees } from '@/lib/articles';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
@@ -15,12 +15,33 @@ import Visuel from '@/components/Visuel.astro';
 import { bySlug } from '@/data/countries';
 import { site } from '@/data/site';
 
+/**
+ * La version anglaise de chaque article, quand elle existe.
+ *
+ * Le lien est porté par l'article anglais — `traduitDe` — et pas par le
+ * français : c'est la traduction qui sait de quoi elle est la traduction, et
+ * l'inverse obligerait à écrire la même information deux fois, donc à la voir
+ * un jour diverger. On retourne simplement l'index ici.
+ *
+ * Un article anglais encore programmé n'est pas déclaré : sa page n'existe pas
+ * tant que sa date n'est pas venue, et une balise hreflang vers une page
+ * absente est pire que pas de balise.
+ */
 export const getStaticPaths = (async () => {
   const posts = await articlesPublies();
-  return posts.map((post) => ({ params: { slug: post.id }, props: { post, posts } }));
+  const aujourdhui = new Date();
+  const versionEn = new Map(
+    (await getCollection('blogEn'))
+      .filter((a) => !a.data.draft && a.data.pubDate <= aujourdhui && a.data.traduitDe)
+      .map((a) => [a.data.traduitDe, `/en/blog/${a.id}`]),
+  );
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post, posts, jumelle: versionEn.get(post.id) },
+  }));
 }) satisfies GetStaticPaths;
 
-const { post, posts } = Astro.props;
+const { post, posts, jumelle } = Astro.props;
 const { Content, headings, remarkPluginFrontmatter } = await render(post);
 const d = post.data;
 
@@ -59,6 +80,7 @@ const fmt = (date: Date) =>
   publishedTime={d.pubDate}
   modifiedTime={d.updatedDate ?? d.pubDate}
   schema={schema}
+  jumelle={jumelle}
 >
   <article>
     <header class="border-b border-line bg-cream-warm">

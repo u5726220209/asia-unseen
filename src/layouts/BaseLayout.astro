@@ -35,6 +35,22 @@ interface Props {
    */
   traduite?: boolean;
   /**
+   * L'adresse de la jumelle, quand les deux versions n'ont pas le même chemin.
+   *
+   * `traduite` suffit tant que la traduction vit à la même adresse préfixée —
+   * `/vietnam` et `/en/vietnam`. Les articles, eux, ont deux slugs différents :
+   * « où dormir à Hanoï » ne peut pas s'appeler `ou-dormir-a-hanoi` en anglais
+   * sans perdre exactement les mots que l'on cherche à se faire trouver.
+   *
+   * Sans ce champ, ces pages-là ne déclaraient rien du tout. Ce n'était pas un
+   * défaut visible : les deux versions existaient, chacune correcte, et le
+   * contrôle de réciprocité les laissait passer puisqu'elles ne promettaient
+   * rien. Mais Google voyait deux pages étrangères l'une à l'autre traitant le
+   * même sujet — et c'est ainsi qu'une traduction se met à concurrencer son
+   * original au lieu de le compléter.
+   */
+  jumelle?: string;
+  /**
    * La version lisible par machine de cette page.
    *
    * Le jeu de données existait, mais rien ne le reliait aux pages : un lecteur
@@ -49,7 +65,7 @@ interface Props {
 const {
   title, description, image = '/og-default.png', type = 'website',
   publishedTime, modifiedTime, noindex = false, schema = [], noPopup = false,
-  donnees, traduite = false,
+  donnees, traduite = false, jumelle,
 } = Astro.props;
 
 // Sur un déploiement de préversion, tout le site est en noindex : un sous-domaine
@@ -69,13 +85,24 @@ const canonical = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', site.url
  * `verifier-config.mjs` refuse la mise en ligne si l'une des deux manque.
  */
 const langue = langueDe(Astro.url.pathname);
-const alternatives = traduite
-  ? LANGUES.map((l) => ({
-      code: l.code,
-      etiquette: l.etiquette,
-      href: new URL(cheminEn(Astro.url.pathname, l.code), site.url).href,
-    }))
-  : [];
+const cheminCourant = Astro.url.pathname.replace(/\/$/, '') || '/';
+const etiquetteDe = (code) => LANGUES.find((l) => l.code === code)!.etiquette;
+const alternatives = jumelle
+  ? [
+      { code: langue, etiquette: etiquetteDe(langue), href: new URL(cheminCourant, site.url).href },
+      {
+        code: langue === 'fr' ? 'en' : 'fr',
+        etiquette: etiquetteDe(langue === 'fr' ? 'en' : 'fr'),
+        href: new URL(jumelle, site.url).href,
+      },
+    ]
+  : traduite
+    ? LANGUES.map((l) => ({
+        code: l.code,
+        etiquette: l.etiquette,
+        href: new URL(cheminEn(Astro.url.pathname, l.code), site.url).href,
+      }))
+    : [];
 const ogImage = new URL(image, site.url).href;
 /**
  * Le nom du site n'est ajouté au titre que s'il tient dans la limite affichée

@@ -612,6 +612,69 @@ if (defautsLangue.length) {
 }
 
 /**
+ * Une paire traduite qui ne se déclare pas du tout.
+ *
+ * Le contrôle précédent vérifie la réciprocité de ce qui est déclaré. Il ne
+ * dit rien du cas où les deux versions existent et où *aucune* ne parle de
+ * l'autre — et c'est précisément ce qui s'est produit : vingt-deux articles
+ * anglais, chacun correct, reliés à leur original par `traduitDe`, et pas une
+ * balise `hreflang` entre eux. Rien ne clochait à l'écran, rien ne clochait au
+ * contrôle : une paire muette ne promet rien, donc ne se contredit jamais.
+ *
+ * Pour Google, deux pages étrangères l'une à l'autre qui traitent le même
+ * sujet ne sont pas une traduction — ce sont deux candidates. C'est ainsi
+ * qu'une version anglaise se met à concurrencer son original au lieu de le
+ * compléter, et le symptôme (une page qui perd son classement) apparaît des
+ * mois après la cause.
+ *
+ * Ce contrôle part donc de `traduitDe`, pas du HTML : si les deux pages sont
+ * parues, elles doivent se nommer l'une l'autre.
+ */
+const paires = [];
+if (existsSync('dist')) {
+  const aujourdhui = new Date().toISOString().slice(0, 10);
+  for (const f of readdirSync('src/content/blog-en')) {
+    if (!f.endsWith('.md')) continue;
+    const contenu = readFileSync(`src/content/blog-en/${f}`, 'utf8');
+    const origine = contenu.match(/^traduitDe:\s*(\S+)\s*$/m)?.[1];
+    const date = contenu.match(/^pubDate:\s*(\S+)\s*$/m)?.[1];
+    if (!origine || !date || date > aujourdhui) continue;
+    paires.push({ en: `/en/blog/${f.replace(/\.md$/, '')}`, fr: `/blog/${origine}` });
+  }
+}
+
+const muettes = [];
+for (const { en, fr } of paires) {
+  for (const [page, attendu] of [[en, fr], [fr, en]]) {
+    const fichier = `dist${page}/index.html`;
+    if (!existsSync(fichier)) {
+      muettes.push({ page, motif: `n'a pas été construite, alors que sa jumelle ${attendu} l'a été` });
+      continue;
+    }
+    /* On lit les balises, pas la page : l'article anglais porte déjà un lien
+       visible « Lire cet article en français », avec son attribut `hreflang`.
+       Chercher la chaîne dans le HTML entier aurait donc validé une page qui
+       ne déclare rien — le contrôle aurait passé au vert sur le défaut même
+       qu'il est là pour voir. */
+    const balises = [...readFileSync(fichier, 'utf8')
+      .matchAll(/<link rel="alternate" hreflang="[^"]+" href="([^"]+)"/g)]
+      .map((m) => new URL(m[1]).pathname.replace(/\/$/, ''));
+    if (!balises.includes(attendu)) {
+      muettes.push({ page, motif: `ne déclare pas sa traduction ${attendu}` });
+    }
+  }
+}
+
+if (muettes.length) {
+  console.log(`⛔ ${muettes.length} page(s) traduite(s) ne le disent pas :\n`);
+  for (const m of muettes.slice(0, 12)) console.log(`   ${m.page.padEnd(40)} ${m.motif}`);
+  console.log('\n   Deux pages qui traitent le même sujet sans se déclarer ne sont pas');
+  console.log('   une traduction pour Google : ce sont deux candidates.\n');
+} else if (paires.length) {
+  console.log(`✓ Les ${paires.length} paire(s) d'articles traduits se nomment l'une l'autre.\n`);
+}
+
+/**
  * Du français resté sur une page anglaise.
  *
  * Une page à moitié traduite se repère en deux secondes, et elle fait douter
@@ -794,5 +857,5 @@ process.exit(
   ecartSources || visasIncoherents.length || correctionsNonFaites.length ||
   tarifsNonSuivis.length || defautsMachine.length || fautesArticle.length ||
   reglesIncoherentes.length || defautsLangue.length || francaisEnAnglais.length ||
-  nonClasses.length ? 1 : 0,
+  nonClasses.length || muettes.length ? 1 : 0,
 );
