@@ -13,6 +13,18 @@ import { site } from '@/data/site';
  * sur `blog` en supposant du français, et le premier endroit oublié aurait
  * publié un article anglais au milieu du site français.
  *
+ * Tous n'ont pas d'original. Depuis que le site écrit des articles anglais
+ * pour un lecteur anglophone — une prolongation de séjour, les frais qui ne
+ * sont pas le visa — `traduitDe` est absent, et c'est normal : ces textes ne
+ * traduisent rien.
+ *
+ * Ce cas a rouvert un défaut déjà corrigé : sans jumelle, le bouton
+ * « Français » retirait `/en` du chemin et menait à `/blog/the-k-eta-you-may-
+ * not-need`, qui n'existe pas. La simulation des parutions l'a vu avant qu'il
+ * ne paraisse. Ces articles renvoient donc à la liste française, qui est le
+ * plus proche équivalent honnête : le site en français, pas cet article en
+ * français, puisqu'il n'existe pas.
+ *
  * `traduitDe` relie l'article à son original. C'est ce qui permet aux deux de
  * se déclarer l'un l'autre — et, le jour où l'original sera corrigé, de savoir
  * quelle version anglaise revoir. Sans ce lien, le retard de traduction se
@@ -65,7 +77,7 @@ const schema = [
 ];
 ---
 
-<BaseLayout title={d.title} description={d.description} type="article" publishedTime={d.pubDate} schema={schema} image={`/og/en/blog/${entry.id}.png`} jumelle={d.traduitDe ? `/blog/${d.traduitDe}` : undefined}>
+<BaseLayout title={d.title} description={d.description} type="article" publishedTime={d.pubDate} schema={schema} image={`/og/en/blog/${entry.id}.png`} jumelle={d.traduitDe ? `/blog/${d.traduitDe}` : undefined} retourFr={d.traduitDe ? undefined : '/blog'}>
   <article>
     <header class="border-b border-line bg-cream-warm">
       <div class="wrap-narrow py-10 lg:py-14">

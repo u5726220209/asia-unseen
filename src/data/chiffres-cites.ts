@@ -94,6 +94,11 @@ const EN_GUIDE_ERREURS = '/en/guides/mistakes-to-avoid-in-asia';
 const GUIDE_ERREURS = '/erreurs-a-eviter';
 const ARTICLE_EVISA_VN = '/blog/visa-vietnam-e-visa-2026';
 const EN_VIETNAM_10J = '/en/blog/vietnam-in-10-days';
+const EN_PROLONGER = '/en/blog/extending-your-stay-southeast-asia';
+const EN_FRAIS = '/en/blog/the-fees-that-are-not-the-visa';
+const EN_BALI = '/en/blog/arriving-in-bali';
+const EN_KETA = '/en/blog/the-k-eta-you-may-not-need';
+const EN_PHILIPPINES = '/en/blog/arriving-in-the-philippines';
 const AOT_TAXI = 'https://suvarnabhumi.airportthai.co.th/service/transportation/detail/834';
 const ARTICLE_TAXI_AEROPORT = '/blog/taxi-aeroport-asie-tarifs';
 
@@ -127,20 +132,20 @@ export const chiffresCites: ChiffreCite[] = [
      absent de cette liste. */
   { affiche: '25', designe: 'e-visa vietnamien, entrée simple (USD)', source: EVISA_VN, releveLe: '2026-09-04', pages: ['/vietnam', ARTICLE_EVISA_VN, EN_VIETNAM_10J], sourceIntrouvableAttendue: true },
   { affiche: '50', designe: 'e-visa vietnamien, entrées multiples (USD)', source: EVISA_VN, releveLe: '2026-09-04', pages: ['/vietnam', ARTICLE_EVISA_VN], sourceIntrouvableAttendue: true },
-  { affiche: '1 900', designe: "prolongation de séjour en Thaïlande, sur place (THB)", source: IMMIGRATION_TH, releveLe: '2026-09-04', pages: ['/thailande'], sourceIntrouvableAttendue: true },
+  { affiche: '1 900', designe: "prolongation de séjour en Thaïlande, sur place (THB)", source: IMMIGRATION_TH, releveLe: '2026-09-04', pages: ['/thailande', EN_PROLONGER], sourceIntrouvableAttendue: true },
   { affiche: '45', designe: 'visa L chinois, entrée simple — frais consulaires, tarif réduit jusqu\'au 31/12/2026', source: AMBASSADE_CN, releveLe: '2026-09-02', pages: ['/chine'] },
   { affiche: '110', designe: 'visa chinois, total constaté frais de service inclus', source: AMBASSADE_CN, releveLe: '2026-09-02', pages: ['/chine'], estimation: "la grille tarifaire du centre de dépôt parisien n'est pas publique : ce total est un ordre de grandeur, et la page le dit" },
-  { affiche: '30', designe: "visa à l'arrivée au Laos, borne basse selon nationalité (USD)", source: EVISA_LA, releveLe: '2026-09-04', pages: ['/laos'], sourceIntrouvableAttendue: true },
-  { affiche: '50', designe: "visa à l'arrivée au Laos, borne haute selon nationalité (USD)", source: EVISA_LA, releveLe: '2026-09-04', pages: ['/laos'], sourceIntrouvableAttendue: true },
-  { affiche: '2', designe: 'prolongation de séjour au Laos, par jour à Vientiane (USD)', source: EVISA_LA, releveLe: '2026-09-04', pages: ['/laos'], sourceIntrouvableAttendue: true },
-  { affiche: '36', designe: 'e-visa cambodgien, frais de service inclus (USD)', source: EVISA_KH, releveLe: '2026-09-04', pages: ['/cambodge'], sourceIntrouvableAttendue: true },
-  { affiche: '40', designe: 'visa cambodgien aux postes-frontières terrestres, en espèces (USD)', source: EVISA_KH, releveLe: '2026-09-04', pages: ['/cambodge'], sourceIntrouvableAttendue: true },
-  { affiche: '10 000', designe: 'K-ETA coréen demandé volontairement, non remboursable (wons)', source: KETA, releveLe: '2026-09-04', pages: ['/coree-du-sud'], sourceIntrouvableAttendue: true },
+  { affiche: '30', designe: "visa à l'arrivée au Laos, borne basse selon nationalité (USD)", source: EVISA_LA, releveLe: '2026-09-04', pages: ['/laos', EN_PROLONGER, EN_FRAIS], sourceIntrouvableAttendue: true },
+  { affiche: '50', designe: "visa à l'arrivée au Laos, borne haute selon nationalité (USD)", source: EVISA_LA, releveLe: '2026-09-04', pages: ['/laos', EN_PROLONGER, EN_FRAIS], sourceIntrouvableAttendue: true },
+  { affiche: '2', designe: 'prolongation de séjour au Laos, par jour à Vientiane (USD)', source: EVISA_LA, releveLe: '2026-09-04', pages: ['/laos', EN_PROLONGER], sourceIntrouvableAttendue: true },
+  { affiche: '36', designe: 'e-visa cambodgien, frais de service inclus (USD)', source: EVISA_KH, releveLe: '2026-09-04', pages: ['/cambodge', EN_PROLONGER, EN_FRAIS], sourceIntrouvableAttendue: true },
+  { affiche: '40', designe: 'visa cambodgien aux postes-frontières terrestres, en espèces (USD)', source: EVISA_KH, releveLe: '2026-09-04', pages: ['/cambodge', EN_PROLONGER, EN_FRAIS], sourceIntrouvableAttendue: true },
+  { affiche: '10 000', designe: 'K-ETA coréen demandé volontairement, non remboursable (wons)', source: KETA, releveLe: '2026-09-04', pages: ['/coree-du-sud', EN_FRAIS, EN_KETA], sourceIntrouvableAttendue: true },
   { affiche: '500 000', designe: "visa à l'arrivée en Indonésie (IDR)", source: EVISA_ID, releveLe: '2026-09-04', pages: ['/indonesie'], sourceIntrouvableAttendue: true },
-  { affiche: '150 000', designe: 'taxe touristique de Bali (IDR)', source: EVISA_ID, releveLe: '2026-09-04', pages: ['/indonesie'], sourceIntrouvableAttendue: true },
+  { affiche: '150 000', designe: 'taxe touristique de Bali (IDR)', source: EVISA_ID, releveLe: '2026-09-04', pages: ['/indonesie', EN_PROLONGER, EN_FRAIS, EN_BALI], sourceIntrouvableAttendue: true },
   { affiche: '30', designe: "visa à l'arrivée en Indonésie, converti en euros", source: EVISA_ID, releveLe: '2026-09-04', pages: ['/indonesie'], estimation: 'conversion de 500 000 IDR : elle bouge avec le change, pas avec la règle' },
   { affiche: '7,50', designe: 'taxe touristique de Bali, convertie en euros', source: EVISA_ID, releveLe: '2026-09-04', pages: ['/indonesie'], estimation: 'conversion de 150 000 IDR : elle bouge avec le change, pas avec la règle' },
-  { affiche: '3 030', designe: 'prolongation de séjour aux Philippines, sur place (PHP)', source: IMMIGRATION_PH, releveLe: '2026-09-04', pages: ['/philippines'], sourceIntrouvableAttendue: true },
+  { affiche: '3 030', designe: 'prolongation de séjour aux Philippines, sur place (PHP)', source: IMMIGRATION_PH, releveLe: '2026-09-04', pages: ['/philippines', EN_PROLONGER, EN_PHILIPPINES], sourceIntrouvableAttendue: true },
 
   /* ── Assurance ──────────────────────────────────────────────── */
   { affiche: '28,82', designe: 'AVI Routard, zone B, 19-35 ans, la semaine', source: AVI, releveLe: '2026-08-30', pages: [COMPARATIF_ASSURANCE] },
