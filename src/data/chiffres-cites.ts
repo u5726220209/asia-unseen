@@ -87,6 +87,7 @@ const ARTICLE_AEROPORT_HANOI = '/blog/aeroport-noi-bai-hanoi';
 const ARTICLE_KETA = '/blog/k-eta-coree-2026';
 const COMPARATIF_ASSURANCE = '/blog/assurance-voyage-asie-comparatif';
 const COMPARATIF_ESIM = '/blog/esim-asie-comparatif-prix';
+const EN_COMPARATIF_ESIM = '/en/blog/esim-asia-price-comparison';
 const GUIDE_TRANSPORTS = '/transports-asie';
 const GUIDE_ERREURS = '/erreurs-a-eviter';
 const ARTICLE_EVISA_VN = '/blog/visa-vietnam-e-visa-2026';
@@ -151,17 +152,17 @@ export const chiffresCites: ChiffreCite[] = [
   { affiche: '1 250 000', designe: 'Plafond frais médicaux, AVI zone A', source: AVI, releveLe: '2026-08-30', pages: [COMPARATIF_ASSURANCE] },
 
   /* ── eSIM ───────────────────────────────────────────────────── */
-  { affiche: '22,50', designe: 'Airalo Asie, 10 Go sur 30 jours', source: AIRALO_ASIE, releveLe: '2026-08-30', pages: [COMPARATIF_ESIM], sourceIntrouvableAttendue: true },
-  { affiche: '65,50', designe: 'Airalo Asie, illimité 30 jours', source: AIRALO_ASIE, releveLe: '2026-08-30', pages: [COMPARATIF_ESIM], sourceIntrouvableAttendue: true },
-  { affiche: '13,50', designe: 'Airalo Asie, 5 Go sur 30 jours', source: AIRALO_ASIE, releveLe: '2026-08-30', pages: [COMPARATIF_ESIM], sourceIntrouvableAttendue: true },
-  { affiche: '52,50', designe: 'Airalo Asie, 50 Go sur 30 jours', source: AIRALO_ASIE, releveLe: '2026-08-30', pages: [COMPARATIF_ESIM], sourceIntrouvableAttendue: true },
-  { affiche: '43,50', designe: 'Airalo Asie, illimité 15 jours', source: AIRALO_ASIE, releveLe: '2026-08-30', pages: [COMPARATIF_ESIM], sourceIntrouvableAttendue: true },
-  { affiche: '16,00', designe: 'Airalo Vietnam, 10 Go sur 30 jours', source: AIRALO_VN, releveLe: '2026-08-30', pages: [COMPARATIF_ESIM], sourceIntrouvableAttendue: true },
-  { affiche: '61,50', designe: 'Airalo Vietnam, illimité 30 jours', source: AIRALO_VN, releveLe: '2026-08-30', pages: [COMPARATIF_ESIM], sourceIntrouvableAttendue: true },
-  { affiche: '46,90', designe: 'Holafly Asie, 15 jours', source: HOLAFLY, releveLe: '2026-08-30', pages: [COMPARATIF_ESIM], sourceIntrouvableAttendue: true },
-  { affiche: '68,90', designe: 'Holafly Asie, 30 jours', source: HOLAFLY, releveLe: '2026-08-30', pages: [COMPARATIF_ESIM], sourceIntrouvableAttendue: true },
-  { affiche: '699', designe: 'SIM touriste AIS, 15 jours, en THB', source: AIS, releveLe: '2026-08-30', pages: [COMPARATIF_ESIM] },
-  { affiche: '1 199', designe: 'SIM touriste AIS, 30 jours, en THB', source: AIS, releveLe: '2026-08-30', pages: [COMPARATIF_ESIM] },
+  { affiche: '22,50', designe: 'Airalo Asie, 10 Go sur 30 jours', source: AIRALO_ASIE, releveLe: '2026-08-30', pages: [COMPARATIF_ESIM, EN_COMPARATIF_ESIM], sourceIntrouvableAttendue: true },
+  { affiche: '65,50', designe: 'Airalo Asie, illimité 30 jours', source: AIRALO_ASIE, releveLe: '2026-08-30', pages: [COMPARATIF_ESIM, EN_COMPARATIF_ESIM], sourceIntrouvableAttendue: true },
+  { affiche: '13,50', designe: 'Airalo Asie, 5 Go sur 30 jours', source: AIRALO_ASIE, releveLe: '2026-08-30', pages: [COMPARATIF_ESIM, EN_COMPARATIF_ESIM], sourceIntrouvableAttendue: true },
+  { affiche: '52,50', designe: 'Airalo Asie, 50 Go sur 30 jours', source: AIRALO_ASIE, releveLe: '2026-08-30', pages: [COMPARATIF_ESIM, EN_COMPARATIF_ESIM], sourceIntrouvableAttendue: true },
+  { affiche: '43,50', designe: 'Airalo Asie, illimité 15 jours', source: AIRALO_ASIE, releveLe: '2026-08-30', pages: [COMPARATIF_ESIM, EN_COMPARATIF_ESIM], sourceIntrouvableAttendue: true },
+  { affiche: '16,00', designe: 'Airalo Vietnam, 10 Go sur 30 jours', source: AIRALO_VN, releveLe: '2026-08-30', pages: [COMPARATIF_ESIM, EN_COMPARATIF_ESIM], sourceIntrouvableAttendue: true },
+  { affiche: '61,50', designe: 'Airalo Vietnam, illimité 30 jours', source: AIRALO_VN, releveLe: '2026-08-30', pages: [COMPARATIF_ESIM, EN_COMPARATIF_ESIM], sourceIntrouvableAttendue: true },
+  { affiche: '46,90', designe: 'Holafly Asie, 15 jours', source: HOLAFLY, releveLe: '2026-08-30', pages: [COMPARATIF_ESIM, EN_COMPARATIF_ESIM], sourceIntrouvableAttendue: true },
+  { affiche: '68,90', designe: 'Holafly Asie, 30 jours', source: HOLAFLY, releveLe: '2026-08-30', pages: [COMPARATIF_ESIM, EN_COMPARATIF_ESIM], sourceIntrouvableAttendue: true },
+  { affiche: '699', designe: 'SIM touriste AIS, 15 jours, en THB', source: AIS, releveLe: '2026-08-30', pages: [COMPARATIF_ESIM, EN_COMPARATIF_ESIM] },
+  { affiche: '1 199', designe: 'SIM touriste AIS, 30 jours, en THB', source: AIS, releveLe: '2026-08-30', pages: [COMPARATIF_ESIM, EN_COMPARATIF_ESIM] },
   { affiche: '10 000', designe: 'K-ETA facultatif, frais de demande en wons', source: KETA, releveLe: '2026-08-31', pages: [ARTICLE_KETA] },
   { affiche: '150 000', designe: 'taxe touristique de Bali, en roupies, à chaque entrée', source: FD_INDONESIE, releveLe: '2026-08-31', pages: [ARTICLE_INDONESIE] },
   { affiche: '3 030', designe: 'prolongation de séjour aux Philippines, en pesos', source: FD_PHILIPPINES, releveLe: '2026-08-31', pages: [ARTICLE_PHILIPPINES] },
