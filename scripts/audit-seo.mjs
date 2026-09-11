@@ -32,6 +32,19 @@ for (const {p, size} of pages) {
     h1: (h.match(/<h1[^>]*>([\s\S]*?)<\/h1>/g)||[]).length,
     og: /property="og:image"/.test(h),
     ogSrc: get(h, /property="og:image" content="([^"]*)"/),
+    /**
+     * Un tableau qui n'a pas de conteneur qui défile.
+     *
+     * Les tableaux sont ce que ce site a de plus utile, et la seule chose dont
+     * la largeur ne dépend pas du lecteur. 544 px dans une colonne de 330 ne
+     * rétrécissent pas : ils poussent la page, et le texte sort du cadre à
+     * chaque paragraphe. Le défaut ne se voit sur aucun écran d'ordinateur —
+     * c'est pour cela que trente-cinq tableaux l'ont eu pendant des mois,
+     * pendant que la classe CSS écrite pour les envelopper n'était appliquée
+     * nulle part.
+     */
+    tablesNues: (h.match(/<table\b/g) || []).length -
+      (h.match(/class="[^"]*(?:table-wrap|overflow-x-auto)[^"]*"[\s\S]{0,400}?<table\b/g) || []).length,
     jsonld: (h.match(/application\/ld\+json/g)||[]).length,
     imgs: (h.match(/<img /g)||[]).length,
     imgsNoAlt: (h.match(/<img (?![^>]*\balt=)[^>]*>/g)||[]).length,
@@ -65,6 +78,7 @@ const ogAbsentes = rows.filter((r) => {
   return !existsSync(join(DIST, chemin));
 });
 pb('og:image annoncée mais absente', ogAbsentes.length);
+pb('tableaux sans conteneur qui défile', rows.reduce((a, r) => a + Math.max(0, r.tablesNues), 0));
 pb('sans JSON-LD', rows.filter(r=>r.jsonld===0).length);
 pb('images sans alt', rows.reduce((a,r)=>a+r.imgsNoAlt,0));
 /**
@@ -108,7 +122,8 @@ const defauts =
   // récapitulatif qui contredit son propre détail est pire qu'absent.
   rows.filter((r) => !r.canonical || r.h1 !== 1 || !r.og || r.jsonld === 0 ||
     r.lang !== (/^\/en(\/|$)/.test(r.url) ? 'en' : 'fr')).length +
-  rows.reduce((a, r) => a + r.imgsNoAlt, 0) + dt.length + dd.length + ogAbsentes.length;
+  rows.reduce((a, r) => a + r.imgsNoAlt, 0) + dt.length + dd.length + ogAbsentes.length +
+  rows.reduce((a, r) => a + Math.max(0, r.tablesNues), 0);
 
 if (ogAbsentes.length) {
   console.log('\n--- og:image annoncée mais absente ---');

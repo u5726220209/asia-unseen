@@ -3,6 +3,7 @@ import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 import { remarkReadingTime } from './src/plugins/remark-reading-time.mjs';
 import { rehypeAffiliateLinks } from './src/plugins/rehype-affiliate-links.mjs';
+import { rehypeTablesScrollables } from './src/plugins/rehype-tables-scrollables.mjs';
 import { loadEnv } from 'vite';
 
 // Les identifiants d'affiliation sont lus à la compilation pour que le plugin
@@ -52,7 +53,7 @@ export default defineConfig({
   ],
   markdown: {
     remarkPlugins: [remarkReadingTime],
-    rehypePlugins: [[rehypeAffiliateLinks, affiliateIds]],
+    rehypePlugins: [[rehypeAffiliateLinks, affiliateIds], rehypeTablesScrollables],
     shikiConfig: { theme: 'github-light', wrap: true },
   },
   vite: { plugins: [tailwindcss()] },

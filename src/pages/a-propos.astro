@@ -139,7 +139,24 @@ const schema = [{
         <p class="mt-1 text-[0.85rem] text-warm">{site.author.role}</p>
         <hr class="rule my-5" />
         <dl class="space-y-3 text-[0.85rem]">
-          <div><dt class="text-warm-light">Éditeur</dt><dd class="font-medium text-ink">{legal.editeur}</dd></div>
+          {/*
+            Deux noms portent le mot « éditeur » dans le même encadré : le nom
+            de plume juste au-dessus, et le nom légal ici. Rien n'y est faux —
+            les mentions légales disent que c'est la même personne — mais
+            elles le disent ailleurs, et un lecteur qui ne les ouvre pas
+            conclut qu'un des deux noms est une erreur.
+
+            Sur un site dont le seul actif est d'être cru, une ambiguïté sur
+            qui écrit coûte plus cher que la place qu'il faut pour la lever.
+          */}
+          <div>
+            <dt class="text-warm-light">Éditeur, au sens légal</dt>
+            <dd class="font-medium text-ink">{legal.editeur}</dd>
+            <dd class="mt-0.5 text-[0.8rem] leading-relaxed text-warm">
+              {site.author.name} en est le prénom d'usage : signature éditoriale et
+              responsabilité légale désignent la même personne.
+            </dd>
+          </div>
           <div><dt class="text-warm-light">Immatriculation</dt><dd class="font-medium text-ink">SIREN {legal.siren}</dd></div>
           <div><dt class="text-warm-light">Contact</dt><dd><a href={`mailto:${site.author.email}`} class="link">{site.author.email}</a></dd></div>
         </dl>
