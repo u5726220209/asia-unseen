@@ -1,6 +1,6 @@
 ---
 import type { GetStaticPaths } from 'astro';
-import { render, type CollectionEntry } from 'astro:content';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
 import { articlesPublies, guidesPublies } from '@/lib/articles';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import CountryView from '@/components/CountryView.astro';
@@ -32,6 +32,22 @@ export const getStaticPaths = (async () => {
   const guides = await guidesPublies();
   const posts = await articlesPublies();
 
+  /**
+   * La version anglaise de chaque guide, quand elle est parue.
+   *
+   * Le pendant de ce qui existe déjà pour les articles. Sans lui, le guide
+   * français ne déclarait pas sa traduction alors que la traduction le
+   * déclarait, lui : une paire boiteuse, que Google ignore purement et
+   * simplement. Le défaut s'est vu en avançant la date d'un guide pour essayer
+   * — pas en lisant le code, où les deux moitiés semblent correctes.
+   */
+  const aujourdhui = new Date();
+  const versionEn = new Map(
+    (await getCollection('guidesEn'))
+      .filter((g) => !g.data.draft && g.data.pubDate <= aujourdhui)
+      .map((g) => [g.data.traduitDe, `/en/guides/${g.id}`]),
+  );
+
   // Les fiches pays et les guides reçoivent la liste des contenus qui les
   // concernent. Sans ça, un article reste orphelin : rien ne pointe vers lui
   // depuis les pages qui reçoivent le trafic, et le lecteur ne le trouve pas.
@@ -52,6 +68,7 @@ export const getStaticPaths = (async () => {
       props: {
         kind: 'guide' as const,
         entry: g,
+        jumelle: versionEn.get(g.id),
         // Articles partageant au moins un pays avec ce guide, les plus récents d'abord.
         articles: posts
           .filter((p) => p.data.pays.some((s) => g.data.pays.includes(s)))
@@ -69,7 +86,7 @@ type Lies = {
 
 type Props =
   | { kind: 'pays'; country: Country; lies: Lies }
-  | { kind: 'guide'; entry: CollectionEntry<'guides'>; articles: CollectionEntry<'blog'>[] };
+  | { kind: 'guide'; entry: CollectionEntry<'guides'>; articles: CollectionEntry<'blog'>[]; jumelle?: string };
 
 const props = Astro.props as Props;
 
@@ -77,6 +94,7 @@ const country = props.kind === 'pays' ? props.country : null;
 const guideEntry = props.kind === 'guide' ? props.entry : null;
 const liesPays = props.kind === 'pays' ? props.lies : { articles: [], guides: [] };
 const articlesDuGuide = props.kind === 'guide' ? props.articles : [];
+const jumelleGuide = props.kind === 'guide' ? props.jumelle : undefined;
 
 // ── Page pays ────────────────────────────────────────────────
 // Trois guides liés, choisis pour leur utilité immédiate sur une fiche pays.
@@ -187,6 +205,7 @@ const promesseLettre = chiffresSurveilles
     publishedTime={g!.pubDate}
     modifiedTime={g!.updatedDate ?? g!.pubDate}
     schema={guideSchema}
+    jumelle={jumelleGuide}
   >
     <article>
       <header class="border-b border-line bg-cream-warm">

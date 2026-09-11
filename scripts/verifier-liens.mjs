@@ -64,6 +64,7 @@ for (const page of pages) {
  * servies. Deux réserves : un lien vers un autre article programmé est
  * légitime, et les ancres pures ne concernent pas ce contrôle.
  */
+const prematures = [];
 {
   const aParaitre = [];
   const aujourdhui = new Date().toISOString().slice(0, 10);
@@ -73,14 +74,29 @@ for (const page of pages) {
       const md = readFileSync(join(dossier, f), 'utf8');
       const date = md.slice(0, 1400).match(/^pubDate:\s*['"]?(\d{4}-\d{2}-\d{2})/m)?.[1];
       if (!date || date <= aujourdhui) continue;
-      aParaitre.push({ fichier: `${dossier}/${f}`, url: `${prefixe}${f.replace(/\.md$/, '')}`, md });
+      aParaitre.push({ fichier: `${dossier}/${f}`, url: `${prefixe}${f.replace(/\.md$/, '')}`, md, date });
     }
   }
   const urlsAParaitre = new Set(aParaitre.map((a) => a.url));
 
+  /**
+   * Deux textes programmés, et l'ordre dans lequel ils paraissent.
+   *
+   * Un lien d'un texte programmé vers un autre est légitime — tant que la
+   * cible paraît en premier. Vingt-neuf textes anglais s'attendent les uns les
+   * autres sur onze semaines : il suffit d'avancer une date pour qu'un guide
+   * sorte avant l'article qu'il cite, et le lien est mort le matin de sa
+   * parution. Personne ne relit ce jour-là, et le contrôle, lui, voyait deux
+   * textes programmés et se taisait.
+   */
+  const dateDe = new Map(aParaitre.map((a) => [a.url, a.date]));
+
   for (const a of aParaitre) {
     for (const m of a.md.matchAll(/\]\((\/[^)\s#?]*)\)/g)) {
       const href = m[1].replace(/\/$/, '') || '/';
+      if (urlsAParaitre.has(href) && dateDe.get(href) > a.date) {
+        prematures.push({ source: a.fichier, date: a.date, cible: href, cibleDate: dateDe.get(href) });
+      }
       if (servies.has(href) || urlsAParaitre.has(href)) continue;
       if (existsSync(join(DIST, href)) && statSync(join(DIST, href)).isFile()) continue;
       if (!casses.has(href)) casses.set(href, new Set());
@@ -89,10 +105,22 @@ for (const page of pages) {
   }
 }
 
-if (casses.size === 0) {
+if (prematures.length) {
+  console.error(`✗ ${prematures.length} lien(s) vers un texte qui paraît plus tard :\n`);
+  for (const p of prematures) {
+    console.error(`  ${p.source} (paraît le ${p.date})`);
+    console.error(`      pointe vers ${p.cible}, qui ne paraît que le ${p.cibleDate}`);
+  }
+  console.error('\n   Le lien sera mort le matin de la parution de la source.');
+  console.error('   Avancez la cible, ou reculez la source.\n');
+}
+
+if (casses.size === 0 && !prematures.length) {
   console.log(`✓ ${pages.length} pages contrôlées, articles programmés compris — aucun lien interne cassé.`);
   process.exit(0);
 }
+
+if (casses.size === 0) process.exit(1);
 
 console.error(`✗ ${casses.size} lien(s) interne(s) cassé(s) :\n`);
 for (const [href, sources] of casses) {

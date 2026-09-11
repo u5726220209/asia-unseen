@@ -14,9 +14,11 @@ import { getCollection } from 'astro:content';
  * anglophone sur des pages françaises : pire qu'une navigation courte, parce
  * qu'elle promet quelque chose et ne le tient pas.
  *
- * Il ne propose donc que ce qui existe : l'accueil anglais, les neuf fiches
- * pays, et le retour vers le français pour qui le lit. Il s'allongera quand il
- * y aura de quoi l'allonger.
+ * Il ne propose donc que ce qui existe, au sens strict : les entrées Guides et
+ * Articles n'apparaissent que le jour où une page correspondante est
+ * réellement parue. Les vingt-neuf textes sont écrits mais programmés, et un
+ * lien vers une liste vide est exactement la promesse non tenue que cet
+ * en-tête a été écrit pour éviter. Il s'allonge donc tout seul.
  */
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const pays = countries.filter((c) => contenuEn[c.slug]);
@@ -31,8 +33,9 @@ const pays = countries.filter((c) => contenuEn[c.slug]);
  * première parution.
  */
 const aujourdhui = new Date();
-const articles = (await getCollection('blogEn'))
-  .some((a) => !a.data.draft && a.data.pubDate <= aujourdhui);
+const paru = (c) => c.some((e) => !e.data.draft && e.data.pubDate <= aujourdhui);
+const articles = paru(await getCollection('blogEn'));
+const guides = paru(await getCollection('guidesEn'));
 
 /**
  * Le chemin français correspondant, pour le bouton de langue.
@@ -84,6 +87,15 @@ const versFrancais = jumelle ?? (path.replace(/^\/en(?=\/|$)/, '') || '/');
         Entry rules
       </a>
 
+      {guides && (
+        <a
+          href="/en/guides"
+          class:list={['rounded-brand px-3 py-2 font-display text-[0.9rem] font-medium transition-colors hover:text-teal', path.startsWith('/en/guides') ? 'text-teal' : 'text-ink']}
+        >
+          Guides
+        </a>
+      )}
+
       {articles && (
         <a
           href="/en/blog"
@@ -117,6 +129,7 @@ const versFrancais = jumelle ?? (path.replace(/^\/en(?=\/|$)/, '') || '/');
       >
         <option value="/en">Entry rules — all countries</option>
         {pays.map((c) => <option value={`/en/${c.slug}`} selected={path === `/en/${c.slug}`}>{c.nomEn}</option>)}
+        {guides && <option value="/en/guides" selected={path.startsWith('/en/guides')}>All guides</option>}
         {articles && <option value="/en/blog" selected={path.startsWith('/en/blog')}>All articles</option>}
       </select>
     </div>

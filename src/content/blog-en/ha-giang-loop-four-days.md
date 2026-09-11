@@ -3,7 +3,7 @@ title: "The Ha Giang loop by motorbike: 4 days, the real cost"
 heading: "Ha Giang by motorbike: four days, and what nobody tells you first"
 description: "A detailed account of Vietnam's Ha Giang loop: the route day by day, the real cost, easy rider or riding yourself, and the mistakes we nearly made."
 accroche: "Four days, 350 kilometres of mountain road, and the only question that genuinely matters: do you ride it yourself, or not?"
-pubDate: 2026-10-27
+pubDate: 2026-10-24
 categorie: pratique
 pays: [vietnam]
 traduitDe: ha-giang-moto-4-jours

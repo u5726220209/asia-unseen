@@ -181,6 +181,21 @@ const CAS = [
   },
 
   {
+    nom: 'un texte programmé cite un texte qui paraît plus tard',
+    script: 'verifier-liens.mjs',
+    /* Un lien entre deux textes programmés était considéré comme valide, sans
+       regarder l'ordre. Vingt-neuf textes anglais s'attendent sur onze
+       semaines : deux paires paraissaient trois jours avant l'article qu'elles
+       citaient, et le lien aurait été mort le matin de leur parution — le seul
+       matin où plus personne ne relit. */
+    muter: {
+      'src/content/blog-en/ha-giang-loop-four-days.md':
+        remplacer(/^pubDate: 2026-10-24$/m, 'pubDate: 2026-10-27'),
+    },
+    attendu: /qui ne paraît que le 2026-10-27/,
+  },
+
+  {
     nom: 'un guide anglais programmé contient un lien mort',
     script: 'verifier-liens.mjs',
     /* Le contrôle déduisait l'adresse du nom du dossier et ignorait donc

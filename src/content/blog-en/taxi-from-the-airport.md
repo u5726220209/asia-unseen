@@ -3,7 +3,7 @@ title: "Airport taxis in Asia: the official fare, where one exists"
 heading: "Airport taxis: two kinds of airport, and only one where you get fleeced"
 description: "Bangkok publishes its per-kilometre table, Hanoi publishes its buses. Bali and Ho Chi Minh City publish nothing. Knowing which you are landing at changes everything."
 accroche: "The airport taxi scam only works where no fare is published. So the first thing to check is not the price — it is whether a price exists."
-pubDate: 2026-09-27
+pubDate: 2026-09-24
 categorie: pratique
 pays: [thailande, vietnam, indonesie]
 traduitDe: taxi-aeroport-asie-tarifs
