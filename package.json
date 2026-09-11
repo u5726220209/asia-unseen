@@ -23,6 +23,7 @@
     "chiffres": "node scripts/verifier-chiffres.mjs",
     "gardien": "node scripts/gardien.mjs",
     "parutions": "node scripts/simuler-parutions.mjs",
+    "reperes": "node scripts/rafraichir.mjs --verifier",
     "programme": "node scripts/programme.mjs",
     "affilies": "node scripts/liens-affilies.mjs",
     "performance": "node scripts/performance.mjs",

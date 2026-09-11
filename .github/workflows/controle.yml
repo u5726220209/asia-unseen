@@ -60,6 +60,14 @@ jobs:
       # produit un « ✓ ». Cette suite réintroduit dans chacun le défaut qu'il
       # vise et exige qu'il refuse. Elle passe en dernier : elle modifie des
       # fichiers puis les restaure, et rien ne doit dépendre de son passage.
+      # Le script qui remonte les dates de vérification écrit dans
+      # `countries.ts` à des positions calculées. Une position juste-à-côté
+      # n'échoue pas : elle écrit une date exacte sur le mauvais champ, le
+      # fichier reste valide, et le site affiche une date qui ment. Ce mode
+      # relit ses propres repères avant qu'ils servent.
+      - name: Les repères de la date de vérification
+        run: npm run reperes
+
       - name: Les garde-fous bloquent-ils encore
         run: npm run gardes
 

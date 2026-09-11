@@ -269,6 +269,29 @@ const CAS = [
   },
 
   {
+    nom: 'la date remontée par la machine vise le mauvais champ',
+    script: 'rafraichir.mjs',
+    args: ['--verifier'],
+    /* Ce script écrit dans `countries.ts` à des positions calculées. Une
+       position juste-à-côté n'échoue pas : elle écrit une date exacte sur le
+       mauvais champ, le fichier reste valide, et le site affiche une date qui
+       ment. C'est arrivé — l'arrivée des règles par passeport a glissé « la
+       première date après le slug » de la fiche vers le passeport
+       britannique. */
+    muter: {
+      /* On réintroduit le défaut là où il était : dans le repérage lui-même.
+         « La première date après le slug » désignait la fiche tant qu'elle
+         était seule à en porter une ; elle désigne aujourd'hui le passeport
+         britannique. */
+      'scripts/rafraichir.mjs': remplacer(
+        /const apresSources = bloc\.indexOf\('\],', i\);/,
+        'const apresSources = 0;',
+      ),
+    },
+    attendu: /ne suit pas ses sources|est celle d'une règle par passeport/,
+  },
+
+  {
     nom: 'un fichier de données oublie un passeport',
     script: 'verifier-config.mjs',
     /* Le fichier ne portait qu'une règle, sans dire de quel passeport. Une
