@@ -661,6 +661,53 @@ if (defautsLangue.length) {
 }
 
 /**
+ * Aucun formulaire d'inscription sur une page anglaise.
+ *
+ * La lettre est écrite en français, et la liste qui la reçoit l'est aussi —
+ * jusqu'au `locale=fr` qui fixe la langue des messages d'erreur du
+ * prestataire. Recueillir une adresse anglophone sur cette promesse revient à
+ * promettre une lettre que la personne ne pourra pas lire.
+ *
+ * Le pied de page anglais l'avait décidé dès le premier jour et l'avait écrit.
+ * Deux mécanismes l'ignoraient quand même : le bloc de capture des outils, que
+ * j'ai posé sur la page anglaise en traduisant trois phrases sur six, et la
+ * pop-up de sortie, qui n'était accrochée à aucune langue et surgissait en
+ * français sur les neuf fiches anglaises. Une décision qui ne vit que dans la
+ * mémoire de celui qui l'a prise n'est pas une décision, c'est un souvenir.
+ *
+ * Le contrôle lèvera le jour où une liste anglaise existera — et c'est
+ * précisément à ce moment-là qu'il faut relire cette page, pas avant.
+ */
+const formulairesEnAnglais = [];
+if (existsSync('dist/en')) {
+  const pagesEn = [];
+  const parcourirForm = (d) => {
+    for (const e of readdirSync(d, { withFileTypes: true })) {
+      const p = `${d}/${e.name}`;
+      if (e.isDirectory()) parcourirForm(p);
+      else if (e.name === 'index.html') pagesEn.push(p);
+    }
+  };
+  parcourirForm('dist/en');
+
+  for (const f of pagesEn) {
+    const html = readFileSync(f, 'utf8');
+    if (/<form[^>]*class="[^"]*au-nl\b/.test(html) || /name="locale" value="fr"/.test(html)) {
+      formulairesEnAnglais.push(f.replace(/^dist/, '').replace(/\/index\.html$/, ''));
+    }
+  }
+}
+
+if (formulairesEnAnglais.length) {
+  console.log(`⛔ ${formulairesEnAnglais.length} page(s) anglaise(s) proposent la lettre française :\n`);
+  for (const p of formulairesEnAnglais.slice(0, 12)) console.log(`   ${p}`);
+  console.log('\n   La lettre est en français et la liste aussi. Recueillir une adresse');
+  console.log("   là-dessus, c'est promettre ce qu'on ne peut pas tenir.\n");
+} else if (existsSync('dist/en')) {
+  console.log("✓ Aucune page anglaise ne propose une lettre qu'elle ne peut pas envoyer.\n");
+}
+
+/**
  * Un lien vers une page française, depuis une page anglaise, doit le dire.
  *
  * Le site en propose délibérément — « lire cette fiche en français », le
@@ -1091,5 +1138,6 @@ process.exit(
   tarifsNonSuivis.length || defautsMachine.length || fautesArticle.length ||
   reglesIncoherentes.length || defautsLangue.length || francaisEnAnglais.length ||
   nonClasses.length || muettes.length || originesFantomes.length ||
-  llmsMuet.length || journalEnRetard.length || liensNonMarques.length ? 1 : 0,
+  llmsMuet.length || journalEnRetard.length || liensNonMarques.length ||
+  formulairesEnAnglais.length ? 1 : 0,
 );

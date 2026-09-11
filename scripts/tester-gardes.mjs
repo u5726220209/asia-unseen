@@ -322,6 +322,21 @@ const CAS = [
   },
 
   {
+    nom: 'une page anglaise propose la lettre française',
+    script: 'verifier-config.mjs',
+    /* La lettre est en français et la liste aussi, jusqu'au `locale=fr` qui
+       fixe la langue des messages d'erreur. Recueillir une adresse anglophone
+       là-dessus, c'est promettre une lettre que la personne ne pourra pas
+       lire. Deux mécanismes l'ont fait sans que personne le voie : le bloc de
+       capture des outils et la pop-up de sortie. */
+    muter: {
+      'dist/en/vietnam/index.html':
+        remplacer(/<\/body>/, '<form class="au-nl"></form></body>'),
+    },
+    attendu: /proposent la lettre française/,
+  },
+
+  {
     nom: 'un lien anglais vers le français ne dit pas sa langue',
     script: 'verifier-config.mjs',
     /* Le site propose délibérément des liens vers sa version française. Ce qui

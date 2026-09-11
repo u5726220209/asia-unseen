@@ -264,7 +264,19 @@ const baseSchema = [
     <div data-pagefind-ignore>{langue === 'en' ? <HeaderEn jumelle={jumelle ?? retourFr} /> : <Header />}</div>
     <main id="contenu" class="flex-1" data-pagefind-body><slot /></main>
     <div data-pagefind-ignore>{langue === 'en' ? <FooterEn /> : <Footer />}</div>
-    {!noPopup && <ExitIntent />}
+    {/*
+      La pop-up de sortie est entièrement française : son titre, sa promesse,
+      son bouton « S'inscrire », et la lettre qu'elle propose. Elle s'affichait
+      pourtant sur les neuf fiches anglaises — une fenêtre en français, surgie
+      sur une page anglaise, proposant une lettre que le lecteur ne pourra pas
+      lire. C'est le pire moment pour se tromper de langue : elle interrompt.
+
+      Le pied de page anglais avait pris cette décision dès le premier jour et
+      l'avait écrite ; la pop-up, elle, n'était accrochée à aucune langue et
+      personne n'y avait pensé. Elle reviendra le jour où une lettre anglaise
+      existera.
+    */}
+    {!noPopup && langue === 'fr' && <ExitIntent />}
 
     <script>
       /*

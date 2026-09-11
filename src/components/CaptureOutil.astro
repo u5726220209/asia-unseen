@@ -1,5 +1,6 @@
 ---
 import { newsletter } from '@/data/site';
+import type { Langue } from '@/lib/langue';
 import ChampsBrevo from '@/components/ChampsBrevo.astro';
 
 /**
@@ -39,43 +40,68 @@ interface Props {
   bouton: string;
   /** L'outil d'origine. Sert à distinguer les identifiants de champ. */
   contexte: string;
+  /** La langue de la page qui l'affiche. */
+  langue?: Langue;
   class?: string;
 }
-const { promesse, bouton, contexte, class: klass = '' } = Astro.props;
+const { promesse, bouton, contexte, langue = 'fr', class: klass = '' } = Astro.props;
+
+/**
+ * Pourquoi ce bloc ne s'affiche pas en anglais.
+ *
+ * La lettre est écrite en français, et la liste Brevo qui la reçoit l'est
+ * aussi — jusqu'au `locale=fr` qui fixe la langue des messages d'erreur. Le
+ * pied de page anglais l'avait décidé dès le premier jour et l'avait écrit :
+ * pas de formulaire tant qu'il n'y a pas de lettre anglaise à promettre.
+ *
+ * J'ai posé ce bloc sur la page anglaise de l'outil en traduisant ses trois
+ * phrases, ce qui donnait un formulaire à moitié traduit — étiquette,
+ * exemple d'adresse et mention de désabonnement restés en français — qui
+ * collectait des adresses anglophones pour une lettre qu'elles ne pourraient
+ * pas lire. Recueillir une adresse sur une promesse qu'on ne peut pas tenir
+ * est la seule chose que ce site ne peut pas se permettre.
+ *
+ * La décision vit donc ici plutôt que dans la mémoire de celui qui pose le
+ * composant : il refuse de s'afficher, et dira oui le jour où une liste
+ * anglaise existera.
+ */
+const affichable = langue === 'fr';
 
 const action = newsletter.endpoint;
 const id = `cap-${contexte.toLowerCase().replace(/[^a-z]+/g, '-')}`;
 ---
 
-<div
-  data-pagefind-ignore
-  class:list={['not-prose rounded-brand border-l-[3px] border-amber bg-amber-50 px-5 py-4 sm:px-6', klass]}
->
-  <p class="text-[0.92rem] leading-relaxed text-ink-soft">{promesse}</p>
-
-  <form
-    class="au-nl mt-3.5 flex flex-col gap-2.5 sm:flex-row"
-    action={action || undefined}
-    method="post"
-    data-configured={action ? 'true' : 'false'}
+{affichable && (
+  <div
+    data-pagefind-ignore
+    class:list={['not-prose rounded-brand border-l-[3px] border-amber bg-amber-50 px-5 py-4 sm:px-6', klass]}
   >
-    <label for={id} class="sr-only">Votre adresse email</label>
-    <input
-      id={id}
-      type="email"
-      name={newsletter.champEmail}
-      required
-      autocomplete="email"
-      placeholder="vous@exemple.com"
-      class="min-w-0 flex-1 rounded-brand border border-line bg-white px-4 py-2.5 text-ink placeholder:text-warm-light focus:border-amber focus:outline-none"
-    />
-    <ChampsBrevo />
-    <button type="submit" class="btn-primary whitespace-nowrap !py-2.5">{bouton}</button>
-  </form>
+    <p class="text-[0.92rem] leading-relaxed text-ink-soft">{promesse}</p>
 
-  <p class="au-nl-msg mt-3 hidden text-sm text-ink-soft" role="status"></p>
+    <form
+      class="au-nl mt-3.5 flex flex-col gap-2.5 sm:flex-row"
+      action={action || undefined}
+      method="post"
+      data-configured={action ? 'true' : 'false'}
+    >
+      <label for={id} class="sr-only">Votre adresse email</label>
+      <input
+        id={id}
+        type="email"
+        name={newsletter.champEmail}
+        required
+        autocomplete="email"
+        placeholder="vous@exemple.com"
+        class="min-w-0 flex-1 rounded-brand border border-line bg-white px-4 py-2.5 text-ink placeholder:text-warm-light focus:border-amber focus:outline-none"
+      />
+      <ChampsBrevo />
+      <button type="submit" class="btn-primary whitespace-nowrap !py-2.5">{bouton}</button>
+    </form>
 
-  <p class="mt-3 text-[0.78rem] leading-relaxed text-warm">
-    Une confirmation vous sera demandée par email. Désabonnement en un clic.
-  </p>
-</div>
+    <p class="au-nl-msg mt-3 hidden text-sm text-ink-soft" role="status"></p>
+
+    <p class="mt-3 text-[0.78rem] leading-relaxed text-warm">
+      Une confirmation vous sera demandée par email. Désabonnement en un clic.
+    </p>
+  </div>
+)}
