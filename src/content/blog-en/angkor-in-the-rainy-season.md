@@ -8,7 +8,7 @@ categorie: pratique
 pays: [cambodge]
 traduitDe: angkor-saison-des-pluies
 sources:
-  - { label: "Angkor Enterprise — official ticket office", url: "https://www.angkorenterprise.gov.kh/" }
+  - { label: "Angkor Enterprise — the park's official ticket office", url: "https://www.angkorenterprise.gov.kh/en/available-tickets" }
   - { label: "GOV.UK — Cambodia, entry requirements", url: "https://www.gov.uk/foreign-travel-advice/cambodia/entry-requirements" }
 faq:
   - q: "How many days do you need at Angkor?"
@@ -67,7 +67,9 @@ For four days in Siem Reap in the rainy season:
 
 | Item | Cost |
 | --- | --- |
-| Three-day Angkor pass | 62 USD |
+| Angkor pass — one day | 37 USD |
+| Angkor pass — three days | 62 USD |
+| Angkor pass — seven days | 72 USD |
 | Tuk-tuk, three days | 45–70 € |
 | Guide, one day | 30–60 € |
 | Accommodation, low season | 15–35 € a night |

@@ -235,6 +235,63 @@ const contradictions = [];
   }
 }
 
+/* ── 1 ter. Un montant en devise publié hors registre ────────────── */
+
+/**
+ * La question que le registre ne se posait pas sur lui-même.
+ *
+ * Il vérifie que ce qu'il déclare figure bien sur les pages, et qu'aucune
+ * forme périmée ne traîne. Il ne demandait jamais l'inverse : ce que les
+ * pages publient est-il déclaré ?
+ *
+ * Le pass d'Angkor a vécu ainsi. « 62 USD » figurait sur deux pages depuis
+ * l'ouverture et dans aucune entrée du registre — un tarif officiel, juste,
+ * et que personne ne relisait. Il serait devenu faux le jour d'une
+ * augmentation, sur deux pages à la fois, sans un mot.
+ *
+ * On cherche les montants en devise étrangère, parce que c'est la signature
+ * d'un tarif relevé : le site chiffre ses propres estimations en euros et
+ * cite les tarifs officiels dans la monnaie où ils sont publiés. Un montant
+ * en bahts, en dongs ou en wons vient donc presque toujours d'un guichet.
+ *
+ * La comparaison passe par `formes()`, la même que le reste du fichier : une
+ * seconde normalisation aurait divergé de la première, et ce dépôt a déjà
+ * payé ce prix ailleurs — « 10,50 » au registre, « 10.50 » dans le texte
+ * anglais, et un contrôle qui croit avoir trouvé un défaut.
+ */
+const DEVISES = 'USD|THB|VND|IDR|PHP|KRW|CNY|JPY|LAK|bahts?|dongs?|roupies?|wons?|yens?|yuans?|pesos?|kips?|riels?';
+const horsRegistre = [];
+{
+  const toutesFormes = chiffres.flatMap((c) => formes(c.affiche));
+  const sansTarif = [
+    ...readFileSync('src/data/chiffres-cites.ts', 'utf8')
+      .matchAll(/\{ montant: '([^']+)', pourquoi:/g),
+  ].flatMap((m) => formes(m[1]));
+  const motif = new RegExp(`(\\d[\\d\u00a0\u202f ,.]*\\d|\\d)\\s*(?:${DEVISES})\\b`, 'gi');
+
+  for (const dossier of Object.keys(PREFIXES)) {
+    if (!existsSync(dossier)) continue;
+    for (const f of readdirSync(dossier).filter((x) => x.endsWith('.md'))) {
+      const texte = readFileSync(`${dossier}/${f}`, 'utf8');
+      for (const m of texte.matchAll(motif)) {
+        const montant = m[1].trim();
+        /* Un montant à un ou deux chiffres est le plus souvent une durée ou un
+           ordre de grandeur en prose — « 20 bahts », « 60 USD la journée ».
+           Les tarifs relevés qui comptent ici en ont davantage, ou une
+           décimale. */
+        const chiffresSeuls = montant.replace(/[^\d]/g, '');
+        if (chiffresSeuls.length < 3 && !/[.,]/.test(montant)) continue;
+        if (toutesFormes.some((forme) => montant === forme)) continue;
+        if (toutesFormes.some((forme) => contient(montant, forme) && forme.length >= montant.length - 1)) continue;
+        /* Les montants que le registre déclare explicitement ne pas être des
+           tarifs : une fourchette, un taux de change, une addition maison. */
+        if (sansTarif.some((forme) => montant === forme)) continue;
+        horsRegistre.push({ montant: m[0].trim(), fichier: `${dossier}/${f}` });
+      }
+    }
+  }
+}
+
 /* ── 2. Le chiffre tient-il encore à la source ? ─────────────────── */
 
 const parSource = new Map();
@@ -347,4 +404,15 @@ if (JSON_OUT) {
 //   2 — un montant a disparu de sa source : il faut aller lire le nouveau
 //       tarif, ce qui demande un jugement humain. On alerte sans bloquer ;
 //   0 — rien à signaler.
-process.exit(manquantsSurLeSite.length || contradictions.length ? 1 : disparusDeLaSource.length ? 2 : 0);
+if (horsRegistre.length) {
+  const vus = new Set();
+  const uniques = horsRegistre.filter((h) => !vus.has(h.montant + h.fichier) && vus.add(h.montant + h.fichier));
+  console.log(`⛔ ${uniques.length} montant(s) en devise publiés hors registre :\n`);
+  for (const h of uniques.slice(0, 15)) console.log(`   ${h.montant.padEnd(16)} ${h.fichier}`);
+  console.log('\n   Un tarif publié sans être inscrit est un tarif que personne ne relit.');
+  console.log("   Inscrivez-le, ou marquez-le comme estimation s'il n'en est pas un.\n");
+} else {
+  console.log('✓ Chaque montant en devise publié est inscrit au registre.\n');
+}
+
+process.exit(manquantsSurLeSite.length || contradictions.length || horsRegistre.length ? 1 : disparusDeLaSource.length ? 2 : 0);

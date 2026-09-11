@@ -99,6 +99,9 @@ const EN_FRAIS = '/en/blog/the-fees-that-are-not-the-visa';
 const EN_BALI = '/en/blog/arriving-in-bali';
 const EN_KETA = '/en/blog/the-k-eta-you-may-not-need';
 const EN_PHILIPPINES = '/en/blog/arriving-in-the-philippines';
+const ANGKOR_BILLETS = 'https://www.angkorenterprise.gov.kh/en/available-tickets';
+const ARTICLE_ANGKOR = '/blog/angkor-saison-des-pluies';
+const EN_ANGKOR = '/en/blog/angkor-in-the-rainy-season';
 const AOT_TAXI = 'https://suvarnabhumi.airportthai.co.th/service/transportation/detail/834';
 const ARTICLE_TAXI_AEROPORT = '/blog/taxi-aeroport-asie-tarifs';
 
@@ -121,6 +124,37 @@ const EVISA_LA = 'https://laoevisa.gov.la/';
 const EVISA_KH = 'https://www.evisa.gov.kh/';
 const EVISA_ID = 'https://evisa.imigrasi.go.id/';
 const IMMIGRATION_PH = 'https://immigration.gov.ph/';
+
+/**
+ * Les montants en devise qui ne sont pas des tarifs relevés.
+ *
+ * Le contrôle inverse — « ce que les pages publient est-il déclaré ? » — part
+ * du principe qu'un montant en monnaie locale vient d'un guichet. C'est vrai
+ * la plupart du temps, et faux dans trois cas : une fourchette que l'article
+ * présente lui-même comme telle, un taux de change, et une addition que nous
+ * faisons nous-mêmes à partir de tarifs déjà inscrits.
+ *
+ * Les inscrire au registre serait pire que de les exclure : la sentinelle
+ * irait chercher chaque nuit, à une source officielle, un nombre qu'aucune
+ * source officielle ne publie — et finirait par crier tous les jours, ce qui
+ * revient à ne plus crier du tout.
+ *
+ * Chacun porte donc sa raison, et la raison est vérifiable dans l'article :
+ * tous disent au lecteur que ce montant n'est pas un tarif officiel.
+ */
+export const montantsSansTarif: { montant: string; pourquoi: string }[] = [
+  { montant: '200 000', pourquoi: "fourchette de taxi à Saigon ; l'article écrit qu'aucune grille officielle n'est publiée" },
+  { montant: '150 000', pourquoi: 'borne basse de la même fourchette' },
+  { montant: '80 000', pourquoi: "fourchette de billet Séoul-Busan ; l'article écrit « couramment entre » et « à confirmer à la réservation »" },
+  { montant: '50 000', pourquoi: 'borne basse de la même fourchette' },
+  { montant: '38,37', pourquoi: "taux de change euro-baht à une date donnée, pas un tarif — l'article donne la date du relevé" },
+  { montant: '34 000', pourquoi: "borne haute d'une addition que nous faisons nous-mêmes à partir des tarifs des lignes japonaises" },
+  { montant: '28 000', pourquoi: 'borne basse de la même addition' },
+  { montant: '1 200', pourquoi: "ordre de grandeur d'un repas au Japon, donné comme fourchette" },
+  { montant: '900', pourquoi: 'borne basse de la même fourchette' },
+  { montant: '30 000', pourquoi: "plafond de retrait d'un distributeur thaïlandais, cité d'après une carte bancaire française" },
+  { montant: '10 000', pourquoi: "péage de sortie d'aéroport à Saigon, donné comme « environ » faute de grille publiée" },
+];
 
 export const chiffresCites: ChiffreCite[] = [
   /* ── Formalités d'entrée ────────────────────────────────────────
@@ -146,6 +180,21 @@ export const chiffresCites: ChiffreCite[] = [
   { affiche: '30', designe: "visa à l'arrivée en Indonésie, converti en euros", source: EVISA_ID, releveLe: '2026-09-04', pages: ['/indonesie'], estimation: 'conversion de 500 000 IDR : elle bouge avec le change, pas avec la règle' },
   { affiche: '7,50', designe: 'taxe touristique de Bali, convertie en euros', source: EVISA_ID, releveLe: '2026-09-04', pages: ['/indonesie'], estimation: 'conversion de 150 000 IDR : elle bouge avec le change, pas avec la règle' },
   { affiche: '3 030', designe: 'prolongation de séjour aux Philippines, sur place (PHP)', source: IMMIGRATION_PH, releveLe: '2026-09-04', pages: ['/philippines', EN_PROLONGER, EN_PHILIPPINES], sourceIntrouvableAttendue: true },
+  /**
+   * Les trois tarifs du parc d'Angkor.
+   *
+   * « 62 USD » était publié sur deux pages depuis l'ouverture et inscrit
+   * nulle part : exactement le cas que ce registre existe pour empêcher, et
+   * exactement celui que le journal des corrections raconte déjà à propos des
+   * 33 heures de train. Un chiffre juste mais non surveillé est un chiffre
+   * qui deviendra faux sans que personne le voie.
+   *
+   * Le portail refuse la lecture automatisée — d'où `sourceIntrouvableAttendue` :
+   * on vérifie la cohérence entre nos pages, pas la page d'Angkor Enterprise.
+   */
+  { affiche: '37', designe: "pass Angkor, un jour (USD)", source: ANGKOR_BILLETS, releveLe: '2026-09-11', pages: [ARTICLE_ANGKOR, EN_ANGKOR], sourceIntrouvableAttendue: true },
+  { affiche: '62', designe: "pass Angkor, trois jours (USD)", source: ANGKOR_BILLETS, releveLe: '2026-09-11', pages: [ARTICLE_ANGKOR, EN_ANGKOR], sourceIntrouvableAttendue: true },
+  { affiche: '72', designe: "pass Angkor, sept jours (USD)", source: ANGKOR_BILLETS, releveLe: '2026-09-11', pages: [ARTICLE_ANGKOR, EN_ANGKOR], sourceIntrouvableAttendue: true },
 
   /* ── Assurance ──────────────────────────────────────────────── */
   { affiche: '28,82', designe: 'AVI Routard, zone B, 19-35 ans, la semaine', source: AVI, releveLe: '2026-08-30', pages: [COMPARATIF_ASSURANCE] },
@@ -200,6 +249,13 @@ export const chiffresCites: ChiffreCite[] = [
      retrouverait dans n'importe quelle page. */
   { affiche: '35', designe: 'taxi Bangkok, prise en charge du premier kilomètre (THB)', source: AOT_TAXI, releveLe: '2026-09-07', pages: [ARTICLE_TAXI_AEROPORT, EN_TAXI_AEROPORT] },
   { affiche: '6,50', designe: 'taxi Bangkok, tarif de 1 à 10 km (THB/km)', source: AOT_TAXI, releveLe: '2026-09-07', pages: [ARTICLE_TAXI_AEROPORT, EN_TAXI_AEROPORT] },
+  /* Les quatre bandes intermédiaires. Seules la première et la dernière
+     étaient inscrites : une grille tarifaire surveillée à un tiers, dont
+     personne n'aurait vu bouger le milieu. */
+  { affiche: '7,00', designe: 'taxi Bangkok, tarif de 10 à 20 km (THB/km)', source: AOT_TAXI, releveLe: '2026-09-07', pages: [ARTICLE_TAXI_AEROPORT, EN_TAXI_AEROPORT] },
+  { affiche: '8,00', designe: 'taxi Bangkok, tarif de 20 à 40 km (THB/km)', source: AOT_TAXI, releveLe: '2026-09-07', pages: [ARTICLE_TAXI_AEROPORT, EN_TAXI_AEROPORT] },
+  { affiche: '8,50', designe: 'taxi Bangkok, tarif de 40 à 60 km (THB/km)', source: AOT_TAXI, releveLe: '2026-09-07', pages: [ARTICLE_TAXI_AEROPORT, EN_TAXI_AEROPORT] },
+  { affiche: '9,00', designe: 'taxi Bangkok, tarif de 60 à 80 km (THB/km)', source: AOT_TAXI, releveLe: '2026-09-07', pages: [ARTICLE_TAXI_AEROPORT, EN_TAXI_AEROPORT] },
   { affiche: '10,50', designe: 'taxi Bangkok, tarif au-delà de 80 km (THB/km)', source: AOT_TAXI, releveLe: '2026-09-07', pages: [ARTICLE_TAXI_AEROPORT, EN_TAXI_AEROPORT] },
 
   /* ── Aéroport de Hanoï (Noi Bai) ────────────────────────────── */

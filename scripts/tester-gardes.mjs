@@ -209,6 +209,21 @@ const CAS = [
   },
 
   {
+    nom: 'un tarif en devise est publié sans être inscrit au registre',
+    script: 'verifier-chiffres.mjs',
+    args: ['--hors-ligne'],
+    /* Le registre vérifiait que ce qu'il déclare figure sur les pages. Il ne
+       demandait jamais l'inverse. Le pass d'Angkor a vécu ainsi : « 62 USD »
+       sur deux pages, dans aucune entrée, juste et jamais relu. Et la grille
+       des taxis de Bangkok était surveillée sur deux de ses six bandes. */
+    muter: {
+      'src/content/blog/taxi-aeroport-asie-tarifs.md':
+        remplacer(/\| 20 à 40 km \| 8,00 THB/, '| 20 à 40 km | 8,25 THB'),
+    },
+    attendu: /publiés hors registre/,
+  },
+
+  {
     nom: "un montant disparaît d'un texte encore programmé",
     script: 'verifier-chiffres.mjs',
     args: ['--hors-ligne'],

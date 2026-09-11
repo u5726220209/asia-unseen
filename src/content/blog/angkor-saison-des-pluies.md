@@ -9,6 +9,7 @@ pays: [cambodge]
 sources:
   - { label: "France Diplomatie — Cambodge, entrée et séjour", url: "https://www.diplomatie.gouv.fr/fr/information-par-pays/cambodge/conseils-aux-voyageurs-entree-sejour" }
   - { label: "E-visa officiel du Cambodge", url: "https://www.evisa.gov.kh/" }
+  - { label: "Angkor Enterprise — la billetterie officielle du parc", url: "https://www.angkorenterprise.gov.kh/en/available-tickets" }
 faq:
   - q: "Combien de jours faut-il pour visiter Angkor ?"
     r: "Trois jours au minimum. En un jour, on voit Angkor Wat, le Bayon et Ta Prohm dans la foule et la chaleur. En trois, on peut commencer par les temples éloignés, revenir aux grands sites aux bonnes heures, et laisser de la place à ceux qui n'étaient pas au programme — souvent les meilleurs."
@@ -62,7 +63,7 @@ L'erreur classique est de commencer par Angkor Wat. Tout le monde le fait, et c'
 
 Sur un séjour de quatre jours à Siem Reap en saison des pluies :
 
-- Pass Angkor trois jours : 62 USD
+- Pass Angkor trois jours : 62 USD (37 USD pour un jour, 72 USD pour sept)
 - Tuk-tuk, trois journées : 45–70 €
 - Guide, une journée : 30–60 €
 - Hébergement, hors saison : 15–35 € la nuit
