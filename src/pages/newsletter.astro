@@ -15,7 +15,13 @@ import { newsletter } from '@/data/site';
   <section class="wrap grid gap-14 py-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-start lg:py-24">
     <div>
       <p class="eyebrow">Newsletter · gratuite</p>
-      <h1 class="mt-4 text-hero">Neuf fiches,<br />une par pays</h1>
+      {/*
+        Le saut de ligne ne vaut pas une espace : à l'écran le titre se lit sur
+        deux lignes, mais son texte est « Neuf fiches,une par pays » — et c'est
+        cette chaîne-là que lisent une synthèse vocale et un résultat de
+        recherche.
+      */}
+      <h1 class="mt-4 text-hero">Neuf fiches, <br />une par pays</h1>
       <p class="mt-7 max-w-xl text-[1.15rem] leading-relaxed text-warm">
         Un document de dix pages, à garder sur le téléphone. Il répond à trois questions
         et pas une de plus : à qui téléphoner en cas d'urgence, ce qu'on a le droit de

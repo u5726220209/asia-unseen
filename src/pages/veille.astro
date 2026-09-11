@@ -70,6 +70,15 @@ const schema = [
     isPartOf: { '@id': `${site.url}/#organization` },
   },
 ];
+
+/**
+ * Les titres de cette page comptent des sources, et un compte tombe un jour
+ * à un. « Les 1 qui n'ont pas répondu » était affiché ce matin : le nombre
+ * était juste, la phrase ne l'était pas. C'est le genre de défaut qu'aucun
+ * contrôle ne voit — la page est valide, le chiffre est bon — et que le
+ * premier lecteur voit en entier, sur la page qui sert à prouver que le site
+ * est sérieux.
+ */
 ---
 
 <BaseLayout
@@ -138,7 +147,11 @@ const schema = [
 
       {muettes.length > 0 && (
         <section class="mt-12">
-          <h2 class="text-title">Les {muettes.length} qui n'ont pas répondu</h2>
+          <h2 class="text-title">
+            {muettes.length === 1
+              ? "La source qui n'a pas répondu"
+              : `Les ${muettes.length} qui n'ont pas répondu`}
+          </h2>
           <div class="mt-3 h-[3px] w-12 bg-amber"></div>
           <p class="mt-5 max-w-2xl text-[0.98rem] leading-relaxed text-warm">
             Le plus souvent un blocage anti-robot, pas un lien mort : plusieurs portails
@@ -160,7 +173,11 @@ const schema = [
       )}
 
       <section class="mt-12">
-        <h2 class="text-title">Les {relevees.length} relevées au dernier passage</h2>
+        <h2 class="text-title">
+          {relevees.length === 1
+            ? 'La source relevée au dernier passage'
+            : `Les ${relevees.length} relevées au dernier passage`}
+        </h2>
         <div class="mt-3 h-[3px] w-12 bg-teal"></div>
 
         <div class="mt-6 overflow-x-auto">
