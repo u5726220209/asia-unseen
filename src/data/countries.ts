@@ -13,6 +13,51 @@
 
 export type Saison = 1 | 2 | 3; // 1 = à éviter · 2 = acceptable · 3 = idéal
 
+/**
+ * Les passeports pour lesquels ce site dit la vérité.
+ *
+ * Une règle d'entrée n'existe pas dans l'absolu : elle existe pour un
+ * passeport. « 45 jours sans visa au Vietnam » est vrai pour un Français et
+ * faux pour un Américain. Tant que le site n'avait qu'une audience française,
+ * le passeport pouvait rester implicite ; il ne le peut plus.
+ */
+export type Passeport = 'fr' | 'gb' | 'us' | 'ca' | 'au' | 'nz';
+
+export const PASSEPORTS: { code: Passeport; nom: string; demonyme: string }[] = [
+  { code: 'fr', nom: 'France', demonyme: 'français' },
+  { code: 'gb', nom: 'Royaume-Uni', demonyme: 'britannique' },
+  { code: 'ca', nom: 'Canada', demonyme: 'canadien' },
+  { code: 'us', nom: 'États-Unis', demonyme: 'américain' },
+  { code: 'au', nom: 'Australie', demonyme: 'australien' },
+  { code: 'nz', nom: 'Nouvelle-Zélande', demonyme: 'néo-zélandais' },
+];
+
+/**
+ * La règle d'entrée pour un passeport autre que français.
+ *
+ * Elle porte sa propre source et sa propre date : deux pays ne publient pas au
+ * même rythme, et une fiche qui donnerait une seule date pour six règles
+ * mentirait sur cinq d'entre elles.
+ *
+ * `lisibleParMachine: false` dit que le portail de ce pays refuse les robots —
+ * travel.state.gov répond 403, smartraveller.gov.au refuse la connexion. Leur
+ * règle est relevée à la main, leur date ne remonte pas toute seule, et la
+ * fiche doit le dire au lecteur plutôt que de laisser croire à une
+ * surveillance qui n'existe pas.
+ */
+export type RegleEntree = {
+  /** Jours de séjour sans aucune démarche. Zéro = visa exigé dès le premier jour. */
+  sansVisaJours: number;
+  /** Une règle publiée dont la date d'effet est encore à venir. */
+  sansVisaJoursApres?: { date: string; jours: number };
+  /** La règle en une phrase, telle que la source la publie. */
+  resume: string;
+  /** La source officielle de CE pays pour ses propres ressortissants. */
+  source: { label: string; url: string; lisibleParMachine?: boolean };
+  /** Mois de vérification de cette règle-là, au format AAAA-MM. */
+  verifieLe: string;
+};
+
 export type Country = {
   slug: string;
   nom: string;
@@ -74,6 +119,19 @@ export type Country = {
      * `duree` doit annoncer les deux nombres et leur date — c'est vérifié.
      */
     sansVisaJoursApres?: { date: string; jours: number };
+    /**
+     * Les règles des autres passeports.
+     *
+     * La règle française n'y figure pas, et c'est délibéré : elle vit dans les
+     * champs ci-dessus, où elle a toujours vécu et où vingt pages la lisent.
+     * La dupliquer ici créerait deux sources de vérité pour la même règle —
+     * exactement le défaut que ce dépôt a déjà payé sur la description des
+     * fiches pays. `scripts/verifier-config.mjs` refuse une entrée `fr`.
+     *
+     * Utilisez `regleDuPasseport()` plutôt que de lire ce champ directement :
+     * il rend la règle française pour `fr` et celle-ci pour les autres.
+     */
+    regles?: Partial<Record<Exclude<Passeport, 'fr'>, RegleEntree>>;
   };
   /**
    * Les sources officielles citées sur la fiche. `surveillee: false` les garde
@@ -130,6 +188,20 @@ export const countries: Country[] = [
       cout: "Gratuit sous exemption ; ≈ 25 USD (entrée simple) / 50 USD (entrées multiples) pour l'e-visa",
       procedure: "E-visa sur le portail officiel de l'immigration, réponse en 3 à 5 jours ouvrés. N'utilisez jamais les sites intermédiaires qui facturent 3 à 5 fois le tarif. Passeport valide 6 mois à la date d'entrée. Un enregistrement en ligne dans les 72 h précédant l'arrivée est demandé à l'aéroport de Hô Chi Minh-Ville.",
       sansVisaJours: 45,
+      regles: {
+        gb: {
+          sansVisaJours: 45,
+          resume: "45 jours sans visa pour le tourisme ou les affaires.",
+          source: { label: "GOV.UK — conseils aux voyageurs, conditions d'entrée", url: 'https://www.gov.uk/foreign-travel-advice/vietnam/entry-requirements' },
+          verifieLe: '2026-09',
+        },
+        ca: {
+          sansVisaJours: 0,
+          resume: "Visa obligatoire. E-visa touristique jusqu'à 90 jours, entrée simple ou multiple.",
+          source: { label: "Gouvernement du Canada — conseils aux voyageurs", url: 'https://travel.gc.ca/destinations/vietnam' },
+          verifieLe: '2026-09',
+        },
+      },
     },
     sourcesVisa: [
       { label: "France Diplomatie — Vietnam, entrée et séjour", url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/vietnam/conseils-aux-voyageurs-entree-sejour' },
@@ -190,6 +262,15 @@ export const countries: Country[] = [
       procedure: "La Thailand Digital Arrival Card (TDAC) est obligatoire depuis le 1er mai 2025 pour toute entrée par air, terre ou mer : à remplir en ligne dans les 3 jours précédant l'arrivée sur tdac.immigration.go.th — gratuitement, les sites qui la facturent sont des intermédiaires. Passeport valide 6 mois à compter de la date d'entrée. Un billet de sortie du territoire peut être réclamé à l'embarquement.",
       sansVisaJours: 60,
       sansVisaJoursApres: { date: '2026-09-15', jours: 30 },
+      regles: {
+        gb: {
+          sansVisaJours: 60,
+          sansVisaJoursApres: { date: '2026-09-15', jours: 30 },
+          resume: "60 jours sans visa pour une entrée jusqu'au 14 septembre 2026 ; 30 jours à partir du 15, sous le régime d'exemption.",
+          source: { label: "GOV.UK — conseils aux voyageurs, conditions d'entrée", url: 'https://www.gov.uk/foreign-travel-advice/thailand/entry-requirements' },
+          verifieLe: '2026-09',
+        },
+      },
     },
     sourcesVisa: [
       { label: "France Diplomatie — Thaïlande, entrée et séjour", url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/thailande/conseils-aux-voyageurs-entree-sejour' },
@@ -249,6 +330,20 @@ export const countries: Country[] = [
       cout: "Gratuit",
       procedure: "Une déclaration douanière et d'immigration en ligne (Visit Japan Web) accélère considérablement le passage à l'aéroport. Faites-la la veille du départ.",
       sansVisaJours: 90,
+      regles: {
+        gb: {
+          sansVisaJours: 90,
+          resume: "90 jours sans visa préalable, délivrés à l'arrivée pour le tourisme ou les affaires.",
+          source: { label: "GOV.UK — conseils aux voyageurs, conditions d'entrée", url: 'https://www.gov.uk/foreign-travel-advice/japan/entry-requirements' },
+          verifieLe: '2026-09',
+        },
+        ca: {
+          sansVisaJours: 90,
+          resume: "90 jours sans visa maximum.",
+          source: { label: "Gouvernement du Canada — conseils aux voyageurs", url: 'https://travel.gc.ca/destinations/japan' },
+          verifieLe: '2026-09',
+        },
+      },
     },
     sourcesVisa: [
       { label: "France Diplomatie — Japon, entrée et séjour", url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/japon/conseils-aux-voyageurs-entree-sejour' },
@@ -303,6 +398,20 @@ export const countries: Country[] = [
       cout: "Gratuit sous exemption ; 45 € de frais consulaires pour un visa L à entrée simple — tarif réduit prolongé jusqu'au 31 décembre 2026 —, plus les frais de service du centre de dépôt, soit environ 110 € au total",
       procedure: "Passeport valide 6 mois après la date de sortie du territoire. Les passeports d'urgence sont exclus du dispositif. Enregistrement obligatoire auprès de la police locale dans les 24 h suivant l'arrivée — l'hôtel s'en charge, mais pas une location entre particuliers. Pour un visa L : dépôt en centre avec biométrie, 4 à 10 jours ouvrés.",
       sansVisaJours: 30,
+      regles: {
+        gb: {
+          sansVisaJours: 30,
+          resume: "30 jours sans visa jusqu'au 31 décembre 2026, pour affaires, tourisme, visite familiale ou transit.",
+          source: { label: "GOV.UK — conseils aux voyageurs, conditions d'entrée", url: 'https://www.gov.uk/foreign-travel-advice/china/entry-requirements' },
+          verifieLe: '2026-09',
+        },
+        ca: {
+          sansVisaJours: 30,
+          resume: "30 jours sans visa, dans le cadre du dispositif d'exemption chinois courant jusqu'au 31 décembre 2026.",
+          source: { label: "Gouvernement du Canada — conseils aux voyageurs", url: 'https://travel.gc.ca/destinations/china' },
+          verifieLe: '2026-09',
+        },
+      },
     },
     sourcesVisa: [
       { label: "France Diplomatie — Chine, entrée et séjour", url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/chine/conseils-aux-voyageurs-entree-sejour' },
@@ -366,6 +475,20 @@ export const countries: Country[] = [
       cout: "≈ 30 à 50 USD selon la nationalité et le point d'entrée ; prolongation à 2 USD par jour à Vientiane",
       procedure: "E-visa en ligne pour éviter la file, ou visa à l'arrivée aux principaux postes frontières. Attention : les points de passage terrestres délivrant un visa à l'arrivée ou acceptant l'e-visa sont limités — vérifiez le vôtre avant de vous y présenter. Exigez le tampon d'entrée sur votre passeport : son absence est sanctionnée d'au moins 200 USD. Prévoyez une photo d'identité et des dollars en espèces en bon état.",
       sansVisaJours: 0,
+      regles: {
+        gb: {
+          sansVisaJours: 0,
+          resume: "Visa obligatoire. Visa touristique de 30 jours ; e-visa à entrée simple, à demander au moins 5 jours avant.",
+          source: { label: "GOV.UK — conseils aux voyageurs, conditions d'entrée", url: 'https://www.gov.uk/foreign-travel-advice/laos/entry-requirements' },
+          verifieLe: '2026-09',
+        },
+        ca: {
+          sansVisaJours: 0,
+          resume: "Visa obligatoire. Demande possible dans les 60 jours précédant la date d'entrée.",
+          source: { label: "Gouvernement du Canada — conseils aux voyageurs", url: 'https://travel.gc.ca/destinations/laos' },
+          verifieLe: '2026-09',
+        },
+      },
     },
     sourcesVisa: [
       { label: "France Diplomatie — Laos, entrée et séjour", url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/laos/conseils-aux-voyageurs-entree-sejour' },
@@ -419,6 +542,20 @@ export const countries: Country[] = [
       cout: '≈ 36 USD (e-visa, frais de service inclus) ; ≈ 40 USD en espèces aux postes-frontières terrestres',
       procedure: "Demandez uniquement sur le portail gouvernemental officiel — les sites clones facturant 80 à 100 USD sont nombreux et bien référencés. L'application « Cambodia e-arrival » est obligatoire depuis le 1er septembre 2024 pour toute arrivée par avion. Une assurance couvrant hospitalisation et rapatriement est exigée. Visa touristique prolongeable une fois d'un mois.",
       sansVisaJours: 0,
+      regles: {
+        gb: {
+          sansVisaJours: 0,
+          resume: "Visa obligatoire. Visa touristique valable 30 jours à compter de l'entrée ; e-visa à demander au moins 4 jours avant.",
+          source: { label: "GOV.UK — conseils aux voyageurs, conditions d'entrée", url: 'https://www.gov.uk/foreign-travel-advice/cambodia/entry-requirements' },
+          verifieLe: '2026-09',
+        },
+        ca: {
+          sansVisaJours: 0,
+          resume: "Visa obligatoire pour le tourisme comme pour les affaires.",
+          source: { label: "Gouvernement du Canada — conseils aux voyageurs", url: 'https://travel.gc.ca/destinations/cambodia' },
+          verifieLe: '2026-09',
+        },
+      },
     },
     sourcesVisa: [
       { label: "France Diplomatie — Cambodge, entrée et séjour", url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/cambodge/conseils-aux-voyageurs-entree-sejour' },
@@ -474,6 +611,20 @@ export const countries: Country[] = [
       cout: "Gratuit — le K-ETA n'étant pas exigé. Le demander volontairement coûte 10 000 wons, non remboursables.",
       procedure: "Le K-ETA n'est pas exigé sur cette période, mais reste facultatif : le demander dispense de remplir la carte d'arrivée à l'atterrissage. Sans K-ETA, la carte d'arrivée électronique est à compléter avant l'entrée. L'exemption prend fin le 31 décembre 2026 : revérifiez pour tout voyage en 2027.",
       sansVisaJours: 90,
+      regles: {
+        gb: {
+          sansVisaJours: 90,
+          resume: "90 jours sans visa pour un séjour touristique ou d'affaires. K-ETA non exigé jusqu'au 31 décembre 2026.",
+          source: { label: "GOV.UK — conseils aux voyageurs, conditions d'entrée", url: 'https://www.gov.uk/foreign-travel-advice/south-korea/entry-requirements' },
+          verifieLe: '2026-09',
+        },
+        ca: {
+          sansVisaJours: 180,
+          resume: "180 jours sans visa — durée propre aux ressortissants canadiens. K-ETA non exigé jusqu'au 31 décembre 2026.",
+          source: { label: "Gouvernement du Canada — conseils aux voyageurs", url: 'https://travel.gc.ca/destinations/south-korea' },
+          verifieLe: '2026-09',
+        },
+      },
     },
     sourcesVisa: [
       { label: "France Diplomatie — Corée du Sud, entrée et séjour", url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/coree-du-sud/conseils-aux-voyageurs-entree-sejour' },
@@ -527,6 +678,20 @@ export const countries: Country[] = [
       cout: '≈ 500 000 IDR (≈ 30 €), plus 150 000 IDR (≈ 7,50 €) de taxe touristique à Bali',
       procedure: "L'e-VOA se demande en ligne quelques jours avant le départ et évite une file d'attente réelle à Denpasar. Le formulaire douanier « All Indonesia » se remplit dans les 72 h précédant l'arrivée. Un billet de sortie du territoire est exigé, et le passeport doit être en excellent état — un document abîmé entraîne un refus d'entrée.",
       sansVisaJours: 0,
+      regles: {
+        gb: {
+          sansVisaJours: 0,
+          resume: "Visa obligatoire. Visa à l'arrivée de 30 jours pour le tourisme, la visite familiale et certaines activités d'affaires.",
+          source: { label: "GOV.UK — conseils aux voyageurs, conditions d'entrée", url: 'https://www.gov.uk/foreign-travel-advice/indonesia/entry-requirements' },
+          verifieLe: '2026-09',
+        },
+        ca: {
+          sansVisaJours: 0,
+          resume: "Visa obligatoire.",
+          source: { label: "Gouvernement du Canada — conseils aux voyageurs", url: 'https://travel.gc.ca/destinations/indonesia' },
+          verifieLe: '2026-09',
+        },
+      },
     },
     sourcesVisa: [
       { label: "France Diplomatie — Indonésie, entrée et séjour", url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/indonesie/conseils-aux-voyageurs-entree-sejour' },
@@ -583,6 +748,20 @@ export const countries: Country[] = [
       cout: "Gratuit à l'entrée ; ≈ 3 030 PHP pour la prolongation sur place",
       procedure: "Un billet de sortie ou de continuation est exigé à l'embarquement. La carte eTravel est obligatoire : remplissez-la 72 h avant le départ, le QR code généré est réclamé par la compagnie et à l'arrivée. Une taxe d'aéroport peut s'ajouter si elle n'est pas incluse dans le billet.",
       sansVisaJours: 30,
+      regles: {
+        gb: {
+          sansVisaJours: 30,
+          resume: "30 jours sans visa pour le tourisme ou les affaires, prolongeables sur place.",
+          source: { label: "GOV.UK — conseils aux voyageurs, conditions d'entrée", url: 'https://www.gov.uk/foreign-travel-advice/philippines/entry-requirements' },
+          verifieLe: '2026-09',
+        },
+        ca: {
+          sansVisaJours: 30,
+          resume: "30 jours sans visa.",
+          source: { label: "Gouvernement du Canada — conseils aux voyageurs", url: 'https://travel.gc.ca/destinations/philippines' },
+          verifieLe: '2026-09',
+        },
+      },
     },
     sourcesVisa: [
       { label: "France Diplomatie — Philippines, entrée et séjour", url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/philippines/conseils-aux-voyageurs-entree-sejour' },
@@ -643,6 +822,36 @@ for (const c of countries) {
   if (bascule && new Date().toISOString().slice(0, 10) >= bascule.date) {
     c.visa.sansVisaJours = bascule.jours;
   }
+}
+
+/**
+ * La règle d'entrée d'un pays pour un passeport donné.
+ *
+ * Le seul endroit qui sait que la règle française vit dans `visa` et les
+ * autres dans `visa.regles`. Cette asymétrie est assumée : la règle française
+ * est lue par une vingtaine de pages depuis l'origine du site, et la déplacer
+ * aurait demandé de réécrire tout ce qui marche pour gagner une symétrie que
+ * personne ne voit. En échange, tout le monde passe par ici.
+ *
+ * Rend `null` quand la règle n'a pas été vérifiée pour ce passeport. Un `null`
+ * se rattrape à l'affichage ; une règle inventée se paie à une frontière.
+ */
+export function regleDuPasseport(c: Country, p: Passeport): RegleEntree | null {
+  if (p === 'fr') {
+    return {
+      sansVisaJours: c.visa.sansVisaJours,
+      sansVisaJoursApres: c.visa.sansVisaJoursApres,
+      resume: c.visa.resume,
+      source: c.sourcesVisa[0] ?? { label: 'France Diplomatie', url: '' },
+      verifieLe: c.verifieLe,
+    };
+  }
+  return c.visa.regles?.[p] ?? null;
+}
+
+/** Les passeports pour lesquels la règle de ce pays a été vérifiée. */
+export function passeportsCouverts(c: Country): Passeport[] {
+  return PASSEPORTS.filter((p) => regleDuPasseport(c, p.code) !== null).map((p) => p.code);
 }
 
 export const bySlug = Object.fromEntries(countries.map((c) => [c.slug, c]));

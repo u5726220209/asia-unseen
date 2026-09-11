@@ -4,6 +4,7 @@ import { MOIS } from '@/data/countries';
 import Breadcrumbs from './Breadcrumbs.astro';
 import Disclosure from './Disclosure.astro';
 import VerifiedBadge from './VerifiedBadge.astro';
+import RegleParPasseport from './RegleParPasseport.astro';
 import AffiliateLink from './AffiliateLink.astro';
 import Callout from './Callout.astro';
 import FAQ from './FAQ.astro';
@@ -250,6 +251,8 @@ const faq = [
           ))}
         </dl>
       </div>
+      <RegleParPasseport country={c} />
+
       <VerifiedBadge date={c.verifieLe} sources={c.sourcesVisa} page={`/${c.slug}`} class="!my-8" />
       <p>
         Le détail des procédures, les délais réels et les pièges des sites intermédiaires sont

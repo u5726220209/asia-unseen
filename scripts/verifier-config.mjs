@@ -455,6 +455,81 @@ if (fautesArticle.length) {
   console.log("✓ Aucun nom de pays écrit sans son article.\n");
 }
 
+/**
+ * Les règles des autres passeports.
+ *
+ * Une règle d'entrée vaut pour un passeport, pas dans l'absolu : « 45 jours
+ * sans visa au Vietnam » est vrai pour un Français et faux pour un Canadien,
+ * qui a besoin d'un visa dès le premier jour. Le modèle porte donc une règle
+ * par passeport, et chacune doit tenir debout seule.
+ *
+ * Trois exigences, et chacune répare une faute déjà commise ailleurs dans ce
+ * dépôt :
+ *
+ *   — Pas d'entrée `fr` dans `regles`. La règle française vit dans `visa`, où
+ *     vingt pages la lisent. La dupliquer créerait deux sources de vérité pour
+ *     la même règle, et elles divergeraient — c'est arrivé sur la description
+ *     des fiches pays.
+ *
+ *   — Une source et une date par règle. Deux pays ne publient pas au même
+ *     rythme : une date unique pour six règles mentirait sur cinq d'entre elles.
+ *
+ *   — Le nombre doit figurer dans la phrase. C'est le contrôle qui existe déjà
+ *     pour la règle française : si l'une bouge sans l'autre, l'outil et le
+ *     texte se contredisent, et c'est l'outil qu'on croit.
+ */
+const reglesIncoherentes = [];
+{
+  const ts = readFileSync('src/data/countries.ts', 'utf8');
+  for (const m of ts.matchAll(/slug: '([a-z-]+)'/g)) {
+    const debut = m.index;
+    const suivant = ts.slice(debut + 1).search(/slug: '[a-z-]+'/);
+    const bloc = ts.slice(debut, suivant < 0 ? undefined : debut + 1 + suivant);
+    const i = bloc.indexOf('regles: {');
+    if (i < 0) continue;
+    const seg = bloc.slice(i, bloc.indexOf('\n      },', i));
+
+    if (/^\s*fr:\s*\{/m.test(seg)) {
+      reglesIncoherentes.push({ pays: m[1], passeport: 'fr', motif: "la règle française vit dans `visa`, jamais dans `regles`" });
+    }
+
+    for (const r of seg.matchAll(/^\s{8}([a-z]{2}): \{([\s\S]*?)\n\s{8}\},/gm)) {
+      const [, code, corps] = r;
+      const jours = Number(corps.match(/sansVisaJours:\s*(\d+)/)?.[1] ?? NaN);
+      const resume = corps.match(/resume:\s*"([^"]*)"/)?.[1] ?? '';
+      const url = corps.match(/url:\s*'([^']+)'/)?.[1] ?? '';
+      const date = corps.match(/verifieLe:\s*'(\d{4}-\d{2})'/)?.[1] ?? '';
+
+      if (!Number.isFinite(jours)) reglesIncoherentes.push({ pays: m[1], passeport: code, motif: 'sansVisaJours absent' });
+      if (!url) reglesIncoherentes.push({ pays: m[1], passeport: code, motif: 'aucune source officielle' });
+      if (!date) reglesIncoherentes.push({ pays: m[1], passeport: code, motif: 'aucune date de relevé' });
+      if (Number.isFinite(jours) && jours > 0 && !new RegExp(`\\b${jours}\\b`).test(resume)) {
+        reglesIncoherentes.push({ pays: m[1], passeport: code, motif: `${jours} ne figure pas dans la phrase`, resume });
+      }
+      if (Number.isFinite(jours) && jours === 0 && !/visa obligatoire/i.test(resume)) {
+        reglesIncoherentes.push({ pays: m[1], passeport: code, motif: "annoncé à 0 sans que la phrase dise « visa obligatoire »", resume });
+      }
+
+      const ap = corps.match(/sansVisaJoursApres:\s*\{\s*date:\s*'(\d{4}-\d{2}-\d{2})',\s*jours:\s*(\d+)/);
+      if (ap && !new RegExp(`\\b${ap[2]}\\b`).test(resume)) {
+        reglesIncoherentes.push({ pays: m[1], passeport: code, motif: `bascule à ${ap[2]} jours non annoncée dans la phrase`, resume });
+      }
+    }
+  }
+}
+
+if (reglesIncoherentes.length) {
+  console.log(`⛔ ${reglesIncoherentes.length} règle(s) d'entrée par passeport mal formée(s) :\n`);
+  for (const r of reglesIncoherentes) {
+    console.log(`   ${r.pays.padEnd(14)} ${r.passeport.toUpperCase()}  ${r.motif}`);
+    if (r.resume) console.log(`      « ${r.resume.slice(0, 80)}… »`);
+  }
+  console.log('\n   Une règle d\'entrée vaut pour un passeport, pas dans l\'absolu.');
+  console.log('   Sans source ni date, elle ne vaut pour personne.\n');
+} else {
+  console.log("✓ Chaque règle par passeport porte sa source, sa date et son chiffre.\n");
+}
+
 if (!tarifsNonSuivis.length) console.log("✓ Chaque tarif d'entrée publié est inscrit au registre.\n");
 
 if (tarifsNonSuivis.length) {
@@ -536,5 +611,6 @@ if (correctionsNonFaites.length) {
 process.exit(
   jamaisEcrits.length || jamaisLus.length || defautsFormulaire.length ||
   ecartSources || visasIncoherents.length || correctionsNonFaites.length ||
-  tarifsNonSuivis.length || defautsMachine.length || fautesArticle.length ? 1 : 0,
+  tarifsNonSuivis.length || defautsMachine.length || fautesArticle.length ||
+  reglesIncoherentes.length ? 1 : 0,
 );

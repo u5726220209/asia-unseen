@@ -77,6 +77,20 @@ export const sourcesSurveillees: SourceSurveillee[] = (() => {
     }
     const u = c.urgences?.source;
     if (u && !vues.has(u.url)) vues.set(u.url, { label: u.label, url: u.url, pays: c.nom });
+    /**
+     * Les portails des autres passeports.
+     *
+     * Chaque règle d'entrée non française porte sa propre source — gov.uk pour
+     * un Britannique, travel.gc.ca pour un Canadien — et la sentinelle les lit
+     * comme les autres : son extraction ratisse toutes les paires
+     * { label, url } du fichier, sans savoir où elles vivent. Les oublier ici
+     * ferait annoncer vingt-cinq sources là où quarante-deux sont surveillées,
+     * et c'est précisément l'écart que le contrôle de mise en ligne refuse.
+     */
+    for (const r of Object.values(c.visa.regles ?? {})) {
+      if (!r || r.source.lisibleParMachine === false) continue;
+      if (!vues.has(r.source.url)) vues.set(r.source.url, { label: r.source.label, url: r.source.url, pays: c.nom });
+    }
   }
   for (const s of sourcesTarifaires) {
     if (!vues.has(s.url)) vues.set(s.url, { label: s.label, url: s.url });

@@ -1,0 +1,130 @@
+---
+import type { Country } from '@/data/countries';
+import { PASSEPORTS, regleDuPasseport } from '@/data/countries';
+
+/**
+ * La règle d'entrée, selon le passeport.
+ *
+ * Une règle de visa n'existe pas dans l'absolu. « 45 jours sans visa au
+ * Vietnam » est vrai pour un Français et faux pour un Canadien, qui a besoin
+ * d'un visa dès le premier jour. Tant que le site n'avait qu'une audience
+ * française, le passeport pouvait rester implicite ; il ne le peut plus, et il
+ * ne le pouvait déjà plus pour les lecteurs belges, suisses ou québécois.
+ *
+ * LES DEUX ÉTATS, ET POURQUOI LE SECOND EXISTE
+ * Un passeport dont la règle a été relevée à sa source officielle affiche
+ * cette règle, sa date et sa source. Un passeport dont elle ne l'a pas été
+ * affiche pourquoi — et renvoie le lecteur à son propre gouvernement.
+ *
+ * Il aurait été plus simple de ne montrer que les passeports couverts. Ce
+ * serait laisser un lecteur américain croire que la question ne se pose pas
+ * pour lui, alors qu'elle se pose exactement autant. Dire « nous ne savons
+ * pas, voici où savoir » vaut mieux que se taire, et infiniment mieux que
+ * transposer la règle d'un autre passeport.
+ */
+interface Props {
+  country: Country;
+  class?: string;
+}
+const { country: c, class: klass = '' } = Astro.props;
+
+/** Le portail de chaque pays, pour ceux dont la règle n'est pas relevée. */
+const PORTAILS: Record<string, { nom: string; url: string; pourquoi: string }> = {
+  us: {
+    nom: 'travel.state.gov',
+    url: 'https://travel.state.gov/content/travel/en/international-travel.html',
+    pourquoi: 'le portail américain refuse la lecture automatisée',
+  },
+  au: {
+    nom: 'smartraveller.gov.au',
+    url: 'https://www.smartraveller.gov.au/',
+    pourquoi: 'le portail australien refuse la connexion',
+  },
+  nz: {
+    nom: 'safetravel.govt.nz',
+    url: 'https://www.safetravel.govt.nz/',
+    pourquoi: "le portail néo-zélandais ne publie pas de règles d'entrée",
+  },
+};
+
+const lignes = PASSEPORTS.map((p) => ({ ...p, regle: regleDuPasseport(c, p.code) }));
+const couverts = lignes.filter((l) => l.regle !== null);
+const absents = lignes.filter((l) => l.regle === null);
+
+const jourISO = new Date().toISOString().slice(0, 10);
+const dit = (r: NonNullable<ReturnType<typeof regleDuPasseport>>) =>
+  r.sansVisaJours > 0 ? `${r.sansVisaJours} jours sans visa` : 'Visa obligatoire';
+---
+
+<section data-pagefind-ignore class:list={['not-prose my-8 overflow-hidden rounded-brand border border-line', klass]}>
+  <div class="border-b border-line bg-cream-warm px-5 py-4 sm:px-6">
+    <p class="eyebrow">Selon votre passeport</p>
+    <label for={`pp-${c.slug}`} class="mt-2 block text-[0.9rem] leading-relaxed text-warm">
+      La règle d'entrée {c.article} {c.nom} dépend du passeport avec lequel vous voyagez.
+      Choisissez le vôtre&nbsp;:
+    </label>
+    <select
+      id={`pp-${c.slug}`}
+      class="au-pp mt-3 w-full max-w-xs rounded-brand border border-line bg-white px-4 py-2.5 text-ink focus:border-teal focus:outline-none sm:w-auto"
+    >
+      {couverts.map((l) => <option value={l.code}>{l.nom}</option>)}
+      {absents.map((l) => <option value={l.code}>{l.nom} — non relevé</option>)}
+    </select>
+  </div>
+
+  {couverts.map((l) => (
+    <div class="au-pp-bloc px-5 py-5 sm:px-6" data-pp={l.code} hidden={l.code !== 'fr'}>
+      <p class="font-display text-[1.15rem] font-bold text-ink">{dit(l.regle!)}</p>
+      <p class="mt-2 text-[0.95rem] leading-relaxed text-ink-soft">{l.regle!.resume}</p>
+      {l.regle!.sansVisaJoursApres && l.regle!.sansVisaJoursApres.date > jourISO && (
+        <p class="mt-3 rounded-brand border-l-[3px] border-amber bg-amber-50 px-4 py-3 text-[0.9rem] leading-relaxed text-ink-soft">
+          Cette règle change le {new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${l.regle!.sansVisaJoursApres.date}T00:00:00`))} :
+          elle passera à <strong class="font-semibold text-ink">{l.regle!.sansVisaJoursApres.jours} jours</strong>.
+          C'est la date d'entrée sur le territoire qui décide.
+        </p>
+      )}
+      <p class="mt-3 text-[0.82rem] text-warm">
+        Relevé en {new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(new Date(`${l.regle!.verifieLe}-01T00:00:00`))} ·{' '}
+        <a href={l.regle!.source.url} target="_blank" rel="noopener nofollow" class="text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">
+          {l.regle!.source.label} ↗
+        </a>
+      </p>
+    </div>
+  ))}
+
+  {absents.map((l) => (
+    <div class="au-pp-bloc px-5 py-5 sm:px-6" data-pp={l.code} hidden>
+      <p class="font-display text-[1.05rem] font-bold text-ink">Nous n'avons pas relevé cette règle</p>
+      <p class="mt-2 text-[0.95rem] leading-relaxed text-ink-soft">
+        {PORTAILS[l.code]?.pourquoi ?? "cette règle n'a pas encore été relevée"} — nous ne pouvons donc
+        pas la vérifier comme nous vérifions les autres. Plutôt que de transposer la règle d'un autre
+        passeport, ce qui se paierait à une frontière, nous préférons vous envoyer à la source.
+      </p>
+      {PORTAILS[l.code] && (
+        <p class="mt-3 text-[0.9rem]">
+          <a href={PORTAILS[l.code].url} target="_blank" rel="noopener nofollow" class="font-semibold text-teal-700 underline decoration-teal/30 underline-offset-4 hover:decoration-amber">
+            {PORTAILS[l.code].nom} ↗
+          </a>
+        </p>
+      )}
+    </div>
+  ))}
+</section>
+
+<script>
+  /**
+   * Le sélecteur ne fait qu'afficher le bloc correspondant.
+   *
+   * Aucune règle n'est calculée ici : chaque bloc est écrit à la compilation
+   * avec sa source et sa date. Un script qui déduirait une règle d'entrée
+   * finirait par en inventer une, et le site perdrait ce qui fait sa valeur.
+   */
+  document.querySelectorAll<HTMLSelectElement>('select.au-pp').forEach((sel) => {
+    const section = sel.closest('section');
+    if (!section) return;
+    const blocs = section.querySelectorAll<HTMLElement>('.au-pp-bloc');
+    const montrer = () => blocs.forEach((b) => { b.hidden = b.dataset.pp !== sel.value; });
+    sel.addEventListener('change', montrer);
+    montrer();
+  });
+</script>

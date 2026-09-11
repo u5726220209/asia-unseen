@@ -149,6 +149,28 @@ const CAS = [
     attendu: /faute\(s\) d'article/,
   },
 
+  {
+    nom: "une règle par passeport perd sa source",
+    script: 'verifier-config.mjs',
+    muter: {
+      'src/data/countries.ts': remplacer(
+        /source: \{ label: "GOV\.UK — conseils aux voyageurs, conditions d'entrée", url: '[^']+' \},/,
+        'source: { label: "GOV.UK", url: \'\' },',
+      ),
+    },
+    attendu: /aucune source officielle/,
+  },
+  {
+    nom: "la règle française dupliquée dans regles",
+    script: 'verifier-config.mjs',
+    muter: {
+      // Deux sources de vérité pour la même règle : elles divergeraient, et ce
+      // dépôt a déjà payé ce prix sur la description des fiches pays.
+      'src/data/countries.ts': remplacer(/^ {8}ca: \{$/m, '        fr: {'),
+    },
+    attendu: /la règle française vit dans `visa`/,
+  },
+
   /* ── verifier-chiffres.mjs ───────────────────────────────────── */
   {
     nom: 'une entrée du registre devient illisible',
