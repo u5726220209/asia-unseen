@@ -336,6 +336,20 @@ const CAS = [
   },
 
   {
+    nom: 'une page anglaise partage la carte française',
+    script: 'verifier-config.mjs',
+    /* L'image par défaut porte une accroche française. Elle part dans la
+       conversation de quelqu'un, sous un titre anglais, au moment précis où
+       l'on décide de cliquer — et c'est le seul endroit où on ne la verra
+       jamais soi-même. */
+    muter: {
+      'dist/en/updates/index.html':
+        remplacer(/og\/en\/updates\.png/g, 'og-default.png'),
+    },
+    attendu: /partagent l'image française/,
+  },
+
+  {
     nom: 'une page anglaise propose la lettre française',
     script: 'verifier-config.mjs',
     /* La lettre est en français et la liste aussi, jusqu'au `locale=fr` qui

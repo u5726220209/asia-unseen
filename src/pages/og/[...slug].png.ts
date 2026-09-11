@@ -71,6 +71,22 @@ export const getStaticPaths = (async () => {
       params: { slug: `en/blog/${p.id}` },
       props: { titre: p.data.heading ?? p.data.title, categorie: 'From the ground' } satisfies Props,
     })),
+    /*
+     * Les pages anglaises sans collection : l'accueil, l'outil, le journal et
+     * les deux listes. Elles partageaient `og-default.png`, dont l'accroche
+     * est française — et ce sont précisément les pages qu'on partage, parce
+     * que ce sont elles qu'on recommande.
+     */
+    ...[
+      { slug: 'en/accueil', titre: 'Asia entry rules, by passport', categorie: 'Entry rules' },
+      { slug: 'en/do-i-need-a-visa', titre: 'Do I need a visa?', categorie: 'Tool' },
+      { slug: 'en/updates', titre: 'What we got wrong', categorie: 'Corrections log' },
+      { slug: 'en/guides-index', titre: 'The guides', categorie: 'Practical guides' },
+      { slug: 'en/blog-index', titre: 'The articles', categorie: 'From the ground' },
+    ].map((x) => ({
+      params: { slug: x.slug },
+      props: { titre: x.titre, categorie: x.categorie } satisfies Props,
+    })),
   ];
 }) satisfies GetStaticPaths;
 

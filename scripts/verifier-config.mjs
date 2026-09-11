@@ -721,6 +721,7 @@ if (cellulesFigees.length) {
  * précisément à ce moment-là qu'il faut relire cette page, pas avant.
  */
 const formulairesEnAnglais = [];
+const partageFrancais = [];
 if (existsSync('dist/en')) {
   const pagesEn = [];
   const parcourirForm = (d) => {
@@ -737,6 +738,15 @@ if (existsSync('dist/en')) {
     if (/<form[^>]*class="[^"]*au-nl\b/.test(html) || /name="locale" value="fr"/.test(html)) {
       formulairesEnAnglais.push(f.replace(/^dist/, '').replace(/\/index\.html$/, ''));
     }
+    /* L'image de partage par défaut porte une accroche française. Une page
+       anglaise qui la sert envoie une carte française dans la conversation de
+       quelqu'un — au moment précis où l'on décide de cliquer. Un défaut à
+       part : il ne parle pas de la lettre, et un contrôle qui bloque pour une
+       autre raison que celle qu'il annonce est un contrôle qu'on cesse de
+       lire. */
+    if (/og:image" content="[^"]*og-default\.png"/.test(html)) {
+      partageFrancais.push(f.replace(/^dist/, '').replace(/\/index\.html$/, ''));
+    }
   }
 }
 
@@ -747,6 +757,15 @@ if (formulairesEnAnglais.length) {
   console.log("   là-dessus, c'est promettre ce qu'on ne peut pas tenir.\n");
 } else if (existsSync('dist/en')) {
   console.log("✓ Aucune page anglaise ne propose une lettre qu'elle ne peut pas envoyer.\n");
+}
+
+if (partageFrancais.length) {
+  console.log(`⛔ ${partageFrancais.length} page(s) anglaise(s) partagent l'image française :\n`);
+  for (const p of partageFrancais.slice(0, 12)) console.log(`   ${p}`);
+  console.log("\n   L'image par défaut porte une accroche française. Elle part dans la");
+  console.log("   conversation de quelqu'un, sous un titre anglais.\n");
+} else if (existsSync('dist/en')) {
+  console.log("✓ Chaque page anglaise a sa propre image de partage.\n");
 }
 
 /**
@@ -1191,5 +1210,5 @@ process.exit(
   reglesIncoherentes.length || defautsLangue.length || francaisEnAnglais.length ||
   nonClasses.length || muettes.length || originesFantomes.length ||
   llmsMuet.length || journalEnRetard.length || liensNonMarques.length ||
-  formulairesEnAnglais.length || cellulesFigees.length ? 1 : 0,
+  formulairesEnAnglais.length || cellulesFigees.length || partageFrancais.length ? 1 : 0,
 );
