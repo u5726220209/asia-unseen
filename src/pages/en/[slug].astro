@@ -4,6 +4,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import RegleParPasseport from '@/components/RegleParPasseport.astro';
 import { countries, MOIS, regleDuPasseport, type Country } from '@/data/countries';
 import { contenuEn } from '@/data/countries.en';
+import { getCollection } from 'astro:content';
 import { site } from '@/data/site';
 
 /**
@@ -27,12 +28,44 @@ import { site } from '@/data/site';
  * même temps que la prose.
  */
 
-export const getStaticPaths = (() =>
-  countries
-    .filter((c) => contenuEn[c.slug])
-    .map((c) => ({ params: { slug: c.slug }, props: { country: c } }))) satisfies GetStaticPaths;
+/**
+ * Ce qui, en anglais, parle de ce pays.
+ *
+ * Les fiches pays sont les pages qui reçoivent le trafic ; les articles et les
+ * guides, eux, se trouvent difficilement. Côté français, les fiches les
+ * relaient depuis toujours. Côté anglais, vingt-neuf textes allaient paraître
+ * sans qu'aucune page à fort trafic ne pointe vers eux — ni orphelins ni
+ * cassés, simplement invisibles.
+ *
+ * Seuls les textes déjà parus sont listés : un lien vers un article programmé
+ * est un 404 jusqu'au jour de sa parution.
+ */
+export const getStaticPaths = (async () => {
+  const aujourdhui = new Date();
+  const paru = (e) => !e.data.draft && e.data.pubDate <= aujourdhui;
+  const articles = (await getCollection('blogEn')).filter(paru);
+  const guides = (await getCollection('guidesEn')).filter(paru);
 
-const { country: c } = Astro.props as { country: Country };
+  return countries
+    .filter((c) => contenuEn[c.slug])
+    .map((c) => ({
+      params: { slug: c.slug },
+      props: {
+        country: c,
+        lies: [
+          ...guides
+            .filter((g) => g.data.pays.includes(c.slug))
+            .map((g) => ({ href: `/en/guides/${g.id}`, titre: g.data.heading ?? g.data.title, quoi: 'Guide' })),
+          ...articles
+            .filter((a) => a.data.pays.includes(c.slug))
+            .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+            .map((a) => ({ href: `/en/blog/${a.id}`, titre: a.data.heading ?? a.data.title, quoi: 'Article' })),
+        ].slice(0, 6),
+      },
+    }));
+}) satisfies GetStaticPaths;
+
+const { country: c, lies } = Astro.props as { country: Country; lies: { href: string; titre: string; quoi: string }[] };
 const en = contenuEn[c.slug];
 
 const MOIS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -157,6 +190,22 @@ const schema = [
         ))}
       </ul>
     </section>
+
+    {lies.length > 0 && (
+      <section class="mt-16">
+        <h2 class="text-display">More on {c.nomEn}</h2>
+        <ul class="mt-8 grid gap-4 sm:grid-cols-2">
+          {lies.map((l) => (
+            <li class="card p-5">
+              <p class="eyebrow">{l.quoi}</p>
+              <a href={l.href} class="mt-2 block font-display text-[1.05rem] font-bold leading-snug text-ink transition-colors hover:text-teal">
+                {l.titre}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
 
     <section class="mt-16">
       <h2 class="text-display">Sources and data</h2>
