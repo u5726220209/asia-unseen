@@ -23,6 +23,19 @@ export type CorrectionEn = {
   apres: string;
   /** Le libellé de la page concernée, en anglais. */
   pageLabel: string;
+  /**
+   * Le libellé de la source, en anglais — quand il est de nous.
+   *
+   * La distinction n'est pas cosmétique. « France Diplomatie — Vietnam, entrée
+   * et séjour » est le nom d'une page du ministère français : le traduire
+   * rendrait la source plus difficile à retrouver, et la source est ce que ce
+   * site vend. En revanche « portail officiel du ministère de la Justice
+   * coréen » est notre description d'une page coréenne — rien n'oblige un
+   * lecteur anglophone à la lire en français.
+   *
+   * Absent, le libellé français est conservé tel quel : c'est un nom propre.
+   */
+  sourceLabel?: string;
 };
 
 export const correctionsEn: Record<string, CorrectionEn> = {
@@ -35,6 +48,7 @@ export const correctionsEn: Record<string, CorrectionEn> = {
       '60 days for an entry up to 14 September 2026, 30 days for an entry from the 15th. The reduction was published on 31 August, and the page was already writing it in the past tense: someone leaving that week read that they were entitled to thirty days, when they had sixty. The visa guide was saying the opposite at the same moment, and the guide was right. The page now carries both regimes with their dates, and the number the tools decide on switches over by itself on the morning of the 15th — with nobody having to remember. The publication check now refuses a dated rule whose second regime is not announced to the reader.',
   },
   'c-2026-09-04-vietnam': {
+    sourceLabel: 'Đường sắt Việt Nam — official fare table, train SE1',
     pageLabel: 'Vietnam',
     titre: 'The correction to the Hanoi–Saigon train time had forgotten the country page',
     avant: 'Underestimating distances: Hanoi to Saigon by train is 33 hours',
@@ -42,6 +56,7 @@ export const correctionsEn: Record<string, CorrectionEn> = {
       '32 h 45, the time read from the official SE1 timetable. The figure had been corrected the previous day in two guides, and the journal told the reader that a sentinel would from now on refuse any page saying otherwise. It would not have: it checked that an amount appears where it is expected, never that a stale value is lurking elsewhere. It was lurking here, on the country page and in its printable version. The check now asks the question both ways, and it was deliberately made to fail on this exact case before being adopted.',
   },
   'c-2026-09-04-chine': {
+    sourceLabel: 'Chinese embassy in France — extension of the reduced visa fees',
     pageLabel: 'China',
     titre: 'The Chinese visa was quoted at 126 €; consular fees are 45 €',
     avant: 'Free under the waiver; ≈ 126 € for an L visa lodged at a centre',
@@ -49,6 +64,7 @@ export const correctionsEn: Record<string, CorrectionEn> = {
       'The Chinese embassy in France publishes 45 € in consular fees for a single-entry visa, a reduced rate extended to 31 December 2026 for Schengen-area nationals. The 126 € was the full rate from before the successive reductions of the last two years. Service fees at the lodging centre are added on top, bringing the total to around 110 €: we could not open the Paris centre\'s official fee schedule, whose link leads to an inaccessible PDF, so that total remains an order of magnitude. The 45 € comes from the embassy itself.',
   },
   'c-2026-09-04-transports-asie': {
+    sourceLabel: 'Đường sắt Việt Nam — official fare table, train SE1',
     pageLabel: 'Transport in Asia',
     titre: 'Two guides said 33 hours of train where the site wrote 32 h 45 elsewhere',
     avant: 'Hanoi to Saigon in one go is 33 hours: nobody should do that.',
@@ -64,6 +80,7 @@ export const correctionsEn: Record<string, CorrectionEn> = {
       'The reduction is no longer an announcement: it has a date. The Thai Ministry of the Interior published four regulations in the Royal Gazette on 31 August 2026, and the exemption drops to 30 days on 15 September. Two points appeared nowhere on this page: land entries are now limited to two visa-free crossings per calendar year, and a single extension of up to 30 days can be requested at an immigration office. A traveller who entered before 15 September keeps the length granted on arrival.',
   },
   'c-2026-09-03-thailande-2': {
+    sourceLabel: 'Thailand Digital Arrival Card — official portal',
     pageLabel: 'Thailand',
     titre: 'An official source cited since launch no longer led anywhere',
     avant: 'Thai Ministry of Foreign Affairs — https://www.mfa.go.th/en/publicservice/visa',
@@ -71,6 +88,7 @@ export const correctionsEn: Record<string, CorrectionEn> = {
       'That address serves a "PAGE NOT FOUND" page while answering HTTP 200. The daily watch could not see it: the page answers, its content no longer moves, no alert fires. It is replaced by the digital arrival card portal, which matches the formality actually required. A false 404 is more dangerous than a dead link — it looks like a source.',
   },
   'c-2026-08-31-blog-ou-dormir-a-bangkok': {
+    sourceLabel: 'The Nation Thailand — rollout of the 20-baht flat fare',
     pageLabel: 'Where to stay in Bangkok',
     titre: 'The flat-fare network has eight lines, not thirteen',
     avant: '13 lines, nearly 200 stations.',
@@ -78,6 +96,7 @@ export const correctionsEn: Record<string, CorrectionEn> = {
       'Eight lines and thirteen routes, 194 stations, about 277 kilometres. The confusion came from counting routes, which are often presented as a number of lines. The point that matters to the traveller is unchanged: that fare is reserved for Thai nationals.',
   },
   'c-2026-08-31-coree-du-sud': {
+    sourceLabel: 'K-ETA — official portal of the Korean Ministry of Justice',
     pageLabel: 'South Korea',
     titre: 'The optional K-ETA is not free, contrary to what was written',
     avant: 'Cost: free.',
@@ -92,6 +111,7 @@ export const correctionsEn: Record<string, CorrectionEn> = {
       '60 days at present, but a reduction to 30 days is announced as imminent. Any stay planned beyond 30 days must be reconfirmed before departure.',
   },
   'c-2026-08-30-thailande-2': {
+    sourceLabel: 'Thailand Digital Arrival Card — official portal',
     pageLabel: 'Thailand',
     titre: 'The digital arrival card (TDAC) is compulsory, not optional',
     avant: 'An online arrival declaration may be required: check before you leave.',
@@ -99,6 +119,7 @@ export const correctionsEn: Record<string, CorrectionEn> = {
       'Compulsory since 1 May 2025 for every entry by air, land or sea, to be filled in within the 3 days before arrival.',
   },
   'c-2026-08-30-coree-du-sud': {
+    sourceLabel: 'Embassy of the Republic of Korea in France',
     pageLabel: 'South Korea',
     titre: 'The K-ETA is suspended for French nationals until 31 December 2026',
     avant:

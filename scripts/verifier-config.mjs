@@ -978,6 +978,11 @@ if (existsSync('dist/en')) {
     // l'ont laissée passer. Un gabarit non traduit ne ressemble pas à une
     // phrase non traduite.
     /\b\d{1,2} (?:janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre) \d{4}\b/,
+    // Un décalage horaire relatif à la France. Il ne disait pas seulement le
+    // français : il donnait une information fausse pour tout autre lecteur
+    // qu'un Français — un Britannique est à une heure de Paris, un Californien
+    // à neuf. Traduire la phrase l'aurait rendue fausse plutôt que française.
+    /\+\d h (?:en été|à \+\d h selon)/,
   ];
   const pages = [];
   const parcourir = (d) => {

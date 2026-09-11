@@ -94,8 +94,22 @@ export type Country = {
   nomEn: string;
   capitale: string;
   monnaie: string;
+  /** Le nom de la monnaie en anglais — « Roupie » n'en est pas un. */
+  monnaieEn: string;
   langue: string;
   decalage: string;
+  /**
+   * Le fuseau, en UTC.
+   *
+   * `decalage` dit « +5 h en été » — relatif à la France. C'est utile à un
+   * lecteur français et faux pour tous les autres : un Britannique est à une
+   * heure de Paris, un Californien à neuf. La page anglaise affichait donc un
+   * décalage qui ne la concernait pas, en français par-dessus le marché.
+   *
+   * Traduire la phrase l'aurait rendue fausse plutôt que française. On donne
+   * donc la référence absolue, qui ne dépend d'aucun pays de départ.
+   */
+  utc: string;
   /** Budget indicatif par personne et par jour, hors vol international (€). */
   budget: { routard: number; confort: number; premium: number };
   /** Note mensuelle, de janvier à décembre. */
@@ -204,9 +218,11 @@ export const countries: Country[] = [
   {
     slug: 'vietnam',
     nom: 'Vietnam', article: 'au', capitale: 'Hanoï', monnaie: 'Dong (VND)',
+    monnaieEn: 'Dong (VND)',
     articleSujet: "le ",
     nomEn: 'Vietnam',
     langue: 'Vietnamien', decalage: '+5 h en été, +6 h en hiver',
+    utc: 'UTC+7',
     budget: { routard: 25, confort: 55, premium: 120 },
     saisons: [2, 2, 3, 3, 2, 1, 1, 1, 2, 3, 3, 3],
     saisonNote:
@@ -279,9 +295,11 @@ export const countries: Country[] = [
   {
     slug: 'thailande',
     nom: 'Thaïlande', article: 'en', capitale: 'Bangkok', monnaie: 'Baht (THB)',
+    monnaieEn: 'Baht (THB)',
     articleSujet: "la ",
     nomEn: 'Thailand',
     langue: 'Thaï', decalage: '+5 h en été, +6 h en hiver',
+    utc: 'UTC+7',
     budget: { routard: 30, confort: 65, premium: 150 },
     saisons: [3, 3, 2, 2, 1, 1, 1, 1, 1, 2, 3, 3],
     saisonNote:
@@ -350,9 +368,11 @@ export const countries: Country[] = [
   {
     slug: 'japon',
     nom: 'Japon', article: 'au', capitale: 'Tokyo', monnaie: 'Yen (JPY)',
+    monnaieEn: 'Yen (JPY)',
     articleSujet: "le ",
     nomEn: 'Japan',
     langue: 'Japonais', decalage: '+7 h en été, +8 h en hiver',
+    utc: 'UTC+9',
     budget: { routard: 65, confort: 120, premium: 250 },
     saisons: [2, 2, 3, 3, 3, 1, 1, 1, 2, 3, 3, 2],
     saisonNote:
@@ -420,9 +440,11 @@ export const countries: Country[] = [
   {
     slug: 'chine',
     nom: 'Chine', article: 'en', capitale: 'Pékin', monnaie: 'Yuan (CNY)',
+    monnaieEn: 'Yuan (CNY)',
     articleSujet: "la ",
     nomEn: 'China',
     langue: 'Mandarin', decalage: '+6 h en été, +7 h en hiver',
+    utc: 'UTC+8',
     budget: { routard: 40, confort: 80, premium: 170 },
     saisons: [1, 1, 2, 3, 3, 2, 1, 1, 3, 3, 2, 1],
     saisonNote:
@@ -499,9 +521,11 @@ export const countries: Country[] = [
   {
     slug: 'laos',
     nom: 'Laos', article: 'au', capitale: 'Vientiane', monnaie: 'Kip (LAK)',
+    monnaieEn: 'Kip (LAK)',
     articleSujet: "le ",
     nomEn: 'Laos',
     langue: 'Lao', decalage: '+5 h en été, +6 h en hiver',
+    utc: 'UTC+7',
     budget: { routard: 25, confort: 50, premium: 100 },
     saisons: [3, 3, 2, 2, 1, 1, 1, 1, 2, 3, 3, 3],
     saisonNote:
@@ -568,9 +592,11 @@ export const countries: Country[] = [
   {
     slug: 'cambodge',
     nom: 'Cambodge', article: 'au', capitale: 'Phnom Penh', monnaie: 'Riel (KHR) et dollar US',
+    monnaieEn: 'Riel (KHR)',
     articleSujet: "le ",
     nomEn: 'Cambodia',
     langue: 'Khmer', decalage: '+5 h en été, +6 h en hiver',
+    utc: 'UTC+7',
     budget: { routard: 28, confort: 55, premium: 115 },
     saisons: [3, 3, 3, 2, 1, 1, 1, 1, 2, 2, 3, 3],
     saisonNote:
@@ -639,9 +665,11 @@ export const countries: Country[] = [
   {
     slug: 'coree-du-sud',
     nom: 'Corée du Sud', article: 'en', capitale: 'Séoul', monnaie: 'Won (KRW)',
+    monnaieEn: 'Won (KRW)',
     articleSujet: "la ",
     nomEn: 'South Korea',
     langue: 'Coréen', decalage: '+7 h en été, +8 h en hiver',
+    utc: 'UTC+9',
     budget: { routard: 55, confort: 100, premium: 200 },
     saisons: [1, 1, 2, 3, 3, 3, 1, 1, 3, 3, 2, 1],
     saisonNote:
@@ -708,9 +736,11 @@ export const countries: Country[] = [
   {
     slug: 'indonesie',
     nom: 'Indonésie', article: 'en', capitale: 'Jakarta', monnaie: 'Roupie (IDR)',
+    monnaieEn: 'Rupiah (IDR)',
     articleSujet: "l'",
     nomEn: 'Indonesia',
     langue: 'Indonésien', decalage: '+6 h à +8 h selon les îles',
+    utc: 'UTC+7 to UTC+9 across the islands',
     budget: { routard: 30, confort: 60, premium: 140 },
     saisons: [1, 1, 2, 3, 3, 3, 3, 3, 3, 3, 2, 1],
     saisonNote:
@@ -780,9 +810,11 @@ export const countries: Country[] = [
   {
     slug: 'philippines',
     nom: 'Philippines', article: 'aux', capitale: 'Manille', monnaie: 'Peso (PHP)',
+    monnaieEn: 'Peso (PHP)',
     articleSujet: "les ",
     nomEn: 'Philippines',
     langue: 'Filipino et anglais', decalage: '+6 h en été, +7 h en hiver',
+    utc: 'UTC+8',
     budget: { routard: 30, confort: 60, premium: 130 },
     saisons: [3, 3, 3, 3, 2, 1, 1, 1, 1, 1, 2, 3],
     saisonNote:

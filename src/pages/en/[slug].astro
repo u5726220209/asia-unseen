@@ -145,7 +145,7 @@ const schema = [
       </dl>
 
       <p class="mt-4 text-[0.85rem] text-warm-light">
-        {c.capitale} · {c.monnaie} · {c.decalage}
+        {c.capitale} · {c.monnaieEn} · {c.utc}
       </p>
     </div>
   </header>
@@ -215,6 +215,12 @@ const schema = [
           Entry rules for {c.nomEn} are read on these official pages, and re-read every night.
           When one changes, the page changes and the correction is published in
           <a href="/en/updates">the corrections log</a>, next to what we used to say.
+        </p>
+        <p>
+          Some source names below are in French, and stay that way on purpose: they are the
+          titles of French government pages. Renaming them in English would make them harder
+          to find, and finding them is the point. The rule for your own passport is read at
+          your own government's portal, named alongside it above.
         </p>
         <ul>
           {c.sourcesVisa.map((s) => (
