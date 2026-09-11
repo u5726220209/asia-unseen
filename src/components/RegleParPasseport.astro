@@ -123,7 +123,15 @@ const dit = (r: NonNullable<ReturnType<typeof regleDuPasseport>>) =>
     const section = sel.closest('section');
     if (!section) return;
     const blocs = section.querySelectorAll<HTMLElement>('.au-pp-bloc');
-    const montrer = () => blocs.forEach((b) => { b.hidden = b.dataset.pp !== sel.value; });
+    // La cellule « Entrée » du haut de page suit le même choix : sans elle, la
+    // page annoncerait deux règles différentes à deux écrans d'intervalle.
+    const entree = document.querySelector<HTMLElement>('.au-pp-entree');
+    const libelles: Record<string, string> = entree?.dataset.regles ? JSON.parse(entree.dataset.regles) : {};
+
+    const montrer = () => {
+      blocs.forEach((b) => { b.hidden = b.dataset.pp !== sel.value; });
+      if (entree && libelles[sel.value]) entree.textContent = libelles[sel.value];
+    };
     sel.addEventListener('change', montrer);
     montrer();
   });

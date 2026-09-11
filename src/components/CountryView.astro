@@ -1,6 +1,6 @@
 ---
 import type { Country } from '@/data/countries';
-import { MOIS } from '@/data/countries';
+import { MOIS, PASSEPORTS, regleDuPasseport } from '@/data/countries';
 import Breadcrumbs from './Breadcrumbs.astro';
 import Disclosure from './Disclosure.astro';
 import VerifiedBadge from './VerifiedBadge.astro';
@@ -63,6 +63,20 @@ const basculeAVenir =
       }
     : null;
 
+/**
+ * Ce qu'annonce la cellule « Entrée » pour chaque passeport.
+ *
+ * Calculée ici plutôt que dans le script : un script qui déduirait une règle
+ * d'entrée finirait par en inventer une. Il ne fait que choisir une phrase
+ * déjà écrite.
+ */
+const entreeParPasseport = Object.fromEntries(
+  PASSEPORTS.map((p) => {
+    const r = regleDuPasseport(c, p.code);
+    return [p.code, r === null ? 'Non relevé pour ce passeport' : r.sansVisaJours > 0 ? `${r.sansVisaJours} jours sans visa` : 'Visa obligatoire'];
+  }),
+);
+
 const SAISON_STYLE = {
   3: { cell: 'bg-teal text-cream', label: 'Idéal' },
   2: { cell: 'bg-amber-100 text-amber-700', label: 'Correct' },
@@ -117,9 +131,17 @@ const faq = [
         à la place qu'ils méritent.
       */}
       <dl class="mt-10 grid gap-px overflow-hidden rounded-brand border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
+        {/*
+          Cette cellule suit le passeport choisi plus bas.
+          
+          Sans ça, la page se contredisait à deux écrans d'intervalle : un
+          lecteur canadien lisait « Visa obligatoire » dans le sélecteur et
+          « 45 jours sans visa » ici même. Des deux, c'est celui du haut qu'on
+          croit — il est plus gros et il vient en premier.
+        */}
         <a href="#visa" class="group bg-cream-warm px-5 py-4 transition hover:bg-white">
           <dt class="font-display text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-warm-light">Entrée</dt>
-          <dd class="mt-1 text-[0.92rem] font-medium text-ink group-hover:text-teal">
+          <dd class="au-pp-entree mt-1 text-[0.92rem] font-medium text-ink group-hover:text-teal" data-regles={JSON.stringify(entreeParPasseport)}>
             {c.visa.sansVisaJours > 0 ? `${c.visa.sansVisaJours} jours sans visa` : 'Visa obligatoire'}
           </dd>
           {basculeAVenir && (
