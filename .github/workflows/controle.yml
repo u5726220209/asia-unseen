@@ -63,5 +63,21 @@ jobs:
       - name: Les garde-fous bloquent-ils encore
         run: npm run gardes
 
+      # Le site tel qu'il sera quand tout aura paru.
+      #
+      # Vingt-neuf textes anglais sont écrits et programmés sur onze semaines.
+      # Tant qu'ils n'ont pas paru ils n'ont pas de page, et tous les contrôles
+      # ci-dessus lisent `dist/` : ils regardent un site amputé de la moitié de
+      # ce qui est écrit, et affichent « ✓ » en toute bonne foi.
+      #
+      # Cette simulation décale les dates vers le passé, en gardant leur ordre,
+      # et relance la batterie. Dès sa première exécution elle a trouvé trois
+      # titres trop longs pour Google, qui seraient apparus un à un entre
+      # septembre et décembre — chacun le matin de sa parution, le seul matin
+      # où plus personne ne relit. Elle passe après les garde-fous, pour la
+      # même raison qu'eux : elle réécrit des fichiers puis les restaure.
+      - name: Le site quand tout aura paru
+        run: npm run parutions
+
       - name: Sources externes
         run: npm run sources || echo "Des sources n'ont pas répondu — souvent un blocage anti-robot, à vérifier à la main."
