@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import { articlesPublies, guidesPublies } from '@/lib/articles';
 import sharp from 'sharp';
 import { countries } from '@/data/countries';
+import { contenuEn } from '@/data/countries.en';
 
 /**
  * Image de partage (Open Graph) générée pour chaque page, à la compilation.
@@ -22,6 +23,24 @@ export const getStaticPaths = (async () => {
   const guides = await guidesPublies();
   const blog = await articlesPublies();
 
+  /**
+   * Les pages anglaises ont aussi besoin d'une image.
+   *
+   * Elles partageaient toutes `og-default.png`, qui porte une accroche
+   * française. Un lecteur anglophone qui envoie un article dans une
+   * conversation y voyait donc une carte générique, en français, sous un titre
+   * anglais — au moment précis où quelqu'un décide de cliquer ou non.
+   *
+   * Elles vivent sous `/og/en/…`, en miroir des adresses des pages : c'est ce
+   * qui permet à `BaseLayout` de les désigner sans table de correspondance, et
+   * à personne de se demander quelle image appartient à quelle page.
+   */
+  const aujourdhui = new Date();
+  const paru = (e: { data: { draft: boolean; pubDate: Date } }) =>
+    !e.data.draft && e.data.pubDate <= aujourdhui;
+  const blogEn = (await getCollection('blogEn')).filter(paru);
+  const guidesEn = (await getCollection('guidesEn')).filter(paru);
+
   return [
     ...countries.map((c) => ({
       params: { slug: c.slug },
@@ -37,6 +56,20 @@ export const getStaticPaths = (async () => {
     ...blog.map((p) => ({
       params: { slug: `blog/${p.id}` },
       props: { titre: p.data.heading ?? p.data.title, categorie: 'Récit de terrain' } satisfies Props,
+    })),
+    ...countries
+      .filter((c) => contenuEn[c.slug])
+      .map((c) => ({
+        params: { slug: `en/${c.slug}` },
+        props: { titre: `Travelling in ${c.nomEn}`, categorie: 'Country guide' } satisfies Props,
+      })),
+    ...guidesEn.map((g) => ({
+      params: { slug: `en/guides/${g.id}` },
+      props: { titre: g.data.heading ?? g.data.title, categorie: 'Practical guide' } satisfies Props,
+    })),
+    ...blogEn.map((p) => ({
+      params: { slug: `en/blog/${p.id}` },
+      props: { titre: p.data.heading ?? p.data.title, categorie: 'From the ground' } satisfies Props,
     })),
   ];
 }) satisfies GetStaticPaths;

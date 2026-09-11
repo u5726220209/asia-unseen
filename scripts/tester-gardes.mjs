@@ -417,6 +417,18 @@ const CAS = [
 
   /* ── audit-seo.mjs ───────────────────────────────────────────── */
   {
+    nom: "une page annonce une image de partage qui n'existe pas",
+    script: 'audit-seo.mjs',
+    /* Le contrôle vérifiait qu'une balise `og:image` est là, jamais que le
+       fichier existe. Une page pouvait donc annoncer une image et servir un
+       404 — défaut invisible sur le site, visible uniquement chez le
+       destinataire à qui on envoie le lien, au seul instant où l'on voulait
+       faire bonne impression. */
+    muter: { 'dist/og/en/vietnam.png': () => null },
+    attendu: /og\/en\/vietnam\.png/,
+  },
+
+  {
     nom: 'une page perd son titre',
     script: 'audit-seo.mjs',
     muter: { 'dist/laos/index.html': remplacer(/<title>[^<]*<\/title>/, '<title></title>') },

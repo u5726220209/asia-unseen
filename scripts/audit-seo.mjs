@@ -9,7 +9,7 @@
  *
  * Sort en code 1 si un défaut est trouvé, pour bloquer une mise en ligne.
  */
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 const DIST = 'dist';
@@ -31,6 +31,7 @@ for (const {p, size} of pages) {
     canonical: get(h, /<link rel="canonical" href="([^"]*)"/),
     h1: (h.match(/<h1[^>]*>([\s\S]*?)<\/h1>/g)||[]).length,
     og: /property="og:image"/.test(h),
+    ogSrc: get(h, /property="og:image" content="([^"]*)"/),
     jsonld: (h.match(/application\/ld\+json/g)||[]).length,
     imgs: (h.match(/<img /g)||[]).length,
     imgsNoAlt: (h.match(/<img (?![^>]*\balt=)[^>]*>/g)||[]).length,
@@ -47,6 +48,23 @@ pb('description hors 80-170', rows.filter(r=>r.desc && (r.desc.length<80||r.desc
 pb('sans canonical', rows.filter(r=>!r.canonical).length);
 pb('h1 != 1', rows.filter(r=>r.h1!==1).length);
 pb('sans og:image', rows.filter(r=>!r.og).length);
+/**
+ * L'image de partage annoncée doit exister.
+ *
+ * Le contrôle vérifiait qu'une balise `og:image` est là, jamais que le fichier
+ * qu'elle désigne l'est aussi. Une page peut donc annoncer une image et servir
+ * un 404 : le défaut n'apparaît qu'au moment où quelqu'un partage le lien,
+ * c'est-à-dire hors du site, chez le destinataire, au seul instant où l'on
+ * voulait faire bonne impression. C'est arrivé en ajoutant les images
+ * anglaises : la balise se met à jour dans le gabarit, le générateur d'images
+ * s'oublie, et rien ne le dit.
+ */
+const ogAbsentes = rows.filter((r) => {
+  if (!r.ogSrc) return false;
+  const chemin = r.ogSrc.replace(/^https?:\/\/[^/]+/, '');
+  return !existsSync(join(DIST, chemin));
+});
+pb('og:image annoncée mais absente', ogAbsentes.length);
 pb('sans JSON-LD', rows.filter(r=>r.jsonld===0).length);
 pb('images sans alt', rows.reduce((a,r)=>a+r.imgsNoAlt,0));
 /**
@@ -90,7 +108,12 @@ const defauts =
   // récapitulatif qui contredit son propre détail est pire qu'absent.
   rows.filter((r) => !r.canonical || r.h1 !== 1 || !r.og || r.jsonld === 0 ||
     r.lang !== (/^\/en(\/|$)/.test(r.url) ? 'en' : 'fr')).length +
-  rows.reduce((a, r) => a + r.imgsNoAlt, 0) + dt.length + dd.length;
+  rows.reduce((a, r) => a + r.imgsNoAlt, 0) + dt.length + dd.length + ogAbsentes.length;
+
+if (ogAbsentes.length) {
+  console.log('\n--- og:image annoncée mais absente ---');
+  for (const r of ogAbsentes.slice(0, 10)) console.log(`  ${r.url} → ${r.ogSrc}`);
+}
 
 console.log('\n' + (defauts ? `\u26a0  ${defauts} défaut(s) mécanique(s)` : '\u2713 Aucun défaut mécanique.'));
 process.exit(defauts ? 1 : 0);
