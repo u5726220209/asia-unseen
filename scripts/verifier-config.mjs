@@ -761,6 +761,16 @@ if (existsSync('dist/en')) {
         );
       }
     }
+    /* Un partenaire qui a un domaine par langue doit servir le bon. La page
+       envoyait « Cambodia » chercher sur un site français : elle s'ouvre, les
+       activités existent, et le lecteur atterrit dans une interface qu'il ne
+       lit pas — juste après neuf écrans qui lui parlaient dans sa langue. */
+    for (const m of html.matchAll(/href="(https?:\/\/[^"]*\.fr[/"][^"]*)"/g)) {
+      if (!/data-aff/.test(html.slice(m.index, m.index + 200))) continue;
+      partenairesFrancais.push(
+        `${f.replace(/^dist/, '').replace(/\/index\.html$/, '')} → ${m[1].slice(0, 60)} (domaine français)`,
+      );
+    }
   }
 }
 

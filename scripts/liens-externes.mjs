@@ -37,6 +37,7 @@
  */
 
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { PREFIXES } from './lib/collections.mjs';
 
 const UA =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36';
@@ -71,7 +72,7 @@ const pages = [];
 const sourcesOfficielles = new Set([
   ...[...readFileSync('src/data/countries.ts', 'utf8').matchAll(/url: '(https?:[^']+)'/g)].map((m) => m[1]),
   ...[...readFileSync('src/data/chiffres-cites.ts', 'utf8').matchAll(/^const [A-Z_0-9]+ = '(https?:[^']+)';$/gm)].map((m) => m[1]),
-  ...['src/content/blog', 'src/content/guides'].flatMap((dossier) =>
+  ...Object.keys(PREFIXES).flatMap((dossier) =>
     !existsSync(dossier) ? [] :
     readdirSync(dossier)
       .filter((f) => f.endsWith('.md'))
@@ -91,6 +92,41 @@ for (const f of pages) {
     if (url.includes('asiaunseen.com')) continue;
     if (!liens.has(url)) liens.set(url, new Set());
     liens.get(url).add(page);
+  }
+}
+
+/**
+ * Les textes qui attendent leur date de parution.
+ *
+ * Leurs adresses extérieures n'étaient testées qu'au matin de leur
+ * publication. Vingt-neuf textes anglais sont programmés sur onze semaines et
+ * citent des portails que le site ne connaissait pas — GOV.UK, l'opérateur
+ * ferroviaire de Hong Kong, la régie d'Angkor, le centre du patrimoine de Hoi
+ * An. Une adresse morte y aurait dormi jusqu'au jour où elle devient publique,
+ * c'est-à-dire jusqu'au seul jour où personne ne la relit.
+ *
+ * On les recense sous le nom de leur fichier : la page n'existe pas encore, et
+ * prétendre le contraire rendrait le rapport faux.
+ */
+{
+  const aujourdhui = new Date().toISOString().slice(0, 10);
+  for (const dossier of Object.keys(PREFIXES)) {
+    if (!existsSync(dossier)) continue;
+    for (const f of readdirSync(dossier).filter((x) => x.endsWith('.md'))) {
+      const md = readFileSync(`${dossier}/${f}`, 'utf8');
+      const date = md.slice(0, 1400).match(/^pubDate:\s*['"]?(\d{4}-\d{2}-\d{2})/m)?.[1];
+      if (!date || date <= aujourdhui) continue;
+      const ou = `${dossier}/${f} (paraît le ${date})`;
+      const adresses = [
+        ...[...md.matchAll(/url:\s*"(https?:[^"]+)"|url:\s*'(https?:[^']+)'/g)].map((m) => m[1] ?? m[2]),
+        ...[...md.matchAll(/\]\((https?:\/\/[^)\s]+)\)/g)].map((m) => m[1]),
+      ];
+      for (const url of adresses) {
+        if (url.includes('asiaunseen.com')) continue;
+        if (!liens.has(url)) liens.set(url, new Set());
+        liens.get(url).add(ou);
+      }
+    }
   }
 }
 

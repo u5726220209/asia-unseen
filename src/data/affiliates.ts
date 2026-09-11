@@ -33,6 +33,19 @@ type Partner = {
   template?: string;
   /** Fourchette de commission observée — sert au tableau de bord interne. */
   commission: string;
+  /**
+   * L'adresse de base pour un lecteur anglophone, quand elle diffère.
+   *
+   * GetYourGuide a un domaine par langue, et les fiches anglaises envoyaient
+   * vers `getyourguide.fr` avec une requête en anglais : « Cambodia » cherché
+   * sur un site français. La page s'ouvre, les activités existent, et le
+   * lecteur atterrit dans une interface qu'il ne lit pas — juste après avoir
+   * lu neuf écrans qui lui parlaient dans sa langue.
+   *
+   * Absent, l'adresse est la même dans les deux langues : Booking, Agoda et
+   * 12Go servent la langue du navigateur depuis la même adresse.
+   */
+  baseEn?: string;
 };
 
 export const partners: Record<PartnerKey, Partner> = {
@@ -40,7 +53,7 @@ export const partners: Record<PartnerKey, Partner> = {
   agoda:        { key: 'agoda',        label: 'Agoda',         category: 'hebergement',   base: 'https://www.agoda.com/search',               param: 'cid', id: env.PUBLIC_AFF_AGODA ?? '',        commission: '4–7 % du montant' },
   twelvego:     { key: 'twelvego',     label: '12Go Asia',     category: 'transport',     base: 'https://12go.asia',                          param: 'z',   id: env.PUBLIC_AFF_12GO ?? '',         commission: '5–10 %' },
   skyscanner:   { key: 'skyscanner',   label: 'Skyscanner',    category: 'transport',     base: 'https://www.skyscanner.fr',                                id: '',                                 commission: 'CPC / CPA variable' },
-  getyourguide: { key: 'getyourguide', label: 'GetYourGuide',  category: 'activites',     base: 'https://www.getyourguide.fr',                param: 'partner_id', id: env.PUBLIC_AFF_GETYOURGUIDE ?? '', commission: '8 %' },
+  getyourguide: { key: 'getyourguide', label: 'GetYourGuide',  category: 'activites',     base: 'https://www.getyourguide.fr', baseEn: 'https://www.getyourguide.com', param: 'partner_id', id: env.PUBLIC_AFF_GETYOURGUIDE ?? '', commission: '8 %' },
   klook:        { key: 'klook',        label: 'Klook',         category: 'activites',     base: 'https://www.klook.com',                                    id: '',                                 commission: '2–5 %' },
   airalo:       { key: 'airalo',       label: 'Airalo',        category: 'connectivite',  base: 'https://www.airalo.com',                     param: 'ref', id: env.PUBLIC_AFF_AIRALO ?? '',       commission: '10–15 %' },
   holafly:      { key: 'holafly',      label: 'Holafly',       category: 'connectivite',  base: 'https://esim.holafly.com',                   param: 'ref', id: env.PUBLIC_AFF_HOLAFLY ?? '',      commission: '10–20 %' },
@@ -58,9 +71,14 @@ export const partners: Record<PartnerKey, Partner> = {
  * recherche, et convertit donc beaucoup moins bien qu'un lien qui arrive
  * directement sur les résultats du pays concerné.
  */
-export function buildUrl(key: PartnerKey, extra: Record<string, string> = {}, path?: string): string {
+export function buildUrl(
+  key: PartnerKey,
+  extra: Record<string, string> = {},
+  path?: string,
+  langue: 'fr' | 'en' = 'fr',
+): string {
   const p = partners[key];
-  const url = new URL(p.base);
+  const url = new URL(langue === 'en' && p.baseEn ? p.baseEn : p.base);
   if (path) url.pathname = path;
   if (p.param && p.id) url.searchParams.set(p.param, p.id);
   for (const [k, v] of Object.entries(extra)) url.searchParams.set(k, v);

@@ -25,7 +25,7 @@ interface Props {
   class?: string;
 }
 const { partner, params = {}, path, href, variant = 'button', langue = 'fr', class: klass = '' } = Astro.props;
-const url = href ?? buildUrl(partner, params, path);
+const url = href ?? buildUrl(partner, params, path, langue);
 const label = partners[partner].label;
 ---
 

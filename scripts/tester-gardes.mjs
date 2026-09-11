@@ -346,7 +346,21 @@ const CAS = [
       'dist/en/vietnam/index.html':
         remplacer(/data-aff="booking"/, 'data-aff="chapka"'),
     },
-    attendu: /partenaire franco-français/,
+    attendu: /→ chapka/,
+  },
+
+  {
+    nom: 'un lien partenaire anglais pointe vers le domaine français',
+    script: 'verifier-config.mjs',
+    /* GetYourGuide a un domaine par langue. La fiche anglaise envoyait
+       « Cambodia » chercher sur le site français : la page s'ouvre, les
+       activités existent, et le lecteur atterrit dans une interface qu'il ne
+       lit pas — juste après neuf écrans qui lui parlaient dans sa langue. */
+    muter: {
+      'dist/en/laos/index.html':
+        remplacer(/getyourguide\.com\/s\/\?q=Laos/, 'getyourguide.fr/s/?q=Laos'),
+    },
+    attendu: /domaine français/,
   },
 
   {
