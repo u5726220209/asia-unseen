@@ -92,6 +92,8 @@ const GUIDE_ERREURS = '/erreurs-a-eviter';
 const ARTICLE_EVISA_VN = '/blog/visa-vietnam-e-visa-2026';
 const AOT_TAXI = 'https://suvarnabhumi.airportthai.co.th/service/transportation/detail/834';
 const ARTICLE_TAXI_AEROPORT = '/blog/taxi-aeroport-asie-tarifs';
+const CHAM_MUSEUM = 'https://chammuseum.vn/view.aspx?ID=654';
+const ARTICLE_HOI_AN_PLUIE = '/blog/hoi-an-pluie-que-faire';
 
 /* Portails officiels des formalités d'entrée. Ce sont les tarifs les plus
    lourds du site : ceux sur lesquels un voyageur fait son budget. */
@@ -190,4 +192,11 @@ export const chiffresCites: ChiffreCite[] = [
   { affiche: '50 000', designe: 'bus Noi Bai, ligne 86 vers la gare de Hanoï, le trajet', source: NOIBAI_TRANSPORT, releveLe: '2026-08-31', pages: [ARTICLE_AEROPORT_HANOI] },
   { affiche: '55 000', designe: 'bus Noi Bai, ligne 68 vers Hà Đông, le trajet', source: NOIBAI_TRANSPORT, releveLe: '2026-08-31', pages: [ARTICLE_AEROPORT_HANOI] },
   { affiche: '90 000', designe: 'navette Hải Vân, lignes NB01/NB02, le trajet', source: NOIBAI_TRANSPORT, releveLe: '2026-08-31', pages: [ARTICLE_AEROPORT_HANOI] },
+
+  /* ── Musée Cham de Da Nang ────────────────────────────────────
+     Tarif annoncé par le musée en 2023, retrouvé via une recherche sur son
+     propre site — pas revérifié sur une page à date récente. L'article le
+     dit explicitement au lecteur ; ce champ garde le même montant surveillé
+     s'il venait à disparaître de la page d'origine. */
+  { affiche: '50 000', designe: "entrée musée de sculpture Cham, Da Nang, annoncée en 2023 (VND)", source: CHAM_MUSEUM, releveLe: '2026-09-11', pages: [ARTICLE_HOI_AN_PLUIE], sourceIntrouvableAttendue: true },
 ];
