@@ -27,6 +27,7 @@ const guides = (await getCollection('guidesEn'))
   title="Practical guides — travelling in Asia"
   description="Budget, season, transport, accommodation and the mistakes that cost the most: the guides that decide a trip to Asia, each with its sources."
   retourFr="/ressources"
+  noindex={guides.length === 0}
 >
   <header class="border-b border-line bg-cream-warm">
     <div class="wrap py-10 lg:py-14">
