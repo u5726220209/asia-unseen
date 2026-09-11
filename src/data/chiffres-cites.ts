@@ -90,6 +90,7 @@ const COMPARATIF_ESIM = '/blog/esim-asie-comparatif-prix';
 const GUIDE_TRANSPORTS = '/transports-asie';
 const GUIDE_ERREURS = '/erreurs-a-eviter';
 const ARTICLE_EVISA_VN = '/blog/visa-vietnam-e-visa-2026';
+const EN_VIETNAM_10J = '/en/blog/vietnam-in-10-days';
 const AOT_TAXI = 'https://suvarnabhumi.airportthai.co.th/service/transportation/detail/834';
 const ARTICLE_TAXI_AEROPORT = '/blog/taxi-aeroport-asie-tarifs';
 
@@ -101,6 +102,7 @@ const EN_TAXI_AEROPORT = '/en/blog/taxi-from-the-airport';
 const EN_AEROPORT_HANOI = '/en/blog/hanoi-airport-to-city';
 const CHAM_MUSEUM = 'https://chammuseum.vn/view.aspx?ID=654';
 const ARTICLE_HOI_AN_PLUIE = '/blog/hoi-an-pluie-que-faire';
+const EN_HOI_AN_PLUIE = '/en/blog/hoi-an-when-it-rains';
 
 /* Portails officiels des formalités d'entrée. Ce sont les tarifs les plus
    lourds du site : ceux sur lesquels un voyageur fait son budget. */
@@ -120,7 +122,7 @@ export const chiffresCites: ChiffreCite[] = [
      chinois ont été corrigés à la main le 2 septembre, et rien ne les
      surveillait. `verifier-config.mjs` refuse désormais un tarif de visa
      absent de cette liste. */
-  { affiche: '25', designe: 'e-visa vietnamien, entrée simple (USD)', source: EVISA_VN, releveLe: '2026-09-04', pages: ['/vietnam', ARTICLE_EVISA_VN], sourceIntrouvableAttendue: true },
+  { affiche: '25', designe: 'e-visa vietnamien, entrée simple (USD)', source: EVISA_VN, releveLe: '2026-09-04', pages: ['/vietnam', ARTICLE_EVISA_VN, EN_VIETNAM_10J], sourceIntrouvableAttendue: true },
   { affiche: '50', designe: 'e-visa vietnamien, entrées multiples (USD)', source: EVISA_VN, releveLe: '2026-09-04', pages: ['/vietnam', ARTICLE_EVISA_VN], sourceIntrouvableAttendue: true },
   { affiche: '1 900', designe: "prolongation de séjour en Thaïlande, sur place (THB)", source: IMMIGRATION_TH, releveLe: '2026-09-04', pages: ['/thailande'], sourceIntrouvableAttendue: true },
   { affiche: '45', designe: 'visa L chinois, entrée simple — frais consulaires, tarif réduit jusqu\'au 31/12/2026', source: AMBASSADE_CN, releveLe: '2026-09-02', pages: ['/chine'] },
@@ -205,5 +207,5 @@ export const chiffresCites: ChiffreCite[] = [
      propre site — pas revérifié sur une page à date récente. L'article le
      dit explicitement au lecteur ; ce champ garde le même montant surveillé
      s'il venait à disparaître de la page d'origine. */
-  { affiche: '50 000', designe: "entrée musée de sculpture Cham, Da Nang, annoncée en 2023 (VND)", source: CHAM_MUSEUM, releveLe: '2026-09-11', pages: [ARTICLE_HOI_AN_PLUIE], sourceIntrouvableAttendue: true },
+  { affiche: '50 000', designe: "entrée musée de sculpture Cham, Da Nang, annoncée en 2023 (VND)", source: CHAM_MUSEUM, releveLe: '2026-09-11', pages: [ARTICLE_HOI_AN_PLUIE, EN_HOI_AN_PLUIE], sourceIntrouvableAttendue: true },
 ];
