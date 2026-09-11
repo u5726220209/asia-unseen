@@ -1,4 +1,5 @@
 ---
+import { getCollection } from 'astro:content';
 import { site, legal } from '@/data/site';
 import { nbSourcesSurveillees } from '@/lib/fraicheur';
 
@@ -15,6 +16,19 @@ import { nbSourcesSurveillees } from '@/lib/fraicheur';
  * adresse pour envoyer un contenu que la personne ne lira pas serait la
  * première promesse non tenue de cette version du site.
  */
+
+/**
+ * Les deux listes n'apparaissent que si elles ont quelque chose à lister.
+ *
+ * Même règle que dans l'en-tête, pour la même raison : un lien de pied de page
+ * vers une liste vide est une promesse non tenue, et c'est la seule chose que
+ * ce site ne peut pas se permettre de promettre à un lecteur qui découvre la
+ * version anglaise.
+ */
+const aujourdhui = new Date();
+const paru = (c) => c.some((e) => !e.data.draft && e.data.pubDate <= aujourdhui);
+const guides = paru(await getCollection('guidesEn'));
+const articles = paru(await getCollection('blogEn'));
 ---
 
 <footer class="mt-auto border-t border-line bg-ink text-cream">
@@ -33,6 +47,8 @@ import { nbSourcesSurveillees } from '@/lib/fraicheur';
         <p class="font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-warm">In English</p>
         <ul class="mt-4 space-y-2 text-[0.9rem]">
           <li><a href="/en" class="text-warm-light transition-colors hover:text-cream">Entry rules by passport</a></li>
+          {guides && <li><a href="/en/guides" class="text-warm-light transition-colors hover:text-cream">Practical guides</a></li>}
+          {articles && <li><a href="/en/blog" class="text-warm-light transition-colors hover:text-cream">Articles</a></li>}
           <li><a href={`${site.url}/donnees/visas.json`} class="text-warm-light transition-colors hover:text-cream">Open data (JSON, CC BY 4.0)</a></li>
           <li><a href={`${site.url}/llms.txt`} class="text-warm-light transition-colors hover:text-cream">llms.txt</a></li>
         </ul>

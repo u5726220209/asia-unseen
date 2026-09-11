@@ -214,7 +214,16 @@ const baseSchema = [
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
-    <link rel="alternate" type="application/rss+xml" title={`${site.name} — derniers articles`} href="/rss.xml" />
+    {/*
+      Le fil annoncé est celui de la langue de la page. Servir le fil français
+      en autodécouverte sur une page anglaise abonnerait le lecteur à vingt
+      titres qu'il ne peut pas lire pour chaque titre qu'il peut.
+    */}
+    {langue === 'en' ? (
+      <link rel="alternate" type="application/rss+xml" title={`${site.name} — latest in English`} href="/en/rss.xml" />
+    ) : (
+      <link rel="alternate" type="application/rss+xml" title={`${site.name} — derniers articles`} href="/rss.xml" />
+    )}
     <link rel="alternate" type="application/rss+xml" title={`${site.name} — corrections`} href="/mises-a-jour/rss.xml" />
     {donnees && (
       <link rel="alternate" type="application/json" title="Les données de cette page, lisibles par machine" href={donnees} />
