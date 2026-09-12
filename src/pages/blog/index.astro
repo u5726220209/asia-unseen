@@ -47,6 +47,7 @@ const [featured, ...rest] = posts;
     {featured && (
       <div class="mb-14">
         <ArticleCard
+          niveau={2}
           featured
           href={`/blog/${featured.id}`}
           title={featured.data.heading ?? featured.data.title}
@@ -60,6 +61,7 @@ const [featured, ...rest] = posts;
     <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {rest.map((p) => (
         <ArticleCard
+          niveau={2}
           href={`/blog/${p.id}`}
           title={p.data.heading ?? p.data.title}
           accroche={p.data.accroche}

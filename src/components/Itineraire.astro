@@ -44,7 +44,12 @@ const defaut = new Date(auj.getFullYear(), auj.getMonth(), auj.getDate() + 60)
 <div class="au-itin my-10 overflow-hidden rounded-brand border border-line bg-white" data-pays={JSON.stringify(data)}>
   <div class="border-b border-line bg-cream-warm px-6 py-5">
     <p class="eyebrow">Outil</p>
-    <h3 class="mt-1.5 font-display text-xl font-bold text-ink">Plusieurs pays, dans quel ordre&nbsp;?</h3>
+    {/*
+      Niveau 2, pas 3 : cet outil est inséré juste après l'introduction, donc
+      directement sous le h1. Un h3 y saute un niveau, et une synthèse vocale
+      qui parcourt la page par ses titres annonce une section manquante.
+    */}
+    <h2 class="mt-1.5 font-display text-xl font-bold text-ink">Plusieurs pays, dans quel ordre&nbsp;?</h2>
     <p class="mt-1.5 text-[0.88rem] leading-relaxed text-warm">
       Ajoutez vos étapes dans l'ordre du voyage. Chaque démarche est datée par rapport
       à l'entrée dans son pays — pas à votre départ de France.

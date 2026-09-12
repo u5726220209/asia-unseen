@@ -15,8 +15,22 @@ interface Props {
    * le genre de détail qui ne casse rien et qui fait douter du reste.
    */
   langue?: 'fr' | 'en';
+  /**
+   * Le niveau du titre de la carte.
+   *
+   * `h3` par défaut, parce qu'une carte vit presque toujours sous une section
+   * qui a son `h2` — « Tout ce qu'on a écrit sur le Vietnam », « Les derniers
+   * articles ». Sur une page de liste, il n'y a pas de section au-dessus : les
+   * cartes sont le contenu, et un `h3` y saute un niveau depuis le `h1`.
+   *
+   * On ne devine pas le contexte, on le demande : une carte ne peut pas savoir
+   * ce qu'il y a au-dessus d'elle, et deviner mal produirait un plan de page
+   * faux sans que rien ne le signale.
+   */
+  niveau?: 2 | 3;
 }
-const { href, title, accroche, date, meta, featured = false, langue = 'fr' } = Astro.props;
+const { href, title, accroche, date, meta, featured = false, langue = 'fr', niveau = 3 } = Astro.props;
+const Titre = `h${niveau}` as 'h2' | 'h3';
 const dateStr = date
   ? new Intl.DateTimeFormat(langue === 'en' ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(date)
   : null;
@@ -24,9 +38,9 @@ const dateStr = date
 
 <article class:list={['group card p-6', featured && 'sm:p-9']}>
   {meta && <p class="eyebrow">{meta}</p>}
-  <h3 class:list={['mt-2 font-display font-bold tracking-tight text-ink transition-colors group-hover:text-teal', featured ? 'text-title' : 'text-[1.15rem] leading-snug']}>
+  <Titre class:list={['mt-2 font-display font-bold tracking-tight text-ink transition-colors group-hover:text-teal', featured ? 'text-title' : 'text-[1.15rem] leading-snug']}>
     <a href={href} class="after:absolute after:inset-0">{title}</a>
-  </h3>
+  </Titre>
   <p class:list={['mt-3 leading-relaxed text-warm', featured ? 'text-[1.02rem]' : 'text-[0.92rem] line-clamp-3']}>{accroche}</p>
   {dateStr && <p class="mt-5 text-[0.78rem] text-warm-light">{dateStr}</p>}
 </article>

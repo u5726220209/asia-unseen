@@ -11,7 +11,14 @@ const now = new Date().getMonth();
 <div class="au-season my-10 overflow-hidden rounded-brand border border-line bg-white">
   <div class="border-b border-line bg-cream-warm px-6 py-5">
     <p class="eyebrow">Outil</p>
-    <h3 class="mt-1.5 font-display text-xl font-bold text-ink">Où partir, et quand ?</h3>
+    {/*
+      Niveau 2, pas 3. Ces outils sont insérés juste après l'introduction,
+      donc directement sous le h1 : un h3 y saute un niveau, et quelqu'un qui
+      parcourt la page par ses titres — ce que fait une synthèse vocale —
+      entend une section manquante entre les deux. Le même défaut avait été
+      corrigé sur « Puis-je entrer ? » sans l'être ici.
+    */}
+    <h2 class="mt-1.5 font-display text-xl font-bold text-ink">Où partir, et quand ?</h2>
     <p class="mt-1.5 text-[0.88rem] text-warm">
       Choisissez un mois : voici les pays où la météo joue pour vous, ceux où elle est acceptable,
       et ceux qu'il vaut mieux garder pour plus tard.

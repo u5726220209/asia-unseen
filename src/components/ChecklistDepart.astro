@@ -45,7 +45,14 @@ const DEUX_ROUES = [
 <div class="au-checklist my-10 overflow-hidden rounded-brand border border-line bg-white">
   <div class="border-b border-line bg-cream-warm px-6 py-5">
     <p class="eyebrow">Outil</p>
-    <h3 class="mt-1.5 font-display text-xl font-bold text-ink">Votre calendrier de départ, daté</h3>
+    {/*
+      Niveau 2, pas 3. Ces outils sont insérés juste après l'introduction,
+      donc directement sous le h1 : un h3 y saute un niveau, et quelqu'un qui
+      parcourt la page par ses titres — ce que fait une synthèse vocale —
+      entend une section manquante entre les deux. Le même défaut avait été
+      corrigé sur « Puis-je entrer ? » sans l'être ici.
+    */}
+    <h2 class="mt-1.5 font-display text-xl font-bold text-ink">Votre calendrier de départ, daté</h2>
     <p class="mt-1.5 text-[0.88rem] text-warm">
       Certaines démarches ont un délai incompressible. Voici les vôtres, à la bonne date.
     </p>

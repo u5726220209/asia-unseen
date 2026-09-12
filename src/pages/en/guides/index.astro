@@ -52,6 +52,7 @@ const guides = (await getCollection('guidesEn'))
     <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {guides.map((g) => (
         <ArticleCard
+          niveau={2}
           langue="en"
           href={`/en/guides/${g.id}`}
           title={g.data.heading ?? g.data.title}

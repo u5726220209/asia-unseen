@@ -59,6 +59,7 @@ const [featured, ...rest] = articles;
     {featured && (
       <div class="mb-14">
         <ArticleCard
+          niveau={2}
           featured
           langue="en"
           href={`/en/blog/${featured.id}`}
@@ -73,6 +74,7 @@ const [featured, ...rest] = articles;
     <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {rest.map((a) => (
         <ArticleCard
+          niveau={2}
           langue="en"
           href={`/en/blog/${a.id}`}
           title={a.data.heading ?? a.data.title}

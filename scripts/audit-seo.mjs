@@ -43,6 +43,25 @@ for (const {p, size} of pages) {
      * pendant que la classe CSS écrite pour les envelopper n'était appliquée
      * nulle part.
      */
+    /**
+     * Un niveau de titre sauté.
+     *
+     * Le plan d'une page est ce qu'entend une synthèse vocale : elle annonce
+     * les titres et leur profondeur. Un h3 posé directement sous le h1 lui
+     * fait annoncer une section qui n'existe pas, et le lecteur cherche ce
+     * qu'il a manqué. Dix-sept pages étaient dans ce cas — tous les outils
+     * interactifs, insérés juste après l'introduction, et les pages de liste
+     * dont les cartes sont le contenu et non une sous-partie.
+     *
+     * Rien ne le montre à l'écran : les titres ont leur taille par une classe,
+     * pas par leur niveau. C'est un défaut qu'on ne voit qu'en lisant le plan.
+     */
+    sautTitre: (() => {
+      const corps = (h.match(/<main[^>]*>([\s\S]*?)<\/main>/) || [])[1] || '';
+      const sansScript = corps.replace(/<script[\s\S]*?<\/script>/g, ' ');
+      const n = [...sansScript.matchAll(/<h([1-6])[^>]*>/g)].map((m) => Number(m[1]));
+      return n.some((v, i) => i > 0 && v > n[i - 1] + 1);
+    })(),
     tablesNues: (h.match(/<table\b/g) || []).length -
       (h.match(/class="[^"]*(?:table-wrap|overflow-x-auto)[^"]*"[\s\S]{0,400}?<table\b/g) || []).length,
     jsonld: (h.match(/application\/ld\+json/g)||[]).length,
@@ -79,6 +98,7 @@ const ogAbsentes = rows.filter((r) => {
 });
 pb('og:image annoncée mais absente', ogAbsentes.length);
 pb('tableaux sans conteneur qui défile', rows.reduce((a, r) => a + Math.max(0, r.tablesNues), 0));
+pb('plan de page avec un niveau sauté', rows.filter((r) => r.sautTitre).length);
 pb('sans JSON-LD', rows.filter(r=>r.jsonld===0).length);
 pb('images sans alt', rows.reduce((a,r)=>a+r.imgsNoAlt,0));
 /**
@@ -123,7 +143,8 @@ const defauts =
   rows.filter((r) => !r.canonical || r.h1 !== 1 || !r.og || r.jsonld === 0 ||
     r.lang !== (/^\/en(\/|$)/.test(r.url) ? 'en' : 'fr')).length +
   rows.reduce((a, r) => a + r.imgsNoAlt, 0) + dt.length + dd.length + ogAbsentes.length +
-  rows.reduce((a, r) => a + Math.max(0, r.tablesNues), 0);
+  rows.reduce((a, r) => a + Math.max(0, r.tablesNues), 0) +
+  rows.filter((r) => r.sautTitre).length;
 
 if (ogAbsentes.length) {
   console.log('\n--- og:image annoncée mais absente ---');

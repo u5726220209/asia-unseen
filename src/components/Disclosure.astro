@@ -22,6 +22,13 @@ const { compact = false, class: klass = '' } = Astro.props;
     Cette page contient des liens partenaires. Si vous réservez via l'un d'eux, nous touchons une
     commission — <strong class="font-semibold text-ink">sans surcoût pour vous</strong>. C'est ce qui
     nous permet de garder ces guides gratuits et sans contenu sponsorisé déguisé.
-    <a href="/affiliation" class="whitespace-nowrap underline underline-offset-2 hover:text-teal">En savoir plus</a>.
+    {/*
+      Le libellé disait « En savoir plus ». Il apparaît sur chaque article, et
+      quelqu'un qui parcourt une page par ses liens — ce que fait une synthèse
+      vocale — entendait « en savoir plus » sans savoir sur quoi. Un libellé
+      doit dire où il mène, surtout celui qui explique comment le site gagne
+      sa vie : c'est le lien qu'on veut voir suivi, pas ignoré.
+    */}
+    <a href="/affiliation" class="underline underline-offset-2 hover:text-teal">Notre charte d'affiliation</a>.
   </span>
 </p>
