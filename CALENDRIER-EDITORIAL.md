@@ -5,6 +5,40 @@ fichier quand aucun sujet n'est donné et propose les deux premiers de la file.
 
 **Rythme cible : 2 articles par semaine.** Barrez ce qui est publié, ajoutez en bas.
 
+## Sentinelle de trafic — relevé du 14/09/2026 (issue #8)
+
+Site jeune : 486 impressions sur 7 jours, 5 clics. Trois angles vérifiés :
+
+- **a. Requêtes en position ≥30 sans page dédiée** : aucun sujet ajouté cette
+  semaine. Les deux seules requêtes de ce type avec un volume notable —
+  « assurance asia » (15 impr., pos. 56,3) et « assurance voyage asie du sud
+  est » (7 impr., pos. 37,1) — relèvent du thème assurance, déjà couvert par
+  deux pages (`/blog/assurance-voyage-asie-comparatif` et
+  `/assurances-voyage`) : pas de troisième page, par la règle « jamais une
+  page de plus sur un sujet que deux pages traitent déjà ». Le reste
+  (« budget japon 15 jours », « 15 jours au japon budget », « budget 2
+  semaines en corée du sud », « budget thailand ») ne dépasse pas 2
+  impressions chacune : trop mince pour en tirer un sujet, ce n'est pas une
+  tendance.
+- **b. Pages en position 11–25** : `/guides/visas-asie` (78 impr./7 j, pos.
+  moyenne 23,4) est le seul cas solide — à un cheveu de la première page.
+  Ce n'est pas un nouvel article mais un renforcement (voir note ci-dessous
+  et l'issue de suivi). `/blog/itineraire-thailande-laos-18-jours` est aussi
+  en position 11,0 mais avec 1 seule impression : à surveiller, pas à agir.
+- **c. Cannibalisation** : `scripts/cannibalisation.mjs` n'a pas pu tourner
+  (`GSC_CLE_JSON` absent). Sans le croisement requête↔page qu'il produit,
+  impossible de confirmer un partage de signal — seule une hypothèse tirée
+  des volumes : `/blog/assurance-voyage-asie-comparatif` (100 impr., pos.
+  26,9) et `/assurances-voyage` (19 impr., pos. 36,2) visent des requêtes
+  proches. À vérifier quand l'accès GSC sera disponible.
+
+**Aucun sujet n'est retiré ou déplacé cette semaine** : rien dans la file
+actuelle n'entre en conflit avec ce relevé.
+
+**À faire par l'éditeur, hors file** : renforcer le maillage interne vers
+`/guides/visas-asie` depuis les fiches pays et les articles visa (78
+impr./7 j, pos. 23,4).
+
 ## Comment cette file est classée
 
 Toutes les pages ne se valent pas. L'ordre suit celui de `PLAN-CROISSANCE.md` :
