@@ -65,6 +65,7 @@ export const classement: Classement[] = [
   { slug: 'transports-asie', collection: 'guides', verdict: 'traduire', raison: 'Trains, bus et ferries traitent tous les voyageurs pareil.' },
   { slug: 'esim-asie', collection: 'guides', verdict: 'traduire', raison: 'Les forfaits eSIM se vendent au même prix partout ; seule la devise change.' },
   { slug: 'esim-asie-comparatif-prix', collection: 'blog', verdict: 'traduire', raison: 'Idem : les tarifs des opérateurs sont mondiaux.' },
+  { slug: 'negocier-en-asie', collection: 'blog', verdict: 'traduire', raison: 'L’usage du marchandage par pays ne dépend pas du passeport du visiteur.' },
 
   /* ── Ce qui demanderait d'autres sources, donc une autre enquête ──
      Traduire ces pages produirait un texte juste dans sa langue et faux dans

@@ -61,9 +61,9 @@ Toutes les pages ne se valent pas. L'ordre suit celui de `PLAN-CROISSANCE.md` :
 - [x] **Visa Vietnam : l'e-visa étape par étape** — publié le 07/09/2026. Requête « visa vietnam ». Exemption 45 j, tarif officiel, causes de refus.
 - [x] **Le taxi depuis l'aéroport** — programmé le 08/09/2026. Bangkok et Hanoï publient leur grille, Bali et Hô Chi Minh non : c'est l'angle.
 - [x] **Que faire à Hoi An quand il pleut** — programmé le 15/09/2026. Angle : distinguer l'averse ordinaire de la vraie alerte inondation, après les crues record de novembre 2025.
-- [ ] **Prendre le train au Vietnam : classes, prix, réservation**
+- [ ] **Prendre le train au Vietnam : classes, prix, réservation** — reporté le 18/09/2026 : le sujet dépend de faits officiels (grille tarifaire, fenêtre de réservation, pièce d'identité exigée) qui ne peuvent venir que de dsvn.vn. Ce jour-là, l'outil `WebFetch` était bloqué par la politique réseau de la session pour tout domaine, y compris des sites non asiatiques testés en contrôle (google.com, wikipedia.org) — pas seulement dsvn.vn. Impossible de sourcer ce sujet dans ces conditions sans s'appuyer sur des agrégateurs tiers, ce que la charte du site interdit. À reprendre dès qu'une session dispose d'un accès WebFetch fonctionnel.
 - [x] **Réserver un train en Chine : la fenêtre des 15 jours** — programmé le 11/09/2026. Angle : un itinéraire ferroviaire chinois ne se verrouille pas à plus de 15 jours.
-- [ ] **Négocier en Asie : où c'est attendu, où c'est déplacé**
+- [x] **Négocier en Asie : où c'est attendu, où c'est déplacé** — programmé le 21/09/2026. Angle : marchander est attendu sur les marchés d'Asie du Sud-Est et déplacé au Japon/Corée du Sud ; méthode et erreurs à éviter plutôt que faits chiffrés officiels, faute de portail dédié à ce sujet.
 
 ## Priorité 3 — itinéraires
 
