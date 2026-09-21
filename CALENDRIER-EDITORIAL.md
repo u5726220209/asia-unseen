@@ -5,39 +5,57 @@ fichier quand aucun sujet n'est donné et propose les deux premiers de la file.
 
 **Rythme cible : 2 articles par semaine.** Barrez ce qui est publié, ajoutez en bas.
 
-## Sentinelle de trafic — relevé du 14/09/2026 (issue #8)
+## Sentinelle de trafic — relevé du 20/09/2026 (log CI, veille run #26)
 
-Site jeune : 486 impressions sur 7 jours, 5 clics. Trois angles vérifiés :
+**Correction du point précédent (14/09, issue #11) :** la recommandation de
+renforcer le maillage vers « `/guides/visas-asie` » (78 impr., pos. 23,4)
+est retirée. Cette URL n'existe pas — la vraie page est `/visas-asie` — et
+le chiffre de 78 impressions n'apparaît nulle part dans le relevé qu'elle
+citait (issue #8) : les 12 pages listées plafonnaient à 42 impressions.
+Aucun lien n'avait de toute façon été ajouté depuis (vérifié : 0 occurrence
+dans `src/content/`). Dans le relevé réel du 20/09, `/visas-asie` est à la
+**position 7,9** avec 56 impressions : déjà en première page, elle n'a pas
+besoin d'un renforcement de maillage.
 
-- **a. Requêtes en position ≥30 sans page dédiée** : aucun sujet ajouté cette
-  semaine. Les deux seules requêtes de ce type avec un volume notable —
-  « assurance asia » (15 impr., pos. 56,3) et « assurance voyage asie du sud
-  est » (7 impr., pos. 37,1) — relèvent du thème assurance, déjà couvert par
-  deux pages (`/blog/assurance-voyage-asie-comparatif` et
-  `/assurances-voyage`) : pas de troisième page, par la règle « jamais une
-  page de plus sur un sujet que deux pages traitent déjà ». Le reste
-  (« budget japon 15 jours », « 15 jours au japon budget », « budget 2
-  semaines en corée du sud », « budget thailand ») ne dépasse pas 2
-  impressions chacune : trop mince pour en tirer un sujet, ce n'est pas une
-  tendance.
-- **b. Pages en position 11–25** : `/guides/visas-asie` (78 impr./7 j, pos.
-  moyenne 23,4) est le seul cas solide — à un cheveu de la première page.
-  Ce n'est pas un nouvel article mais un renforcement (voir note ci-dessous
-  et l'issue de suivi). `/blog/itineraire-thailande-laos-18-jours` est aussi
-  en position 11,0 mais avec 1 seule impression : à surveiller, pas à agir.
-- **c. Cannibalisation** : `scripts/cannibalisation.mjs` n'a pas pu tourner
-  (`GSC_CLE_JSON` absent). Sans le croisement requête↔page qu'il produit,
-  impossible de confirmer un partage de signal — seule une hypothèse tirée
-  des volumes : `/blog/assurance-voyage-asie-comparatif` (100 impr., pos.
-  26,9) et `/assurances-voyage` (19 impr., pos. 36,2) visent des requêtes
-  proches. À vérifier quand l'accès GSC sera disponible.
+Aucune tâche « Point Google » n'a pu lire de nouveau relevé détaillé posté
+en ticket depuis le 12/09 : le workflow `veille.yml` ne republie le détail
+page/requête dans l'issue que si un seuil d'alerte est franchi ; le 20/09
+n'a rien déclenché, donc l'issue #8 a juste reçu « tout est stable » puis
+été fermée. Le détail complet existe néanmoins dans le journal du run CI
+([run 35501546048](https://github.com/u5726220209/asia-unseen/actions/runs/35501546048)),
+d'où vient ce qui suit — à signaler à l'éditeur (voir l'issue de ce point).
 
-**Aucun sujet n'est retiré ou déplacé cette semaine** : rien dans la file
-actuelle n'entre en conflit avec ce relevé.
+Chiffres : 395 impressions / 4 clics sur 7 jours (moyenne des 4 semaines
+précédentes : 167 impr. — en hausse, rien d'anormal signalé par le script).
 
-**À faire par l'éditeur, hors file** : renforcer le maillage interne vers
-`/guides/visas-asie` depuis les fiches pays et les articles visa (78
-impr./7 j, pos. 23,4).
+- **a. Requêtes en position ≥30 sans page dédiée** : rien d'ajouté. Seules
+  « assurance asia » (pos. 56,2) et « assurance voyage asie du sud est »
+  (pos. 33,5) dépassent la position 30 avec un peu de volume, et le thème
+  assurance est déjà couvert par deux pages — pas de troisième. « budget
+  voyage asie » (pos. 67, 1 impr.) est trop mince pour conclure.
+- **b. Pages en position 11–25** : `/assurances-voyage` (35 impr., pos.
+  16,2) et `/blog/assurance-voyage-asie-comparatif` (29 impr., pos. 24,3)
+  sont les deux cas avec du volume. **Ne pas les renforcer séparément avant
+  de lire le point c** : ce sont exactement les deux pages qui se
+  cannibalisent.
+- **c. Cannibalisation — CONFIRMÉE** (`cannibalisation.mjs` a tourné en CI
+  avec `GSC_CLE_JSON` réel, contrairement à ici) : `/assurances-voyage` et
+  `/blog/assurance-voyage-asie-comparatif` se disputent 2 requêtes, 54
+  impressions cumulées — « meilleure assurance voyage asie » (29 impr.,
+  aucune des deux pages sous la position 49) et « assurance voyage asie »
+  (25 impr., l'essentiel du volume — 24 impr. — coincé à la position 23,3
+  sur l'article de blog). C'était une hypothèse non confirmée au 14/09
+  (issue #11) ; les données la confirment maintenant.
+
+**Aucun sujet n'est retiré ou déplacé dans la file de rédaction** : rien
+dans la file actuelle n'entre en conflit avec ce relevé.
+
+**À faire par l'éditeur, hors file** : trancher la cannibalisation
+assurance avant tout maillage — décider laquelle de `/assurances-voyage` ou
+`/blog/assurance-voyage-asie-comparatif` doit répondre aux requêtes
+« assurance voyage asie » / « meilleure assurance voyage asie », et faire
+pointer l'autre vers elle. Configurer aussi `GSC_CLE_JSON` en local/agent
+si l'on veut que ce contrôle puisse tourner en dehors de la CI.
 
 ## Comment cette file est classée
 
