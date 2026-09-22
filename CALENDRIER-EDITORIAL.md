@@ -85,7 +85,7 @@ Toutes les pages ne se valent pas. L'ordre suit celui de `PLAN-CROISSANCE.md` :
 
 ## Priorité 3 — itinéraires
 
-- [ ] **Corée du Sud en 12 jours** — Séoul, Gyeongju, Busan, Jeju.
+- [x] **Corée du Sud en 12 jours** — programmé le 25/09/2026. Séoul, Gyeongju, Busan, Jeju. Le sujet précédent de la file (train Vietnam, priorité 2) reste bloqué : `WebFetch` refusait encore tout domaine ce jour-là (testé sur dsvn.vn, diplomatie.gouv.fr et jusqu'à google.com), pas seulement dsvn.vn. Cet article s'appuie donc largement sur des faits déjà sourcés et publiés ailleurs sur le site (K-ETA, budget, saisons, KTX Séoul–Busan) plutôt que sur une nouvelle vérification primaire ; les durées de vol vers Jeju et le trajet Gyeongju–Busan sont données comme ordre de grandeur, non vérifiées à la source faute d'accès réseau.
 - [ ] **Japon en 21 jours : au-delà du triangle classique** — Tohoku ou mer de Seto.
 - [ ] **Indonésie en 3 semaines : Java et Bali sans le sud de Bali**
 - [ ] **Philippines en 2 semaines : Palawan et Siargao**

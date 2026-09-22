@@ -39,6 +39,7 @@ export const classement: Classement[] = [
   { slug: 'angkor-saison-des-pluies', collection: 'blog', verdict: 'traduire', raison: 'La mousson ne dépend pas du passeport.' },
   { slug: 'applications-voyage-asie', collection: 'blog', verdict: 'traduire', raison: 'Les applications sont les mêmes ; seules deux mentions de banques françaises sautent.' },
   { slug: 'arriver-en-chine-preparation', collection: 'blog', verdict: 'traduire', raison: 'Le pare-feu, les paiements et les portiques traitent tous les étrangers pareil.' },
+  { slug: 'coree-du-sud-12-jours', collection: 'blog', verdict: 'traduire', raison: 'Un ordre d’étapes ; seules les formalités citées doivent devenir « selon votre passeport ».' },
   { slug: 'cout-reel-30-jours-vietnam', collection: 'blog', verdict: 'traduire', raison: 'Des dépenses relevées sur place, converties en euros ; la devise se dit.' },
   { slug: 'ha-giang-moto-4-jours', collection: 'blog', verdict: 'traduire', raison: 'Un itinéraire de montagne, identique pour qui le roule.' },
   { slug: 'hoi-an-pluie-que-faire', collection: 'blog', verdict: 'traduire', raison: 'La pluie tombe sur tout le monde.' },
