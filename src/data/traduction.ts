@@ -46,6 +46,7 @@ export const classement: Classement[] = [
   { slug: 'itineraire-thailande-laos-18-jours', collection: 'blog', verdict: 'traduire', raison: 'Un ordre d’étapes ; seules les formalités citées doivent devenir « selon votre passeport ».' },
   { slug: 'itineraire-vietnam-10-jours', collection: 'blog', verdict: 'traduire', raison: 'Idem : la géographie ne change pas de nationalité.' },
   { slug: 'japon-15-jours-sans-jr-pass', collection: 'blog', verdict: 'traduire', raison: 'Le calcul du JR Pass est le même pour tout étranger éligible.' },
+  { slug: 'japon-21-jours-tohoku-mer-de-seto', collection: 'blog', verdict: 'traduire', raison: 'Un choix d’itinéraire et une géographie identiques ; seule la mention du visa doit devenir « selon votre passeport ».' },
   { slug: 'jr-pass-rentable-ou-pas', collection: 'blog', verdict: 'traduire', raison: 'Un calcul de rentabilité, en yens.' },
   { slug: 'ou-dormir-a-bangkok', collection: 'blog', verdict: 'traduire', raison: 'Le choix d’un quartier ne dépend pas du passeport.' },
   { slug: 'ou-dormir-a-hanoi', collection: 'blog', verdict: 'traduire', raison: 'Idem.' },
