@@ -5,57 +5,53 @@ fichier quand aucun sujet n'est donné et propose les deux premiers de la file.
 
 **Rythme cible : 2 articles par semaine.** Barrez ce qui est publié, ajoutez en bas.
 
-## Sentinelle de trafic — relevé du 20/09/2026 (log CI, veille run #26)
+## Sentinelle de trafic — relevé du 26/09/2026 (issue #16, veille run #33)
 
-**Correction du point précédent (14/09, issue #11) :** la recommandation de
-renforcer le maillage vers « `/guides/visas-asie` » (78 impr., pos. 23,4)
-est retirée. Cette URL n'existe pas — la vraie page est `/visas-asie` — et
-le chiffre de 78 impressions n'apparaît nulle part dans le relevé qu'elle
-citait (issue #8) : les 12 pages listées plafonnaient à 42 impressions.
-Aucun lien n'avait de toute façon été ajouté depuis (vérifié : 0 occurrence
-dans `src/content/`). Dans le relevé réel du 20/09, `/visas-asie` est à la
-**position 7,9** avec 56 impressions : déjà en première page, elle n'a pas
-besoin d'un renforcement de maillage.
+Chiffres : 383 impressions / 5 clics sur 7 jours (moyenne des 4 semaines
+précédentes : 243 impr. — en hausse, rien d'anormal signalé par le script).
+12 pages servies par Google sur la période.
 
-Aucune tâche « Point Google » n'a pu lire de nouveau relevé détaillé posté
-en ticket depuis le 12/09 : le workflow `veille.yml` ne republie le détail
-page/requête dans l'issue que si un seuil d'alerte est franchi ; le 20/09
-n'a rien déclenché, donc l'issue #8 a juste reçu « tout est stable » puis
-été fermée. Le détail complet existe néanmoins dans le journal du run CI
-([run 35501546048](https://github.com/u5726220209/asia-unseen/actions/runs/35501546048)),
-d'où vient ce qui suit — à signaler à l'éditeur (voir l'issue de ce point).
-
-Chiffres : 395 impressions / 4 clics sur 7 jours (moyenne des 4 semaines
-précédentes : 167 impr. — en hausse, rien d'anormal signalé par le script).
-
-- **a. Requêtes en position ≥30 sans page dédiée** : rien d'ajouté. Seules
-  « assurance asia » (pos. 56,2) et « assurance voyage asie du sud est »
-  (pos. 33,5) dépassent la position 30 avec un peu de volume, et le thème
-  assurance est déjà couvert par deux pages — pas de troisième. « budget
-  voyage asie » (pos. 67, 1 impr.) est trop mince pour conclure.
-- **b. Pages en position 11–25** : `/assurances-voyage` (35 impr., pos.
-  16,2) et `/blog/assurance-voyage-asie-comparatif` (29 impr., pos. 24,3)
-  sont les deux cas avec du volume. **Ne pas les renforcer séparément avant
-  de lire le point c** : ce sont exactement les deux pages qui se
-  cannibalisent.
-- **c. Cannibalisation — CONFIRMÉE** (`cannibalisation.mjs` a tourné en CI
-  avec `GSC_CLE_JSON` réel, contrairement à ici) : `/assurances-voyage` et
-  `/blog/assurance-voyage-asie-comparatif` se disputent 2 requêtes, 54
-  impressions cumulées — « meilleure assurance voyage asie » (29 impr.,
-  aucune des deux pages sous la position 49) et « assurance voyage asie »
-  (25 impr., l'essentiel du volume — 24 impr. — coincé à la position 23,3
-  sur l'article de blog). C'était une hypothèse non confirmée au 14/09
-  (issue #11) ; les données la confirment maintenant.
+- **a. Requêtes en position ≥30 sans page dédiée** : rien d'ajouté, comme
+  aux relevés du 14/09 et du 20/09 — **3e semaine de suite sans candidat
+  exploitable**. Quatre requêtes dépassent la position 30 cette semaine,
+  aucune ne qualifie : « agoda asie hotel » (pos. 50,0, 3 impr.) — le thème
+  hôtels a déjà une page dédiée, `/hotels-asie` ; « assurance voyage asie du
+  sud est » (pos. 34,0, 2 impr.) — thème déjà couvert par deux pages, voir
+  point c ; « frais visa vietnam » (pos. 54,0, 1 impr.) — une page dédiée au
+  visa Vietnam existe déjà (`/blog/visa-vietnam-e-visa-2026`) et le volume
+  est de toute façon trop mince ; « aller en indonésie » (pos. 96,0, 1
+  impr.) — 1 impression, trop mince pour conclure à une demande réelle.
+- **b. Pages en position 11–25** : une seule cette semaine, `/assurances-voyage`
+  (35 impr., pos. 12,3) — même dossier que le point c ci-dessous, à ne pas
+  renforcer isolément tant que l'éditeur n'a pas tranché.
+  `/blog/assurance-voyage-asie-comparatif` n'apparaît plus du tout dans les
+  12 pages servies cette semaine (elle y figurait à la pos. 24,3 avec 29
+  impr. le 20/09) : simple observation, pas assez pour conclure à une
+  perte de visibilité — à surveiller la semaine prochaine.
+- **c. Cannibalisation** : `cannibalisation.mjs` n'a pas pu tourner ici —
+  `GSC_CLE_JSON` toujours absent de cette session (blocage réseau structurel
+  signalé chaque nuit depuis le 22/09 dans les commentaires de l'issue
+  #16). Aucune donnée nouvelle donc ; on s'appuie sur la confirmation
+  obtenue en CI la semaine dernière (issue #15, run 35501546048) :
+  `/assurances-voyage` et `/blog/assurance-voyage-asie-comparatif` se
+  disputent « meilleure assurance voyage asie » (29 impr., aucune des deux
+  pages sous la position 49) et « assurance voyage asie » (25 impr., 24
+  coincés à la pos. 23,3 sur l'article de blog). Rien n'indique que
+  l'éditeur ait tranché depuis : la recommandation reste valable.
 
 **Aucun sujet n'est retiré ou déplacé dans la file de rédaction** : rien
 dans la file actuelle n'entre en conflit avec ce relevé.
 
-**À faire par l'éditeur, hors file** : trancher la cannibalisation
-assurance avant tout maillage — décider laquelle de `/assurances-voyage` ou
-`/blog/assurance-voyage-asie-comparatif` doit répondre aux requêtes
-« assurance voyage asie » / « meilleure assurance voyage asie », et faire
-pointer l'autre vers elle. Configurer aussi `GSC_CLE_JSON` en local/agent
-si l'on veut que ce contrôle puisse tourner en dehors de la CI.
+**À faire par l'éditeur, hors file** — inchangé depuis la semaine
+dernière et toujours en attente :
+1. Trancher la cannibalisation assurance avant tout maillage — décider
+   laquelle de `/assurances-voyage` ou `/blog/assurance-voyage-asie-comparatif`
+   doit répondre à « assurance voyage asie » / « meilleure assurance voyage
+   asie », et faire pointer l'autre vers elle.
+2. Configurer `GSC_CLE_JSON` pour les sessions agent (déjà en secret CI,
+   absent ici) — sans lui, ni `trafic.mjs` ni `cannibalisation.mjs` ne
+   peuvent tourner en session, et ce point continuera à dépendre des
+   journaux CI ou du corps des issues « Veille ».
 
 ## Comment cette file est classée
 
