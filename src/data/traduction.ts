@@ -42,6 +42,7 @@ export const classement: Classement[] = [
   { slug: 'coree-du-sud-12-jours', collection: 'blog', verdict: 'traduire', raison: 'Un ordre d’étapes ; seules les formalités citées doivent devenir « selon votre passeport ».' },
   { slug: 'cout-reel-30-jours-vietnam', collection: 'blog', verdict: 'traduire', raison: 'Des dépenses relevées sur place, converties en euros ; la devise se dit.' },
   { slug: 'ha-giang-moto-4-jours', collection: 'blog', verdict: 'traduire', raison: 'Un itinéraire de montagne, identique pour qui le roule.' },
+  { slug: 'indonesie-3-semaines-java-bali', collection: 'blog', verdict: 'traduire', raison: 'Un itinéraire et une géographie identiques ; seule la mention du visa doit devenir « selon votre passeport ».' },
   { slug: 'hoi-an-pluie-que-faire', collection: 'blog', verdict: 'traduire', raison: 'La pluie tombe sur tout le monde.' },
   { slug: 'itineraire-thailande-laos-18-jours', collection: 'blog', verdict: 'traduire', raison: 'Un ordre d’étapes ; seules les formalités citées doivent devenir « selon votre passeport ».' },
   { slug: 'itineraire-vietnam-10-jours', collection: 'blog', verdict: 'traduire', raison: 'Idem : la géographie ne change pas de nationalité.' },
