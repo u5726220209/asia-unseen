@@ -80,6 +80,7 @@ const FD_INDONESIE = 'https://www.diplomatie.gouv.fr/fr/information-par-pays/ind
 const FD_PHILIPPINES = 'https://www.diplomatie.gouv.fr/fr/information-par-pays/philippines/conseils-aux-voyageurs-entree-sejour';
 const ARTICLE_INDONESIE = '/blog/visa-indonesie-prolongation';
 const ARTICLE_PHILIPPINES = '/blog/etravel-philippines';
+const ARTICLE_PHILIPPINES_14J = '/blog/philippines-palawan-siargao-14-jours';
 const DSVN_TARIFS = 'https://giotaugiave.dsvn.vn/giave/thongnhat.aspx';
 const NOIBAI_TRANSPORT = 'https://noibaiairport.vn/vi/phuong-tien-van-chuyen-cong-cong-nid1.html';
 const ARTICLE_TRAIN_VIETNAM = '/blog/train-hanoi-saigon';
@@ -179,7 +180,7 @@ export const chiffresCites: ChiffreCite[] = [
   { affiche: '150 000', designe: 'taxe touristique de Bali (IDR)', source: EVISA_ID, releveLe: '2026-09-04', pages: ['/indonesie', EN_PROLONGER, EN_FRAIS, EN_BALI], sourceIntrouvableAttendue: true },
   { affiche: '30', designe: "visa à l'arrivée en Indonésie, converti en euros", source: EVISA_ID, releveLe: '2026-09-04', pages: ['/indonesie'], estimation: 'conversion de 500 000 IDR : elle bouge avec le change, pas avec la règle' },
   { affiche: '7,50', designe: 'taxe touristique de Bali, convertie en euros', source: EVISA_ID, releveLe: '2026-09-04', pages: ['/indonesie'], estimation: 'conversion de 150 000 IDR : elle bouge avec le change, pas avec la règle' },
-  { affiche: '3 030', designe: 'prolongation de séjour aux Philippines, sur place (PHP)', source: IMMIGRATION_PH, releveLe: '2026-09-04', pages: ['/philippines', EN_PROLONGER, EN_PHILIPPINES], sourceIntrouvableAttendue: true },
+  { affiche: '3 030', designe: 'prolongation de séjour aux Philippines, sur place (PHP)', source: IMMIGRATION_PH, releveLe: '2026-09-04', pages: ['/philippines', EN_PROLONGER, EN_PHILIPPINES, ARTICLE_PHILIPPINES_14J], sourceIntrouvableAttendue: true },
   /**
    * Les trois tarifs du parc d'Angkor.
    *

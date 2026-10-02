@@ -50,6 +50,7 @@ export const classement: Classement[] = [
   { slug: 'japon-21-jours-tohoku-mer-de-seto', collection: 'blog', verdict: 'traduire', raison: 'Un choix d’itinéraire et une géographie identiques ; seule la mention du visa doit devenir « selon votre passeport ».' },
   { slug: 'jr-pass-rentable-ou-pas', collection: 'blog', verdict: 'traduire', raison: 'Un calcul de rentabilité, en yens.' },
   { slug: 'ou-dormir-a-bangkok', collection: 'blog', verdict: 'traduire', raison: 'Le choix d’un quartier ne dépend pas du passeport.' },
+  { slug: 'philippines-palawan-siargao-14-jours', collection: 'blog', verdict: 'traduire', raison: 'Un itinéraire et une géographie identiques ; seule la mention du visa doit devenir « selon votre passeport ».' },
   { slug: 'ou-dormir-a-hanoi', collection: 'blog', verdict: 'traduire', raison: 'Idem.' },
   { slug: 'ou-dormir-a-kyoto', collection: 'blog', verdict: 'traduire', raison: 'Idem.' },
   { slug: 'sac-a-dos-asie-checklist', collection: 'blog', verdict: 'traduire', raison: 'Une liste de matériel ; les mentions d’ordonnances françaises sautent.' },
