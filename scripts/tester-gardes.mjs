@@ -447,7 +447,7 @@ const CAS = [
        passer « 1 septembre 2026 ». En le cherchant, on a trouvé deux fiches
        pays qui affichaient des phrases entières en français. */
     muter: {
-      'dist/en/vietnam/index.html': remplacer(/Taken in September 2026/, 'Relevé le 3 septembre 2026'),
+      'dist/en/vietnam/index.html': remplacer(/Taken in \w+ 2026/, 'Relevé le 3 septembre 2026'),
     },
     attendu: /3 septembre 2026/,
   },
