@@ -856,7 +856,7 @@ export const countries: Country[] = [
       ambassade: { ville: 'Manille', adresse: '21e étage, Ayala Triangle Gardens Tower 2, Paseo de Roxas, 1226 Makati, Metro Manila', telephone: '+63 2 8857 6900' },
       source: { label: 'France Diplomatie — Contacts utiles', url: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/philippines/conseils-aux-voyageurs-contacts-utiles' },
     },
-    verifieLe: '2026-09',
+    verifieLe: '2026-10',
     volDepuisParis: '≈ 16 h à 18 h avec une escale',
     accent: 'amber',
     resume:
