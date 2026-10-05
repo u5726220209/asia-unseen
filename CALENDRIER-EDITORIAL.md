@@ -5,53 +5,52 @@ fichier quand aucun sujet n'est donné et propose les deux premiers de la file.
 
 **Rythme cible : 2 articles par semaine.** Barrez ce qui est publié, ajoutez en bas.
 
-## Sentinelle de trafic — relevé du 26/09/2026 (issue #16, veille run #33)
+## Sentinelle de trafic — relevé du 04/10/2026 (issue #22, run du 05/10)
 
-Chiffres : 383 impressions / 5 clics sur 7 jours (moyenne des 4 semaines
-précédentes : 243 impr. — en hausse, rien d'anormal signalé par le script).
-12 pages servies par Google sur la période.
+⛔ **Chute de 99 % des impressions, signalée par le script lui-même** : 2
+impressions / 0 clic sur 7 jours, contre une moyenne de 338 impr. sur les
+4 semaines précédentes. Seulement 2 pages servies par Google sur la
+période : `/blog/itineraire-thailande-laos-18-jours` (1 impr., pos. 7,0)
+et `/blog/jr-pass-rentable-ou-pas` (1 impr., pos. 3,0). L'historique
+(`src/data/trafic-historique.json`) confirme une dégringolade sur 3
+relevés consécutifs : 383 impr. (26/09) → 61 impr. (02/10) → 2 impr.
+(semaine du 04/10) — ce n'est pas un bruit statistique isolé.
 
-- **a. Requêtes en position ≥30 sans page dédiée** : rien d'ajouté, comme
-  aux relevés du 14/09 et du 20/09 — **3e semaine de suite sans candidat
-  exploitable**. Quatre requêtes dépassent la position 30 cette semaine,
-  aucune ne qualifie : « agoda asie hotel » (pos. 50,0, 3 impr.) — le thème
-  hôtels a déjà une page dédiée, `/hotels-asie` ; « assurance voyage asie du
-  sud est » (pos. 34,0, 2 impr.) — thème déjà couvert par deux pages, voir
-  point c ; « frais visa vietnam » (pos. 54,0, 1 impr.) — une page dédiée au
-  visa Vietnam existe déjà (`/blog/visa-vietnam-e-visa-2026`) et le volume
-  est de toute façon trop mince ; « aller en indonésie » (pos. 96,0, 1
-  impr.) — 1 impression, trop mince pour conclure à une demande réelle.
-- **b. Pages en position 11–25** : une seule cette semaine, `/assurances-voyage`
-  (35 impr., pos. 12,3) — même dossier que le point c ci-dessous, à ne pas
-  renforcer isolément tant que l'éditeur n'a pas tranché.
-  `/blog/assurance-voyage-asie-comparatif` n'apparaît plus du tout dans les
-  12 pages servies cette semaine (elle y figurait à la pos. 24,3 avec 29
-  impr. le 20/09) : simple observation, pas assez pour conclure à une
-  perte de visibilité — à surveiller la semaine prochaine.
-- **c. Cannibalisation** : `cannibalisation.mjs` n'a pas pu tourner ici —
-  `GSC_CLE_JSON` toujours absent de cette session (blocage réseau structurel
-  signalé chaque nuit depuis le 22/09 dans les commentaires de l'issue
-  #16). Aucune donnée nouvelle donc ; on s'appuie sur la confirmation
-  obtenue en CI la semaine dernière (issue #15, run 35501546048) :
-  `/assurances-voyage` et `/blog/assurance-voyage-asie-comparatif` se
-  disputent « meilleure assurance voyage asie » (29 impr., aucune des deux
-  pages sous la position 49) et « assurance voyage asie » (25 impr., 24
-  coincés à la pos. 23,3 sur l'article de blog). Rien n'indique que
-  l'éditeur ait tranché depuis : la recommandation reste valable.
+- **a. Requêtes en position ≥30 sans page dédiée** : **pas de donnée
+  exploitable cette semaine**. Le relevé ne liste même plus de requêtes
+  (la section a disparu, faute de volume) — proposer un sujet sur cette
+  base reviendrait à inventer une tendance à partir de 2 impressions.
+- **b. Pages en position 11–25** : aucune des 2 pages servies n'est dans
+  cette tranche (pos. 7,0 et 3,0) — rien à renforcer sur la seule donnée
+  de cette semaine.
+- **c. Cannibalisation** : `cannibalisation.mjs` n'a pas pu tourner
+  (`GSC_CLE_JSON` absent de cette session, comme chaque jour depuis le
+  22/09 d'après les commentaires de l'issue #22). La seule donnée fiable
+  reste la confirmation obtenue en CI il y a 2 semaines (issue #15, run
+  35501546048) : `/assurances-voyage` et `/blog/assurance-voyage-asie-comparatif`
+  se disputent toujours « assurance voyage asie » et « meilleure assurance
+  voyage asie » — **non tranché depuis au moins 3 relevés**.
 
-**Aucun sujet n'est retiré ou déplacé dans la file de rédaction** : rien
-dans la file actuelle n'entre en conflit avec ce relevé.
+**Aucun sujet ajouté en tête de file cette semaine** : les données sont
+trop minces (2 impressions au total) pour désigner un candidat 2a
+fiable. La file reste inchangée sous ce rapport — rien n'est retiré non
+plus, rien dans la file n'entrant en conflit avec ce relevé.
 
-**À faire par l'éditeur, hors file** — inchangé depuis la semaine
-dernière et toujours en attente :
-1. Trancher la cannibalisation assurance avant tout maillage — décider
-   laquelle de `/assurances-voyage` ou `/blog/assurance-voyage-asie-comparatif`
-   doit répondre à « assurance voyage asie » / « meilleure assurance voyage
-   asie », et faire pointer l'autre vers elle.
-2. Configurer `GSC_CLE_JSON` pour les sessions agent (déjà en secret CI,
+**À faire par l'éditeur, hors file — par ordre d'urgence** :
+1. **Urgent** — ouvrir Search Console et vérifier les actions manuelles
+   et la couverture de l'index avant toute autre décision ; le script
+   recommande lui-même de couper la rédaction automatique
+   (`active` → `false` dans `src/data/redaction.ts`) devant une chute de
+   cette ampleur sans panne du site connue. Cette décision n'a pas été
+   prise automatiquement ici — elle relève de l'éditeur.
+2. Trancher la cannibalisation assurance (inchangé depuis 3 relevés) :
+   décider laquelle de `/assurances-voyage` ou
+   `/blog/assurance-voyage-asie-comparatif` doit répondre à « assurance
+   voyage asie » / « meilleure assurance voyage asie », et faire pointer
+   l'autre vers elle.
+3. Configurer `GSC_CLE_JSON` pour les sessions agent (déjà en secret CI,
    absent ici) — sans lui, ni `trafic.mjs` ni `cannibalisation.mjs` ne
-   peuvent tourner en session, et ce point continuera à dépendre des
-   journaux CI ou du corps des issues « Veille ».
+   peuvent tourner en session.
 
 ## Comment cette file est classée
 
