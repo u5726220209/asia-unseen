@@ -81,6 +81,7 @@ const FD_PHILIPPINES = 'https://www.diplomatie.gouv.fr/fr/information-par-pays/p
 const ARTICLE_INDONESIE = '/blog/visa-indonesie-prolongation';
 const ARTICLE_PHILIPPINES = '/blog/etravel-philippines';
 const ARTICLE_PHILIPPINES_14J = '/blog/philippines-palawan-siargao-14-jours';
+const ARTICLE_CAMBODGE_10J = '/blog/cambodge-10-jours-au-dela-angkor';
 const DSVN_TARIFS = 'https://giotaugiave.dsvn.vn/giave/thongnhat.aspx';
 const NOIBAI_TRANSPORT = 'https://noibaiairport.vn/vi/phuong-tien-van-chuyen-cong-cong-nid1.html';
 const ARTICLE_TRAIN_VIETNAM = '/blog/train-hanoi-saigon';
@@ -173,8 +174,8 @@ export const chiffresCites: ChiffreCite[] = [
   { affiche: '30', designe: "visa à l'arrivée au Laos, borne basse selon nationalité (USD)", source: EVISA_LA, releveLe: '2026-09-04', pages: ['/laos', EN_PROLONGER, EN_FRAIS], sourceIntrouvableAttendue: true },
   { affiche: '50', designe: "visa à l'arrivée au Laos, borne haute selon nationalité (USD)", source: EVISA_LA, releveLe: '2026-09-04', pages: ['/laos', EN_PROLONGER, EN_FRAIS], sourceIntrouvableAttendue: true },
   { affiche: '2', designe: 'prolongation de séjour au Laos, par jour à Vientiane (USD)', source: EVISA_LA, releveLe: '2026-09-04', pages: ['/laos', EN_PROLONGER], sourceIntrouvableAttendue: true },
-  { affiche: '36', designe: 'e-visa cambodgien, frais de service inclus (USD)', source: EVISA_KH, releveLe: '2026-09-04', pages: ['/cambodge', EN_PROLONGER, EN_FRAIS], sourceIntrouvableAttendue: true },
-  { affiche: '40', designe: 'visa cambodgien aux postes-frontières terrestres, en espèces (USD)', source: EVISA_KH, releveLe: '2026-09-04', pages: ['/cambodge', EN_PROLONGER, EN_FRAIS], sourceIntrouvableAttendue: true },
+  { affiche: '36', designe: 'e-visa cambodgien, frais de service inclus (USD)', source: EVISA_KH, releveLe: '2026-09-04', pages: ['/cambodge', EN_PROLONGER, EN_FRAIS, ARTICLE_CAMBODGE_10J], sourceIntrouvableAttendue: true },
+  { affiche: '40', designe: 'visa cambodgien aux postes-frontières terrestres, en espèces (USD)', source: EVISA_KH, releveLe: '2026-09-04', pages: ['/cambodge', EN_PROLONGER, EN_FRAIS, ARTICLE_CAMBODGE_10J], sourceIntrouvableAttendue: true },
   { affiche: '10 000', designe: 'K-ETA coréen demandé volontairement, non remboursable (wons)', source: KETA, releveLe: '2026-09-04', pages: ['/coree-du-sud', EN_FRAIS, EN_KETA], sourceIntrouvableAttendue: true },
   { affiche: '500 000', designe: "visa à l'arrivée en Indonésie (IDR)", source: EVISA_ID, releveLe: '2026-09-04', pages: ['/indonesie'], sourceIntrouvableAttendue: true },
   { affiche: '150 000', designe: 'taxe touristique de Bali (IDR)', source: EVISA_ID, releveLe: '2026-09-04', pages: ['/indonesie', EN_PROLONGER, EN_FRAIS, EN_BALI], sourceIntrouvableAttendue: true },
@@ -193,9 +194,9 @@ export const chiffresCites: ChiffreCite[] = [
    * Le portail refuse la lecture automatisée — d'où `sourceIntrouvableAttendue` :
    * on vérifie la cohérence entre nos pages, pas la page d'Angkor Enterprise.
    */
-  { affiche: '37', designe: "pass Angkor, un jour (USD)", source: ANGKOR_BILLETS, releveLe: '2026-09-11', pages: [ARTICLE_ANGKOR, EN_ANGKOR], sourceIntrouvableAttendue: true },
-  { affiche: '62', designe: "pass Angkor, trois jours (USD)", source: ANGKOR_BILLETS, releveLe: '2026-09-11', pages: [ARTICLE_ANGKOR, EN_ANGKOR], sourceIntrouvableAttendue: true },
-  { affiche: '72', designe: "pass Angkor, sept jours (USD)", source: ANGKOR_BILLETS, releveLe: '2026-09-11', pages: [ARTICLE_ANGKOR, EN_ANGKOR], sourceIntrouvableAttendue: true },
+  { affiche: '37', designe: "pass Angkor, un jour (USD)", source: ANGKOR_BILLETS, releveLe: '2026-09-11', pages: [ARTICLE_ANGKOR, EN_ANGKOR, ARTICLE_CAMBODGE_10J], sourceIntrouvableAttendue: true },
+  { affiche: '62', designe: "pass Angkor, trois jours (USD)", source: ANGKOR_BILLETS, releveLe: '2026-09-11', pages: [ARTICLE_ANGKOR, EN_ANGKOR, ARTICLE_CAMBODGE_10J], sourceIntrouvableAttendue: true },
+  { affiche: '72', designe: "pass Angkor, sept jours (USD)", source: ANGKOR_BILLETS, releveLe: '2026-09-11', pages: [ARTICLE_ANGKOR, EN_ANGKOR, ARTICLE_CAMBODGE_10J], sourceIntrouvableAttendue: true },
 
   /* ── Assurance ──────────────────────────────────────────────── */
   { affiche: '28,82', designe: 'AVI Routard, zone B, 19-35 ans, la semaine', source: AVI, releveLe: '2026-08-30', pages: [COMPARATIF_ASSURANCE] },
